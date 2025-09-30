@@ -1,4 +1,4 @@
-package com.backeryquotation.backend;
+package com.bakeryquotation.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

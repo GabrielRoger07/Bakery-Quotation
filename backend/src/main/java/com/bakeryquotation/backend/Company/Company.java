@@ -1,6 +1,10 @@
-package com.backeryquotation.backend.Company;
+package com.bakeryquotation.backend.Company;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.br.CNPJ;
 
 import java.util.Objects;
 
@@ -8,10 +12,13 @@ import java.util.Objects;
 @Table(name = "company")
 public class Company {
     @Id
-    @Column(name = "company_cnpj", nullable = false)
+    @CNPJ
+    @Column(name = "company_cnpj", columnDefinition = "VARCHAR(14)")
     private String companyCnpj;
 
-    @Column(name = "company_name", nullable = false)
+    @NotNull
+    @NotEmpty
+    @Column(name = "company_name", nullable = false, columnDefinition = "VARCHAR(45)")
     private String companyName;
 
     public Company() {

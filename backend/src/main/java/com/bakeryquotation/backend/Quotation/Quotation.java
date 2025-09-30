@@ -2,6 +2,9 @@ package com.bakeryquotation.backend.Quotation;
 
 import com.bakeryquotation.backend.Company.Company;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
@@ -13,15 +16,26 @@ public class Quotation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "quotation_id")
     private Long id;
 
+    @NotNull(message = "Start datetime is required")
+    @Future(message = "Start datetime must be in the future")
+    @Column(name = "start_datetime", nullable = false)
     private LocalDateTime startDateTime;
 
+    @NotNull(message = "End datetime is required")
+    @Future(message = "End datetime must be in the future")
+    @Column(name = "end_datetime", nullable = false)
     private LocalDateTime endDateTime;
 
+    @NotNull(message = "Status is required")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private Status status;
 
-    @ManyToOne
+    @NotNull(message = "Company is required")
+    @ManyToOne(optional = false)
     private Company company;
 
     public Quotation() {

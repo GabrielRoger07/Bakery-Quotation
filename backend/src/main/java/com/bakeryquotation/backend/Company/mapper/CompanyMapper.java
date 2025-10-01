@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface CompanyMapper {
 
-    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     Company toEntity(CompanyRequestDTO companyRequestDTO);
 
     CompanyResponseDTO toDto(Company company);

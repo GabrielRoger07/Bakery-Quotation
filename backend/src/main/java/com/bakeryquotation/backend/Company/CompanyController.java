@@ -2,6 +2,7 @@ package com.bakeryquotation.backend.Company;
 
 import com.bakeryquotation.backend.Company.DTO.CompanyRequestDTO;
 import com.bakeryquotation.backend.Company.DTO.CompanyResponseDTO;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class CompanyController {
     }
 
     @PostMapping
-    public ResponseEntity<CompanyResponseDTO> createCompany(@RequestBody CompanyRequestDTO companyRequestDTO){
+    public ResponseEntity<CompanyResponseDTO> createCompany(@Valid @RequestBody CompanyRequestDTO companyRequestDTO){
         return companyService.createCompany(companyRequestDTO);
     }
 

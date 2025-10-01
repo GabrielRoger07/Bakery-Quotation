@@ -1,13 +1,28 @@
 package com.bakeryquotation.backend.Company.DTO;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.br.CNPJ;
+
 public class CompanyRequestDTO {
 
+    @NotNull(message = "CNPJ is required")
+    @NotEmpty(message = "CNPJ cannot be empty")
+    @CNPJ(message = "CNPJ must be valid")
     private String companyCnpj;
 
+    @NotNull(message = "Company name is required")
+    @NotEmpty(message = "Company name cannot be empty")
     private String companyName;
 
+    @NotNull(message = "Email is required")
+    @NotEmpty(message = "Email cannot be empty")
+    @Email(message = "Email must be valid")
     private String companyEmail;
 
+    @NotNull(message = "WhatsApp number is required")
+    @NotEmpty(message = "WhatsApp number cannot be empty")
     private String companyWhatsappNumber;
 
     public CompanyRequestDTO() {

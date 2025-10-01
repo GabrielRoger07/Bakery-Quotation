@@ -13,7 +13,6 @@ import java.util.Objects;
 @Table(name = "company")
 public class Company {
     @Id
-    @CNPJ
     @Column(name = "companyCnpj", length = 14)
     private String companyCnpj;
 
@@ -29,11 +28,11 @@ public class Company {
 
     @NotNull
     @NotEmpty
-    @Email
+    @Email(message = "The field need to be an valid email")
     @Column(name = "companyEmail", nullable = false, length = 60)
     private String companyEmail;
 
-    @Column(name = "createdAt", nullable = false, columnDefinition = "DATETIME", insertable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, columnDefinition = "DATETIME", updatable = false)
     private LocalDateTime createdAt;
 
     public Company() {
@@ -44,6 +43,7 @@ public class Company {
         this.companyName = companyName;
         this.companyWhatsappNumber = companyWhatsappNumber;
         this.companyEmail = companyEmail;
+        this.createdAt = LocalDateTime.now();
     }
 
     public String getCompanyCnpj() {

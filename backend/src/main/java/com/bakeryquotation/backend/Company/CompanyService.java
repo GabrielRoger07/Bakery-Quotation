@@ -5,6 +5,7 @@ import com.bakeryquotation.backend.Company.DTO.CompanyResponseDTO;
 import com.bakeryquotation.backend.Company.mapper.CompanyMapper;
 import com.bakeryquotation.backend.Company.mapper.CompanyUpdate;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

@@ -2,6 +2,7 @@ package com.bakeryquotation.backend.Product;
 
 import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import com.bakeryquotation.backend.Product.mapper.ProductMapper;
+import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,12 +31,12 @@ public class ProductService {
     }
 
     public ResponseEntity<ProductResponseDTO> getProductById(Long id){
-        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product with id " + id + " does not exists"));
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " does not exists"));
         return ResponseEntity.status(HttpStatus.OK).body(productMapper.toDto(product));
     }
 
     public ResponseEntity<ProductResponseDTO> deleteProductById(Long id){
-        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product with id " + id + " does not exists"));
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " does not exists"));
         productRepository.delete(product);
         return ResponseEntity.status(HttpStatus.OK).body(productMapper.toDto(product));
     }

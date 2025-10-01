@@ -2,6 +2,7 @@ package com.bakeryquotation.backend.Quotation;
 
 import com.bakeryquotation.backend.Quotation.DTO.QuotationResponseDTO;
 import com.bakeryquotation.backend.Quotation.mapper.QuotationMapper;
+import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,12 +31,12 @@ public class QuotationService {
     }
 
     public ResponseEntity<QuotationResponseDTO> getQuotationById(Long id){
-        Quotation quotation = quotationRepository.findById(id).orElseThrow(() -> new RuntimeException("Quotation with id " + id + " does not exists"));
+        Quotation quotation = quotationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Quotation with id " + id + " does not exists"));
         return ResponseEntity.status(HttpStatus.OK).body(quotationMapper.toDto(quotation));
     }
 
     public ResponseEntity<QuotationResponseDTO> deleteQuotationById(Long id){
-        Quotation quotation = quotationRepository.findById(id).orElseThrow(() -> new RuntimeException("Quotation with id " + id + "does not exists"));
+        Quotation quotation = quotationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Quotation with id " + id + "does not exists"));
         quotationRepository.delete(quotation);
         return ResponseEntity.status(HttpStatus.OK).body(quotationMapper.toDto(quotation));
     }

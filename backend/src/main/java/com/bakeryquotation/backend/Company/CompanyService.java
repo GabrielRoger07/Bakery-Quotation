@@ -4,6 +4,7 @@ import com.bakeryquotation.backend.Company.DTO.CompanyRequestDTO;
 import com.bakeryquotation.backend.Company.DTO.CompanyResponseDTO;
 import com.bakeryquotation.backend.Company.mapper.CompanyMapper;
 import com.bakeryquotation.backend.Company.mapper.CompanyUpdate;
+import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class CompanyService {
     }
 
     public ResponseEntity<CompanyResponseDTO> getCompanyByCnpj(String cnpj){
-        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new RuntimeException("Company with cnpj " + cnpj + " does not exists"));
+        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new ResourceNotFoundException("Company with cnpj " + cnpj + " does not exists"));
         return ResponseEntity.status(HttpStatus.OK).body(companyMapper.toDto(company));
     }
 
@@ -45,13 +46,13 @@ public class CompanyService {
     }
 
     public ResponseEntity<CompanyResponseDTO> deleteCompanyByCnpj(String cnpj){
-        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new RuntimeException("Company with cnpj " + cnpj + " does not exists"));
+        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new ResourceNotFoundException("Company with cnpj " + cnpj + " does not exists"));
         companyRepository.delete(company);
         return ResponseEntity.status(HttpStatus.OK).body(companyMapper.toDto(company));
     }
 
     public ResponseEntity<CompanyResponseDTO> updateCompanyByCnpj(CompanyRequestDTO companyRequestDTO, String cnpj){
-        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new RuntimeException("Company with cnpj " + cnpj + " does not exists"));
+        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new ResourceNotFoundException("Company with cnpj " + cnpj + " does not exists"));
         companyUpdate.updateCompany(companyRequestDTO, company);
         CompanyResponseDTO companyResponseDTO = companyMapper.toDto(companyRepository.save(company));
         return ResponseEntity.status(HttpStatus.CREATED).body(companyResponseDTO);

@@ -2,6 +2,7 @@ package com.bakeryquotation.backend.Administrator;
 
 import com.bakeryquotation.backend.Administrator.DTO.AdministratorResponseDTO;
 import com.bakeryquotation.backend.Administrator.mapper.AdministratorMapper;
+import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class AdministratorService {
     }
 
     public ResponseEntity<AdministratorResponseDTO> getAdministratorById(Long id){
-        Administrator administrator = administratorRepository.findById(id).orElseThrow(() -> new RuntimeException("Administrator with id " + id + " does not exists"));
+        Administrator administrator = administratorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Administrator with id " + id + " does not exists"));
         return ResponseEntity.status(HttpStatus.OK).body(administratorMapper.toDto(administrator));
     }
 
@@ -35,7 +36,7 @@ public class AdministratorService {
     }
 
     public ResponseEntity<AdministratorResponseDTO> deleteAdministratorById(Long id){
-        Administrator administrator = administratorRepository.findById(id).orElseThrow(() -> new RuntimeException("Administrator with id " + id + " does not exists"));
+        Administrator administrator = administratorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Administrator with id " + id + " does not exists"));
         administratorRepository.delete(administrator);
         return ResponseEntity.status(HttpStatus.OK).body(administratorMapper.toDto(administrator));
     }

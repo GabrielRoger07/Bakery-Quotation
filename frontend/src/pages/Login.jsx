@@ -29,8 +29,8 @@ const Login = () => {
         <div className='login-container'>
             <h1>Pani Premium Login</h1>
             <form onSubmit={handleLogin}>
-                <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" />
-                <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" />
+                <Input label="Email" type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" />
+                <Input label="Password" type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" />
                 <Alert message={error} />
                 <Button type="submit">Login</Button>
             </form>

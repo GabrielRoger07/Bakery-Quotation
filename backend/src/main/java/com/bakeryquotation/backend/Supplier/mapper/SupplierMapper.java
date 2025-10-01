@@ -13,5 +13,5 @@ public interface SupplierMapper {
     @Mapping(target = "createdAt", ignore = true)
     Supplier toEntity(SupplierRequestDTO supplierRequestDTO);
 
-    SupplierResponseDTO supplierResponseDTO(Supplier supplier);
+    SupplierResponseDTO toDto(Supplier supplier);
 }

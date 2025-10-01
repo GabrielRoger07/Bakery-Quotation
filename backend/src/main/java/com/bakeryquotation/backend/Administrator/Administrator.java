@@ -15,7 +15,7 @@ public class Administrator extends Worker {
     @Column(name = "administratorId")
     private Long id;
 
-    @Column(name = "position")
+    @Column(name = "position", length = 30)
     private String position;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, targetEntity = Company.class)

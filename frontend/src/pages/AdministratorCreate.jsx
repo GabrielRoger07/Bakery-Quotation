@@ -49,7 +49,7 @@ const AdministratorCreate = () => {
             <form onSubmit={handleCreateAdministrator}>
                 <Input label="Name" type="text" name="workerName" value={workerName} onChange={(e) => setWorkerName(e.target.value)} placeholder="Enter Administrator Name"/>
                 <Input label="Email" type="email" name="workerEmail" value={workerEmail} onChange={(e) => setWorkerEmail(e.target.value)} placeholder="Enter Administrator Email"/>
-                <Input label="Whatsapp Number" type="text" name="workerWhatsappNumber" value={workerWhatsappNumber} onChange={(e) => setWorkerName(e.target.value)} placeholder="Enter Whatsapp Number"/>
+                <Input label="Whatsapp Number" type="text" name="workerWhatsappNumber" value={workerWhatsappNumber} onChange={(e) => setWorkerWhatsappNumber(e.target.value)} placeholder="Enter Whatsapp Number"/>
                 <Input label="Password" type="password" name="workerPassword" value={workerPassword} onChange={(e) => setWorkerPassword(e.target.value)} placeholder="Enter Administrator Password"/>
                 <Input label="Position" type="text" name="position" value={position} onChange={(e) => setPosition(e.target.value)} placeholder="Enter Administrator Position"/>
                 <Input label="Company CNPJ" type="text" name="companyCnpj" value={companyCnpj} onChange={(e) => setCompanyCnpj(e.target.value)} placeholder="Enter Company CNPJ"/>

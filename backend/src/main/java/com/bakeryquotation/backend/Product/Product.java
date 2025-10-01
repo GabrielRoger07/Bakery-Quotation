@@ -1,11 +1,15 @@
 package com.bakeryquotation.backend.Product;
 
 import com.bakeryquotation.backend.Company.Company;
+import com.bakeryquotation.backend.Participation.Participation;
+import com.bakeryquotation.backend.Quotation.Quotation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "product")
@@ -36,6 +40,12 @@ public class Product {
                 nullable = false
     )
     private Company company;
+
+    @ManyToMany(mappedBy = "products")
+    private Set<Quotation> quotations = new HashSet<>();
+
+    @ManyToMany(mappedBy = "products")
+    private Set<Participation> participations = new HashSet<>();
 
     public Product() {
     }

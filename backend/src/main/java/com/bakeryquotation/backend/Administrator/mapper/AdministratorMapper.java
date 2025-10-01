@@ -13,5 +13,6 @@ public interface AdministratorMapper {
     @Mapping(target = "createdAt", ignore = true)
     Administrator toEntity(AdministratorRequestDTO administratorRequestDTO);
 
+    @Mapping(source = "id", target = "administratorId")
     AdministratorResponseDTO toDto(Administrator administrator);
 }

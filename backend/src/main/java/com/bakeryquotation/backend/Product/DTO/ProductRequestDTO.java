@@ -1,28 +1,20 @@
-package com.bakeryquotation.backend.Product;
+package com.bakeryquotation.backend.Product.DTO;
 
-public class ProductResponseDTO {
+import com.bakeryquotation.backend.Product.UnitOfMeasure;
 
-    private Long productId;
+public class ProductRequestDTO {
+
     private String productName;
     private UnitOfMeasure unitOfMeasure;
     private String companyCnpj;
 
-    public ProductResponseDTO() {
+    public ProductRequestDTO() {
     }
 
-    public ProductResponseDTO(Long productId, String productName, UnitOfMeasure unitOfMeasure, String companyCnpj) {
-        this.productId = productId;
+    public ProductRequestDTO(String productName, UnitOfMeasure unitOfMeasure, String companyCnpj) {
         this.productName = productName;
         this.unitOfMeasure = unitOfMeasure;
         this.companyCnpj = companyCnpj;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
     }
 
     public String getProductName() {

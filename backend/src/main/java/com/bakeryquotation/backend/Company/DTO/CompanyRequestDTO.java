@@ -1,8 +1,6 @@
-package com.bakeryquotation.backend.Company;
+package com.bakeryquotation.backend.Company.DTO;
 
-import java.time.LocalDateTime;
-
-public class CompanyResponseDTO {
+public class CompanyRequestDTO {
 
     private String companyCnpj;
 
@@ -12,17 +10,14 @@ public class CompanyResponseDTO {
 
     private String companyWhatsappNumber;
 
-    private LocalDateTime createdAt;
-
-    public CompanyResponseDTO() {
+    public CompanyRequestDTO() {
     }
 
-    public CompanyResponseDTO(String companyCnpj, String companyName, String companyEmail, String companyWhatsappNumber, LocalDateTime createdAt) {
+    public CompanyRequestDTO(String companyCnpj, String companyName, String companyEmail, String companyWhatsappNumber) {
         this.companyCnpj = companyCnpj;
         this.companyName = companyName;
         this.companyEmail = companyEmail;
         this.companyWhatsappNumber = companyWhatsappNumber;
-        this.createdAt = createdAt;
     }
 
     public String getCompanyCnpj() {
@@ -55,13 +50,5 @@ public class CompanyResponseDTO {
 
     public void setCompanyWhatsappNumber(String companyWhatsappNumber) {
         this.companyWhatsappNumber = companyWhatsappNumber;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }

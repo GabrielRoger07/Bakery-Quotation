@@ -1,36 +1,24 @@
-package com.bakeryquotation.backend.Administrator;
+package com.bakeryquotation.backend.Supplier.DTO;
 
-import java.time.LocalDateTime;
+public class SupplierRequestDTO {
 
-public class AdministratorResponseDTO {
-
-    private Long administratorId;
     private String workerName;
     private String workerEmail;
     private String workerWhatsappNumber;
-    private String position;
+    private String workerPassword;
     private String companyCnpj;
-    private LocalDateTime createdAt;
+    private String companyName;
 
-    public AdministratorResponseDTO() {
+    public SupplierRequestDTO() {
     }
 
-    public AdministratorResponseDTO(Long administratorId, String workerName, String workerEmail, String workerWhatsappNumber, String position, String companyCnpj, LocalDateTime createdAt) {
-        this.administratorId = administratorId;
+    public SupplierRequestDTO(String workerName, String workerEmail, String workerWhatsappNumber, String workerPassword, String companyCnpj, String companyName) {
         this.workerName = workerName;
         this.workerEmail = workerEmail;
         this.workerWhatsappNumber = workerWhatsappNumber;
-        this.position = position;
+        this.workerPassword = workerPassword;
         this.companyCnpj = companyCnpj;
-        this.createdAt = createdAt;
-    }
-
-    public Long getAdministratorId() {
-        return administratorId;
-    }
-
-    public void setAdministratorId(Long administratorId) {
-        this.administratorId = administratorId;
+        this.companyName = companyName;
     }
 
     public String getWorkerName() {
@@ -57,12 +45,12 @@ public class AdministratorResponseDTO {
         this.workerWhatsappNumber = workerWhatsappNumber;
     }
 
-    public String getPosition() {
-        return position;
+    public String getWorkerPassword() {
+        return workerPassword;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
+    public void setWorkerPassword(String workerPassword) {
+        this.workerPassword = workerPassword;
     }
 
     public String getCompanyCnpj() {
@@ -73,11 +61,11 @@ public class AdministratorResponseDTO {
         this.companyCnpj = companyCnpj;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 }

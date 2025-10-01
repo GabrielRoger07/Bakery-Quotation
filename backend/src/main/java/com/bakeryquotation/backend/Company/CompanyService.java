@@ -1,5 +1,7 @@
 package com.bakeryquotation.backend.Company;
 
+import com.bakeryquotation.backend.Company.DTO.CompanyRequestDTO;
+import com.bakeryquotation.backend.Company.DTO.CompanyResponseDTO;
 import com.bakeryquotation.backend.Company.mapper.CompanyMapper;
 import com.bakeryquotation.backend.Company.mapper.CompanyUpdate;
 import org.springframework.http.HttpStatus;

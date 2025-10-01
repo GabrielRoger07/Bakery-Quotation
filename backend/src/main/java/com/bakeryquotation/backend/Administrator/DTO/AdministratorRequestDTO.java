@@ -1,4 +1,4 @@
-package com.bakeryquotation.backend.Administrator;
+package com.bakeryquotation.backend.Administrator.DTO;
 
 public class AdministratorRequestDTO {
 

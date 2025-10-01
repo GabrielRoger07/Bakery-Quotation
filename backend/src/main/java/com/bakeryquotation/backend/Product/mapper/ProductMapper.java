@@ -1,8 +1,8 @@
 package com.bakeryquotation.backend.Product.mapper;
 
 import com.bakeryquotation.backend.Product.Product;
-import com.bakeryquotation.backend.Product.ProductRequestDTO;
-import com.bakeryquotation.backend.Product.ProductResponseDTO;
+import com.bakeryquotation.backend.Product.DTO.ProductRequestDTO;
+import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

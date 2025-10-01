@@ -1,5 +1,7 @@
 package com.bakeryquotation.backend.Company;
 
+import com.bakeryquotation.backend.Company.DTO.CompanyRequestDTO;
+import com.bakeryquotation.backend.Company.DTO.CompanyResponseDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

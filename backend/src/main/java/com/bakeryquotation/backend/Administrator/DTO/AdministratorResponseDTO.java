@@ -1,36 +1,36 @@
-package com.bakeryquotation.backend.Supplier;
+package com.bakeryquotation.backend.Administrator.DTO;
 
 import java.time.LocalDateTime;
 
-public class SupplierResponseDTO {
+public class AdministratorResponseDTO {
 
-    private Long supplierId;
+    private Long administratorId;
     private String workerName;
     private String workerEmail;
     private String workerWhatsappNumber;
+    private String position;
     private String companyCnpj;
-    private String companyName;
     private LocalDateTime createdAt;
 
-    public SupplierResponseDTO() {
+    public AdministratorResponseDTO() {
     }
 
-    public SupplierResponseDTO(Long supplierId, String workerName, String workerEmail, String workerWhatsappNumber, String companyCnpj, String companyName, LocalDateTime createdAt) {
-        this.supplierId = supplierId;
+    public AdministratorResponseDTO(Long administratorId, String workerName, String workerEmail, String workerWhatsappNumber, String position, String companyCnpj, LocalDateTime createdAt) {
+        this.administratorId = administratorId;
         this.workerName = workerName;
         this.workerEmail = workerEmail;
         this.workerWhatsappNumber = workerWhatsappNumber;
+        this.position = position;
         this.companyCnpj = companyCnpj;
-        this.companyName = companyName;
         this.createdAt = createdAt;
     }
 
-    public Long getSupplierId() {
-        return supplierId;
+    public Long getAdministratorId() {
+        return administratorId;
     }
 
-    public void setSupplierId(Long supplierId) {
-        this.supplierId = supplierId;
+    public void setAdministratorId(Long administratorId) {
+        this.administratorId = administratorId;
     }
 
     public String getWorkerName() {
@@ -57,20 +57,20 @@ public class SupplierResponseDTO {
         this.workerWhatsappNumber = workerWhatsappNumber;
     }
 
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
     public String getCompanyCnpj() {
         return companyCnpj;
     }
 
     public void setCompanyCnpj(String companyCnpj) {
         this.companyCnpj = companyCnpj;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
     }
 
     public LocalDateTime getCreatedAt() {

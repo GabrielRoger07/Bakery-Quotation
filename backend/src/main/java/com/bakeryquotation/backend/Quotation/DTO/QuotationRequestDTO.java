@@ -1,4 +1,6 @@
-package com.bakeryquotation.backend.Quotation;
+package com.bakeryquotation.backend.Quotation.DTO;
+
+import com.bakeryquotation.backend.Quotation.Status;
 
 import java.time.LocalDateTime;
 

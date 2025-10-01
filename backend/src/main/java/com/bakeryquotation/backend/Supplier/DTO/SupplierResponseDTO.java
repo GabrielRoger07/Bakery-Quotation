@@ -1,26 +1,36 @@
-package com.bakeryquotation.backend.Supplier;
+package com.bakeryquotation.backend.Supplier.DTO;
 
 import java.time.LocalDateTime;
 
-public class SupplierRequestDTO {
+public class SupplierResponseDTO {
 
+    private Long supplierId;
     private String workerName;
     private String workerEmail;
     private String workerWhatsappNumber;
-    private String workerPassword;
     private String companyCnpj;
     private String companyName;
+    private LocalDateTime createdAt;
 
-    public SupplierRequestDTO() {
+    public SupplierResponseDTO() {
     }
 
-    public SupplierRequestDTO(String workerName, String workerEmail, String workerWhatsappNumber, String workerPassword, String companyCnpj, String companyName) {
+    public SupplierResponseDTO(Long supplierId, String workerName, String workerEmail, String workerWhatsappNumber, String companyCnpj, String companyName, LocalDateTime createdAt) {
+        this.supplierId = supplierId;
         this.workerName = workerName;
         this.workerEmail = workerEmail;
         this.workerWhatsappNumber = workerWhatsappNumber;
-        this.workerPassword = workerPassword;
         this.companyCnpj = companyCnpj;
         this.companyName = companyName;
+        this.createdAt = createdAt;
+    }
+
+    public Long getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(Long supplierId) {
+        this.supplierId = supplierId;
     }
 
     public String getWorkerName() {
@@ -47,14 +57,6 @@ public class SupplierRequestDTO {
         this.workerWhatsappNumber = workerWhatsappNumber;
     }
 
-    public String getWorkerPassword() {
-        return workerPassword;
-    }
-
-    public void setWorkerPassword(String workerPassword) {
-        this.workerPassword = workerPassword;
-    }
-
     public String getCompanyCnpj() {
         return companyCnpj;
     }
@@ -69,5 +71,13 @@ public class SupplierRequestDTO {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

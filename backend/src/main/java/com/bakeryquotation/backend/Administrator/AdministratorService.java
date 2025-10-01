@@ -1,11 +1,10 @@
 package com.bakeryquotation.backend.Administrator;
 
+import com.bakeryquotation.backend.Administrator.DTO.AdministratorResponseDTO;
 import com.bakeryquotation.backend.Administrator.mapper.AdministratorMapper;
-import com.bakeryquotation.backend.Company.CompanyRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;

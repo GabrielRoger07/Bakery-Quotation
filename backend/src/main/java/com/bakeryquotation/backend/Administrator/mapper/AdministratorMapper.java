@@ -1,8 +1,8 @@
 package com.bakeryquotation.backend.Administrator.mapper;
 
 import com.bakeryquotation.backend.Administrator.Administrator;
-import com.bakeryquotation.backend.Administrator.AdministratorRequestDTO;
-import com.bakeryquotation.backend.Administrator.AdministratorResponseDTO;
+import com.bakeryquotation.backend.Administrator.DTO.AdministratorRequestDTO;
+import com.bakeryquotation.backend.Administrator.DTO.AdministratorResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

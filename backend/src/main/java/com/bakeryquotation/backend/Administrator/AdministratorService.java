@@ -21,12 +21,12 @@ public class AdministratorService {
         this.administratorMapper = administratorMapper;
     }
 
-    public ResponseEntity<AdministratorResponseDTO> findAdministratorById(Long id){
+    public ResponseEntity<AdministratorResponseDTO> getAdministratorById(Long id){
         Administrator administrator = administratorRepository.findById(id).orElseThrow(() -> new RuntimeException("Administrator with id " + id + " does not exists"));
         return ResponseEntity.status(HttpStatus.OK).body(administratorMapper.toDto(administrator));
     }
 
-    public ResponseEntity<List<AdministratorResponseDTO>> findAllAdministrators(){
+    public ResponseEntity<List<AdministratorResponseDTO>> getAllAdministrators(){
         List<Administrator> administrators = administratorRepository.findAll();
         List<AdministratorResponseDTO> administratorResponseDTOS = new ArrayList<>();
         administrators.forEach(administrator -> {

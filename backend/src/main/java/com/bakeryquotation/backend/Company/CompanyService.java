@@ -1,5 +1,7 @@
 package com.bakeryquotation.backend.Company;
 
+import com.bakeryquotation.backend.Company.mapper.CompanyMapper;
+import com.bakeryquotation.backend.Company.mapper.CompanyUpdate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,10 +14,12 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
+    private final CompanyUpdate companyUpdate;
 
-    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper){
+    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper, CompanyUpdate companyUpdate){
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
+        this.companyUpdate = companyUpdate;
     }
 
     public ResponseEntity<CompanyResponseDTO> createCompany(CompanyRequestDTO companyRequestDTO){
@@ -42,5 +46,12 @@ public class CompanyService {
         Company company = companyRepository.findById(cnpj).orElseThrow(() -> new RuntimeException("Company with cnpj " + cnpj + " does not exists"));
         companyRepository.delete(company);
         return ResponseEntity.status(HttpStatus.OK).body(companyMapper.toDto(company));
+    }
+
+    public ResponseEntity<CompanyResponseDTO> updateCompanyByCnpj(CompanyRequestDTO companyRequestDTO, String cnpj){
+        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new RuntimeException("Company with cnpj " + cnpj + " does not exists"));
+        companyUpdate.updateCompany(companyRequestDTO, company);
+        CompanyResponseDTO companyResponseDTO = companyMapper.toDto(companyRepository.save(company));
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyResponseDTO);
     }
 }

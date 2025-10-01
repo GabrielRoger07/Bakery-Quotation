@@ -34,4 +34,9 @@ public class CompanyController {
     public ResponseEntity<CompanyResponseDTO> deleteCompanyByCnpj(@PathVariable("cnpj") String cnpj){
         return companyService.deleteCompanyByCnpj(cnpj);
     }
+
+    @PutMapping("/{cnpj}")
+    public ResponseEntity<CompanyResponseDTO> updateCompanyByCnpj(@RequestBody CompanyRequestDTO companyRequestDTO, @PathVariable("cnpj") String cnpj){
+        return companyService.updateCompanyByCnpj(companyRequestDTO, cnpj);
+    }
 }

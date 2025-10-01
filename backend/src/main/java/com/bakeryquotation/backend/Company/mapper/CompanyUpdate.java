@@ -10,5 +10,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface CompanyUpdate {
 
-    CompanyResponseDTO updateCompany(CompanyRequestDTO companyRequestDTO, @MappingTarget Company company);
+    void updateCompany(CompanyRequestDTO companyRequestDTO, @MappingTarget Company company);
 }

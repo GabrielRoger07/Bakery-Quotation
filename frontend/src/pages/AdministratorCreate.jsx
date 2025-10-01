@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Input from '../components/Input'
 import Button from '../components/Button'
+import Alert from '../components/Alert'
 
 const AdministratorCreate = () => {
 
@@ -16,7 +17,6 @@ const AdministratorCreate = () => {
     const validate = () => {
         const newErrors = {}
         if(!workerName) newErrors.workerName = "Name is required"
-        if(!workerEmail) newErrors.workerEmail = "Email is required"
         if(!workerWhatsappNumber) newErrors.workerWhatsappNumber = "Whatsapp Number is required"
         if(!workerPassword) newErrors.workerPassword = "Password is required"
         if(!companyCnpj) newErrors.companyCnpj = "Company CNPJ is required"
@@ -30,6 +30,7 @@ const AdministratorCreate = () => {
         if(validationErrors.length > 0){
             setErrors(validationErrors)
             setSuccess("")
+            return
         }
 
         if (workerEmail && !/\S+@\S+\.\S+/.test(workerEmail)) {
@@ -46,12 +47,13 @@ const AdministratorCreate = () => {
     return (
         <div className="administrator-create-container">
             <form onSubmit={handleCreateAdministrator}>
-                <Input label="Name" type="text" name="workerName" value={workerName} onChange={(e) => setWorkerName(e.target.value)} placeholder="Enter Worker Name"/>
-                <Input label="Email" type="email" name="workerEmail" value={workerEmail} onChange={(e) => setWorkerEmail(e.target.value)} placeholder="Enter Worker Email"/>
-                <Input label="Whatsapp Number" type="text" name="workerWhatsappNumber" value={workerWhatsappNumber} onChange={(e) => setWorkerName(e.target.value)} placeholder="Enter Worker Name"/>
-                <Input label="Password" type="password" name="workerPassword" value={workerPassword} onChange={(e) => setWorkerPassword(e.target.value)} placeholder="Enter Worker Password"/>
-                <Input label="Position" type="text" name="position" value={position} onChange={(e) => setPosition(e.target.value)} placeholder="Enter Worker Position"/>
+                <Input label="Name" type="text" name="workerName" value={workerName} onChange={(e) => setWorkerName(e.target.value)} placeholder="Enter Administrator Name"/>
+                <Input label="Email" type="email" name="workerEmail" value={workerEmail} onChange={(e) => setWorkerEmail(e.target.value)} placeholder="Enter Administrator Email"/>
+                <Input label="Whatsapp Number" type="text" name="workerWhatsappNumber" value={workerWhatsappNumber} onChange={(e) => setWorkerName(e.target.value)} placeholder="Enter Whatsapp Number"/>
+                <Input label="Password" type="password" name="workerPassword" value={workerPassword} onChange={(e) => setWorkerPassword(e.target.value)} placeholder="Enter Administrator Password"/>
+                <Input label="Position" type="text" name="position" value={position} onChange={(e) => setPosition(e.target.value)} placeholder="Enter Administrator Position"/>
                 <Input label="Company CNPJ" type="text" name="companyCnpj" value={companyCnpj} onChange={(e) => setCompanyCnpj(e.target.value)} placeholder="Enter Company CNPJ"/>
+                <Alert message={errors} />
                 {success && <div className="success">{success}</div>}
                 <Button type="submit">Create Administrator</Button>
             </form>

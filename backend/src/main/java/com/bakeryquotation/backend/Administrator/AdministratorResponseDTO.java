@@ -1,0 +1,61 @@
+package com.bakeryquotation.backend.Administrator;
+
+public class AdministratorResponseDTO {
+
+    private String workerName;
+    private String workerEmail;
+    private String workerWhatsappNumber;
+    private String position;
+    private String companyCnpj;
+
+    public AdministratorResponseDTO() {
+    }
+
+    public AdministratorResponseDTO(String workerName, String workerEmail, String workerWhatsappNumber, String position, String companyCnpj) {
+        this.workerName = workerName;
+        this.workerEmail = workerEmail;
+        this.workerWhatsappNumber = workerWhatsappNumber;
+        this.position = position;
+        this.companyCnpj = companyCnpj;
+    }
+
+    public String getWorkerName() {
+        return workerName;
+    }
+
+    public void setWorkerName(String workerName) {
+        this.workerName = workerName;
+    }
+
+    public String getWorkerEmail() {
+        return workerEmail;
+    }
+
+    public void setWorkerEmail(String workerEmail) {
+        this.workerEmail = workerEmail;
+    }
+
+    public String getWorkerWhatsappNumber() {
+        return workerWhatsappNumber;
+    }
+
+    public void setWorkerWhatsappNumber(String workerWhatsappNumber) {
+        this.workerWhatsappNumber = workerWhatsappNumber;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getCompanyCnpj() {
+        return companyCnpj;
+    }
+
+    public void setCompanyCnpj(String companyCnpj) {
+        this.companyCnpj = companyCnpj;
+    }
+}

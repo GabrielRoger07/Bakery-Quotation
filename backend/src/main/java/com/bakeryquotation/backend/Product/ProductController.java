@@ -1,6 +1,8 @@
 package com.bakeryquotation.backend.Product;
 
+import com.bakeryquotation.backend.Product.DTO.ProductRequestDTO;
 import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,11 @@ public class ProductController {
 
     public ProductController(ProductService productService){
         this.productService = productService;
+    }
+
+    @PostMapping
+    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO){
+        return productService.createProduct(productRequestDTO);
     }
 
     @GetMapping

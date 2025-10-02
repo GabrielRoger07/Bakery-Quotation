@@ -18,11 +18,6 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
-    @PostMapping
-    public ResponseEntity<CompanyResponseDTO> createCompany(@Valid @RequestBody CompanyRequestDTO companyRequestDTO){
-        return companyService.createCompany(companyRequestDTO);
-    }
-
     @GetMapping("/{cnpj}")
     public ResponseEntity<CompanyResponseDTO> getCompanyByCnpj(@PathVariable("cnpj") String cnpj){
         return companyService.getCompanyByCnpj(cnpj);
@@ -33,13 +28,23 @@ public class CompanyController {
         return companyService.getAllCompanies();
     }
 
-    @DeleteMapping("/{cnpj}")
-    public ResponseEntity<CompanyResponseDTO> deleteCompanyByCnpj(@PathVariable("cnpj") String cnpj){
-        return companyService.deleteCompanyByCnpj(cnpj);
+    @PostMapping
+    public ResponseEntity<CompanyResponseDTO> createCompany(@Valid @RequestBody CompanyRequestDTO companyRequestDTO){
+        return companyService.createCompany(companyRequestDTO);
     }
 
     @PutMapping("/{cnpj}")
     public ResponseEntity<CompanyResponseDTO> updateCompanyByCnpj(@Valid @RequestBody CompanyRequestDTO companyRequestDTO, @PathVariable("cnpj") String cnpj){
         return companyService.updateCompanyByCnpj(companyRequestDTO, cnpj);
+    }
+
+    @DeleteMapping("/{cnpj}")
+    public ResponseEntity<CompanyResponseDTO> deleteCompanyByCnpj(@PathVariable("cnpj") String cnpj){
+        return companyService.deleteCompanyByCnpj(cnpj);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<List<CompanyResponseDTO>> deleteAllCompanies(){
+        return companyService.deleteAllCompanies();
     }
 }

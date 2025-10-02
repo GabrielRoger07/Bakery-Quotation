@@ -1,5 +1,8 @@
 package com.bakeryquotation.backend.Product;
 
+import com.bakeryquotation.backend.Company.Company;
+import com.bakeryquotation.backend.Company.CompanyRepository;
+import com.bakeryquotation.backend.Product.DTO.ProductRequestDTO;
 import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import com.bakeryquotation.backend.Product.mapper.ProductMapper;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
@@ -15,10 +18,25 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final CompanyRepository companyRepository;
 
-    public ProductService(ProductRepository productRepository, ProductMapper productMapper){
+    public ProductService(ProductRepository productRepository, ProductMapper productMapper, CompanyRepository companyRepository){
         this.productRepository = productRepository;
         this.productMapper = productMapper;
+        this.companyRepository = companyRepository;
+    }
+
+    public ResponseEntity<ProductResponseDTO> createProduct(ProductRequestDTO productRequestDTO){
+        Product product = new Product();
+        product.setProductName(productRequestDTO.getProductName());
+        product.setUnitOfMeasure(productRequestDTO.getUnitOfMeasure());
+
+        String companyCnpj = productRequestDTO.getCompanyCnpj();
+        Company company = companyRepository.findById(companyCnpj).orElseThrow(() -> new RuntimeException("Company with cnpj " + companyCnpj + "does not exists"));
+        product.setCompany(company);
+
+        Product productSaved = productRepository.save(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productMapper.toDto(productSaved));
     }
 
     public ResponseEntity<List<ProductResponseDTO>> getAllProducts(){

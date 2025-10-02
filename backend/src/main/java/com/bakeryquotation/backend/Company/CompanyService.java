@@ -4,6 +4,7 @@ import com.bakeryquotation.backend.Company.DTO.CompanyRequestDTO;
 import com.bakeryquotation.backend.Company.DTO.CompanyResponseDTO;
 import com.bakeryquotation.backend.Company.mapper.CompanyMapper;
 import com.bakeryquotation.backend.Company.mapper.CompanyUpdate;
+import com.bakeryquotation.backend.exception.DuplicateResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CompanyService {
@@ -23,12 +25,6 @@ public class CompanyService {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
         this.companyUpdate = companyUpdate;
-    }
-
-    public ResponseEntity<CompanyResponseDTO> createCompany(CompanyRequestDTO companyRequestDTO){
-        Company company = companyMapper.toEntity(companyRequestDTO);
-        CompanyResponseDTO companyResponseDTO = companyMapper.toDto(companyRepository.save(company));
-        return ResponseEntity.status(HttpStatus.CREATED).body(companyResponseDTO);
     }
 
     public ResponseEntity<CompanyResponseDTO> getCompanyByCnpj(String cnpj){
@@ -45,10 +41,16 @@ public class CompanyService {
         return ResponseEntity.status(HttpStatus.OK).body(companiesResponseDto);
     }
 
-    public ResponseEntity<CompanyResponseDTO> deleteCompanyByCnpj(String cnpj){
-        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new ResourceNotFoundException("Company with cnpj " + cnpj + " does not exists"));
-        companyRepository.delete(company);
-        return ResponseEntity.status(HttpStatus.OK).body(companyMapper.toDto(company));
+    public ResponseEntity<CompanyResponseDTO> createCompany(CompanyRequestDTO companyRequestDTO){
+        String companyCnpj = companyRequestDTO.getCompanyCnpj();
+        Optional<Company> exists = companyRepository.findById(companyCnpj);
+        if(exists.isPresent()){
+            throw new DuplicateResourceException("Company with cnpj " + companyCnpj + " already exists");
+        }
+
+        Company company = companyMapper.toEntity(companyRequestDTO);
+        CompanyResponseDTO companyResponseDTO = companyMapper.toDto(companyRepository.save(company));
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyResponseDTO);
     }
 
     public ResponseEntity<CompanyResponseDTO> updateCompanyByCnpj(CompanyRequestDTO companyRequestDTO, String cnpj){
@@ -56,5 +58,21 @@ public class CompanyService {
         companyUpdate.updateCompany(companyRequestDTO, company);
         CompanyResponseDTO companyResponseDTO = companyMapper.toDto(companyRepository.save(company));
         return ResponseEntity.status(HttpStatus.CREATED).body(companyResponseDTO);
+    }
+
+    public ResponseEntity<CompanyResponseDTO> deleteCompanyByCnpj(String cnpj){
+        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new ResourceNotFoundException("Company with cnpj " + cnpj + " does not exists"));
+        companyRepository.delete(company);
+        return ResponseEntity.status(HttpStatus.OK).body(companyMapper.toDto(company));
+    }
+
+    public ResponseEntity<List<CompanyResponseDTO>> deleteAllCompanies(){
+        List<Company> companies = companyRepository.findAll();
+        List<CompanyResponseDTO> companiesResponseDto = new ArrayList<>();
+        companies.forEach(company -> {
+            companiesResponseDto.add(companyMapper.toDto(company));
+        });
+        companyRepository.deleteAll();
+        return ResponseEntity.status(HttpStatus.OK).body(companiesResponseDto);
     }
 }

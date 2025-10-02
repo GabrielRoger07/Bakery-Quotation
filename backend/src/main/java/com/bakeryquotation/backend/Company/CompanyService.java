@@ -5,6 +5,7 @@ import com.bakeryquotation.backend.Company.DTO.CompanyResponseDTO;
 import com.bakeryquotation.backend.Company.mapper.CompanyMapper;
 import com.bakeryquotation.backend.Company.mapper.CompanyUpdate;
 import com.bakeryquotation.backend.exception.DuplicateResourceException;
+import com.bakeryquotation.backend.exception.ImmutableIdentifierException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class CompanyService {
     }
 
     public ResponseEntity<CompanyResponseDTO> getCompanyByCnpj(String cnpj){
-        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new ResourceNotFoundException("Company with cnpj " + cnpj + " does not exists"));
+        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new ResourceNotFoundException("Company with CNPJ " + cnpj + " does not exists"));
         return ResponseEntity.status(HttpStatus.OK).body(companyMapper.toDto(company));
     }
 
@@ -45,7 +46,19 @@ public class CompanyService {
         String companyCnpj = companyRequestDTO.getCompanyCnpj();
         Optional<Company> exists = companyRepository.findById(companyCnpj);
         if(exists.isPresent()){
-            throw new DuplicateResourceException("Company with cnpj " + companyCnpj + " already exists");
+            throw new DuplicateResourceException("Company with CNPJ " + companyCnpj + " already exists");
+        }
+
+        String companyEmail = companyRequestDTO.getCompanyEmail();
+        exists = companyRepository.findByCompanyEmail(companyEmail);
+        if(exists.isPresent()){
+            throw new DuplicateResourceException("Company with email " + companyEmail + " already exists");
+        }
+
+        String companyWhatsappNumber = companyRequestDTO.getCompanyWhatsappNumber();
+        exists = companyRepository.findByCompanyWhatsappNumber(companyWhatsappNumber);
+        if(exists.isPresent()){
+            throw new DuplicateResourceException("Company with whatsapp number " + companyWhatsappNumber + " already exists");
         }
 
         Company company = companyMapper.toEntity(companyRequestDTO);
@@ -54,14 +67,17 @@ public class CompanyService {
     }
 
     public ResponseEntity<CompanyResponseDTO> updateCompanyByCnpj(CompanyRequestDTO companyRequestDTO, String cnpj){
-        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new ResourceNotFoundException("Company with cnpj " + cnpj + " does not exists"));
+        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new ResourceNotFoundException("Company with CNPJ " + cnpj + " does not exists"));
+        if(!companyRequestDTO.getCompanyCnpj().equals(cnpj)){
+            throw new ImmutableIdentifierException("CNPJ cannot be changed");
+        }
         companyUpdate.updateCompany(companyRequestDTO, company);
         CompanyResponseDTO companyResponseDTO = companyMapper.toDto(companyRepository.save(company));
         return ResponseEntity.status(HttpStatus.CREATED).body(companyResponseDTO);
     }
 
     public ResponseEntity<CompanyResponseDTO> deleteCompanyByCnpj(String cnpj){
-        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new ResourceNotFoundException("Company with cnpj " + cnpj + " does not exists"));
+        Company company = companyRepository.findById(cnpj).orElseThrow(() -> new ResourceNotFoundException("Company with CNPJ " + cnpj + " does not exists"));
         companyRepository.delete(company);
         return ResponseEntity.status(HttpStatus.OK).body(companyMapper.toDto(company));
     }

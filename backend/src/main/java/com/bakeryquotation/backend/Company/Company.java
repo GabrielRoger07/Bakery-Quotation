@@ -18,13 +18,13 @@ public class Company {
     @Column(name = "companyName", nullable = false, length = 45)
     private String companyName;
 
-    @Column(name = "companyWhatsappNumber", nullable = false, length = 16)
+    @Column(name = "companyWhatsappNumber", unique = true, nullable = false, length = 16)
     private String companyWhatsappNumber;
 
-    @Column(name = "companyEmail", nullable = false, length = 60)
+    @Column(name = "companyEmail", unique = true, nullable = false, length = 60)
     private String companyEmail;
 
-    @Column(name = "companyPassword", nullable = false, length = 255)
+    @Column(name = "companyPassword", nullable = false)
     private String companyPassword;
 
     @Column(name = "createdAt", nullable = false, columnDefinition = "DATETIME", updatable = false)

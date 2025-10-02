@@ -1,12 +1,9 @@
 package com.bakeryquotation.backend.Company;
 
+import com.bakeryquotation.backend.Product.Product;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.List;
 
 @Entity
 @Table(name = "company")
@@ -30,16 +27,20 @@ public class Company {
     @Column(name = "createdAt", nullable = false, columnDefinition = "DATETIME", updatable = false)
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "company", cascade = {CascadeType.REMOVE}, orphanRemoval = true)
+    private List<Product> products;
+
     public Company() {
     }
 
-    public Company(String companyCnpj, String companyName, String companyWhatsappNumber, String companyEmail, String companyPassword, LocalDateTime createdAt) {
+    public Company(String companyCnpj, String companyName, String companyWhatsappNumber, String companyEmail, String companyPassword, LocalDateTime createdAt, List<Product> products) {
         this.companyCnpj = companyCnpj;
         this.companyName = companyName;
         this.companyWhatsappNumber = companyWhatsappNumber;
         this.companyEmail = companyEmail;
         this.companyPassword = companyPassword;
         this.createdAt = createdAt;
+        this.products = products;
     }
 
     public String getCompanyCnpj() {
@@ -88,5 +89,13 @@ public class Company {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 }

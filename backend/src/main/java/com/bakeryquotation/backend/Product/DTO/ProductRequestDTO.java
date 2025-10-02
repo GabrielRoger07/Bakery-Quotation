@@ -15,7 +15,6 @@ public class ProductRequestDTO {
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Unit of Measure is required")
-    @NotEmpty(message = "Unit of Measure cannot be empty")
     private UnitOfMeasure unitOfMeasure;
 
     @NotNull(message = "CNPJ is required")

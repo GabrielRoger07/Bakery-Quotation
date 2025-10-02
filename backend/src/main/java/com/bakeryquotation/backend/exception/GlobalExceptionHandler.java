@@ -31,8 +31,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
-    @ExceptionHandler(ImmutableIdentifierException.class)
-    public ResponseEntity<ApiError> handleImmutableIdentifierException(ImmutableIdentifierException ex){
+    @ExceptionHandler(ImmutableResourceException.class)
+    public ResponseEntity<ApiError> handleImmutableIdentifierException(ImmutableResourceException ex){
         ApiError error = new ApiError(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }

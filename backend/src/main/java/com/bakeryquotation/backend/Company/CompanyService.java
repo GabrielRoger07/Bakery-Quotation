@@ -5,7 +5,7 @@ import com.bakeryquotation.backend.Company.DTO.CompanyResponseDTO;
 import com.bakeryquotation.backend.Company.mapper.CompanyMapper;
 import com.bakeryquotation.backend.Company.mapper.CompanyUpdate;
 import com.bakeryquotation.backend.exception.DuplicateResourceException;
-import com.bakeryquotation.backend.exception.ImmutableIdentifierException;
+import com.bakeryquotation.backend.exception.ImmutableResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,7 +69,7 @@ public class CompanyService {
     public ResponseEntity<CompanyResponseDTO> updateCompanyByCnpj(CompanyRequestDTO companyRequestDTO, String cnpj){
         Company company = companyRepository.findById(cnpj).orElseThrow(() -> new ResourceNotFoundException("Company with CNPJ " + cnpj + " does not exists"));
         if(!companyRequestDTO.getCompanyCnpj().equals(cnpj)){
-            throw new ImmutableIdentifierException("CNPJ cannot be changed");
+            throw new ImmutableResourceException("CNPJ cannot be changed");
         }
         companyUpdate.updateCompany(companyRequestDTO, company);
         CompanyResponseDTO companyResponseDTO = companyMapper.toDto(companyRepository.save(company));

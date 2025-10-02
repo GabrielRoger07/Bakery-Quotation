@@ -6,12 +6,16 @@ import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import javax.sound.midi.spi.SoundbankReader;
+
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "company", ignore = true)
     Product toEntity(ProductRequestDTO productRequestDTO);
 
     @Mapping(source = "id", target = "productId")
+    @Mapping(source = "company.companyCnpj", target = "companyCnpj")
     ProductResponseDTO toDto(Product product);
 }

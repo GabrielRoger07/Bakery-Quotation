@@ -94,7 +94,7 @@ public class SupplierService {
         return ResponseEntity.status(HttpStatus.OK).body(supplierResponseDTOS);
     }
 
-    void validation(SupplierRequestDTO supplierRequestDTO){
+    public void validation(SupplierRequestDTO supplierRequestDTO){
         String supplierEmail = supplierRequestDTO.getSupplierEmail();
         String supplierWhatsappNumber = supplierRequestDTO.getSupplierWhatsappNumber();
         String companyCnpj = supplierRequestDTO.getCompanyCnpj();

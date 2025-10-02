@@ -1,56 +1,85 @@
 package com.bakeryquotation.backend.Supplier.DTO;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.br.CNPJ;
+
 public class SupplierRequestDTO {
 
-    private String workerName;
-    private String workerEmail;
-    private String workerWhatsappNumber;
-    private String workerPassword;
+    @NotNull(message = "Supplier name is required")
+    @NotEmpty(message = "Supplier name cannot be empty")
+    private String supplierName;
+
+    @Email(message = "Email must be valid")
+    private String supplierEmail;
+
+    @NotNull(message = "Whatsapp number is required")
+    @NotEmpty(message = "Whatsapp number cannot be empty")
+    private String supplierWhatsappNumber;
+
+    @NotNull(message = "Employer name is required")
+    @NotEmpty(message = "Employer name cannot be empty")
+    private String employerName;
+
+    @CNPJ(message = "Employer CNPJ must be valid")
+    private String employerCnpj;
+
+    @NotNull(message = "Company CNPJ is required")
+    @NotEmpty(message = "Company CNPJ cannot be empty")
+    @CNPJ(message = "Company CNPJ must be valid")
     private String companyCnpj;
-    private String companyName;
 
     public SupplierRequestDTO() {
     }
 
-    public SupplierRequestDTO(String workerName, String workerEmail, String workerWhatsappNumber, String workerPassword, String companyCnpj, String companyName) {
-        this.workerName = workerName;
-        this.workerEmail = workerEmail;
-        this.workerWhatsappNumber = workerWhatsappNumber;
-        this.workerPassword = workerPassword;
+    public SupplierRequestDTO(String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, String companyCnpj) {
+        this.supplierName = supplierName;
+        this.supplierEmail = supplierEmail;
+        this.supplierWhatsappNumber = supplierWhatsappNumber;
+        this.employerName = employerName;
+        this.employerCnpj = employerCnpj;
         this.companyCnpj = companyCnpj;
-        this.companyName = companyName;
     }
 
-    public String getWorkerName() {
-        return workerName;
+    public String getSupplierName() {
+        return supplierName;
     }
 
-    public void setWorkerName(String workerName) {
-        this.workerName = workerName;
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
-    public String getWorkerEmail() {
-        return workerEmail;
+    public String getSupplierEmail() {
+        return supplierEmail;
     }
 
-    public void setWorkerEmail(String workerEmail) {
-        this.workerEmail = workerEmail;
+    public void setSupplierEmail(String supplierEmail) {
+        this.supplierEmail = supplierEmail;
     }
 
-    public String getWorkerWhatsappNumber() {
-        return workerWhatsappNumber;
+    public String getSupplierWhatsappNumber() {
+        return supplierWhatsappNumber;
     }
 
-    public void setWorkerWhatsappNumber(String workerWhatsappNumber) {
-        this.workerWhatsappNumber = workerWhatsappNumber;
+    public void setSupplierWhatsappNumber(String supplierWhatsappNumber) {
+        this.supplierWhatsappNumber = supplierWhatsappNumber;
     }
 
-    public String getWorkerPassword() {
-        return workerPassword;
+    public String getEmployerName() {
+        return employerName;
     }
 
-    public void setWorkerPassword(String workerPassword) {
-        this.workerPassword = workerPassword;
+    public void setEmployerName(String employerName) {
+        this.employerName = employerName;
+    }
+
+    public String getEmployerCnpj() {
+        return employerCnpj;
+    }
+
+    public void setEmployerCnpj(String employerCnpj) {
+        this.employerCnpj = employerCnpj;
     }
 
     public String getCompanyCnpj() {
@@ -59,13 +88,5 @@ public class SupplierRequestDTO {
 
     public void setCompanyCnpj(String companyCnpj) {
         this.companyCnpj = companyCnpj;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
     }
 }

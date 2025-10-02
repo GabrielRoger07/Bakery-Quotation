@@ -1,17 +1,11 @@
 package com.bakeryquotation.backend.Quotation;
 
-import com.bakeryquotation.backend.Administrator.Administrator;
 import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Product.Product;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -23,34 +17,27 @@ public class Quotation {
     @Column(name = "quotationId")
     private Long id;
 
-    @NotNull(message = "'Quotation start' is required")
-    @Future(message = "'Quotation start' must be in the future")
     @Column(name = "quotationStart", nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime quotationStart;
 
-    @NotNull(message = "'Quotation end' is required")
-    @Future(message = "'Quotation end' must be in the future")
     @Column(name = "quotationEnd", nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime quotationEnd;
 
-    @NotNull(message = "'Status' is required")
-    @Enumerated(EnumType.STRING)
     @Column(name = "quotationStatus", nullable = false)
     private Status quotationStatus;
 
-    @Column(name = "createdAt", nullable = false, columnDefinition = "DATETIME", insertable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, columnDefinition = "DATETIME", updatable = false)
     private LocalDateTime createdAt;
 
-    @NotNull(message = "Administrator is required")
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, targetEntity = Administrator.class)
-    @JoinColumn(name = "administratorId",
-            referencedColumnName = "administratorId",
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, targetEntity = Company.class)
+    @JoinColumn(name = "companyCnpj",
+            referencedColumnName = "companyCnpj",
             foreignKey = @ForeignKey(
-                    name = "QUOTATION_ADMINISTRATOR_FK"
+                    name = "QUOTATION_COMPANY_FK"
             ),
             nullable = false
     )
-    private Administrator administrator;
+    private Company company;
 
     @ManyToMany
     @JoinTable(
@@ -63,10 +50,14 @@ public class Quotation {
     public Quotation() {
     }
 
-    public Quotation(LocalDateTime quotationStart, LocalDateTime quotationEnd, Administrator administrator) {
+    public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, Status quotationStatus, LocalDateTime createdAt, Company company, Set<Product> products) {
+        this.id = id;
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
-        this.administrator = administrator;
+        this.quotationStatus = quotationStatus;
+        this.createdAt = createdAt;
+        this.company = company;
+        this.products = products;
     }
 
     public Long getId() {
@@ -109,12 +100,12 @@ public class Quotation {
         this.createdAt = createdAt;
     }
 
-    public Administrator getAdministrator() {
-        return administrator;
+    public Company getCompany() {
+        return company;
     }
 
-    public void setAdministrator(Administrator administrator) {
-        this.administrator = administrator;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public Set<Product> getProducts() {
@@ -123,17 +114,5 @@ public class Quotation {
 
     public void setProducts(Set<Product> products) {
         this.products = products;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Quotation quotation = (Quotation) o;
-        return Objects.equals(id, quotation.id) && Objects.equals(quotationStart, quotation.quotationStart) && Objects.equals(quotationEnd, quotation.quotationEnd) && quotationStatus == quotation.quotationStatus && Objects.equals(createdAt, quotation.createdAt) && Objects.equals(administrator, quotation.administrator) && Objects.equals(products, quotation.products);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, quotationStart, quotationEnd, quotationStatus, createdAt, administrator, products);
     }
 }

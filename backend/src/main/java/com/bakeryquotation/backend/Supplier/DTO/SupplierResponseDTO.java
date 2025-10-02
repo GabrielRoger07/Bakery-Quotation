@@ -5,23 +5,25 @@ import java.time.LocalDateTime;
 public class SupplierResponseDTO {
 
     private Long supplierId;
-    private String workerName;
-    private String workerEmail;
-    private String workerWhatsappNumber;
+    private String supplierName;
+    private String supplierEmail;
+    private String supplierWhatsappNumber;
+    private String employerName;
+    private String employerCnpj;
     private String companyCnpj;
-    private String companyName;
     private LocalDateTime createdAt;
 
     public SupplierResponseDTO() {
     }
 
-    public SupplierResponseDTO(Long supplierId, String workerName, String workerEmail, String workerWhatsappNumber, String companyCnpj, String companyName, LocalDateTime createdAt) {
+    public SupplierResponseDTO(Long supplierId, String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, String companyCnpj, LocalDateTime createdAt) {
         this.supplierId = supplierId;
-        this.workerName = workerName;
-        this.workerEmail = workerEmail;
-        this.workerWhatsappNumber = workerWhatsappNumber;
+        this.supplierName = supplierName;
+        this.supplierEmail = supplierEmail;
+        this.supplierWhatsappNumber = supplierWhatsappNumber;
+        this.employerName = employerName;
+        this.employerCnpj = employerCnpj;
         this.companyCnpj = companyCnpj;
-        this.companyName = companyName;
         this.createdAt = createdAt;
     }
 
@@ -33,28 +35,44 @@ public class SupplierResponseDTO {
         this.supplierId = supplierId;
     }
 
-    public String getWorkerName() {
-        return workerName;
+    public String getSupplierName() {
+        return supplierName;
     }
 
-    public void setWorkerName(String workerName) {
-        this.workerName = workerName;
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
-    public String getWorkerEmail() {
-        return workerEmail;
+    public String getSupplierEmail() {
+        return supplierEmail;
     }
 
-    public void setWorkerEmail(String workerEmail) {
-        this.workerEmail = workerEmail;
+    public void setSupplierEmail(String supplierEmail) {
+        this.supplierEmail = supplierEmail;
     }
 
-    public String getWorkerWhatsappNumber() {
-        return workerWhatsappNumber;
+    public String getSupplierWhatsappNumber() {
+        return supplierWhatsappNumber;
     }
 
-    public void setWorkerWhatsappNumber(String workerWhatsappNumber) {
-        this.workerWhatsappNumber = workerWhatsappNumber;
+    public void setSupplierWhatsappNumber(String supplierWhatsappNumber) {
+        this.supplierWhatsappNumber = supplierWhatsappNumber;
+    }
+
+    public String getEmployerName() {
+        return employerName;
+    }
+
+    public void setEmployerName(String employerName) {
+        this.employerName = employerName;
+    }
+
+    public String getEmployerCnpj() {
+        return employerCnpj;
+    }
+
+    public void setEmployerCnpj(String employerCnpj) {
+        this.employerCnpj = employerCnpj;
     }
 
     public String getCompanyCnpj() {
@@ -63,14 +81,6 @@ public class SupplierResponseDTO {
 
     public void setCompanyCnpj(String companyCnpj) {
         this.companyCnpj = companyCnpj;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
     }
 
     public LocalDateTime getCreatedAt() {

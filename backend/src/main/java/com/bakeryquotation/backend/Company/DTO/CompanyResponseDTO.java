@@ -5,13 +5,9 @@ import java.time.LocalDateTime;
 public class CompanyResponseDTO {
 
     private String companyCnpj;
-
     private String companyName;
-
     private String companyEmail;
-
     private String companyWhatsappNumber;
-
     private LocalDateTime createdAt;
 
     public CompanyResponseDTO() {

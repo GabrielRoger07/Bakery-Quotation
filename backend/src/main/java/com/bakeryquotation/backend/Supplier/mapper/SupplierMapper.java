@@ -10,8 +10,9 @@ import org.mapstruct.Mapping;
 public interface SupplierMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     Supplier toEntity(SupplierRequestDTO supplierRequestDTO);
 
+    @Mapping(source = "id", target = "supplierId")
     SupplierResponseDTO toDto(Supplier supplier);
 }

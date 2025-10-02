@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.br.CNPJ;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -16,21 +15,17 @@ public class Company {
     @Column(name = "companyCnpj", length = 14)
     private String companyCnpj;
 
-    @NotNull
-    @NotEmpty
     @Column(name = "companyName", nullable = false, length = 45)
     private String companyName;
 
-    @NotNull
-    @NotEmpty
     @Column(name = "companyWhatsappNumber", nullable = false, length = 16)
     private String companyWhatsappNumber;
 
-    @NotNull
-    @NotEmpty
-    @Email(message = "The field need to be an valid email")
     @Column(name = "companyEmail", nullable = false, length = 60)
     private String companyEmail;
+
+    @Column(name = "companyPassword", nullable = false, length = 255)
+    private String companyPassword;
 
     @Column(name = "createdAt", nullable = false, columnDefinition = "DATETIME", updatable = false)
     private LocalDateTime createdAt;
@@ -38,12 +33,13 @@ public class Company {
     public Company() {
     }
 
-    public Company(String companyCnpj, String companyName, String companyWhatsappNumber, String companyEmail) {
+    public Company(String companyCnpj, String companyName, String companyWhatsappNumber, String companyEmail, String companyPassword, LocalDateTime createdAt) {
         this.companyCnpj = companyCnpj;
         this.companyName = companyName;
         this.companyWhatsappNumber = companyWhatsappNumber;
         this.companyEmail = companyEmail;
-        this.createdAt = LocalDateTime.now();
+        this.companyPassword = companyPassword;
+        this.createdAt = createdAt;
     }
 
     public String getCompanyCnpj() {
@@ -78,23 +74,19 @@ public class Company {
         this.companyEmail = companyEmail;
     }
 
+    public String getCompanyPassword() {
+        return companyPassword;
+    }
+
+    public void setCompanyPassword(String companyPassword) {
+        this.companyPassword = companyPassword;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Company company = (Company) o;
-        return Objects.equals(companyCnpj, company.companyCnpj) && Objects.equals(companyName, company.companyName) && Objects.equals(companyWhatsappNumber, company.companyWhatsappNumber) && Objects.equals(companyEmail, company.companyEmail) && Objects.equals(createdAt, company.createdAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(companyCnpj, companyName, companyWhatsappNumber, companyEmail, createdAt);
     }
 }

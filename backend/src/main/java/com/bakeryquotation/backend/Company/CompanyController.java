@@ -39,7 +39,7 @@ public class CompanyController {
     }
 
     @PutMapping("/{cnpj}")
-    public ResponseEntity<CompanyResponseDTO> updateCompanyByCnpj(@RequestBody CompanyRequestDTO companyRequestDTO, @PathVariable("cnpj") String cnpj){
+    public ResponseEntity<CompanyResponseDTO> updateCompanyByCnpj(@Valid @RequestBody CompanyRequestDTO companyRequestDTO, @PathVariable("cnpj") String cnpj){
         return companyService.updateCompanyByCnpj(companyRequestDTO, cnpj);
     }
 }

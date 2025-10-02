@@ -25,14 +25,19 @@ public class CompanyRequestDTO {
     @NotEmpty(message = "WhatsApp number cannot be empty")
     private String companyWhatsappNumber;
 
+    @NotNull(message = "Password is required")
+    @NotEmpty(message = "Password cannot be empty")
+    private String companyPassword;
+
     public CompanyRequestDTO() {
     }
 
-    public CompanyRequestDTO(String companyCnpj, String companyName, String companyEmail, String companyWhatsappNumber) {
+    public CompanyRequestDTO(String companyCnpj, String companyName, String companyEmail, String companyWhatsappNumber, String companyPassword) {
         this.companyCnpj = companyCnpj;
         this.companyName = companyName;
         this.companyEmail = companyEmail;
         this.companyWhatsappNumber = companyWhatsappNumber;
+        this.companyPassword = companyPassword;
     }
 
     public String getCompanyCnpj() {
@@ -65,5 +70,13 @@ public class CompanyRequestDTO {
 
     public void setCompanyWhatsappNumber(String companyWhatsappNumber) {
         this.companyWhatsappNumber = companyWhatsappNumber;
+    }
+
+    public String getCompanyPassword() {
+        return companyPassword;
+    }
+
+    public void setCompanyPassword(String companyPassword) {
+        this.companyPassword = companyPassword;
     }
 }

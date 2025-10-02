@@ -2,10 +2,7 @@ package com.bakeryquotation.backend.Product;
 
 import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,12 +22,12 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> getProductById(Long id){
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable("id") Long id){
         return productService.getProductById(id);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> deleteProductById(Long id){
+    public ResponseEntity<ProductResponseDTO> deleteProductById(@PathVariable("id") Long id){
         return productService.deleteProductById(id);
     }
 }

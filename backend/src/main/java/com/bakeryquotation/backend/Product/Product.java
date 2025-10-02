@@ -20,14 +20,9 @@ public class Product {
     @Column(name = "productId")
     private Long id;
 
-    @NotNull
-    @NotEmpty
     @Column(name = "productName", nullable = false, length = 30)
     private String productName;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    @NotEmpty
     @Column(name = "unitOfMeasure", nullable = false)
     private UnitOfMeasure unitOfMeasure;
 

@@ -10,18 +10,18 @@ public class QuotationResponseDTO {
     private LocalDateTime quotationStart;
     private LocalDateTime quotationEnd;
     private Status quotationStatus;
-    private Long administratorId;
+    private String companyCnpj;
     private LocalDateTime createdAt;
 
     public QuotationResponseDTO() {
     }
 
-    public QuotationResponseDTO(Long quotationId, LocalDateTime quotationStart, LocalDateTime quotationEnd, Status quotationStatus, Long administratorId, LocalDateTime createdAt) {
+    public QuotationResponseDTO(Long quotationId, LocalDateTime quotationStart, LocalDateTime quotationEnd, Status quotationStatus, String companyCnpj, LocalDateTime createdAt) {
         this.quotationId = quotationId;
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
         this.quotationStatus = quotationStatus;
-        this.administratorId = administratorId;
+        this.companyCnpj = companyCnpj;
         this.createdAt = createdAt;
     }
 
@@ -57,12 +57,12 @@ public class QuotationResponseDTO {
         this.quotationStatus = quotationStatus;
     }
 
-    public Long getAdministratorId() {
-        return administratorId;
+    public String getCompanyCnpj() {
+        return companyCnpj;
     }
 
-    public void setAdministratorId(Long administratorId) {
-        this.administratorId = administratorId;
+    public void setCompanyCnpj(String companyCnpj) {
+        this.companyCnpj = companyCnpj;
     }
 
     public LocalDateTime getCreatedAt() {

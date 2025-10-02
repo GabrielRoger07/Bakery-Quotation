@@ -10,9 +10,11 @@ import org.mapstruct.Mapping;
 public interface QuotationMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "company", ignore = true)
     Quotation toEntity(QuotationRequestDTO quotationRequestDTO);
 
     @Mapping(source = "id", target = "quotationId")
+    @Mapping(source = "company.companyCnpj", target = "companyCnpj")
     QuotationResponseDTO toDto(Quotation quotation);
 }

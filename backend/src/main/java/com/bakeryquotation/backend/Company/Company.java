@@ -1,6 +1,7 @@
 package com.bakeryquotation.backend.Company;
 
 import com.bakeryquotation.backend.Product.Product;
+import com.bakeryquotation.backend.Quotation.Quotation;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,10 +36,13 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     private List<Product> products;
 
+    @OneToMany(mappedBy = "company", cascade = {CascadeType.REMOVE}, orphanRemoval = true)
+    private List<Quotation> quotations;
+
     public Company() {
     }
 
-    public Company(String companyCnpj, String companyName, String companyWhatsappNumber, String companyEmail, String companyPassword, LocalDateTime createdAt, List<Product> products) {
+    public Company(String companyCnpj, String companyName, String companyWhatsappNumber, String companyEmail, String companyPassword, LocalDateTime createdAt, List<Product> products, List<Quotation> quotations) {
         this.companyCnpj = companyCnpj;
         this.companyName = companyName;
         this.companyWhatsappNumber = companyWhatsappNumber;
@@ -46,6 +50,7 @@ public class Company {
         this.companyPassword = companyPassword;
         this.createdAt = createdAt;
         this.products = products;
+        this.quotations = quotations;
     }
 
     public String getCompanyCnpj() {
@@ -102,5 +107,13 @@ public class Company {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public List<Quotation> getQuotations() {
+        return quotations;
+    }
+
+    public void setQuotations(List<Quotation> quotations) {
+        this.quotations = quotations;
     }
 }

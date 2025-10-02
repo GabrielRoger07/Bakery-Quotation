@@ -23,9 +23,6 @@ public class Quotation {
     @Column(name = "quotationEnd", nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime quotationEnd;
 
-    @Column(name = "quotationStatus", nullable = false)
-    private Status quotationStatus;
-
     @Column(name = "createdAt", nullable = false, columnDefinition = "DATETIME", updatable = false)
     private LocalDateTime createdAt;
 
@@ -50,11 +47,10 @@ public class Quotation {
     public Quotation() {
     }
 
-    public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, Status quotationStatus, LocalDateTime createdAt, Company company, Set<Product> products) {
+    public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, LocalDateTime createdAt, Company company, Set<Product> products) {
         this.id = id;
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
-        this.quotationStatus = quotationStatus;
         this.createdAt = createdAt;
         this.company = company;
         this.products = products;
@@ -82,14 +78,6 @@ public class Quotation {
 
     public void setQuotationEnd(LocalDateTime quotationEnd) {
         this.quotationEnd = quotationEnd;
-    }
-
-    public Status getQuotationStatus() {
-        return quotationStatus;
-    }
-
-    public void setQuotationStatus(Status quotationStatus) {
-        this.quotationStatus = quotationStatus;
     }
 
     public LocalDateTime getCreatedAt() {

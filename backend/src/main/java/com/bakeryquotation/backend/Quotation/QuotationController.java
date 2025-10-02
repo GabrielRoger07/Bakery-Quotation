@@ -1,6 +1,8 @@
 package com.bakeryquotation.backend.Quotation;
 
+import com.bakeryquotation.backend.Quotation.DTO.QuotationRequestDTO;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationResponseDTO;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,18 +18,33 @@ public class QuotationController {
         this.quotationService = quotationService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<QuotationResponseDTO>> getAllQuotations(){
-        return quotationService.getAllQuotations();
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<QuotationResponseDTO> getQuotationById(@PathVariable("id") Long id){
         return quotationService.getQuotationById(id);
     }
 
+    @GetMapping
+    public ResponseEntity<List<QuotationResponseDTO>> getAllQuotations(){
+        return quotationService.getAllQuotations();
+    }
+
+    @PostMapping
+    public ResponseEntity<QuotationResponseDTO> createQuotation(@Valid @RequestBody QuotationRequestDTO quotationRequestDTO){
+        return quotationService.createQuotation(quotationRequestDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<QuotationResponseDTO> updateQuotationById(@Valid @RequestBody QuotationRequestDTO quotationRequestDTO, @PathVariable("id") Long id){
+        return quotationService.updateQuotationById(quotationRequestDTO, id);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<QuotationResponseDTO> deleteQuotationById(@PathVariable("id") Long id){
         return quotationService.deleteQuotationById(id);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<List<QuotationResponseDTO>> deleteAllQuotations(){
+        return quotationService.deleteAllQuotations();
     }
 }

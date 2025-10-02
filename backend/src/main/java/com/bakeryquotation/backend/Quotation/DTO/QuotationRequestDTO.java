@@ -1,8 +1,5 @@
 package com.bakeryquotation.backend.Quotation.DTO;
 
-import com.bakeryquotation.backend.Quotation.Status;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -22,11 +19,6 @@ public class QuotationRequestDTO {
     @Future(message = "Quotation end must be in the future")
     private LocalDateTime quotationEnd;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull(message = "Quotation status is required")
-    @NotEmpty(message = "Quotation status cannot be empty")
-    private Status quotationStatus;
-
     @NotNull(message = "Company CNPJ is required")
     @NotEmpty(message = "Company CNPJ cannot be empty")
     @CNPJ(message = "Company CNPJ must be valid")
@@ -35,10 +27,9 @@ public class QuotationRequestDTO {
     public QuotationRequestDTO() {
     }
 
-    public QuotationRequestDTO(LocalDateTime quotationStart, LocalDateTime quotationEnd, Status quotationStatus, String companyCnpj) {
+    public QuotationRequestDTO(LocalDateTime quotationStart, LocalDateTime quotationEnd, String companyCnpj) {
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
-        this.quotationStatus = quotationStatus;
         this.companyCnpj = companyCnpj;
     }
 
@@ -56,14 +47,6 @@ public class QuotationRequestDTO {
 
     public void setQuotationEnd(LocalDateTime quotationEnd) {
         this.quotationEnd = quotationEnd;
-    }
-
-    public Status getQuotationStatus() {
-        return quotationStatus;
-    }
-
-    public void setQuotationStatus(Status quotationStatus) {
-        this.quotationStatus = quotationStatus;
     }
 
     public String getCompanyCnpj() {

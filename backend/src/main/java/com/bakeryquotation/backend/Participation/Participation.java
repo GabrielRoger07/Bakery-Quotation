@@ -1,17 +1,16 @@
 package com.bakeryquotation.backend.Participation;
 
-import com.bakeryquotation.backend.Company.Company;
-import com.bakeryquotation.backend.Product.Product;
 import com.bakeryquotation.backend.Quotation.Quotation;
 import com.bakeryquotation.backend.Supplier.Supplier;
 import jakarta.persistence.*;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
 @Entity
-@Table(name = "participation")
+@Table( name = "participation",
+        uniqueConstraints = {
+            @UniqueConstraint(name = "PARTICIPATION_link_UK", columnNames = "link"),
+            @UniqueConstraint(name = "PARTICIPATION_supplierId_quotationId_UK", columnNames = {"supplierId", "quotationId"})
+        }
+)
 public class Participation {
 
     @Id
@@ -39,21 +38,60 @@ public class Participation {
     )
     private Supplier supplier;
 
-    @ManyToMany
-    @JoinTable(
-            name = "bid",
-            joinColumns = @JoinColumn(name = "participationId"),
-            inverseJoinColumns = @JoinColumn(name = "productId")
-    )
-    private Set<Product> products = new HashSet<>();
+    @Column(name = "link", nullable = false)
+    private String link;
+
+    @Column(name = "accessToken", nullable = false)
+    private String accessToken;
 
     public Participation() {
     }
 
-    public Participation(Quotation quotation, Supplier supplier) {
+    public Participation(Long id, Quotation quotation, Supplier supplier, String link, String accessToken) {
+        this.id = id;
         this.quotation = quotation;
+        this.supplier = supplier;
+        this.link = link;
+        this.accessToken = accessToken;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Quotation getQuotation() {
+        return quotation;
+    }
+
+    public void setQuotation(Quotation quotation) {
+        this.quotation = quotation;
+    }
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
     }
 
+    public String getLink() {
+        return link;
+    }
 
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 }

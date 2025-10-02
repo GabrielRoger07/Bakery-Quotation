@@ -1,6 +1,8 @@
 package com.bakeryquotation.backend.Supplier;
 
+import com.bakeryquotation.backend.Supplier.DTO.SupplierRequestDTO;
 import com.bakeryquotation.backend.Supplier.DTO.SupplierResponseDTO;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,9 +28,24 @@ public class SupplierController {
         return supplierService.getAllSuppliers();
     }
 
+    @PostMapping
+    public ResponseEntity<SupplierResponseDTO> createSupplier(@Valid @RequestBody SupplierRequestDTO supplierRequestDTO){
+        return supplierService.createSupplier(supplierRequestDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<SupplierResponseDTO> updateSupplierById(@Valid @RequestBody SupplierRequestDTO supplierRequestDTO, @PathVariable("id") Long id){
+        return supplierService.updateSupplierById(supplierRequestDTO, id);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<SupplierResponseDTO> deleteSupplierById(@PathVariable("id") Long id){
         return supplierService.deleteSupplierById(id);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<List<SupplierResponseDTO>> deleteAllSuppliers(){
+        return supplierService.deleteAllSuppliers();
     }
 
 }

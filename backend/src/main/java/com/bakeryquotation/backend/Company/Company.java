@@ -6,7 +6,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "company")
+@Table( name = "company",
+        uniqueConstraints = {
+            @UniqueConstraint(name = "COMPANY_whatsapp_UK", columnNames = {"companyWhatsappNumber"}),
+            @UniqueConstraint(name = "COMPANY_email_UK", columnNames = {"companyEmail"}),
+        }
+)
 public class Company {
     @Id
     @Column(name = "companyCnpj", length = 14)
@@ -15,10 +20,10 @@ public class Company {
     @Column(name = "companyName", nullable = false, length = 45)
     private String companyName;
 
-    @Column(name = "companyWhatsappNumber", unique = true, nullable = false, length = 16)
+    @Column(name = "companyWhatsappNumber", nullable = false, length = 16)
     private String companyWhatsappNumber;
 
-    @Column(name = "companyEmail", unique = true, nullable = false, length = 60)
+    @Column(name = "companyEmail", nullable = false, length = 60)
     private String companyEmail;
 
     @Column(name = "companyPassword", nullable = false)

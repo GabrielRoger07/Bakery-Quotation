@@ -6,7 +6,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "supplier")
+@Table(name = "supplier",
+       uniqueConstraints = {
+            @UniqueConstraint(name = "SUPPLIER_companyCnpj_whatsapp_UK", columnNames = {"companyCnpj", "supplierWhatsappNumber"}),
+            @UniqueConstraint(name = "SUPPLIER_companyCnpj_email_UK", columnNames = {"companyCnpj", "supplierEmail"})
+       }
+)
 public class Supplier {
 
     @Id

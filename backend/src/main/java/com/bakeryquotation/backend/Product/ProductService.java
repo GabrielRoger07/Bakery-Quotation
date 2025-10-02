@@ -45,7 +45,7 @@ public class ProductService {
         Product product = productMapper.toEntity(productRequestDTO);
 
         String companyCnpj = productRequestDTO.getCompanyCnpj();
-        Company company = companyRepository.findById(companyCnpj).orElseThrow(() -> new RuntimeException("Company with CNPJ " + companyCnpj + " does not exists"));
+        Company company = companyRepository.findById(companyCnpj).orElseThrow(() -> new ResourceNotFoundException("Company with CNPJ " + companyCnpj + " does not exists"));
         product.setCompany(company);
 
         Product productSaved = productRepository.save(product);

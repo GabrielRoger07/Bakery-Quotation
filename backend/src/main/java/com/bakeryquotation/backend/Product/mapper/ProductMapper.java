@@ -6,8 +6,6 @@ import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import javax.sound.midi.spi.SoundbankReader;
-
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
 

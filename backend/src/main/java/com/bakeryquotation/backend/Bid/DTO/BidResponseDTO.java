@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public class BidResponseDTO {
 
     private Long participationId;
-    private Long quotationId;
+    private Long productId;
     private BigDecimal price;
     private BigDecimal quantity;
     private BigDecimal bonus;
@@ -15,9 +15,9 @@ public class BidResponseDTO {
     public BidResponseDTO() {
     }
 
-    public BidResponseDTO(Long participationId, Long quotationId, BigDecimal price, BigDecimal quantity, BigDecimal bonus, LocalDateTime createdAt) {
+    public BidResponseDTO(Long participationId, Long productId, BigDecimal price, BigDecimal quantity, BigDecimal bonus, LocalDateTime createdAt) {
         this.participationId = participationId;
-        this.quotationId = quotationId;
+        this.productId = productId;
         this.price = price;
         this.quantity = quantity;
         this.bonus = bonus;
@@ -32,12 +32,12 @@ public class BidResponseDTO {
         this.participationId = participationId;
     }
 
-    public Long getQuotationId() {
-        return quotationId;
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setQuotationId(Long quotationId) {
-        this.quotationId = quotationId;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
     public BigDecimal getPrice() {

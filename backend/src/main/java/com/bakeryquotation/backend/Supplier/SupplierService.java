@@ -99,7 +99,7 @@ public class SupplierService {
         String supplierWhatsappNumber = supplierRequestDTO.getSupplierWhatsappNumber();
         String companyCnpj = supplierRequestDTO.getCompanyCnpj();
 
-        Optional<Company> exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, supplierEmail);
+        Optional<Supplier> exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, supplierEmail);
         if(exists.isPresent()){
             throw new DuplicateResourceException("This company already has a supplier with email " + supplierEmail);
         }

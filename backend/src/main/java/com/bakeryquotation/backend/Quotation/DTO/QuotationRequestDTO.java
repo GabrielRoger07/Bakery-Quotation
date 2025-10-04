@@ -10,12 +10,10 @@ import java.time.LocalDateTime;
 public class QuotationRequestDTO {
 
     @NotNull(message = "Quotation start is required")
-    @NotEmpty(message = "Quotation start cannot be empty")
     @Future(message = "Quotation start must be in the future")
     private LocalDateTime quotationStart;
 
     @NotNull(message = "Quotation end is required")
-    @NotEmpty(message = "Quotation end cannot be empty")
     @Future(message = "Quotation end must be in the future")
     private LocalDateTime quotationEnd;
 

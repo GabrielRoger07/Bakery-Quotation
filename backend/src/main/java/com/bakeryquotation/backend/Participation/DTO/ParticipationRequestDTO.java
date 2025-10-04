@@ -6,11 +6,9 @@ import jakarta.validation.constraints.NotNull;
 public class ParticipationRequestDTO {
 
     @NotNull(message = "Supplier ID is required")
-    @NotEmpty(message = "Supplier ID cannot be empty")
     private Long supplierId;
 
     @NotNull(message = "Quotation ID is required")
-    @NotEmpty(message = "Quotation ID cannot be empty")
     private Long quotationId;
 
     public ParticipationRequestDTO() {

@@ -39,9 +39,6 @@ public class Product {
     @ManyToMany(mappedBy = "products")
     private Set<Quotation> quotations = new HashSet<>();
 
-    @ManyToMany(mappedBy = "products")
-    private Set<Participation> participations = new HashSet<>();
-
     public Product() {
     }
 

@@ -34,7 +34,7 @@ public class BidService {
 
     public ResponseEntity<BidResponseDTO> getBidById(Long participationId, Long productId){
         BidId bidId = new BidId(participationId, productId);
-        Bid bid = bidRepository.findByBidId(bidId).orElseThrow(() -> new ResourceNotFoundException("Bid with participationId " + participationId + " and productId " + productId + " does not exists"));
+        Bid bid = bidRepository.findById(bidId).orElseThrow(() -> new ResourceNotFoundException("Bid with participationId " + participationId + " and productId " + productId + " does not exists"));
 
         return ResponseEntity.status(HttpStatus.OK).body(bidMapper.toDto(bid));
     }
@@ -57,7 +57,7 @@ public class BidService {
         Product product = productRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
 
         BidId bidId = new BidId(participationId, productId);
-        Optional<Bid> exists = bidRepository.findByBidId(bidId);
+        Optional<Bid> exists = bidRepository.findById(bidId);
         if(exists.isPresent()){
             throw new DuplicateResourceException("Bid with participation id " + participationId + " and product id " + productId + " already exists");
         }
@@ -71,7 +71,7 @@ public class BidService {
 
     public ResponseEntity<BidResponseDTO> deleteBidById(Long participationId, Long productId){
         BidId bidId = new BidId(participationId, productId);
-        Bid bid = bidRepository.findByBidId(bidId).orElseThrow(() -> new ResourceNotFoundException("Bid with participationId " + participationId + " and productId " + productId + " does not exists"));
+        Bid bid = bidRepository.findById(bidId).orElseThrow(() -> new ResourceNotFoundException("Bid with participationId " + participationId + " and productId " + productId + " does not exists"));
 
         bidRepository.deleteById(bid.getBidId());
         return ResponseEntity.status(HttpStatus.OK).body(bidMapper.toDto(bid));

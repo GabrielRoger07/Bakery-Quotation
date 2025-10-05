@@ -5,22 +5,14 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class ContainId {
 
-    private Long productId;
     private Long quotationId;
+    private Long productId;
 
     public ContainId() {
     }
 
-    public ContainId(Long productId, Long quotationId) {
-        this.productId = productId;
+    public ContainId(Long quotationId, Long productId) {
         this.quotationId = quotationId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
@@ -30,5 +22,13 @@ public class ContainId {
 
     public void setQuotationId(Long quotationId) {
         this.quotationId = quotationId;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 }

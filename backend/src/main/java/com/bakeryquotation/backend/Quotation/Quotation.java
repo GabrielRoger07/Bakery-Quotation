@@ -36,24 +36,15 @@ public class Quotation {
     )
     private Company company;
 
-    @ManyToMany
-    @JoinTable(
-            name = "contain",
-            joinColumns = @JoinColumn(name = "quotationId"),
-            inverseJoinColumns = @JoinColumn(name = "productId")
-    )
-    private Set<Product> products = new HashSet<>();
-
     public Quotation() {
     }
 
-    public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, LocalDateTime createdAt, Company company, Set<Product> products) {
+    public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, LocalDateTime createdAt, Company company) {
         this.id = id;
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
         this.createdAt = createdAt;
         this.company = company;
-        this.products = products;
     }
 
     public Long getId() {
@@ -94,13 +85,5 @@ public class Quotation {
 
     public void setCompany(Company company) {
         this.company = company;
-    }
-
-    public Set<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(Set<Product> products) {
-        this.products = products;
     }
 }

@@ -23,6 +23,7 @@ public class Product {
     @Column(name = "productName", nullable = false, length = 30)
     private String productName;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "unitOfMeasure", nullable = false)
     private UnitOfMeasure unitOfMeasure;
 
@@ -35,9 +36,6 @@ public class Product {
                 nullable = false
     )
     private Company company;
-
-    @ManyToMany(mappedBy = "products")
-    private Set<Quotation> quotations = new HashSet<>();
 
     public Product() {
     }

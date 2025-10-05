@@ -14,14 +14,14 @@ public class Contain {
     private ContainId containId;
 
     @ManyToOne()
-    @JoinColumn(name = "productId", referencedColumnName = "productId", foreignKey = @ForeignKey(name = "contain_PRODUCT_FK"))
-    @MapsId("productId")
-    private Product product;
-
-    @ManyToOne()
     @JoinColumn(name = "quotationId", referencedColumnName = "quotationId", foreignKey = @ForeignKey(name = "contain_QUOTATION_FK"))
     @MapsId("quotationId")
     private Quotation quotation;
+
+    @ManyToOne()
+    @JoinColumn(name = "productId", referencedColumnName = "productId", foreignKey = @ForeignKey(name = "contain_PRODUCT_FK"))
+    @MapsId("productId")
+    private Product product;
 
     @Column(name = "quantity", nullable = false, precision = 6, scale = 2)
     private BigDecimal quantity;
@@ -32,10 +32,10 @@ public class Contain {
     public Contain() {
     }
 
-    public Contain(ContainId containId, Product product, Quotation quotation, BigDecimal quantity, BigDecimal bonusLimit) {
+    public Contain(ContainId containId, Quotation quotation, Product product, BigDecimal quantity, BigDecimal bonusLimit) {
         this.containId = containId;
-        this.product = product;
         this.quotation = quotation;
+        this.product = product;
         this.quantity = quantity;
         this.bonusLimit = bonusLimit;
     }
@@ -48,20 +48,20 @@ public class Contain {
         this.containId = containId;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
     public Quotation getQuotation() {
         return quotation;
     }
 
     public void setQuotation(Quotation quotation) {
         this.quotation = quotation;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public BigDecimal getQuantity() {

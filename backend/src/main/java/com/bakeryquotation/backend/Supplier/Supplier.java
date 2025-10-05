@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "supplier",
        uniqueConstraints = {
-            @UniqueConstraint(name = "SUPPLIER_companyCnpj_whatsapp_UK", columnNames = {"companyCnpj", "supplierWhatsappNumber"}),
-            @UniqueConstraint(name = "SUPPLIER_companyCnpj_email_UK", columnNames = {"companyCnpj", "supplierEmail"})
+            @UniqueConstraint(name = "SUPPLIER_companyCnpj_whatsapp_UK", columnNames = {"supplierWhatsappNumber", "companyCnpj"}),
+            @UniqueConstraint(name = "SUPPLIER_companyCnpj_email_UK", columnNames = {"supplierEmail", "companyCnpj"})
        }
 )
 public class Supplier {

@@ -12,10 +12,10 @@ public interface BidMapper {
     @Mapping(target = "bidId", ignore = true)
     @Mapping(target = "participation", ignore = true)
     @Mapping(target = "product", ignore = true)
-    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     Bid toEntity(BidRequestDTO bidRequestDTO);
 
     @Mapping(source = "participation.id", target = "participationId")
     @Mapping(source = "product.id", target = "productId")
+    @Mapping(source = "bidId.createdAt", target = "createdAt")
     BidResponseDTO toDto(Bid bid);
 }

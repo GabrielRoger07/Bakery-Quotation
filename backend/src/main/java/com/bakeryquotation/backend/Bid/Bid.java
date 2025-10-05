@@ -33,9 +33,6 @@ public class Bid {
     @Column(name = "bonus", nullable = false, precision = 6, scale = 2)
     private BigDecimal bonus;
 
-    @Column(name = "createdAt", nullable = false, updatable = false, columnDefinition = "DATETIME")
-    private LocalDateTime createdAt;
-
     public Bid() {
     }
 
@@ -46,16 +43,6 @@ public class Bid {
         this.price = price;
         this.quantity = quantity;
         this.bonus = bonus;
-    }
-
-    public Bid(BidId bidId, Participation participation, Product product, BigDecimal price, BigDecimal quantity, BigDecimal bonus, LocalDateTime createdAt) {
-        this.bidId = bidId;
-        this.participation = participation;
-        this.product = product;
-        this.price = price;
-        this.quantity = quantity;
-        this.bonus = bonus;
-        this.createdAt = createdAt;
     }
 
     public BidId getBidId() {
@@ -104,13 +91,5 @@ public class Bid {
 
     public void setBonus(BigDecimal bonus) {
         this.bonus = bonus;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }

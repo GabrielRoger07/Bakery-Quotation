@@ -65,8 +65,11 @@ public class BidService {
         Bid bid = bidMapper.toEntity(bidRequestDTO);
         bid.setParticipation(participation);
         bid.setProduct(product);
+        bid.setBidId(bidId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(bidMapper.toDto(bid));
+        Bid bidCreated = bidRepository.save(bid);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(bidMapper.toDto(bidCreated));
     }
 
     public ResponseEntity<BidResponseDTO> deleteBidById(Long participationId, Long productId){

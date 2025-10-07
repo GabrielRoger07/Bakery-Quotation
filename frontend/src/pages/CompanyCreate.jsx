@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import Input from '../components/Input'
 import Alert from '../components/Alert'
 import Button from '../components/Button'
+import useFetch from '../hooks/useFetch'
+import { useNavigate } from 'react-router-dom'
 
 const CompanyCreate = () => {
 
@@ -12,9 +14,9 @@ const CompanyCreate = () => {
     const [companyPassword, setCompanyPassword] = useState("")
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
-    const [data, setData] = useState("")
 
-    const url = "http://localhost:8080/api/v1/companies"
+    const { request, loading, errors } = useFetch("http://localhost:8080/api/v1")
+    const navigate = useNavigate();
 
     const handleCreateCompany = async (e) => {
         e.preventDefault();
@@ -42,22 +44,15 @@ const CompanyCreate = () => {
             companyPassword
         }
 
-        const res = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(company)
-        })
+        const res = await request("POST", "/companies", company)
 
-        const json = await res.json();
-
-        if(res.status === 201){
+        if(res.ok){
             setSuccess("Company created successfully!")
             setError("")
+            setTimeout(() => navigate("/"), 1000)
         }else{
             setSuccess("")
-            setError(json.message)
+            setError(res.data?.message)
         }
     }
 

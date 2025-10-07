@@ -9,13 +9,17 @@ const CompanyCreate = () => {
     const [companyName, setCompanyName] = useState("")
     const [companyEmail, setCompanyEmail] = useState("")
     const [companyWhatsappNumber, setCompanyWhatsappNumber] = useState("")
+    const [companyPassword, setCompanyPassword] = useState("")
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
+    const [data, setData] = useState("")
+
+    const url = "http://localhost:8080/api/v1/companies"
 
     const handleCreateCompany = async (e) => {
         e.preventDefault();
 
-        if(!companyCnpj || !companyName || !companyWhatsappNumber || !companyEmail){
+        if(!companyCnpj || !companyName || !companyWhatsappNumber || !companyEmail || !companyPassword){
             setError("All fields are required")
             setSuccess("")
             return
@@ -30,8 +34,31 @@ const CompanyCreate = () => {
         setError("")
 
         // chamar a api
-        setSuccess("Company created successfully!")
-        console.log({ companyCnpj, companyName, companyEmail, companyWhatsappNumber })
+        const company = {
+            companyCnpj,
+            companyName,
+            companyEmail,
+            companyWhatsappNumber,
+            companyPassword
+        }
+
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(company)
+        })
+
+        const json = await res.json();
+
+        if(res.status === 201){
+            setSuccess("Company created successfully!")
+            setError("")
+        }else{
+            setSuccess("")
+            setError(json.message)
+        }
     }
 
     return (
@@ -42,6 +69,7 @@ const CompanyCreate = () => {
                 <Input label="Company Name" type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Enter Company Name"/>
                 <Input label="Company E-mail" type="text" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} placeholder="Enter Company Email"/>
                 <Input label="Whatsapp Number" type="text" value={companyWhatsappNumber} onChange={(e) => setCompanyWhatsappNumber(e.target.value)} placeholder="Enter Whatsapp Number"/>
+                <Input label="Company Password" type="password" value={companyPassword} onChange={(e) => setCompanyPassword(e.target.value)} placeholder="Enter Password"/>
                 <Alert message={error} />
                 {success && <div className="success">{success}</div>}
                 <Button type="submit">Create Company</Button>

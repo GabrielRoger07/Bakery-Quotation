@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import Input from '../components/Input'
-import Alert from '../components/Alert'
-import Button from '../components/Button'
-import useFetch from '../hooks/useFetch'
+import Input from '../../components/Input'
+import Alert from '../../components/Alert'
+import Button from '../../components/Button'
+import useFetch from '../../hooks/useFetch'
 import { useNavigate } from 'react-router-dom'
 
 const CompanyCreate = () => {

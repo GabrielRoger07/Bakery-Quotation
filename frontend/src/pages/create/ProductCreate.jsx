@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import Input from '../components/Input'
-import Alert from '../components/Alert'
-import Button from '../components/Button'
+import Input from '../../components/Input'
+import Alert from '../../components/Alert'
+import Button from '../../components/Button'
 
 const ProductCreate = () => {
 

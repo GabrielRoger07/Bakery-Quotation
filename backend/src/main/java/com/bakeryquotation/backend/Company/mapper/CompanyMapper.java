@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
 public interface CompanyMapper {
 
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "role", constant = "USER")
     Company toEntity(CompanyRequestDTO companyRequestDTO);
 
     CompanyResponseDTO toDto(Company company);

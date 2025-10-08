@@ -34,6 +34,10 @@ public class Company {
     @Column(name = "createdAt", nullable = false, columnDefinition = "DATETIME", updatable = false)
     private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private CompanyRole role = CompanyRole.USER;
+
     @OneToMany(mappedBy = "company", cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     private List<Product> products;
 
@@ -104,6 +108,14 @@ public class Company {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public CompanyRole getRole() {
+        return role;
+    }
+
+    public void setRole(CompanyRole role) {
+        this.role = role;
     }
 
     public List<Product> getProducts() {

@@ -2,24 +2,48 @@ import React, { useState } from 'react'
 import Input from '../../components/Input'
 import Alert from '../../components/Alert'
 import Button from '../../components/Button'
+import useFetch from '../../hooks/useFetch'
+import { useNavigate } from 'react-router-dom'
 
 const ProductCreate = () => {
 
     const [productName, setProductName] = useState("")
     const [unitOfMeasure, setUnitOfMeasure] = useState("")
-    const [errors, setErrors] = useState("")
+    const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
+    const { request, loading, errors } = useFetch("http://localhost:8080/api/v1")
+    const navigate = useNavigate();
+
     const handleProductCreate = async(e) => {
+        e.preventDefault()
+
         if(!productName || !unitOfMeasure){
-            setErrors("All the fields are required")
+            setError("All the fields are required")
             setSuccess("")
             return;
         }
 
-        // chamada da api
-        setSuccess("Product created successfully!")
-        console.log({ productName, unitOfMeasure })
+        setError("")
+
+        // chamar a api
+        const product = {
+
+            productName,
+            unitOfMeasure,
+            companyCnpj: "05203425000111"
+        }
+
+        const res = await request("POST", "/products", product)
+
+        if(res.ok){
+            setSuccess("Product created successfully!")
+            setError("")
+            setTimeout(() => navigate("/products"), 1000)
+        }else{
+            setSuccess("")
+            setError(res.data?.message)
+        }
     }
 
     return (
@@ -37,7 +61,7 @@ const ProductCreate = () => {
                         <option value="und">und</option> 
                     </select>
                 </label>
-                <Alert message={errors} />
+                <Alert message={error} />
                 {success && <div className="success">{success}</div>}
                 <Button type="submit">Create Product</Button>
             </form>

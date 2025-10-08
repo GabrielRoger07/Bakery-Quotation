@@ -11,6 +11,7 @@ const ProductList = () => {
 
     const [products, setProducts] = useState([])
     const [error, setError] = useState("")
+    const [status, setStatus] = useState(null)
 
     const handleDelete = async (productId) => {
         const res = await request("DELETE", `/products/${productId}`)
@@ -32,10 +33,10 @@ const ProductList = () => {
             if(res.ok){
                 setProducts(res.data);
                 setError("")
-                console.log("ola")
             }else{
                 setError(res.data?.message)
             }
+            setStatus(res.status)
         }
 
         fetchProducts();
@@ -47,10 +48,10 @@ const ProductList = () => {
 
         {loading && <p>Loading products...</p>}
         {error && <Alert message={error} />}
-        {!loading && !error && products.length === 0 && <p>No products found.</p>}
+        {status === 0 && <Alert message="Server Internal Error" />}
+        {!loading && !error && status !== 0 && products.length === 0 && <p>No products found.</p>}
 
         {console.log(products)}
-        {console.log("oi")}
 
         <div className='product-list'>
             <ul>

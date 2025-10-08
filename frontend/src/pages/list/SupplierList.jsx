@@ -11,6 +11,7 @@ const SupplierList = () => {
     
     const [suppliers, setSuppliers] = useState([])
     const [error, setError] = useState("")
+    const [status, setStatus] = useState(null)
 
     const handleDelete = async (supplierId) => {
         const res = await request("DELETE", `/suppliers/${supplierId}`)
@@ -33,10 +34,11 @@ const SupplierList = () => {
             if(res.ok){
                 setSuppliers(res.data);
                 setError("")
-                console.log("ola")
             }else{
                 setError(res.data?.message)
+                console.log("res.data?.message: " + res.data?.message)
             }
+            setStatus(res.status)
         }
 
         fetchSuppliers();
@@ -48,10 +50,11 @@ const SupplierList = () => {
 
         {loading && <p>Loading suppliers...</p>}
         {error && <Alert message={error} />}
-        {!loading && !error && suppliers.length === 0 && <p>No suppliers found.</p>}
+        {status === 0 && <Alert message="Server Internal Error" />}
+        {!loading && !error && status !== 0 && suppliers.length === 0 && <p>No suppliers found.</p>}
 
         {console.log(suppliers)}
-        {console.log("oi")}
+        {console.log("valor em errors: " + errors)}
 
         <div className='supplier-list'>
             <ul>

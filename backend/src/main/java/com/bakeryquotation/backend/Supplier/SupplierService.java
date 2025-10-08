@@ -45,6 +45,15 @@ public class SupplierService {
         return ResponseEntity.status(HttpStatus.OK).body(supplierResponseDTOS);
     }
 
+    public ResponseEntity<List<SupplierResponseDTO>> getSuppliersByCompanyCnpj(String cnpj){
+        List<Supplier> suppliersByCompany = supplierRepository.findByCompany_CompanyCnpj(cnpj);
+        List<SupplierResponseDTO> suppliersResponseDTOByCompany = new ArrayList<>();
+        suppliersByCompany.forEach(supplier -> {
+            suppliersResponseDTOByCompany.add(supplierMapper.toDto(supplier));
+        });
+        return ResponseEntity.status(HttpStatus.OK).body(suppliersResponseDTOByCompany);
+    }
+
     public ResponseEntity<SupplierResponseDTO> createSupplier(SupplierRequestDTO supplierRequestDTO){
         String companyCnpj = supplierRequestDTO.getCompanyCnpj();
         Company company = companyRepository.findById(companyCnpj).orElseThrow(() -> new ResourceNotFoundException("Company with CNPJ " + companyCnpj + " does not exists"));

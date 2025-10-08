@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
 import Login from './pages/Login';
-import CompanyCreate from './pages/CompanyCreate';
+import CompanyCreate from './pages/create/CompanyCreate';
+import SupplierList from './pages/list/SupplierList';
+import ProductList from './pages/list/ProductList';
 
 function App() {
   return (
@@ -13,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />}></Route>
           <Route path= "/create-company" element={<CompanyCreate />}></Route>
+          <Route path= "/suppliers" element={<SupplierList />}></Route>
         </Routes>
       </BrowserRouter>
     </div>

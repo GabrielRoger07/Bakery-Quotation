@@ -10,6 +10,16 @@ const ProductList = () => {
     const [products, setProducts] = useState([])
     const [error, setError] = useState("")
 
+    const handleDelete = async (productId) => {
+        const res = await request("DELETE", `/products/${productId}`)
+        if(res.ok){
+            setProducts(prevProducts => prevProducts.filter(p => p.productId !== productId))
+            setError("")
+        }else{
+            setError(res.data?.message || "Failed to delete product")
+        }
+    }
+
     useEffect(() => {
         const fetchProducts = async () => {
             const res = await request("GET", "/products")
@@ -39,7 +49,9 @@ const ProductList = () => {
         <div className='product-list'>
             <ul>
                 {products.map((product) => (
-                    <li key={product.productId} className="product-card">Name: {product.productName} - Unit of Measure: {product.unitOfMeasure}</li>
+                    <li key={product.productId} className="product-card">Name: {product.productName} - Unit of Measure: {product.unitOfMeasure}
+                    <Button onClick={() => handleDelete(product.productId)}>Delete</Button>
+                    </li>
                 ))}
             </ul>
         </div>

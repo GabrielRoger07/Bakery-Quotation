@@ -41,6 +41,15 @@ public class ProductService {
         return ResponseEntity.status(HttpStatus.OK).body(productResponseDTOS);
     }
 
+    public ResponseEntity<List<ProductResponseDTO>> getProductsByCompanyCnpj(String cnpj){
+        List<Product> productsByCompany = productRepository.findByCompany_CompanyCnpj(cnpj);
+        List<ProductResponseDTO> productsResponseDTOByCompany = new ArrayList<>();
+        productsByCompany.forEach(product -> {
+            productsResponseDTOByCompany.add(productMapper.toDto(product));
+        });
+        return ResponseEntity.status(HttpStatus.OK).body(productsResponseDTOByCompany);
+    }
+
     public ResponseEntity<ProductResponseDTO> createProduct(ProductRequestDTO productRequestDTO){
         Product product = productMapper.toEntity(productRequestDTO);
 

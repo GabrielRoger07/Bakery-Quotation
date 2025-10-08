@@ -10,6 +10,17 @@ const SupplierList = () => {
     const [suppliers, setSuppliers] = useState([])
     const [error, setError] = useState("")
 
+    const handleDelete = async (supplierId) => {
+        const res = await request("DELETE", `/suppliers/${supplierId}`)
+
+        if(res.ok){
+            setSuppliers(prevSuppliers => prevSuppliers.filter(s => s.supplierId !== supplierId));
+            setError("")
+        }else{
+            setError(res.data?.message || "Failed to delete supplier")
+        }
+    }
+
     useEffect(() => {
         const fetchSuppliers = async () => {
             const res = await request("GET", "/suppliers")
@@ -40,7 +51,7 @@ const SupplierList = () => {
             <ul>
                 {suppliers.map((supplier) => (
                     <li key={supplier.supplierId} className="supplier-card">Name: {supplier.supplierName} - Email: {supplier.supplierEmail} - Whatsapp: {supplier.supplierWhatsappNumber}
-                        <Button onClick={() => console.log("valor aqui: " + supplier.supplierId)}>Delete</Button>
+                        <Button onClick={() => handleDelete(supplier.supplierId)}>Delete</Button>
                     </li>
                 ))}
             </ul>

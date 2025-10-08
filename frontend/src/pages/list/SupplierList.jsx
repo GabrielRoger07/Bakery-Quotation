@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react'
 import useFetch from '../../hooks/useFetch'
 import Alert from '../../components/Alert'
 import Button from '../../components/Button'
+import { useNavigate } from 'react-router-dom'
 
 const SupplierList = () => {
 
     const { request, loading, errors } = useFetch("http://localhost:8080/api/v1")
+    const navigate = useNavigate();
     
     const [suppliers, setSuppliers] = useState([])
     const [error, setError] = useState("")
@@ -19,6 +21,10 @@ const SupplierList = () => {
         }else{
             setError(res.data?.message || "Failed to delete supplier")
         }
+    }
+
+    const createSupplier = () => {
+        navigate("/create-supplier")
     }
 
     useEffect(() => {
@@ -58,6 +64,7 @@ const SupplierList = () => {
         </div>
 
         <Button onClick={() => window.location.reload()}>Reload</Button>
+        <Button onClick={() => createSupplier()}>Add Supplier</Button>
     </div>
   )
 }

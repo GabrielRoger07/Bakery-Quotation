@@ -9,6 +9,8 @@ import com.bakeryquotation.backend.exception.ImmutableResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,11 +23,13 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
     private final CompanyUpdate companyUpdate;
+    private final PasswordEncoder passwordEncoder;
 
-    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper, CompanyUpdate companyUpdate){
+    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper, CompanyUpdate companyUpdate, PasswordEncoder passwordEncoder){
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
         this.companyUpdate = companyUpdate;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public ResponseEntity<CompanyResponseDTO> getCompanyByCnpj(String cnpj){
@@ -62,6 +66,8 @@ public class CompanyService {
         }
 
         Company company = companyMapper.toEntity(companyRequestDTO);
+        company.setRole(CompanyRole.USER);
+        company.setCompanyPassword(passwordEncoder.encode(company.getCompanyPassword()));
         CompanyResponseDTO companyResponseDTO = companyMapper.toDto(companyRepository.save(company));
         return ResponseEntity.status(HttpStatus.CREATED).body(companyResponseDTO);
     }

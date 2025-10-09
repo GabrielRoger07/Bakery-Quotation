@@ -44,7 +44,7 @@ const CompanyCreate = () => {
             companyPassword
         }
 
-        const res = await request("POST", "/companies", company)
+        const res = await request("POST", "/companies/register", company)
 
         if(res.ok){
             setSuccess("Company created successfully!")

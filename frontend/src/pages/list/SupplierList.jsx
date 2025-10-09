@@ -36,7 +36,6 @@ const SupplierList = () => {
                 setError("")
             }else{
                 setError(res.data?.message)
-                console.log("res.data?.message: " + res.data?.message)
             }
             setStatus(res.status)
         }
@@ -54,7 +53,6 @@ const SupplierList = () => {
         {!loading && !error && status !== 0 && suppliers.length === 0 && <p>No suppliers found.</p>}
 
         {console.log(suppliers)}
-        {console.log("valor em errors: " + errors)}
 
         <div className='supplier-list'>
             <ul>

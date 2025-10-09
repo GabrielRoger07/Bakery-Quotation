@@ -48,6 +48,7 @@ const ProductCreate = () => {
 
     return (
         <div className="product-create-container">
+        <h1>Product Create</h1>
             <form onSubmit={handleProductCreate}>
                 <Input label="Name" type="text" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Enter Product Name"/>
                 <label>

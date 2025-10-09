@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import Cookies from 'js-cookie'
 
 const useFetch = (baseUrl = "") => {
 
@@ -11,11 +12,14 @@ const useFetch = (baseUrl = "") => {
             setError("")
 
             try{
+                const token = Cookies.get("token")
+
                 const options = {
                     method: method.toUpperCase(),
                     headers: {
                         "Accept": "application/json",
                         "Content-Type": "application/json",
+                        ...(token ? {"Authorization": `Bearer ${token}`} : {}),
                         ...headers
                     }
                 };

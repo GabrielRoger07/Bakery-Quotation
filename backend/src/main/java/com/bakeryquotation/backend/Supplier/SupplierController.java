@@ -28,6 +28,11 @@ public class SupplierController {
         return supplierService.getAllSuppliers();
     }
 
+    @GetMapping("/company/{companyCnpj}")
+    public ResponseEntity<List<SupplierResponseDTO>> getSuppliersByCompanyCnpj(@PathVariable("companyCnpj") String cnpj){
+        return supplierService.getSuppliersByCompanyCnpj(cnpj);
+    }
+
     @PostMapping
     public ResponseEntity<SupplierResponseDTO> createSupplier(@Valid @RequestBody SupplierRequestDTO supplierRequestDTO){
         return supplierService.createSupplier(supplierRequestDTO);

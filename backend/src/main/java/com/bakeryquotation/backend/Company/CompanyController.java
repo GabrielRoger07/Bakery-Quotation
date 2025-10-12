@@ -2,6 +2,8 @@ package com.bakeryquotation.backend.Company;
 
 import com.bakeryquotation.backend.Company.DTO.CompanyRequestDTO;
 import com.bakeryquotation.backend.Company.DTO.CompanyResponseDTO;
+import com.bakeryquotation.backend.Company.DTO.Login.LoginRequestDTO;
+import com.bakeryquotation.backend.Company.DTO.Login.LoginResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +30,14 @@ public class CompanyController {
         return companyService.getAllCompanies();
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<CompanyResponseDTO> createCompany(@Valid @RequestBody CompanyRequestDTO companyRequestDTO){
         return companyService.createCompany(companyRequestDTO);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> loginCompany(@Valid @RequestBody LoginRequestDTO loginRequestDTO){
+        return companyService.loginCompany(loginRequestDTO);
     }
 
     @PutMapping("/{cnpj}")

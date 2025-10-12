@@ -4,7 +4,12 @@ import com.bakeryquotation.backend.Product.Product;
 import com.bakeryquotation.backend.Quotation.Quotation;
 import com.bakeryquotation.backend.Supplier.Supplier;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -14,7 +19,7 @@ import java.util.List;
             @UniqueConstraint(name = "COMPANY_email_UK", columnNames = {"companyEmail"}),
         }
 )
-public class Company {
+public class Company implements UserDetails {
     @Id
     @Column(name = "companyCnpj", length = 14)
     private String companyCnpj;
@@ -140,5 +145,44 @@ public class Company {
 
     public void setSuppliers(List<Supplier> suppliers) {
         this.suppliers = suppliers;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if(this.role == CompanyRole.ADMIN){
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        }else{
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+    }
+
+    @Override
+    public String getPassword() {
+        return companyPassword;
+    }
+
+    @Override
+    public String getUsername() {
+        return companyEmail;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

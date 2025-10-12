@@ -2,23 +2,23 @@ package com.bakeryquotation.backend.Company.DTO.Login;
 
 public class LoginRequestDTO {
 
-    private String companyCnpj;
+    private String companyEmail;
     private String companyPassword;
 
     public LoginRequestDTO() {
     }
 
-    public LoginRequestDTO(String companyCnpj, String companyPassword) {
-        this.companyCnpj = companyCnpj;
+    public LoginRequestDTO(String companyEmail, String companyPassword) {
+        this.companyEmail = companyEmail;
         this.companyPassword = companyPassword;
     }
 
-    public String getCompanyCnpj() {
-        return companyCnpj;
+    public String getCompanyEmail() {
+        return companyEmail;
     }
 
-    public void setCompanyCnpj(String companyCnpj) {
-        this.companyCnpj = companyCnpj;
+    public void setCompanyEmail(String companyEmail) {
+        this.companyEmail = companyEmail;
     }
 
     public String getCompanyPassword() {

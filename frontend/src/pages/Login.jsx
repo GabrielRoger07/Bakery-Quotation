@@ -29,7 +29,6 @@ const Login = () => {
         }
 
         setError("")
-
         //chamada da api
         const login = {
             companyEmail,

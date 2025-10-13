@@ -4,6 +4,8 @@ import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import useFetch from '../../hooks/useFetch'
 import { useNavigate } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode'
+import Cookies from 'js-cookie'
 
 const SupplierCreate = () => {
 
@@ -44,6 +46,10 @@ const SupplierCreate = () => {
 
         setError("")
 
+        const token = Cookies.get("token")
+        const decoded = jwtDecode(token)
+        const cnpj = decoded.companyCnpj;
+
         // chamar a api
         const supplier = {
 
@@ -52,7 +58,7 @@ const SupplierCreate = () => {
             supplierWhatsappNumber,
             employerName,
             employerCnpj,
-            companyCnpj: "05203425000111"
+            companyCnpj: cnpj
         }
 
         const res = await request("POST", "/suppliers", supplier)

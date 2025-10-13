@@ -4,6 +4,8 @@ import Alert from '../../components/Alert'
 import Button from '../../components/Button'
 import useFetch from '../../hooks/useFetch'
 import { useNavigate } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode'
+import Cookies from 'js-cookie'
 
 const ProductCreate = () => {
 
@@ -26,12 +28,16 @@ const ProductCreate = () => {
 
         setError("")
 
+        const token = Cookies.get("token")
+        const decoded = jwtDecode(token)
+        const cnpj = decoded.companyCnpj;
+
         // chamar a api
         const product = {
 
             productName,
             unitOfMeasure,
-            companyCnpj: "05203425000111"
+            companyCnpj: cnpj
         }
 
         const res = await request("POST", "/products", product)

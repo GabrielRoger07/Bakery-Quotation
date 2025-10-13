@@ -1,5 +1,6 @@
 package com.bakeryquotation.backend.Quotation;
 
+import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationRequestDTO;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationResponseDTO;
 import jakarta.validation.Valid;
@@ -26,6 +27,11 @@ public class QuotationController {
     @GetMapping
     public ResponseEntity<List<QuotationResponseDTO>> getAllQuotations(){
         return quotationService.getAllQuotations();
+    }
+
+    @GetMapping("/company/{companyCnpj}")
+    public ResponseEntity<List<QuotationResponseDTO>> getQuotationsByCompanyCnpj(@PathVariable("companyCnpj") String cnpj){
+        return quotationService.getQuotationsByCompanyCnpj(cnpj);
     }
 
     @PostMapping

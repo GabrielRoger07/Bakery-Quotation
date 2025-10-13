@@ -5,7 +5,6 @@ import com.bakeryquotation.backend.Company.CompanyRepository;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationRequestDTO;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationResponseDTO;
 import com.bakeryquotation.backend.Quotation.mapper.QuotationMapper;
-import com.bakeryquotation.backend.Supplier.DTO.SupplierResponseDTO;
 import com.bakeryquotation.backend.exception.ImmutableResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -40,6 +39,15 @@ public class QuotationService {
             quotationResponseDTOS.add(quotationMapper.toDto(quotation));
         });
         return ResponseEntity.status(HttpStatus.OK).body(quotationResponseDTOS);
+    }
+
+    public ResponseEntity<List<QuotationResponseDTO>> getQuotationsByCompanyCnpj(String cnpj){
+        List<Quotation> quotationsByCompany = quotationRepository.findByCompany_CompanyCnpj(cnpj);
+        List<QuotationResponseDTO> quotationsResponseDTOByCompany = new ArrayList<>();
+        quotationsByCompany.forEach(quotation -> {
+            quotationsResponseDTOByCompany.add(quotationMapper.toDto(quotation));
+        });
+        return ResponseEntity.status(HttpStatus.OK).body(quotationsResponseDTOByCompany);
     }
 
     public ResponseEntity<QuotationResponseDTO> createQuotation(QuotationRequestDTO quotationRequestDTO){

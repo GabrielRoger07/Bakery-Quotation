@@ -28,6 +28,11 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
+    @GetMapping("/company/{companyCnpj}")
+    public ResponseEntity<List<ProductResponseDTO>> getProductsByCompanyCnpj(@PathVariable("companyCnpj") String cnpj){
+        return productService.getProductsByCompanyCnpj(cnpj);
+    }
+
     @PostMapping
     public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO){
         return productService.createProduct(productRequestDTO);

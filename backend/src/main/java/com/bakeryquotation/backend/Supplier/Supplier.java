@@ -50,6 +50,16 @@ public class Supplier {
     public Supplier() {
     }
 
+    public Supplier(String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, Company company) {
+        this.supplierName = supplierName;
+        this.supplierEmail = supplierEmail;
+        this.supplierWhatsappNumber = supplierWhatsappNumber;
+        this.employerName = employerName;
+        this.employerCnpj = employerCnpj;
+        this.createdAt = LocalDateTime.now();
+        this.company = company;
+    }
+
     public Supplier(Long id, String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, LocalDateTime createdAt, Company company) {
         this.id = id;
         this.supplierName = supplierName;

@@ -55,6 +55,15 @@ public class Company implements UserDetails {
     public Company() {
     }
 
+    public Company(String companyCnpj, String companyName, String companyWhatsappNumber, String companyEmail, String companyPassword) {
+        this.companyCnpj = companyCnpj;
+        this.companyName = companyName;
+        this.companyWhatsappNumber = companyWhatsappNumber;
+        this.companyEmail = companyEmail;
+        this.companyPassword = companyPassword;
+        this.createdAt = LocalDateTime.now();
+    }
+
     public Company(String companyCnpj, String companyName, String companyWhatsappNumber, String companyEmail, String companyPassword, LocalDateTime createdAt, List<Product> products, List<Quotation> quotations, List<Supplier> suppliers) {
         this.companyCnpj = companyCnpj;
         this.companyName = companyName;

@@ -13,8 +13,8 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />}></Route>
-          <Route path= "/create-company" element={<CompanyCreate />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+          <Route path= "/register" element={<CompanyCreate />}></Route>
           <Route path= "/create-supplier" element={<SupplierCreate />}></Route>
           <Route path= "/create-product" element={<ProductCreate />}></Route>
           <Route path= "/suppliers" element={<SupplierList />}></Route>

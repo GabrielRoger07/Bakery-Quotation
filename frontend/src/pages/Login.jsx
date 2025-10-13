@@ -65,7 +65,7 @@ const Login = () => {
                 <Button type="submit">Login</Button>
             </form>
             <p><a href="#">Forgot your password?</a></p>
-            <p><a href="/create-company">New company? Create an account!</a></p>
+            <p><a href="/register">New company? Create an account!</a></p>
         </div>
     )
 }

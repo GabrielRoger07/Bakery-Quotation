@@ -3,6 +3,8 @@ import useFetch from '../../hooks/useFetch'
 import Alert from '../../components/Alert'
 import Button from '../../components/Button'
 import { useNavigate } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode'
+import Cookies from 'js-cookie'
 
 const ProductList = () => {
 
@@ -29,7 +31,10 @@ const ProductList = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            const res = await request("GET", "/products")
+            const token = Cookies.get("token")
+            const decoded = jwtDecode(token)
+            const cnpj = decoded.companyCnpj
+            const res = await request("GET", `/products/company/${cnpj}`)
             if(res.ok){
                 setProducts(res.data);
                 setError("")

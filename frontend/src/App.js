@@ -7,6 +7,7 @@ import SupplierList from './pages/list/SupplierList';
 import ProductList from './pages/list/ProductList';
 import SupplierCreate from './pages/create/SupplierCreate';
 import ProductCreate from './pages/create/ProductCreate';
+import QuotationList from './pages/list/QuotationList';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path= "/create-product" element={<ProductCreate />}></Route>
           <Route path= "/suppliers" element={<SupplierList />}></Route>
           <Route path= "/products" element={<ProductList />}></Route>
+          <Route path= "/quotations" element={<QuotationList />}></Route>
         </Routes>
       </BrowserRouter>
     </div>

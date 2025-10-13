@@ -39,6 +39,13 @@ public class Quotation {
     public Quotation() {
     }
 
+    public Quotation(LocalDateTime quotationStart, LocalDateTime quotationEnd, Company company) {
+        this.quotationStart = quotationStart;
+        this.quotationEnd = quotationEnd;
+        this.createdAt = LocalDateTime.now();
+        this.company = company;
+    }
+
     public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, LocalDateTime createdAt, Company company) {
         this.id = id;
         this.quotationStart = quotationStart;

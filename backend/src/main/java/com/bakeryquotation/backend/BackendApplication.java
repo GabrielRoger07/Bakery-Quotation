@@ -5,6 +5,8 @@ import com.bakeryquotation.backend.Company.CompanyRepository;
 import com.bakeryquotation.backend.Product.Product;
 import com.bakeryquotation.backend.Product.ProductRepository;
 import com.bakeryquotation.backend.Product.UnitOfMeasure;
+import com.bakeryquotation.backend.Quotation.Quotation;
+import com.bakeryquotation.backend.Quotation.QuotationRepository;
 import com.bakeryquotation.backend.Supplier.Supplier;
 import com.bakeryquotation.backend.Supplier.SupplierRepository;
 import com.github.javafaker.Faker;
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Random;
 
@@ -29,6 +32,7 @@ public class BackendApplication {
     public CommandLineRunner run(CompanyRepository companyRepository,
                                  SupplierRepository supplierRepository,
                                  ProductRepository productRepository,
+                                 QuotationRepository quotationRepository,
                                  PasswordEncoder passwordEncoder){
         return args -> {
             Faker faker = new Faker(new Locale("pt-BR"));
@@ -42,6 +46,14 @@ public class BackendApplication {
 
             companyRepository.save(company1);
             companyRepository.save(company2);
+
+            Quotation quotation1 = new Quotation(LocalDateTime.parse("2025-12-12T08:00:00"), LocalDateTime.parse("2025-12-12T10:00:00"), company1);
+            Quotation quotation2 = new Quotation(LocalDateTime.parse("2025-12-15T16:00:00"), LocalDateTime.parse("2025-12-15T18:00:00"), company1);
+            Quotation quotation3 = new Quotation(LocalDateTime.parse("2025-11-11T08:00:00"), LocalDateTime.parse("2025-11-11T10:00:00"), company2);
+
+            quotationRepository.save(quotation1);
+            quotationRepository.save(quotation2);
+            quotationRepository.save(quotation3);
 
             for(int i = 0; i < 10; i++){
 

@@ -6,17 +6,21 @@ public class ContainResponseDTO {
 
     private Long productId;
     private Long quotationId;
+    private String productName;
+    private String unitOfMeasure;
     private BigDecimal quantity;
     private BigDecimal bonusLimit;
 
     public ContainResponseDTO() {
     }
 
-    public ContainResponseDTO(Long productId, Long quotationId, BigDecimal quantity, BigDecimal bonusLimit) {
+    public ContainResponseDTO(Long productId, Long quotationId, BigDecimal quantity, BigDecimal bonusLimit, String productName, String unitOfMeasure) {
         this.productId = productId;
         this.quotationId = quotationId;
         this.quantity = quantity;
         this.bonusLimit = bonusLimit;
+        this.productName = productName;
+        this.unitOfMeasure = unitOfMeasure;
     }
 
     public Long getProductId() {
@@ -49,5 +53,21 @@ public class ContainResponseDTO {
 
     public void setBonusLimit(BigDecimal bonusLimit) {
         this.bonusLimit = bonusLimit;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getUnitOfMeasure() {
+        return unitOfMeasure;
+    }
+
+    public void setUnitOfMeasure(String unitOfMeasure) {
+        this.unitOfMeasure = unitOfMeasure;
     }
 }

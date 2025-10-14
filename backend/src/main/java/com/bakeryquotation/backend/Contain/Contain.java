@@ -32,6 +32,17 @@ public class Contain {
     public Contain() {
     }
 
+    public Contain(Quotation quotation, Product product, BigDecimal quantity, BigDecimal bonusLimit) {
+        this.quotation = quotation;
+        this.product = product;
+        this.quantity = quantity;
+        this.bonusLimit = bonusLimit;
+
+        this.containId = new ContainId();
+        this.containId.setProductId(product.getId());
+        this.containId.setQuotationId(quotation.getId());
+    }
+
     public Contain(ContainId containId, Quotation quotation, Product product, BigDecimal quantity, BigDecimal bonusLimit) {
         this.containId = containId;
         this.quotation = quotation;

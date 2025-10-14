@@ -47,6 +47,13 @@ public class Participation {
     public Participation() {
     }
 
+    public Participation(Quotation quotation, Supplier supplier, String link, String accessToken) {
+        this.quotation = quotation;
+        this.supplier = supplier;
+        this.link = link;
+        this.accessToken = accessToken;
+    }
+
     public Participation(Long id, Quotation quotation, Supplier supplier, String link, String accessToken) {
         this.id = id;
         this.quotation = quotation;

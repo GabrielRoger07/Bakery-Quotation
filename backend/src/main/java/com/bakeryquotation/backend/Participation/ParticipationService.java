@@ -2,6 +2,7 @@ package com.bakeryquotation.backend.Participation;
 
 import com.bakeryquotation.backend.Participation.DTO.ParticipationRequestDTO;
 import com.bakeryquotation.backend.Participation.DTO.ParticipationResponseDTO;
+import com.bakeryquotation.backend.Participation.mapper.ParticipationMapper;
 import com.bakeryquotation.backend.Quotation.Quotation;
 import com.bakeryquotation.backend.Quotation.QuotationRepository;
 import com.bakeryquotation.backend.Supplier.Supplier;

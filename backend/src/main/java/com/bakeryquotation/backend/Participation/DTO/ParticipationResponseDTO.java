@@ -6,6 +6,8 @@ public class ParticipationResponseDTO {
     private String link;
     private String accessToken;
     private Long supplierId;
+    private String supplierName;
+    private String employerName;
     private Long quotationId;
 
     public ParticipationResponseDTO() {
@@ -17,6 +19,16 @@ public class ParticipationResponseDTO {
         this.accessToken = accessToken;
         this.supplierId = supplierId;
         this.quotationId = quotationId;
+    }
+
+    public ParticipationResponseDTO(Long participationId, String link, String accessToken, Long supplierId, Long quotationId, String supplierName, String employerName) {
+        this.participationId = participationId;
+        this.link = link;
+        this.accessToken = accessToken;
+        this.supplierId = supplierId;
+        this.quotationId = quotationId;
+        this.supplierName = supplierName;
+        this.employerName = employerName;
     }
 
     public Long getParticipationId() {
@@ -57,5 +69,21 @@ public class ParticipationResponseDTO {
 
     public void setQuotationId(Long quotationId) {
         this.quotationId = quotationId;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
+    }
+
+    public String getEmployerName() {
+        return employerName;
+    }
+
+    public void setEmployerName(String employerName) {
+        this.employerName = employerName;
     }
 }

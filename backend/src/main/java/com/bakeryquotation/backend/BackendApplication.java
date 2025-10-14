@@ -2,6 +2,10 @@ package com.bakeryquotation.backend;
 
 import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Company.CompanyRepository;
+import com.bakeryquotation.backend.Contain.Contain;
+import com.bakeryquotation.backend.Contain.ContainRepository;
+import com.bakeryquotation.backend.Participation.Participation;
+import com.bakeryquotation.backend.Participation.ParticipationRepository;
 import com.bakeryquotation.backend.Product.Product;
 import com.bakeryquotation.backend.Product.ProductRepository;
 import com.bakeryquotation.backend.Product.UnitOfMeasure;
@@ -17,7 +21,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -33,6 +39,8 @@ public class BackendApplication {
                                  SupplierRepository supplierRepository,
                                  ProductRepository productRepository,
                                  QuotationRepository quotationRepository,
+                                 ContainRepository containRepository,
+                                 ParticipationRepository participationRepository,
                                  PasswordEncoder passwordEncoder){
         return args -> {
             Faker faker = new Faker(new Locale("pt-BR"));
@@ -71,6 +79,24 @@ public class BackendApplication {
                     productRepository.save(product);
                 }
             }
+
+            List<Product> products = productRepository.findAll();
+            Contain contain1 = new Contain(quotation1, products.get(0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(0.0));
+            Contain contain2 = new Contain(quotation1, products.get(1), BigDecimal.valueOf(5.0), BigDecimal.valueOf(3.0));
+            Contain contain3 = new Contain(quotation2, products.get(2), BigDecimal.valueOf(2.0), BigDecimal.valueOf(0.0));
+
+            containRepository.save(contain1);
+            containRepository.save(contain2);
+            containRepository.save(contain3);
+
+            List<Supplier> suppliers = supplierRepository.findAll();
+            Participation participation1 = new Participation(quotation1, suppliers.get(0), "Link de Acesso 1", "accessToken");
+            Participation participation2 = new Participation(quotation1, suppliers.get(1), "Link de Acesso 2", "accessToken");
+            Participation participation3 = new Participation(quotation2, suppliers.get(2), "Link de Acesso 3", "accessToken");
+
+            participationRepository.save(participation1);
+            participationRepository.save(participation2);
+            participationRepository.save(participation3);
         };
     }
 

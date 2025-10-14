@@ -28,9 +28,19 @@ public class ParticipationController {
         return participationService.getAllParticipations();
     }
 
+    @GetMapping("/quotations/{quotationId}")
+    public ResponseEntity<List<ParticipationResponseDTO>> getAllParticipationsByQuotationId(@PathVariable("quotationId") Long quotationId){
+        return participationService.getAllParticipationsByQuotationId(quotationId);
+    }
+
     @PostMapping
     public ResponseEntity<ParticipationResponseDTO> createParticipation(@Valid @RequestBody ParticipationRequestDTO participationRequestDTO){
         return participationService.createParticipation(participationRequestDTO);
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<List<ParticipationResponseDTO>> createParticipations(@Valid @RequestBody List<ParticipationRequestDTO> participationRequestDTOS){
+        return participationService.createParticipations(participationRequestDTOS);
     }
 
     @DeleteMapping("/{id}")

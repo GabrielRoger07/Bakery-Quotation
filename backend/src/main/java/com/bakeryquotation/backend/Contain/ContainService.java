@@ -53,6 +53,16 @@ public class ContainService {
         return ResponseEntity.status(HttpStatus.OK).body(containResponseDTOS);
     }
 
+    public ResponseEntity<List<ContainResponseDTO>> getAllContainsByQuotationId(Long quotationId){
+        List<Contain> contains = containRepository.findAllByQuotation_Id(quotationId);
+        List<ContainResponseDTO> containResponseDTOS = new ArrayList<>();
+
+        contains.forEach(contain -> {
+            containResponseDTOS.add(containMapper.toDto(contain));
+        });
+        return ResponseEntity.status(HttpStatus.OK).body(containResponseDTOS);
+    }
+
     public ResponseEntity<ContainResponseDTO> createContain(ContainRequestDTO containRequestDTO){
         Long productId = containRequestDTO.getProductId();
         Long quotationId = containRequestDTO.getQuotationId();
@@ -75,8 +85,37 @@ public class ContainService {
         return ResponseEntity.status(HttpStatus.CREATED).body(containMapper.toDto(containCreated));
     }
 
+    public ResponseEntity<List<ContainResponseDTO>> createContains(List<ContainRequestDTO> containRequestDTOS){
+
+        List<ContainResponseDTO> containResponseDTOS = new ArrayList<>();
+
+        containRequestDTOS.forEach(containRequestDTO -> {
+            Long productId = containRequestDTO.getProductId();
+            Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
+
+            Long quotationId = containRequestDTO.getQuotationId();
+            Quotation quotation = quotationRepository.findById(quotationId).orElseThrow(() -> new ResourceNotFoundException("Quotation with id " + quotationId + " does not exists"));
+
+            ContainId containId = new ContainId(productId, quotationId);
+            Optional<Contain> exists = containRepository.findById(containId);
+            if(exists.isPresent()){
+                throw new DuplicateResourceException("Contain with product id " + productId + " and quotation id " + quotationId + " already exists");
+            }
+
+            Contain contain = containMapper.toEntity(containRequestDTO);
+            contain.setContainId(containId);
+            contain.setProduct(product);
+            contain.setQuotation(quotation);
+
+            Contain containCreated = containRepository.save(contain);
+            containResponseDTOS.add(containMapper.toDto(containCreated));
+        });
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(containResponseDTOS);
+    }
+
     public ResponseEntity<ContainResponseDTO> deleteContainById(Long quotationId, Long productId){
-        ContainId containId = new ContainId(productId, quotationId);
+        ContainId containId = new ContainId(quotationId, productId);
         Contain contain = containRepository.findById(containId).orElseThrow(() -> new ResourceNotFoundException("Contain with productId " + productId + " and quotationId " + quotationId + " does not exists"));
 
         ContainResponseDTO containResponseDTO = containMapper.toDto(contain);

@@ -28,9 +28,19 @@ public class ContainController {
         return containService.getAllContains();
     }
 
+    @GetMapping("/{quotationId}")
+    public ResponseEntity<List<ContainResponseDTO>> getAllContainsByQuotationId(@PathVariable("quotationId") Long id){
+        return containService.getAllContainsByQuotationId(id);
+    }
+
     @PostMapping
     public ResponseEntity<ContainResponseDTO> createContain(@Valid @RequestBody ContainRequestDTO containRequestDTO){
         return containService.createContain(containRequestDTO);
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<List<ContainResponseDTO>> createContains(@Valid @RequestBody List<ContainRequestDTO> containRequestDTOS){
+        return containService.createContains(containRequestDTOS);
     }
 
     @DeleteMapping("/{quotationId}/{productId}")

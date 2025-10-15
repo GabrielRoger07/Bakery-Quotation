@@ -7,12 +7,13 @@ import com.bakeryquotation.backend.Participation.Participation;
 import com.bakeryquotation.backend.Participation.ParticipationRepository;
 import com.bakeryquotation.backend.Product.Product;
 import com.bakeryquotation.backend.Product.ProductRepository;
-import com.bakeryquotation.backend.exception.DuplicateResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,12 +25,18 @@ public class BidService {
     private final BidMapper bidMapper;
     private final ParticipationRepository participationRepository;
     private final ProductRepository productRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public BidService(BidRepository bidRepository, BidMapper bidMapper, ParticipationRepository participationRepository, ProductRepository productRepository){
+    public BidService(BidRepository bidRepository,
+                      BidMapper bidMapper,
+                      ParticipationRepository participationRepository,
+                      ProductRepository productRepository,
+                      SimpMessagingTemplate messagingTemplate){
         this.bidRepository = bidRepository;
         this.bidMapper = bidMapper;
         this.participationRepository = participationRepository;
         this.productRepository = productRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     public ResponseEntity<BidResponseDTO> getBidById(Long participationId, Long productId){
@@ -49,18 +56,28 @@ public class BidService {
         return ResponseEntity.status(HttpStatus.OK).body(bidResponseDTOS);
     }
 
+    public ResponseEntity<BidResponseDTO> getLowestBid(Long participationId, Long productId){
+
+        participationRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + participationId + " does not exists"));
+        productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
+
+        Optional<Bid> lowestBid = bidRepository.findTopByParticipation_IdAndProduct_IdOrderByPriceAsc(participationId, productId);
+
+        BidResponseDTO bidResponseDTO = null;
+        if(lowestBid.isPresent()){
+            bidResponseDTO = bidMapper.toDto(lowestBid.get());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(bidResponseDTO);
+    }
+
     public ResponseEntity<BidResponseDTO> createBid(BidRequestDTO bidRequestDTO){
         Long participationId = bidRequestDTO.getParticipationId();
         Long productId = bidRequestDTO.getProductId();
 
         Participation participation = participationRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + participationId + " does not exists"));
-        Product product = productRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
 
-        BidId bidId = new BidId(participationId, productId);
-//        Optional<Bid> exists = bidRepository.findById(bidId);
-//        if(exists.isPresent()){
-//            throw new DuplicateResourceException("Bid with participation id " + participationId + " and product id " + productId + " already exists");
-//        }
+        BidId bidId = new BidId(participationId, productId, LocalDateTime.now());
 
         Bid bid = bidMapper.toEntity(bidRequestDTO);
         bid.setParticipation(participation);
@@ -68,8 +85,11 @@ public class BidService {
         bid.setBidId(bidId);
 
         Bid bidCreated = bidRepository.save(bid);
+        BidResponseDTO bidResponseDTO = bidMapper.toDto(bidCreated);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(bidMapper.toDto(bidCreated));
+        String destination = "/topic/quotation/" + participation.getQuotation().getId();
+        messagingTemplate.convertAndSend(destination, bidResponseDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(bidResponseDTO);
     }
 
     public ResponseEntity<BidResponseDTO> deleteBidById(Long participationId, Long productId){

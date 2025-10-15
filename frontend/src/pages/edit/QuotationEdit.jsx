@@ -154,7 +154,28 @@ const QuotationEdit = ({ quotation, onClose, onSave }) => {
                     ))}
                 </ul>
                 <h3>Add Product</h3>
-                <select value={selectedProductId} onChange={(e) => setSelectedProductId(e.target.value)}> <option value="">Select a product</option> {availableProducts.map(p => (<option key={p.productId} value={p.productId}>{p.productName}</option>))} </select> </div> <div className="quotation-edit-section"> <h3>Suppliers</h3> <ul> {suppliers.map(s => (<li key={s.supplierId}> {s.supplierName} - {s.employerName} <Button onClick={() => handleRemoveSupplier(s.participationId)}>Remove</Button> </li>))} </ul> </div> <div className="quotation-edit-actions"> <Button onClick={onClose}>Close</Button> <Button onClick={onSave}>Save & Refresh</Button> </div> </div>)
+                <select value={selectedProductId} onChange={(e) => setSelectedProductId(e.target.value)}> 
+                    <option value="">Select a product</option> 
+                    {availableProducts.map(p => (
+                        <option key={p.productId} value={p.productId}>{p.productName}</option>
+                    ))} 
+                </select> 
+            </div> 
+            <div className="quotation-edit-section"> 
+                <h3>Suppliers</h3> 
+                <ul> 
+                    {suppliers.map(s => (
+                        <li key={s.supplierId}> {s.supplierName} - {s.employerName} 
+                            <Button onClick={() => handleRemoveSupplier(s.participationId)}>Remove</Button> 
+                        </li>
+                    ))} 
+                </ul> 
+            </div> 
+            <div className="quotation-edit-actions"> 
+                <Button onClick={onClose}>Close</Button> 
+                <Button onClick={onSave}>Save & Refresh</Button> 
+            </div> 
+        </div>)
 } 
 
 export default QuotationEdit

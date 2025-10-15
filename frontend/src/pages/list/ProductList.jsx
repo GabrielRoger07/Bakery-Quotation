@@ -5,6 +5,8 @@ import Button from '../../components/Button'
 import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
+import Modal from '../../components/Modal'
+import ProductEdit from '../edit/ProductEdit'
 
 const ProductList = () => {
 
@@ -14,6 +16,23 @@ const ProductList = () => {
     const [products, setProducts] = useState([])
     const [error, setError] = useState("")
     const [status, setStatus] = useState(null)
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [productToEdit, setProductToEdit] = useState(null)
+
+    const openEditModal = (product) => {
+        setProductToEdit(product)
+        setIsModalOpen(true)
+    }
+
+    const closeModal = () => {
+        setProductToEdit(null)
+        setIsModalOpen(false)
+    }
+
+    const handleSave = (updatedProduct) => {
+        setProducts(prev => prev.map(p => p.productId === updatedProduct.productId ? updatedProduct : p))
+    }
 
     const handleDelete = async (productId) => {
         const res = await request("DELETE", `/products/${productId}`)
@@ -62,6 +81,7 @@ const ProductList = () => {
             <ul>
                 {products.map((product) => (
                     <li key={product.productId} className="product-card">Name: {product.productName} - Unit of Measure: {product.unitOfMeasure}
+                    <Button onClick={() => openEditModal(product)}>Edit</Button>
                     <Button onClick={() => handleDelete(product.productId)}>Delete</Button>
                     </li>
                 ))}
@@ -70,6 +90,14 @@ const ProductList = () => {
 
         <Button onClick={() => window.location.reload()}>Reload</Button>
         <Button onClick={() => createProduct()}>Add Product</Button>
+
+        <Modal isOpen={isModalOpen} onClose={closeModal} title="Edit Product">
+            <ProductEdit 
+                product={productToEdit} 
+                onSave={handleSave} 
+                onClose={closeModal} 
+            />
+        </Modal>
     </div>
   )
 }

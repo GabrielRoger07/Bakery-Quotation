@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 @Entity
 @Table( name = "participation",
         uniqueConstraints = {
-            @UniqueConstraint(name = "PARTICIPATION_link_UK", columnNames = "link"),
             @UniqueConstraint(name = "PARTICIPATION_supplierId_quotationId_UK", columnNames = {"supplierId", "quotationId"})
         }
 )
@@ -38,10 +37,10 @@ public class Participation {
     )
     private Supplier supplier;
 
-    @Column(name = "link", nullable = false)
+    @Column(name = "link")
     private String link;
 
-    @Column(name = "accessToken")
+    @Column(name = "accessToken", nullable = false)
     private String accessToken;
 
     public Participation() {

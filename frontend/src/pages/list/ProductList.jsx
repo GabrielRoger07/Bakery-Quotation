@@ -8,7 +8,7 @@ import Cookies from 'js-cookie'
 
 const ProductList = () => {
 
-    const { request, loading, errors } = useFetch("http://localhost:8080/api/v1")
+    const { request, loading } = useFetch("http://localhost:8080/api/v1")
     const navigate = useNavigate();
 
     const [products, setProducts] = useState([])

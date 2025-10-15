@@ -16,7 +16,7 @@ const QuotationEdit = ({ quotation, onClose, onSave }) => {
     const [selectedSupplierId, setSelectedSupplierId] = useState("")
     const [quantity, setQuantity] = useState("")
     const [bonusLimit, setBonusLimit] = useState("")
-    const { request, loading, errors } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch("http://localhost:8080/api/v1")
 
     useEffect(() => {
         if (!quotation)

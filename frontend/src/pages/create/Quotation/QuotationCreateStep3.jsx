@@ -5,7 +5,7 @@ import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
 
 const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish }) => {
-    const { request, loading, errors } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch("http://localhost:8080/api/v1")
     const [availableSuppliers, setAvailableSuppliers] = useState([])
     const [localSelected, setLocalSelected] = useState(selectedSuppliers)
 

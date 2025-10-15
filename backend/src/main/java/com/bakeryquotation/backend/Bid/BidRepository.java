@@ -7,4 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface BidRepository extends JpaRepository<Bid, BidId> {
+
+    Optional<Bid> findTopByParticipation_IdAndProduct_IdOrderByPriceAsc(Long participationId, Long productId);
 }

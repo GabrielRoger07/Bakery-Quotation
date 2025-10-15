@@ -28,6 +28,11 @@ public class BidController {
         return bidService.getAllBids();
     }
 
+    @GetMapping("/lowest")
+    public ResponseEntity<BidResponseDTO> getLowestBid(@RequestParam("participationId") Long participationId, @RequestParam("productId") Long productId){
+        return bidService.getLowestBid(participationId, productId);
+    }
+
     @PostMapping
     public ResponseEntity<BidResponseDTO> createBid(@Valid @RequestBody BidRequestDTO bidRequestDTO){
         return bidService.createBid(bidRequestDTO);

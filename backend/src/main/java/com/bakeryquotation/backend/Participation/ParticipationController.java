@@ -1,5 +1,6 @@
 package com.bakeryquotation.backend.Participation;
 
+import com.bakeryquotation.backend.Participation.DTO.AccessTokenRequestDTO;
 import com.bakeryquotation.backend.Participation.DTO.ParticipationRequestDTO;
 import com.bakeryquotation.backend.Participation.DTO.ParticipationResponseDTO;
 import jakarta.validation.Valid;
@@ -33,6 +34,11 @@ public class ParticipationController {
         return participationService.getAllParticipationsByQuotationId(quotationId);
     }
 
+    @GetMapping("/{quotationId}/{supplierId}")
+    public ResponseEntity<ParticipationResponseDTO> getParticipationByQuotationIdAndSupplierId(@PathVariable("quotationId") Long quotationId, @PathVariable("supplierId") Long supplierId){
+        return participationService.getParticipationByQuotationIdAndSupplierId(quotationId, supplierId);
+    }
+
     @PostMapping
     public ResponseEntity<ParticipationResponseDTO> createParticipation(@Valid @RequestBody ParticipationRequestDTO participationRequestDTO){
         return participationService.createParticipation(participationRequestDTO);
@@ -41,6 +47,11 @@ public class ParticipationController {
     @PostMapping("/batch")
     public ResponseEntity<List<ParticipationResponseDTO>> createParticipations(@Valid @RequestBody List<ParticipationRequestDTO> participationRequestDTOS){
         return participationService.createParticipations(participationRequestDTOS);
+    }
+
+    @PostMapping("/validateToken/{participationId}")
+    public ResponseEntity<ParticipationResponseDTO> validateAccessToken(@PathVariable("participationId") Long participationId, @Valid @RequestBody AccessTokenRequestDTO accessToken){
+        return participationService.validateAccessToken(participationId, accessToken);
     }
 
     @DeleteMapping("/{id}")

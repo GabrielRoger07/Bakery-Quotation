@@ -41,7 +41,7 @@ public class Participation {
     @Column(name = "link", nullable = false)
     private String link;
 
-    @Column(name = "accessToken", nullable = false)
+    @Column(name = "accessToken")
     private String accessToken;
 
     public Participation() {

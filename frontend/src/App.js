@@ -8,7 +8,8 @@ import ProductList from './pages/list/ProductList';
 import SupplierCreate from './pages/create/SupplierCreate';
 import ProductCreate from './pages/create/ProductCreate';
 import QuotationList from './pages/list/QuotationList';
-import QuotationCreate from './pages/create/QuotationCreate';
+import QuotationCreate from './pages/create/Quotation/QuotationCreate';
+import SupplierPage from './pages/SupplierAccess/SupplierPage';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path= "/suppliers" element={<SupplierList />}></Route>
           <Route path= "/products" element={<ProductList />}></Route>
           <Route path= "/quotations" element={<QuotationList />}></Route>
+          <Route path= "/quotation" element={<SupplierPage />}></Route>
         </Routes>
       </BrowserRouter>
     </div>

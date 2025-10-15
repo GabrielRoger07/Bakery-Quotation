@@ -57,10 +57,10 @@ public class BidService {
         Product product = productRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
 
         BidId bidId = new BidId(participationId, productId);
-        Optional<Bid> exists = bidRepository.findById(bidId);
-        if(exists.isPresent()){
-            throw new DuplicateResourceException("Bid with participation id " + participationId + " and product id " + productId + " already exists");
-        }
+//        Optional<Bid> exists = bidRepository.findById(bidId);
+//        if(exists.isPresent()){
+//            throw new DuplicateResourceException("Bid with participation id " + participationId + " and product id " + productId + " already exists");
+//        }
 
         Bid bid = bidMapper.toEntity(bidRequestDTO);
         bid.setParticipation(participation);

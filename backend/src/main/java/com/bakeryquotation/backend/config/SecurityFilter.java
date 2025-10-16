@@ -1,6 +1,7 @@
 package com.bakeryquotation.backend.config;
 
 import com.bakeryquotation.backend.Company.CompanyRepository;
+import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,7 +31,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         if(authorizedHeader != null && authorizedHeader.startsWith("Bearer ")){
             String token = authorizedHeader.replace("Bearer ", "");
             String subject = tokenConfig.validateToken(token);
-            UserDetails company = companyRepository.findByCompanyEmail(subject);
+            UserDetails company = companyRepository.findByCompanyEmail(subject).orElseThrow(() -> new ResourceNotFoundException("Company with email " + subject + " does not exists"));
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(company, null, company.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);

@@ -1,6 +1,7 @@
 package com.bakeryquotation.backend.config;
 
 import com.bakeryquotation.backend.Company.CompanyRepository;
+import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +18,6 @@ public class AuthConfig implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String companyEmail) throws UsernameNotFoundException {
-        return companyRepository.findByCompanyEmail(companyEmail);
+        return companyRepository.findByCompanyEmail(companyEmail).orElseThrow(() -> new ResourceNotFoundException("Bad credentials"));
     }
 }

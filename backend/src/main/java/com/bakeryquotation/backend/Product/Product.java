@@ -1,15 +1,14 @@
 package com.bakeryquotation.backend.Product;
 
 import com.bakeryquotation.backend.Company.Company;
+import com.bakeryquotation.backend.Contain.Contain;
 import com.bakeryquotation.backend.Participation.Participation;
 import com.bakeryquotation.backend.Quotation.Quotation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "product")
@@ -37,6 +36,9 @@ public class Product {
     )
     private Company company;
 
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.REMOVE})
+    private List<Contain> contains = new ArrayList<>();
+
     public Product() {
     }
 
@@ -44,6 +46,14 @@ public class Product {
         this.productName = productName;
         this.unitOfMeasure = unitOfMeasure;
         this.company = company;
+    }
+
+    public Product(Long id, String productName, UnitOfMeasure unitOfMeasure, Company company, List<Contain> contains) {
+        this.id = id;
+        this.productName = productName;
+        this.unitOfMeasure = unitOfMeasure;
+        this.company = company;
+        this.contains = contains;
     }
 
     public Long getId() {
@@ -76,6 +86,14 @@ public class Product {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public List<Contain> getContains() {
+        return contains;
+    }
+
+    public void setContains(List<Contain> contains) {
+        this.contains = contains;
     }
 
     @Override

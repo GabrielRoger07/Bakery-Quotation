@@ -75,8 +75,6 @@ public class SupplierService {
             throw new ImmutableResourceException("CNPJ cannot be changed");
         }
 
-        //validation(supplierRequestDTO);
-
         String supplierEmail = supplierRequestDTO.getSupplierEmail();
         String supplierWhatsappNumber = supplierRequestDTO.getSupplierWhatsappNumber();
 

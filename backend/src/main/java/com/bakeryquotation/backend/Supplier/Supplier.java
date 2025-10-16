@@ -1,9 +1,12 @@
 package com.bakeryquotation.backend.Supplier;
 
 import com.bakeryquotation.backend.Company.Company;
+import com.bakeryquotation.backend.Participation.Participation;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "supplier",
@@ -47,6 +50,9 @@ public class Supplier {
     )
     private Company company;
 
+    @OneToMany(mappedBy = "supplier", cascade = {CascadeType.REMOVE})
+    private List<Participation> participations = new ArrayList<>();
+
     public Supplier() {
     }
 
@@ -60,7 +66,7 @@ public class Supplier {
         this.company = company;
     }
 
-    public Supplier(Long id, String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, LocalDateTime createdAt, Company company) {
+    public Supplier(Long id, String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, LocalDateTime createdAt, Company company, List<Participation> participations) {
         this.id = id;
         this.supplierName = supplierName;
         this.supplierEmail = supplierEmail;
@@ -69,6 +75,7 @@ public class Supplier {
         this.employerCnpj = employerCnpj;
         this.createdAt = createdAt;
         this.company = company;
+        this.participations = participations;
     }
 
     public Long getId() {
@@ -133,5 +140,13 @@ public class Supplier {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public List<Participation> getParticipations() {
+        return participations;
+    }
+
+    public void setParticipations(List<Participation> participations) {
+        this.participations = participations;
     }
 }

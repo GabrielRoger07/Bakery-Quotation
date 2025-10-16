@@ -75,7 +75,20 @@ public class SupplierService {
             throw new ImmutableResourceException("CNPJ cannot be changed");
         }
 
-        validation(supplierRequestDTO);
+        //validation(supplierRequestDTO);
+
+        String supplierEmail = supplierRequestDTO.getSupplierEmail();
+        String supplierWhatsappNumber = supplierRequestDTO.getSupplierWhatsappNumber();
+
+        Optional<Supplier> exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, supplierEmail);
+        if(exists.isPresent() && !exists.get().getId().equals(id)){
+            throw new DuplicateResourceException("This company already has a supplier with email " + supplierEmail);
+        }
+
+        exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, supplierWhatsappNumber);
+        if(exists.isPresent() && !exists.get().getId().equals(id)){
+            throw new DuplicateResourceException("This company already has a supplier with Whatsapp number " + supplierWhatsappNumber);
+        }
 
         supplier.setSupplierEmail(supplierRequestDTO.getSupplierEmail());
         supplier.setSupplierWhatsappNumber(supplierRequestDTO.getSupplierWhatsappNumber());

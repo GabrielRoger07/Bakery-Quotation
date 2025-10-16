@@ -62,6 +62,15 @@ public class ParticipationService {
         return ResponseEntity.status(HttpStatus.OK).body(participationResponseDTOS);
     }
 
+    public ResponseEntity<ParticipationResponseDTO> getParticipationByQuotationIdAndSupplierId(Long quotationId, Long supplierId){
+        quotationRepository.findById(quotationId).orElseThrow(() -> new ResourceNotFoundException("Quotation with id " + quotationId + " does not exists"));
+        supplierRepository.findById(supplierId).orElseThrow(() -> new ResourceNotFoundException("Supplier with id " + supplierId + " does not exists"));
+
+        Participation participation = participationRepository.findByQuotation_IdAndSupplier_Id(quotationId, supplierId).orElseThrow(() -> new ResourceNotFoundException("Participation with quotationId " + quotationId + " and supplierId " + supplierId + " does not exists"));
+
+        return ResponseEntity.status(HttpStatus.OK).body(participationMapper.toDto(participation));
+    }
+
     public ResponseEntity<ParticipationResponseDTO> createParticipation(ParticipationRequestDTO participationRequestDTO){
 
         Long supplierId = participationRequestDTO.getSupplierId();
@@ -85,15 +94,6 @@ public class ParticipationService {
 
         ParticipationResponseDTO participationSaved = participationMapper.toDto(participationRepository.save(participation));
         return ResponseEntity.status(HttpStatus.CREATED).body(participationSaved);
-    }
-
-    public ResponseEntity<ParticipationResponseDTO> getParticipationByQuotationIdAndSupplierId(Long quotationId, Long supplierId){
-        quotationRepository.findById(quotationId).orElseThrow(() -> new ResourceNotFoundException("Quotation with id " + quotationId + " does not exists"));
-        supplierRepository.findById(supplierId).orElseThrow(() -> new ResourceNotFoundException("Supplier with id " + supplierId + " does not exists"));
-
-        Participation participation = participationRepository.findByQuotation_IdAndSupplier_Id(quotationId, supplierId).orElseThrow(() -> new ResourceNotFoundException("Participation with quotationId " + quotationId + " and supplierId " + supplierId + " does not exists"));
-
-        return ResponseEntity.status(HttpStatus.OK).body(participationMapper.toDto(participation));
     }
 
     public ResponseEntity<List<ParticipationResponseDTO>> createParticipations(List<ParticipationRequestDTO> participationRequestDTOS){

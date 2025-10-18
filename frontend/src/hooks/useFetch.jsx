@@ -1,7 +1,10 @@
 import { useCallback, useState } from 'react'
 import Cookies from 'js-cookie'
+import { useNavigate } from 'react-router-dom'
 
 const useFetch = (baseUrl = "") => {
+
+    const navigate = useNavigate()
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
@@ -38,6 +41,12 @@ const useFetch = (baseUrl = "") => {
 
                 if(!response.ok){
                     setError(data?.message || `HTTP ${response.status}`)
+                }
+
+                if(response.status === 403){
+                    console.log("entrou aqui")
+                    Cookies.remove("token")
+                    navigate("/login")
                 }
 
                 return { data, status: response.status, ok: response.ok }

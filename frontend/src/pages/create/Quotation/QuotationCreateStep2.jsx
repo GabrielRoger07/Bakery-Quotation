@@ -7,7 +7,7 @@ import Input from '../../../components/Input'
 
 const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) => {
 
-    const { request, loading, errors } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch("http://localhost:8080/api/v1")
     const [availableProducts, setAvailableProducts] = useState([])
     const [localSelected, setLocalSelected] = useState(selectedProducts)
 

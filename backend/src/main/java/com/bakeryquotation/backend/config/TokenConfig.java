@@ -22,7 +22,7 @@ public class TokenConfig {
         return JWT.create()
                 .withSubject(company.getCompanyEmail())
                 .withClaim("companyCnpj", company.getCompanyCnpj())
-                .withExpiresAt(Instant.now().plusSeconds(86400))
+                .withExpiresAt(Instant.now().plusSeconds(10))
                 .withIssuedAt(Instant.now())
                 .sign(algorithm);
     }
@@ -34,7 +34,7 @@ public class TokenConfig {
         try{
             return JWT.require(algorithm).build().verify(token).getSubject();
         }catch(JWTVerificationException exception){
-            return "";
+            return null;
         }
     }
 }

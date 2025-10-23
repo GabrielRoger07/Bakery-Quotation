@@ -64,7 +64,9 @@ const Login = () => {
                 {success && <div className="success">{success}</div>}
                 <Button type="submit">Login</Button>
             </form>
+            {/*
             <p><a href="#">Forgot your password?</a></p>
+            */}
             <p><a href="/register">New company? Create an account!</a></p>
         </div>
     )

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
 
 import Login from './pages/Login';
@@ -10,12 +10,27 @@ import ProductCreate from './pages/create/ProductCreate';
 import QuotationList from './pages/list/QuotationList';
 import QuotationCreate from './pages/create/Quotation/QuotationCreate';
 import SupplierPage from './pages/SupplierAccess/SupplierPage';
+import Navbar from './components/Navbar';
 
 function App() {
+
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  );
+}
+
+function AppContent(){
+  const location = useLocation()
+  const showNavbarRoutes = ["/suppliers", "/products", "/quotations"]
+  const shouldShowNavbar = showNavbarRoutes.includes(location.pathname)
+
   return (
     <div className="App">
-      <BrowserRouter>
+      {shouldShowNavbar && <Navbar />}
         <Routes>
+          <Route path="/" element={<Navigate to="/login" />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path= "/register" element={<CompanyCreate />}></Route>
           <Route path= "/create-supplier" element={<SupplierCreate />}></Route>
@@ -25,8 +40,8 @@ function App() {
           <Route path= "/products" element={<ProductList />}></Route>
           <Route path= "/quotations" element={<QuotationList />}></Route>
           <Route path= "/quotation" element={<SupplierPage />}></Route>
+          <Route path="*" element={<Navigate to="/login" />}></Route>
         </Routes>
-      </BrowserRouter>
     </div>
   );
 }

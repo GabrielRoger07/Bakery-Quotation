@@ -19,6 +19,36 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         setError("")
         setSuccess("")
 
+        if(!price){
+            setError("Price is required")
+            return
+        }
+
+        if(currentLowestBid && currentLowestBid.price <= price){
+            setError("Bid must be lower than the current one")
+            return
+        }
+
+        if(!quantity){
+            setError("Quantity is required")
+            return
+        }
+
+        if(quantity > product.quantity){
+            setError("Quantity cannot be higher than requested")
+            return
+        }
+
+        if(!bonus){
+            setError("Bonus is required")
+            return
+        }
+
+        if(bonus > product.bonusLimit){
+            setError("Bonus cannot be higher than requested")
+            return
+        }
+
         const body = {
             participationId,
             productId: product.productId,

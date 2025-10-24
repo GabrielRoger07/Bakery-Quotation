@@ -3,7 +3,7 @@ import Input from '../components/Input'
 import Alert from '../components/Alert'
 import Button from '../components/Button'
 import useFetch from '../hooks/useFetch'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
 
 const Login = () => {
@@ -67,7 +67,9 @@ const Login = () => {
             {/*
             <p><a href="#">Forgot your password?</a></p>
             */}
-            <p><a href="/register">New company? Create an account!</a></p>
+            <p>
+                <Link to="/register">New company? Create an account!</Link>
+            </p>
         </div>
     )
 }

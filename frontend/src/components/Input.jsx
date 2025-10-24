@@ -1,8 +1,9 @@
 import React from 'react'
+import './Input.css'
 
 const Input = ({ label, type, name, value, onChange, placeholder }) => {
   return (
-    <div>
+    <div className='input-container'>
         <label>{label}</label>
         <input 
             type={type} 

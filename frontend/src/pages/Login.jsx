@@ -5,15 +5,15 @@ import Button from '../components/Button'
 import useFetch from '../hooks/useFetch'
 import { Link, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
+import '../components/Auth.css'
 
 const Login = () => {
     const [companyEmail, setCompanyEmail] = useState("")
     const [companyPassword, setCompanyPassword] = useState("")
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
-    const [user, setUser] = useState(null)
 
-    const { request, loading, errors } = useFetch("http://localhost:8080/api/v1")
+    const { request, loading } = useFetch("http://localhost:8080/api/v1")
     const navigate = useNavigate()
 
     const handleLogin = async (e) => {
@@ -29,7 +29,7 @@ const Login = () => {
         }
 
         setError("")
-        //chamada da api
+
         const login = {
             companyEmail,
             companyPassword
@@ -55,21 +55,23 @@ const Login = () => {
     }
 
     return (
-        <div className='login-container'>
-            <h1>Pani Premium Login</h1>
-            <form onSubmit={handleLogin}>
-                <Input label="Email" type="email" name="companyEmail" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} placeholder="Enter your email" />
-                <Input label="Password" type="password" name="companyPassword" value={companyPassword} onChange={(e) => setCompanyPassword(e.target.value)} placeholder="Enter your password" />
-                <Alert message={error} />
-                {success && <div className="success">{success}</div>}
-                <Button type="submit">Login</Button>
-            </form>
-            {/*
-            <p><a href="#">Forgot your password?</a></p>
-            */}
-            <p>
-                <Link to="/register">New company? Create an account!</Link>
-            </p>
+        <div className='auth-container'>
+            <div className='auth-box'>
+                <h1>Pani Premium Login</h1>
+                <form onSubmit={handleLogin}>
+                    <Input label="Email" type="email" name="companyEmail" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} placeholder="Enter your email" />
+                    <Input label="Password" type="password" name="companyPassword" value={companyPassword} onChange={(e) => setCompanyPassword(e.target.value)} placeholder="Enter your password" />
+                    <Alert message={error} />
+                    {success && <div className="success">{success}</div>}
+                    <Button type="submit" loading={loading}>Login</Button>
+                </form>
+                {/*
+                <p><a href="#">Forgot your password?</a></p>
+                */}
+                <p>
+                    <Link to="/register">New company? Create an account!</Link>
+                </p>
+            </div>
         </div>
     )
 }

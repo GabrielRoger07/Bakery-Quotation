@@ -1,0 +1,31 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background-color: #f3f4f6;
+    border-bottom: 1px solid #e5e7eb;
+    position: relative;
+}
+
+.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+}
+
+.navbar-center a {
+    text-decoration: none;
+    color: #1f2937;
+    font-weight: 500;
+}
+
+.navbar-center a.active {
+    color: #2563eb
+}
+
+.navbar-right {
+    margin-left: auto;
+}

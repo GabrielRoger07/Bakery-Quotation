@@ -1,0 +1,97 @@
+.product-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f3f2ef;
+    min-height: 100vh;
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.product-list-container h1 {
+    color: #0a66c2;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.table-container {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 900px;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.table-header h1 {
+    font-size: 1.5rem;
+    color: #0a66c2;
+    margin: 0;
+}
+
+.table-header-buttons button {
+    margin-left: 0.5rem;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.custom-table th, .custom-table td {
+    border: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    text-align: left;
+}
+
+.custom-table th {
+    background-color: #f3f4f6;
+    font-weight: 600;
+    color: #374151;
+}
+
+.custom-table tr:nth-child(even){
+    background-color: #fafafa;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.empty-message {
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin-top: 1rem;
+}
+
+.product-list-container p {
+    margin: 0.5rem 0;
+    color: #374151;
+}
+
+@media (max-width: 768px) {
+    .table-container {
+        width: 95%;
+        padding: 1rem;
+    }
+
+    .custom-table th, .custom-table td {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+    }
+
+    .table-header h1 {
+        font-size: 1.25rem;
+    }
+}

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import useFetch from '../../hooks/useFetch'
-import Alert from '../../components/Alert'
-import Button from '../../components/Button'
 import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import Modal from '../../components/Modal'
 import ProductEdit from '../edit/ProductEdit'
+import Table from '../../components/Table'
+import './ProductList.css'
 
 const ProductList = () => {
 
@@ -19,6 +19,12 @@ const ProductList = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [productToEdit, setProductToEdit] = useState(null)
+
+    const columns = [
+        { key: "productId", label: "ID" },
+        { key: "productName", label: "Name" },
+        { key: "unitOfMeasure", label: "Unit of Measure" }
+    ]
 
     const openEditModal = (product) => {
         setProductToEdit(product)
@@ -68,28 +74,18 @@ const ProductList = () => {
 
     return (
     <div className="product-list-container">
-        <h1>All Products</h1>
-
-        {loading && <p>Loading products...</p>}
-        {error && <Alert message={error} />}
-        {status === 0 && <Alert message="Server Internal Error" />}
-        {!loading && !error && status !== 0 && products.length === 0 && <p>No products found.</p>}
-
-        {console.log(products)}
-
-        <div className='product-list'>
-            <ul>
-                {products.map((product) => (
-                    <li key={product.productId} className="product-card">Name: {product.productName} - Unit of Measure: {product.unitOfMeasure}
-                    <Button onClick={() => openEditModal(product)}>Edit</Button>
-                    <Button onClick={() => handleDelete(product.productId)}>Delete</Button>
-                    </li>
-                ))}
-            </ul>
-        </div>
-
-        <Button onClick={() => window.location.reload()}>Reload</Button>
-        <Button onClick={() => createProduct()}>Add Product</Button>
+        <Table 
+            title="All Products" 
+            columns={columns}
+            data={products}
+            idKey="productId"
+            loading={loading}
+            onEdit={openEditModal}
+            onDelete={handleDelete}
+            onAdd={createProduct}
+            onReload={() => window.location.reload()}
+            emptyMessage="No products found."
+        />
 
         <Modal isOpen={isModalOpen} onClose={closeModal} title="Edit Product">
             <ProductEdit 

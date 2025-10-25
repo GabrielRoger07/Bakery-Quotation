@@ -1,0 +1,88 @@
+.table-container {
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f3f2ef;
+    min-height: 100vh;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.table-header h1 {
+    font-size: 1.8rem;
+    color: #0a66c2;
+}
+
+.table-header-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.custom-table th {
+    background-color: #0a66c2;
+    color: white;
+    text-align: left;
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.custom-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+.custom-table tr:hover {
+    background-color: #f3f4f6;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.actions .btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.empty-message {
+    color: #6b7280;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .table-header-buttons {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .custom-table th, .custom-table td {
+        padding: 0.75rem;
+    }
+}

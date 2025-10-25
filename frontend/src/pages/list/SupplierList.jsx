@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import useFetch from '../../hooks/useFetch'
-import Alert from '../../components/Alert'
-import Button from '../../components/Button'
 import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import Modal from '../../components/Modal'
 import SupplierEdit from '../edit/SupplierEdit'
+import Table from '../../components/Table'
+import './SupplierList.css'
 
 const SupplierList = () => {
 
@@ -69,28 +69,24 @@ const SupplierList = () => {
 
     return (
     <div className="supplier-list-container">
-        <h1>All Suppliers</h1>
-
-        {loading && <p>Loading suppliers...</p>}
-        {error && <Alert message={error} />}
-        {status === 0 && <Alert message="Server Internal Error" />}
-        {!loading && !error && status !== 0 && suppliers.length === 0 && <p>No suppliers found.</p>}
-
-        {console.log(suppliers)}
-
-        <div className='supplier-list'>
-            <ul>
-                {suppliers.map((supplier) => (
-                    <li key={supplier.supplierId} className="supplier-card">Name: {supplier.supplierName} - Email: {supplier.supplierEmail} - Whatsapp: {supplier.supplierWhatsappNumber}
-                        <Button onClick={() => openEditModal(supplier)}>Edit</Button>
-                        <Button onClick={() => handleDelete(supplier.supplierId)}>Delete</Button>
-                    </li>
-                ))}
-            </ul>
-        </div>
-
-        <Button onClick={() => window.location.reload()}>Reload</Button>
-        <Button onClick={() => createSupplier()}>Add Supplier</Button>
+        <Table 
+            title="All Suppliers"
+            columns={[
+                { key: "supplierName", label: "Name"},
+                { key: "supplierEmail", label: "Email"},
+                { key: "supplierWhatsappNumber", label: "Whatsapp"},
+                { key: "employerName", label: "Employer Name"},
+                { key: "employerCnpj", label: "Employer CNPJ"},
+            ]}
+            data={suppliers}
+            idKey="supplierId"
+            loading={loading}
+            onEdit={openEditModal}
+            onDelete={handleDelete}
+            onAdd={createSupplier}
+            onReload={() => window.location.reload()}
+            emptyMessage="No suppliers found."
+        />
 
         <Modal isOpen={isModalOpen} onClose={closeModal} title="Edit Supplier">
             <SupplierEdit 

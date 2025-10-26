@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
 import Input from '../../components/Input'
-import Button from '../../components/Button'
 import Alert from '../../components/Alert'
+import Button from '../../components/Button'
 import useFetch from '../../hooks/useFetch'
-import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 
-const SupplierCreate = () => {
+const SupplierCreate = ({ onClose, onSave }) => {
 
     const [supplierName, setSupplierName] = useState("")
     const [supplierEmail, setSupplierEmail] = useState("")
@@ -17,8 +16,7 @@ const SupplierCreate = () => {
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
-    const { request, loading, errors } = useFetch("http://localhost:8080/api/v1")
-    const navigate = useNavigate();
+    const { request, loading } = useFetch("http://localhost:8080/api/v1")
 
     const validate = () => {
         const newErrors = {}
@@ -50,7 +48,6 @@ const SupplierCreate = () => {
         const decoded = jwtDecode(token)
         const cnpj = decoded.companyCnpj;
 
-        // chamar a api
         const supplier = {
 
             supplierName,
@@ -66,7 +63,8 @@ const SupplierCreate = () => {
         if(res.ok){
             setSuccess("Supplier created successfully!")
             setError("")
-            setTimeout(() => navigate("/suppliers"), 1000)
+            onSave && onSave(res.data)
+            setTimeout(() => onClose(), 800)
         }else{
             setSuccess("")
             setError(res.data?.message)
@@ -74,19 +72,19 @@ const SupplierCreate = () => {
     }
 
     return (
-        <div className="supplier-create-container">
-        <h1>Supplier Create</h1>
-            <form onSubmit={handleSupplierCreate}>
-                <Input label="Name" type="text" name="supplierName" value={supplierName} onChange={(e) => setSupplierName(e.target.value)} placeholder="Enter Supplier Name"/>
-                <Input label="Email" type="email" name="supplierEmail" value={supplierEmail} onChange={(e) => setSupplierEmail(e.target.value)} placeholder="Enter Supplier Email"/>
-                <Input label="Whatsapp Number" type="text" name="supplierWhatsappNumber" value={supplierWhatsappNumber} onChange={(e) => setSupplierWhatsappNumber(e.target.value)} placeholder="Enter Whatsapp Number"/>
-                <Input label="Company Name" type="text" name="employerName" value={employerName} onChange={(e) => setEmployerName(e.target.value)} placeholder="Enter Employer Company Name"/>
-                <Input label="Company Cnpj" type="text" name="employerCnpj" value={employerCnpj} onChange={(e) => setEmployerCnpj(e.target.value)} placeholder="Enter Employer Company Cnpj"/>
-                <Alert message={error}/>
-                {success && <div className="success">{success}</div>}
-                <Button type="submit">Create Supplier</Button>
-            </form>
-        </div>
+        <form onSubmit={handleSupplierCreate}>
+            <Input label="Name" type="text" name="supplierName" value={supplierName} onChange={(e) => setSupplierName(e.target.value)} placeholder="Enter Supplier Name"/>
+            <Input label="Email" type="email" name="supplierEmail" value={supplierEmail} onChange={(e) => setSupplierEmail(e.target.value)} placeholder="Enter Supplier Email"/>
+            <Input label="Whatsapp Number" type="text" name="supplierWhatsappNumber" value={supplierWhatsappNumber} onChange={(e) => setSupplierWhatsappNumber(e.target.value)} placeholder="Enter Whatsapp Number"/>
+            <Input label="Company Name" type="text" name="employerName" value={employerName} onChange={(e) => setEmployerName(e.target.value)} placeholder="Enter Company Name"/>
+            <Input label="Company Cnpj" type="text" name="employerCnpj" value={employerCnpj} onChange={(e) => setEmployerCnpj(e.target.value)} placeholder="Enter Company Cnpj"/>
+            <Alert message={error}/>
+            {success && <div className="success">{success}</div>}
+
+            <Button type="submit" disabled={loading}>
+                {loading ? "Creating" : "Create Supplier"}
+            </Button>
+        </form>
     )
 }
 

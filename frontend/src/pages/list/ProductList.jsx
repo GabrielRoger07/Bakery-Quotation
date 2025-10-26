@@ -1,23 +1,24 @@
 import { useEffect, useState } from 'react'
 import useFetch from '../../hooks/useFetch'
-import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import Modal from '../../components/Modal'
 import ProductEdit from '../edit/ProductEdit'
 import Table from '../../components/Table'
 import './ProductList.css'
+import Alert from '../../components/Alert'
+import ProductCreate from '../create/ProductCreate'
 
 const ProductList = () => {
 
     const { request, loading } = useFetch("http://localhost:8080/api/v1")
-    const navigate = useNavigate();
 
     const [products, setProducts] = useState([])
     const [error, setError] = useState("")
     const [status, setStatus] = useState(null)
 
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [productToEdit, setProductToEdit] = useState(null)
 
     const columns = [
@@ -28,15 +29,20 @@ const ProductList = () => {
 
     const openEditModal = (product) => {
         setProductToEdit(product)
-        setIsModalOpen(true)
+        setIsEditModalOpen(true)
     }
 
-    const closeModal = () => {
+    const closeModals = () => {
         setProductToEdit(null)
-        setIsModalOpen(false)
+        setIsEditModalOpen(false)
+        setIsCreateModalOpen(false)
     }
 
-    const handleSave = (updatedProduct) => {
+    const handleSaveCreate = (newProduct) => {
+        setProducts(prev => [...prev, newProduct])
+    }
+
+    const handleSaveEdit = (updatedProduct) => {
         setProducts(prev => prev.map(p => p.productId === updatedProduct.productId ? updatedProduct : p))
     }
 
@@ -50,30 +56,29 @@ const ProductList = () => {
         }
     }
 
-    const createProduct = () => {
-        navigate("/create-product")
+    const fetchProducts = async () => {
+        const token = Cookies.get("token")
+        const decoded = jwtDecode(token)
+        const cnpj = decoded.companyCnpj
+        const res = await request("GET", `/products/company/${cnpj}`)
+        if(res.ok){
+            setProducts(res.data);
+            setError("")
+        }else{
+            setError(res.data?.message)
+        }
+        setStatus(res.status)
     }
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            const token = Cookies.get("token")
-            const decoded = jwtDecode(token)
-            const cnpj = decoded.companyCnpj
-            const res = await request("GET", `/products/company/${cnpj}`)
-            if(res.ok){
-                setProducts(res.data);
-                setError("")
-            }else{
-                setError(res.data?.message)
-            }
-            setStatus(res.status)
-        }
-
         fetchProducts();
-    }, [request])
+    }, [])
 
     return (
     <div className="product-list-container">
+        {error && <Alert message={error}/>}
+        {status === 0 && <Alert message="Server Internal Error" />}
+
         <Table 
             title="All Products" 
             columns={columns}
@@ -82,16 +87,23 @@ const ProductList = () => {
             loading={loading}
             onEdit={openEditModal}
             onDelete={handleDelete}
-            onAdd={createProduct}
-            onReload={() => window.location.reload()}
+            onAdd={() => setIsCreateModalOpen(true)}
+            onReload={fetchProducts}
             emptyMessage="No products found."
         />
 
-        <Modal isOpen={isModalOpen} onClose={closeModal} title="Edit Product">
+        <Modal isOpen={isEditModalOpen} onClose={closeModals} title="Edit Product">
             <ProductEdit 
                 product={productToEdit} 
-                onSave={handleSave} 
-                onClose={closeModal} 
+                onSave={handleSaveEdit} 
+                onClose={closeModals} 
+            />
+        </Modal>
+
+        <Modal isOpen={isCreateModalOpen} onClose={closeModals} title="Create Product">
+            <ProductCreate
+                onSave={handleSaveCreate} 
+                onClose={closeModals} 
             />
         </Modal>
     </div>

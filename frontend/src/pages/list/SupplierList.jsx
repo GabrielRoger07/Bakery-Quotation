@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import useFetch from '../../hooks/useFetch'
-import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import Modal from '../../components/Modal'
@@ -13,7 +12,6 @@ import SupplierCreate from '../create/SupplierCreate'
 const SupplierList = () => {
 
     const { request, loading } = useFetch("http://localhost:8080/api/v1")
-    const navigate = useNavigate();
     
     const [suppliers, setSuppliers] = useState([])
     const [error, setError] = useState("")

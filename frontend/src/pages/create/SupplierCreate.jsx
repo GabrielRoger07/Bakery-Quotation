@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Input from '../../components/Input'
 import Alert from '../../components/Alert'
 import Button from '../../components/Button'
@@ -78,11 +78,11 @@ const SupplierCreate = ({ onClose, onSave }) => {
             <Input label="Whatsapp Number" type="text" name="supplierWhatsappNumber" value={supplierWhatsappNumber} onChange={(e) => setSupplierWhatsappNumber(e.target.value)} placeholder="Enter Whatsapp Number"/>
             <Input label="Company Name" type="text" name="employerName" value={employerName} onChange={(e) => setEmployerName(e.target.value)} placeholder="Enter Company Name"/>
             <Input label="Company Cnpj" type="text" name="employerCnpj" value={employerCnpj} onChange={(e) => setEmployerCnpj(e.target.value)} placeholder="Enter Company Cnpj"/>
-            <Alert message={error}/>
+            <Alert message={error} />
             {success && <div className="success">{success}</div>}
 
             <Button type="submit" disabled={loading}>
-                {loading ? "Creating" : "Create Supplier"}
+                {loading ? "Creating..." : "Create Supplier"}
             </Button>
         </form>
     )

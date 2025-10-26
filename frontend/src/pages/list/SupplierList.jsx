@@ -21,6 +21,14 @@ const SupplierList = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [supplierToEdit, setSupplierToEdit] = useState(null)
 
+    const columns = [
+        { key: "supplierName", label: "Name"},
+        { key: "supplierEmail", label: "Email"},
+        { key: "supplierWhatsappNumber", label: "Whatsapp"},
+        { key: "employerName", label: "Employer Name"},
+        { key: "employerCnpj", label: "Employer CNPJ"}
+    ]
+
     const openEditModal = (supplier) => {
         setSupplierToEdit(supplier)
         setIsEditModalOpen(true)
@@ -76,13 +84,7 @@ const SupplierList = () => {
 
         <Table 
             title="All Suppliers"
-            columns={[
-                { key: "supplierName", label: "Name"},
-                { key: "supplierEmail", label: "Email"},
-                { key: "supplierWhatsappNumber", label: "Whatsapp"},
-                { key: "employerName", label: "Employer Name"},
-                { key: "employerCnpj", label: "Employer CNPJ"},
-            ]}
+            columns={columns}
             data={suppliers}
             idKey="supplierId"
             loading={loading}

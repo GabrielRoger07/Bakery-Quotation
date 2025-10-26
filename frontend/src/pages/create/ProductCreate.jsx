@@ -19,7 +19,7 @@ const ProductCreate = ({ onClose, onSave }) => {
         e.preventDefault()
 
         if(!productName || !unitOfMeasure){
-            setError("All the fields are required")
+            setError("All fields are required.")
             setSuccess("")
             return;
         }
@@ -41,27 +41,31 @@ const ProductCreate = ({ onClose, onSave }) => {
         if(res.ok){
             setSuccess("Product created successfully!")
             setError("")
+            onSave && onSave(res.data)
             setTimeout(() => onClose(), 800)
         }else{
             setSuccess("")
-            setError(res.data?.message)
+            setError(res.data?.message || "Failed to create product")
         }
     }
 
     return (
         <form onSubmit={handleProductCreate}>
             <Input label="Name" type="text" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Enter Product Name"/>
-            <label>
-                <span>Unit of Measure</span>
-                <select name="unitOfMeasure" onChange={(e) => setUnitOfMeasure(e.target.value)} value={unitOfMeasure}>
-                    <option value="mg">mg</option> 
-                    <option value="g">g</option> 
-                    <option value="kg">kg</option> 
-                    <option value="ml">ml</option> 
-                    <option value="l">l</option> 
-                    <option value="und">und</option> 
+            <div className="input-group">
+                <label htmlFor="unitOfMeasure" className="input-label">
+                    Unit of Measure
+                </label>
+                <select id="unitOfMeasure" name="unitOfMeasure" value={unitOfMeasure} onChange={(e) => setUnitOfMeasure(e.target.value)} className="custom-select">
+                    <option value="" disabled>Select a unit</option>
+                    <option value="mg">mg</option>
+                    <option value="g">g</option>
+                    <option value="kg">kg</option>
+                    <option value="ml">ml</option>
+                    <option value="l">l</option>
+                    <option value="und">und</option>
                 </select>
-            </label>
+            </div>
             <Alert message={error} />
             {success && <div className="success">{success}</div>}
 

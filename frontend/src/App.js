@@ -33,9 +33,11 @@ function AppContent(){
           <Route path="/" element={<Navigate to="/login" />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path= "/register" element={<CompanyCreate />}></Route>
+          {/*
           <Route path= "/create-supplier" element={<SupplierCreate />}></Route>
           <Route path= "/create-product" element={<ProductCreate />}></Route>
           <Route path= "/create-quotation" element={<QuotationCreate />}></Route>
+          */}
           <Route path= "/suppliers" element={<SupplierList />}></Route>
           <Route path= "/products" element={<ProductList />}></Route>
           <Route path= "/quotations" element={<QuotationList />}></Route>

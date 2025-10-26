@@ -25,3 +25,38 @@
   border-color: #2563eb;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
 }
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.input-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.custom-select {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 1rem;
+  color: #333;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  appearance: none;
+  cursor: pointer;
+}
+
+.custom-select:hover {
+  border-color: #888;
+}
+
+.custom-select:focus {
+  border-color: #0a66c2;
+  box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.2);
+  outline: none;
+}

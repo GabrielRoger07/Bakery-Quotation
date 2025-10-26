@@ -1,11 +1,15 @@
 package com.bakeryquotation.backend.Quotation;
 
 import com.bakeryquotation.backend.Company.Company;
+import com.bakeryquotation.backend.Contain.Contain;
+import com.bakeryquotation.backend.Participation.Participation;
 import com.bakeryquotation.backend.Product.Product;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -36,6 +40,12 @@ public class Quotation {
     )
     private Company company;
 
+    @OneToMany(mappedBy = "quotation", cascade = {CascadeType.REMOVE})
+    private List<Participation> participations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "quotation", cascade = {CascadeType.REMOVE})
+    private List<Contain> contains = new ArrayList<>();
+
     public Quotation() {
     }
 
@@ -52,6 +62,16 @@ public class Quotation {
         this.quotationEnd = quotationEnd;
         this.createdAt = createdAt;
         this.company = company;
+    }
+
+    public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, LocalDateTime createdAt, Company company, List<Participation> participations, List<Contain> contains) {
+        this.id = id;
+        this.quotationStart = quotationStart;
+        this.quotationEnd = quotationEnd;
+        this.createdAt = createdAt;
+        this.company = company;
+        this.participations = participations;
+        this.contains = contains;
     }
 
     public Long getId() {
@@ -92,5 +112,21 @@ public class Quotation {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public List<Participation> getParticipations() {
+        return participations;
+    }
+
+    public void setParticipations(List<Participation> participations) {
+        this.participations = participations;
+    }
+
+    public List<Contain> getContains() {
+        return contains;
+    }
+
+    public void setContains(List<Contain> contains) {
+        this.contains = contains;
     }
 }

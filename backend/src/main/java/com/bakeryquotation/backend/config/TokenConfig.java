@@ -22,7 +22,7 @@ public class TokenConfig {
         return JWT.create()
                 .withSubject(company.getCompanyEmail())
                 .withClaim("companyCnpj", company.getCompanyCnpj())
-                .withExpiresAt(Instant.now().plusSeconds(10))
+                .withExpiresAt(Instant.now().plusSeconds(86400))
                 .withIssuedAt(Instant.now())
                 .sign(algorithm);
     }

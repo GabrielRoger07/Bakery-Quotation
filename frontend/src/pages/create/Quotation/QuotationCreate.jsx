@@ -4,12 +4,11 @@ import QuotationCreateStep2 from './QuotationCreateStep2'
 import QuotationCreateStep3 from './QuotationCreateStep3'
 import Button from '../../../components/Button'
 import useFetch from '../../../hooks/useFetch'
-import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import Alert from '../../../components/Alert'
 
-const QuotationCreate = () => {
+const QuotationCreate = ({ onClose, onSave }) => {
 
     const [step, setStep] = useState(1)
     const [loading, setLoading] = useState(false)
@@ -23,29 +22,22 @@ const QuotationCreate = () => {
     })
 
     const { request } = useFetch("http://localhost:8080/api/v1")
-    const navigate = useNavigate()
 
     const nextStep = () => {
         
-        if(step === 1){
-            if(!quotationData.start || !quotationData.end){
-                setError("All fields are required")
-                return
-            }
+        if(step === 1 && (!quotationData.start || !quotationData.end)){
+            setError("All fields are required")
+            return
         }
 
-        if(step === 2){
-            if(!quotationData.products.length === 0){
-                setError("Select at least one product")
-                return
-            }
+        if(step === 2 && quotationData.products.length === 0){
+            setError("Select at least one product")
+            return
         }
 
-        if(step === 3){
-            if(!quotationData.suppliers.length === 0){
-                setError("Select at least one supplier")
-                return
-            }
+        if(step === 3 && quotationData.suppliers.length === 0){
+            setError("Select at least one supplier")
+            return
         }
         
         setError("")
@@ -74,6 +66,7 @@ const QuotationCreate = () => {
         const quotationRes = await request("POST", "/quotations", quotation)
 
         if(!quotationRes.ok){
+            setLoading(false)
             setSuccess("")
             setError(quotationRes.data?.message)
             return
@@ -113,7 +106,8 @@ const QuotationCreate = () => {
 
         setSuccess("Quotation created successfully!")
         setError("")
-        setTimeout(() => navigate("/quotations"), 1000)
+        onSave && onSave()
+        setTimeout(() => onClose(), 800)
     }
 
     return (
@@ -122,6 +116,7 @@ const QuotationCreate = () => {
                 <QuotationCreateStep1 start={quotationData.start} end={quotationData.end} onChange={(field, value) => setQuotationData({ ...quotationData, [field]: value})} onNext={nextStep} loading={loading}/>
             )}
             <Alert message={error} />
+            {success && <p className="success">{success}</p>}
 
             {step === 2 && (
                 <QuotationCreateStep2 selectedProducts={quotationData.products} onChange={(products) => setQuotationData({ ...quotationData, products})} onBack={prevStep} onNext={nextStep} loading={loading}/>
@@ -129,6 +124,10 @@ const QuotationCreate = () => {
 
             {step === 3 && (
                 <QuotationCreateStep3 selectedSuppliers={quotationData.suppliers} onChange={(suppliers) => setQuotationData({ ...quotationData, suppliers})} onBack={prevStep} onFinish={handleSave} loading={loading}/>
+            )}
+
+            {step > 1 && step < 3 && (
+                <Button onClick={onClose} style={{ marginTop: '1rem'}}>Cancel</Button>
             )}
         </div>
     )

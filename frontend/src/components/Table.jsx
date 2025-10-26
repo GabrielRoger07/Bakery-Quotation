@@ -2,14 +2,14 @@ import React from 'react'
 import './Table.css'
 import Button from './Button'
 
-const Table = ({title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onReload}) => {
+const Table = ({title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload}) => {
   return (
     <div className="table-container">
         <div className="table-header">
             <h1>{title}</h1>
-            <div className="table-haeder-buttons">
-                {onAdd && <Button onClick={onAdd}>Add</Button>}
+            <div className="table-header-buttons">
                 {onReload && <Button onClick={onReload}>Reload</Button>}
+                {onAdd && <Button onClick={onAdd}>Add</Button>}
             </div>
         </div>
 
@@ -27,7 +27,7 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                             {columns.map((col) => (
                                 <th key={col.key}>{col.label}</th>
                             ))}
-                            {(onEdit || onDelete) && <th>Actions</th>}
+                            {(onEdit || onDelete || onView) && <th>Actions</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -36,7 +36,7 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                                 {columns.map((col) => (
                                     <td key={col.key}>{item[col.key]}</td>
                                 ))}
-                                {(onEdit || onDelete) && (
+                                {(onEdit || onDelete | onView) && (
                                     <td className="actions">
                                         {onEdit && (
                                             <Button onClick={() => onEdit(item)}>Edit</Button>
@@ -44,7 +44,11 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                                         {onDelete && (
                                             <Button onClick={() => onDelete(item[idKey])}>Delete</Button>
                                         )}
+                                        {onView && (
+                                            <Button onClick={() => onView(item)}>View</Button>
+                                        )}
                                     </td>
+
                                 )}
                             </tr>
                         ))}

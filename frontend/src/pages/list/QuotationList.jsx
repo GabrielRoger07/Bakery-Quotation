@@ -7,6 +7,7 @@ import Table from '../../components/Table'
 import Alert from '../../components/Alert'
 import QuotationEdit from '../edit/QuotationEdit'
 import QuotationCreate from '../create/Quotation/QuotationCreate'
+import QuotationDetails from './QuotationDetails'
 import './QuotationList.css'
 
 const QuotationList = () => {
@@ -19,7 +20,9 @@ const QuotationList = () => {
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
     const [quotationToEdit, setQuotationToEdit] = useState(null)
+    const [quotationToView, setQuotationToView] = useState(null)
 
     const columns = [
         { key: "quotationId", label: "ID" },
@@ -33,10 +36,17 @@ const QuotationList = () => {
         setIsEditModalOpen(true)
     }
 
+    const openDetailsModal = (quotation) => {
+        setQuotationToView(quotation)
+        setIsDetailsModalOpen(true)
+    }
+
     const closeModals = () => {
         setQuotationToEdit(null)
+        setQuotationToView(null)
         setIsEditModalOpen(false)
         setIsCreateModalOpen(false)
+        setIsDetailsModalOpen(false)
     }
 
     const handleSaveCreate = (newQuotation) => {
@@ -104,6 +114,7 @@ const QuotationList = () => {
             }}
             onAdd={() => setIsCreateModalOpen(true)}
             onReload={fetchQuotations}
+            onView={openDetailsModal}
             emptyMessage="No quotations found."
         />
 
@@ -119,6 +130,12 @@ const QuotationList = () => {
             <QuotationCreate
                 onSave={handleSaveCreate}
                 onClose={closeModals}
+            />
+        </Modal>
+
+        <Modal isOpen={isDetailsModalOpen} onClose={closeModals} title="Quotation Details">
+            <QuotationDetails
+                quotation={quotationToView}
             />
         </Modal>
     </div>

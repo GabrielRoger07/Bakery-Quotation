@@ -8,6 +8,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.NoSuchElementException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -22,6 +24,12 @@ public class GlobalExceptionHandler {
         FieldError fieldError = ex.getBindingResult().getFieldError();
         String errorMessage = fieldError != null ? fieldError.getDefaultMessage() : "Invalid request";
         ApiError error = new ApiError(errorMessage, HttpStatus.BAD_REQUEST.value());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ApiError> handleNoSuchElementException(NoSuchElementException ex){
+        ApiError error = new ApiError(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 

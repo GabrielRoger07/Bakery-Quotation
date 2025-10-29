@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ContainService {
@@ -96,7 +97,7 @@ public class ContainService {
             Long quotationId = containRequestDTO.getQuotationId();
             Quotation quotation = quotationRepository.findById(quotationId).orElseThrow(() -> new ResourceNotFoundException("Quotation with id " + quotationId + " does not exists"));
 
-            ContainId containId = new ContainId(productId, quotationId);
+            ContainId containId = new ContainId(quotationId, productId);
             Optional<Contain> exists = containRepository.findById(containId);
             if(exists.isPresent()){
                 throw new DuplicateResourceException("Contain with product id " + productId + " and quotation id " + quotationId + " already exists");
@@ -112,6 +113,37 @@ public class ContainService {
         });
 
         return ResponseEntity.status(HttpStatus.CREATED).body(containResponseDTOS);
+    }
+
+    public ResponseEntity<List<ContainResponseDTO>> updateContains(List<ContainRequestDTO> containRequestDTOS){
+        List<ContainResponseDTO> containResponseDTOS = new ArrayList<>();
+        List<Long> requestProductIds = containRequestDTOS.stream().map(ContainRequestDTO::getProductId).toList();
+
+        List<Contain> containsByQuotationId = containRepository.findAllByQuotation_Id(containRequestDTOS.getFirst().getQuotationId());
+        List<Contain> containsToRemove = containsByQuotationId.stream().filter(contain -> !requestProductIds.contains(contain.getProduct().getId())).toList();
+
+        // Removing old contains that are not on request
+        containRepository.deleteAll(containsToRemove);
+
+        containRequestDTOS.forEach(contain -> {
+            Long productId = contain.getProductId();
+            Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
+
+            Long quotationId = contain.getQuotationId();
+            Quotation quotation = quotationRepository.findById(quotationId).orElseThrow(() -> new ResourceNotFoundException("Quotation with id " + quotationId + " does not exists"));
+
+            ContainId containId = new ContainId(quotationId, productId);
+
+            Contain newContain = containMapper.toEntity(contain);
+            newContain.setContainId(containId);
+            newContain.setProduct(product);
+            newContain.setQuotation(quotation);
+
+            containRepository.save(newContain);
+            containResponseDTOS.add(containMapper.toDto(newContain));
+        });
+
+        return ResponseEntity.status(HttpStatus.OK).body(containResponseDTOS);
     }
 
     public ResponseEntity<ContainResponseDTO> deleteContainById(Long quotationId, Long productId){

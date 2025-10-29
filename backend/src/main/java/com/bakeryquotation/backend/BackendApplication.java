@@ -83,11 +83,15 @@ public class BackendApplication {
             List<Product> products = productRepository.findAll();
             Contain contain1 = new Contain(quotation1, products.get(0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(0.0));
             Contain contain2 = new Contain(quotation1, products.get(1), BigDecimal.valueOf(5.0), BigDecimal.valueOf(3.0));
-            Contain contain3 = new Contain(quotation2, products.get(2), BigDecimal.valueOf(2.0), BigDecimal.valueOf(0.0));
+            Contain contain3 = new Contain(quotation1, products.get(2), BigDecimal.valueOf(7.0), BigDecimal.valueOf(2.0));
+            Contain contain4 = new Contain(quotation1, products.get(3), BigDecimal.valueOf(25.0), BigDecimal.valueOf(1.0));
+            Contain contain5 = new Contain(quotation2, products.get(2), BigDecimal.valueOf(2.0), BigDecimal.valueOf(0.0));
 
             containRepository.save(contain1);
             containRepository.save(contain2);
             containRepository.save(contain3);
+            containRepository.save(contain4);
+            containRepository.save(contain5);
 
             List<Supplier> suppliers = supplierRepository.findAll();
             Participation participation1 = new Participation(quotation1, suppliers.get(0), "Link de Acesso 1", "accessToken");

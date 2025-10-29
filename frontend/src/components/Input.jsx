@@ -1,7 +1,7 @@
 import React from 'react'
 import './Input.css'
 
-const Input = ({ label, type, name, value, onChange, placeholder }) => {
+const Input = ({ label, type, name, value, onChange, placeholder, min, max, step }) => {
   return (
     <div className='input-container'>
         <label>{label}</label>
@@ -11,6 +11,9 @@ const Input = ({ label, type, name, value, onChange, placeholder }) => {
             value={value} 
             onChange={onChange} 
             placeholder={placeholder}
+            min={min}
+            max={max}
+            step={step}
         />
     </div>
   )

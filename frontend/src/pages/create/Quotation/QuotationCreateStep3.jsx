@@ -54,8 +54,10 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish })
                 ))}
             </ul>
 
-            <Button onClick={onBack}>Back</Button>
-            <Button onClick={() => onChange(localSelected) & onFinish()}>Finish</Button>
+            <div className="step-navigation">
+                <Button onClick={onBack}>Back</Button>
+                <Button onClick={() => onChange(localSelected) & onFinish()}>Finish</Button>
+            </div>
         </div>
     )
 }

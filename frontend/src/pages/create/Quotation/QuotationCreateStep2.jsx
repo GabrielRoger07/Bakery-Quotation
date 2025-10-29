@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from '../../../components/Button'
+import Input from '../../../components/Input'
 import useFetch from '../../../hooks/useFetch'
 import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
-import Input from '../../../components/Input'
+import Alert from '../../../components/Alert'
 
 const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) => {
 
     const { request } = useFetch("http://localhost:8080/api/v1")
     const [availableProducts, setAvailableProducts] = useState([])
     const [localSelected, setLocalSelected] = useState(selectedProducts)
+    const [selectedProductId, setSelectedProductId] = useState("")
+    const [quantity, setQuantity] = useState(1)
+    const [bonus, setBonus] = useState(0)
+    const [error, setError] = useState("")
 
     useEffect(() => {
 
@@ -19,58 +24,86 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) =>
 
         const fetchProducts = async () => {
             const res = await request("GET", `/products/company/${cnpj}`)
-            if(res.ok){
+            if(res.ok) {
                 setAvailableProducts(res.data)
+                if(res.data.length > 0) setSelectedProductId(res.data[0].productId)
             }
         }
+
         fetchProducts()
     }, [request])
 
-    const handleAddProduct = (product) => {
-        if(!localSelected.find(p => p.id === product.productId)){
-            setLocalSelected([...localSelected, { ...product, quantity: 1, bonus: 0}])
+    const handleAddProduct = () => {
+
+        if(!selectedProductId) return
+
+        const product = availableProducts.find(p => p.productId === selectedProductId)
+        if(!product) return
+
+        if(localSelected.find(p => p.productId === selectedProductId)){
+            setError("Product already added!")
+            return
         }
+        
+        setLocalSelected([...localSelected, { ...product, quantity: Number(quantity), bonusLimit: Number(bonus)}])
+        setError("")
     }
 
-    const handleChange = (productId, field, value) => {
-        setLocalSelected(
-            localSelected.map(p => (
-                p.productId === productId ? {...p, [field]: value} : p
-            ))
-        )
-    }
-
-    const handleRemove = (productId) => {
+    const handleRemoveProduct = (productId) => {
         setLocalSelected(localSelected.filter(p => p.productId !== productId))
     }
 
     return (
         <div className="step-products">
             <h2>Step 2: Select Products</h2>
-            <ul>
-                {availableProducts.map(p => (
-                    <li key={p.productId}>
-                        {p.productName}{" "}
-                        <Button onClick={() => handleAddProduct(p)}>Add</Button>
-                    </li>
-                ))}
-            </ul>
+            
+            <div className="product-add-form">
+                <select value={selectedProductId} onChange={e => setSelectedProductId(Number(e.target.value))} className="custom-select">
+                    {availableProducts.map(p => (
+                        <option key={p.productId} value={p.productId}>
+                            {p.productName}
+                        </option>
+                    ))}
+                </select>
 
-            <h3>Selected Products</h3>
-            <ul>
-                {localSelected.map(p => (
-                    <li key={p.productId}>
-                        {p.productName} - Quantity: 
-                        <Input type="number" value={p.quantity} onChange={e => handleChange(p.productId, "quantity", e.target.value)}></Input>
-                        Bonus:
-                        <Input type="number" value={p.bonus} onChange={e => handleChange(p.productId, "bonus", e.target.value)}></Input>
-                        <Button onClick={() => handleRemove(p.productId)}>Remove</Button>
-                    </li>
-                ))}
-            </ul>
+                <div className="quantity-bonus-group">
+                    <Input 
+                        type="number"
+                        value={quantity}
+                        onChange={e => setQuantity(e.target.value)}
+                        label="Quantity"
+                        min="1"
+                    />
+                    <Input 
+                        type="number"
+                        value={bonus}
+                        onChange={e => setBonus(e.target.value)}
+                        label="Bonus"
+                        min="0"
+                    />
+                </div>
 
-            <Button onClick={onBack}>Back</Button>
-            <Button onClick={() => onChange(localSelected) & onNext()}>Next</Button>
+                <Button onClick={handleAddProduct}>Add Product</Button>
+            </div>
+
+            <Alert message={error} />
+
+            <div className="selected-products">
+                <h3>Products Added ({localSelected.length})</h3>
+                <ul>
+                    {localSelected.map(p => (
+                        <li key={p.productId} className="selected-product-item">
+                            {p.productName} - Qtd: {p.quantity} | Bonus: {p.bonusLimit}
+                            <Button className="remove-product-btn" onClick={() => handleRemoveProduct(p.productId)}>x</Button>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <div className="step-navigation">
+                <Button onClick={onBack}>Back</Button>
+                <Button onClick={() => onChange(localSelected) & onNext()}>Next</Button>
+            </div>
         </div>
     )
 }

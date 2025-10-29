@@ -50,13 +50,17 @@ const QuotationList = () => {
     }
 
     const handleSaveCreate = (newQuotation) => {
-        setQuotations((prev) => [...prev, newQuotation])
+        const status = new Date(newQuotation.quotationStart) > new Date() ? 'Scheduled' : new Date(newQuotation.quotationEnd) < new Date() ? 'Closed' : 'Active' 
+        console.log(newQuotation)
+        setQuotations((prev) => [...prev, { ...newQuotation, status}])
     }
 
     const handleSaveEdit = (updatedQuotation) => {
-        setQuotations((prev) => {
-            prev.map((q) => q.quotationId === updatedQuotation.quotationId ? updatedQuotation : q)
-        })
+        console.log(updatedQuotation)
+        const status = new Date(updatedQuotation.quotationStart) > new Date() ? 'Scheduled' : new Date(updatedQuotation.quotationEnd) < new Date() ? 'Closed' : 'Active'
+        setQuotations((prev) => 
+            prev.map((q) => q.quotationId === updatedQuotation.quotationId ? {...updatedQuotation, status} : q)
+        )
     }
 
     const handleDelete = async (quotationId, started) => {

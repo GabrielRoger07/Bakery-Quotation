@@ -80,6 +80,9 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         const decoded = jwtDecode(token)
         const cnpj = decoded.companyCnpj
 
+        let quotationRes = null
+        let updatedQuotation = null
+
         if(mode === "create"){
             const quotation = {
                 quotationStart: quotationData.start,
@@ -87,7 +90,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                 companyCnpj: cnpj
             }
 
-            const quotationRes = await request("POST", "/quotations", quotation)
+            quotationRes = await request("POST", "/quotations", quotation)
             if(!quotationRes.ok){
                 setLoading(false)
                 setError(quotationRes.data?.message)
@@ -95,21 +98,39 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             }
 
             const quotationId = quotationRes.data.quotationId
-            await saveRelatedData(quotationId)
+            updatedQuotation = quotationRes.data
+            await saveRelatedData(quotationId, mode)
+        }else if(mode === "edit" && initialData){
+            const quotation = {
+                quotationStart: quotationData.start,
+                quotationEnd: quotationData.end,
+                companyCnpj: cnpj
+            }
+
+            quotationRes = await request("PUT", `/quotations/${initialData.quotationId}`, quotation)
+            if(!quotationRes.ok){
+                setLoading(false)
+                setError(quotationRes.data?.message)
+                return
+            }
+
+            updatedQuotation = quotationRes.data
+            await saveRelatedData(initialData.quotationId, mode)
         }
 
         setLoading(false)
         setSuccess(`Quotation ${mode === "create" ? "created" : "updated"} successfully!`)
-        onSave && onSave()
+        onSave && onSave(updatedQuotation)
+
         setTimeout(() => onClose(), 800)
     }
 
-    const saveRelatedData = async (quotationId) => {
+    const saveRelatedData = async (quotationId, mode) => {
         const productsPayload = quotationData.products.map(p => ({
             productId: p.productId,
             quotationId,
             quantity: p.quantity,
-            bonusLimit: p.bonus
+            bonusLimit: p.bonusLimit
         }))
 
         const suppliersPayload = quotationData.suppliers.map(s => ({
@@ -117,19 +138,23 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             quotationId
         }))
 
-        const productsRes = await request("POST", "/contains/batch", productsPayload)
+        const method = mode === "create" ? "POST" : "PUT"
+
+        const productsRes = await request(method, "/contains/batch", productsPayload)
 
         if(!productsRes.ok){
             setError(productsRes.data?.message)
             return
         }
 
-        const suppliersRes = await request("POST", "/participations/batch", suppliersPayload)
+        /*
+        const suppliersRes = await request(method, "/participations/batch", suppliersPayload)
         
         if(!suppliersRes.ok){
             setError(suppliersRes.data?.message)
             return
         }
+        */
     }
 
     return (
@@ -165,10 +190,6 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                     onFinish={handleSave}
                     loading={loading}
                 />
-            )}
-
-            {step > 1 && step < 3 && (
-                <Button onClick={onClose}>Cancel</Button>
             )}
         </div>
     )

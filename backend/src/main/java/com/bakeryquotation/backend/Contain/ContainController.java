@@ -43,6 +43,11 @@ public class ContainController {
         return containService.createContains(containRequestDTOS);
     }
 
+    @PutMapping("/batch")
+    public ResponseEntity<List<ContainResponseDTO>> updateContains(@Valid @RequestBody List<ContainRequestDTO> containRequestDTOS){
+        return containService.updateContains(containRequestDTOS);
+    }
+
     @DeleteMapping("/{quotationId}/{productId}")
     public ResponseEntity<ContainResponseDTO> deleteContainById(@PathVariable("quotationId") Long quotationId, @PathVariable("productId") Long productId){
         return containService.deleteContainById(quotationId, productId);

@@ -2,7 +2,7 @@ import React from 'react'
 import './Table.css'
 import Button from './Button'
 
-const Table = ({title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload}) => {
+const Table = ({title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload, onMonitor}) => {
   return (
     <div className="table-container">
         <div className="table-header">
@@ -27,7 +27,7 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                             {columns.map((col) => (
                                 <th key={col.key}>{col.label}</th>
                             ))}
-                            {(onEdit || onDelete || onView) && <th>Actions</th>}
+                            {(onEdit || onDelete || onView || onMonitor) && <th>Actions</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -36,7 +36,7 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                                 {columns.map((col) => (
                                     <td key={col.key}>{item[col.key]}</td>
                                 ))}
-                                {(onEdit || onDelete | onView) && (
+                                {(onEdit || onDelete || onView || onMonitor) && (
                                     <td className="actions">
                                         {onEdit && (
                                             <Button onClick={() => onEdit(item)}>Edit</Button>
@@ -46,6 +46,9 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                                         )}
                                         {onView && (
                                             <Button onClick={() => onView(item)}>View</Button>
+                                        )}
+                                        {onMonitor && (
+                                            <Button onClick={() => onMonitor(item)}>Monitor</Button>
                                         )}
                                     </td>
 

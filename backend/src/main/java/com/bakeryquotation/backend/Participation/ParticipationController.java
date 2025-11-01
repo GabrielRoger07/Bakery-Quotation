@@ -54,6 +54,11 @@ public class ParticipationController {
         return participationService.validateAccessToken(participationId, accessToken);
     }
 
+    @PutMapping("/batch")
+    public ResponseEntity<List<ParticipationResponseDTO>> updateParticipations(@Valid @RequestBody List<ParticipationRequestDTO> participationRequestDTOS){
+        return participationService.updateParticipations(participationRequestDTOS);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ParticipationResponseDTO> deleteParticipationById(@PathVariable("id") Long id){
         return participationService.deleteParticipationById(id);

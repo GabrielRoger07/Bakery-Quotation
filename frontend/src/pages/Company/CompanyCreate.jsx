@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import Input from '../../components/Input'
-import Alert from '../../components/Alert'
-import Button from '../../components/Button'
-import useFetch from '../../hooks/useFetch'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import useFetch from '../../hooks/useFetch'
+import Input from '../../components/Input'
+import Button from '../../components/Button'
+import Alert from '../../components/Alert'
 import '../../components/Auth.css'
 
 const CompanyCreate = () => {
@@ -16,7 +16,7 @@ const CompanyCreate = () => {
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
-    const { request, loading } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch("http://localhost:8080/api/v1")
     const navigate = useNavigate();
 
     const handleCreateCompany = async (e) => {

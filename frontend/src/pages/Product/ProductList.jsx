@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
-import useFetch from '../../hooks/useFetch'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
-import Modal from '../../components/Modal'
-import ProductEdit from '../edit/ProductEdit'
+import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
-import './ProductList.css'
+import Modal from '../../components/Modal'
 import Alert from '../../components/Alert'
-import ProductCreate from '../create/ProductCreate'
+import ProductCreate from './ProductCreate'
+import ProductEdit from './ProductEdit'
+import './ProductList.css'
 
 const ProductList = () => {
 

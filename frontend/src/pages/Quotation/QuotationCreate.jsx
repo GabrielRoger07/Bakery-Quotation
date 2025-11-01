@@ -1,4 +1,4 @@
-import QuotationForm from '../../QuotationForm'
+import QuotationForm from './QuotationForm'
 
 const QuotationCreate = ({ onClose, onSave }) => {
     return (

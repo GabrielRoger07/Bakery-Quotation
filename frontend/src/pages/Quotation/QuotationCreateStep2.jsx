@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import Button from '../../../components/Button'
-import Input from '../../../components/Input'
-import useFetch from '../../../hooks/useFetch'
-import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
-import Alert from '../../../components/Alert'
+import Cookies from 'js-cookie'
+import useFetch from '../../hooks/useFetch'
+import Input from '../../components/Input'
+import Button from '../../components/Button'
+import Alert from '../../components/Alert'
 
 const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) => {
 
@@ -94,7 +94,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) =>
                     {localSelected.map(p => (
                         <li key={p.productId} className="selected-product-item">
                             {p.productName} - Qtd: {p.quantity} | Bonus: {p.bonusLimit}
-                            <Button className="remove-product-btn" onClick={() => handleRemoveProduct(p.productId)}>x</Button>
+                            <Button className="remove-product-btn" onClick={() => handleRemoveProduct(p.productId)}>Remove</Button>
                         </li>
                     ))}
                 </ul>
@@ -102,7 +102,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) =>
 
             <div className="step-navigation">
                 <Button onClick={onBack}>Back</Button>
-                <Button onClick={() => onChange(localSelected) & onNext()}>Next</Button>
+                <Button onClick={() => {onChange(localSelected); onNext()}}>Next</Button>
             </div>
         </div>
     )

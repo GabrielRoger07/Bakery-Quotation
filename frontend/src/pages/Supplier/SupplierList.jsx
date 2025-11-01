@@ -3,11 +3,11 @@ import useFetch from '../../hooks/useFetch'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import Modal from '../../components/Modal'
-import SupplierEdit from '../edit/SupplierEdit'
+import SupplierEdit from './SupplierEdit'
 import Table from '../../components/Table'
 import './SupplierList.css'
 import Alert from '../../components/Alert'
-import SupplierCreate from '../create/SupplierCreate'
+import SupplierCreate from './SupplierCreate'
 
 const SupplierList = () => {
 

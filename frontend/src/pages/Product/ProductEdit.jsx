@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import Button from '../../components/Button'
 import useFetch from '../../hooks/useFetch'
-import Alert from '../../components/Alert'
 import Input from '../../components/Input'
+import Button from '../../components/Button'
+import Alert from '../../components/Alert'
 
 const ProductEdit = ({product, onSave, onClose}) => {
 

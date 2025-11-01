@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
-import Input from '../components/Input'
-import Alert from '../components/Alert'
-import Button from '../components/Button'
-import useFetch from '../hooks/useFetch'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
-import '../components/Auth.css'
+import useFetch from '../../hooks/useFetch'
+import Input from '../../components/Input'
+import Button from '../../components/Button'
+import Alert from '../../components/Alert'
+import '../../components/Auth.css'
 
 const Login = () => {
     const [companyEmail, setCompanyEmail] = useState("")

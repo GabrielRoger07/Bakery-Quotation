@@ -45,7 +45,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish })
 
             <div className="available-suppliers">
                 <ul>
-                    {availableSuppliers.map(s => (
+                    {availableSuppliers.filter(s => !localSelected.some(sel => sel.supplierId === s.supplierId)).map(s => (
                         <li key={s.supplierId} className="available-supplier-item">
                             {s.supplierName} ({s.employerName}){" "}
                             <Button className="add-supplier-btn" onClick={() => handleAddSupplier(s)}>Add</Button>

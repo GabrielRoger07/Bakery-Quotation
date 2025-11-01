@@ -127,6 +127,39 @@ public class ParticipationService {
         return ResponseEntity.status(HttpStatus.CREATED).body(participationResponseDTOS);
     }
 
+    public ResponseEntity<List<ParticipationResponseDTO>> updateParticipations(List<ParticipationRequestDTO> participationRequestDTOS){
+        List<ParticipationResponseDTO> participationResponseDTOS = new ArrayList<>();
+        List<Long> requestSuppliersIds = participationRequestDTOS.stream().map(ParticipationRequestDTO::getSupplierId).toList();
+
+        List<Participation> participationsByQuotationId = participationRepository.findAllByQuotation_Id(participationRequestDTOS.getFirst().getQuotationId());
+        List<Long> existedSuppliersIds = participationsByQuotationId.stream().map(p -> p.getSupplier().getId()).toList();
+
+        List<Participation> participationsToRemove = participationsByQuotationId.stream().filter(participation -> !requestSuppliersIds.contains(participation.getSupplier().getId())).toList();
+        List<ParticipationRequestDTO> newParticipations = participationRequestDTOS.stream().filter(participation -> !existedSuppliersIds.contains(participation.getSupplierId())).toList();
+
+        participationRepository.deleteAll(participationsToRemove);
+
+        newParticipations.forEach(participation -> {
+            Long supplierId = participation.getSupplierId();
+            Supplier supplier = supplierRepository.findById(supplierId).orElseThrow(() -> new ResourceNotFoundException("Supplier with id " + supplierId + " does not exists"));
+
+            Long quotationId = participation.getQuotationId();
+            Quotation quotation = quotationRepository.findById(quotationId).orElseThrow(() -> new ResourceNotFoundException("Quotation with id " + quotationId + " does not exists"));
+
+            Participation newParticipation = participationMapper.toEntity(participation);
+            newParticipation.setQuotation(quotation);
+            newParticipation.setSupplier(supplier);
+            String accessToken = generateDigitToken(8);
+            newParticipation.setAccessToken(accessToken);
+            newParticipation.setLink("Link de teste");
+
+            Participation participationSaved = participationRepository.save(newParticipation);
+            participationResponseDTOS.add(participationMapper.toDto(participationSaved));
+        });
+
+        return ResponseEntity.status(HttpStatus.OK).body(participationResponseDTOS);
+    }
+
     public ResponseEntity<ParticipationResponseDTO> deleteParticipationById(Long id){
         Participation participation = participationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + id + " does not exists"));
         participationRepository.delete(participation);

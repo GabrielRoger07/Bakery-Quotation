@@ -1,16 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
 
-import Login from './pages/Login';
-import CompanyCreate from './pages/create/CompanyCreate';
-import SupplierList from './pages/list/SupplierList';
-import ProductList from './pages/list/ProductList';
-import SupplierCreate from './pages/create/SupplierCreate';
-import ProductCreate from './pages/create/ProductCreate';
-import QuotationList from './pages/list/QuotationList';
-import QuotationCreate from './pages/create/Quotation/QuotationCreate';
+import Login from './pages/Company/Login';
+import CompanyCreate from './pages/Company/CompanyCreate';
+import SupplierList from './pages/Supplier/SupplierList';
+import ProductList from './pages/Product/ProductList';
+import QuotationList from './pages/Quotation/QuotationList';
 import SupplierPage from './pages/SupplierAccess/SupplierPage';
 import Navbar from './components/Navbar';
+import QuotationMonitor from './pages/Quotation/QuotationMonitor';
 
 function App() {
 
@@ -41,6 +39,7 @@ function AppContent(){
           <Route path= "/suppliers" element={<SupplierList />}></Route>
           <Route path= "/products" element={<ProductList />}></Route>
           <Route path= "/quotations" element={<QuotationList />}></Route>
+          <Route path= "/quotations/monitor/" element={<QuotationMonitor />}></Route>
           <Route path= "/quotation" element={<SupplierPage />}></Route>
           <Route path="*" element={<Navigate to="/login" />}></Route>
         </Routes>

@@ -44,7 +44,6 @@ const useFetch = (baseUrl = "") => {
                 }
 
                 if(response.status === 403){
-                    console.log("entrou aqui")
                     Cookies.remove("token")
                     navigate("/login")
                 }

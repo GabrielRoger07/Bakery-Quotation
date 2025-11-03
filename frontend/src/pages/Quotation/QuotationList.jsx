@@ -83,6 +83,7 @@ const QuotationList = () => {
     const fetchQuotations = async () => {
         const token = Cookies.get("token")
         const decoded = jwtDecode(token)
+        console.log(decoded)
         const cnpj = decoded.companyCnpj
 
         const res = await request("GET", `/quotations/company/${cnpj}`)

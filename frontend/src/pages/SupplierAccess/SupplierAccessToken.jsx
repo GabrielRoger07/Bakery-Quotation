@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import useFetch from '../../hooks/useFetch'
+import '../../components/Auth.css'
 
 const SupplierAccessToken = ({ participationId, onAccessGranted }) => {
 
@@ -39,13 +40,15 @@ const SupplierAccessToken = ({ participationId, onAccessGranted }) => {
     }
 
     return (
-        <div className="supplier-access-token">
-            <h2>Enter your access token</h2>
-            <form onSubmit={handleSubmit}>
-                <Input type="text" value={accessToken} onChange={e => setAccessToken(e.target.value)} placeholder="Access Token"></Input>
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                <Button type="submit" disabled={loading}>{loading ? "Validating..." : "Access Quotation"}</Button>
-            </form>
+        <div className="auth-container">
+            <div className="auth-box">
+                <h2>Enter your access token</h2>
+                <form onSubmit={handleSubmit}>
+                    <Input type="text" value={accessToken} onChange={e => setAccessToken(e.target.value)} placeholder="Access Token"></Input>
+                    {error && <p style={{ color: "red" }}>{error}</p>}
+                    <Button type="submit" disabled={loading}>{loading ? "Validating..." : "Access Quotation"}</Button>
+                </form>
+            </div>
         </div>
     )
 }

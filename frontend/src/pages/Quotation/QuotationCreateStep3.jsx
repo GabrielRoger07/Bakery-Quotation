@@ -36,8 +36,13 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish })
     }
 
     const handleRemoveSupplier = (supplierId) => {
-        setLocalSelected(localSelected.filter(s => s.supplierId !== supplierId))
+        const updatedList = localSelected.filter(s => s.supplierId !== supplierId)
+        setLocalSelected(updatedList)
     }
+
+    useEffect(() => {
+        onChange(localSelected)
+    }, [localSelected])
 
     return (
         <div className="step-suppliers">

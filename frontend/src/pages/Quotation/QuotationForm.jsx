@@ -53,44 +53,43 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
     }
 
     const nextStep = () => {
-        if(step === 1){
-            if(!quotationData.start || !quotationData.end){
-                setError("All fields are required")
-                return
-            }else{
-                const now = new Date()
-                const start = new Date(quotationData.start)
-                const end = new Date(quotationData.end)
-                if(start <= now){
-                    setError("The start date must be later than the current date")
+        if(step !== 3){
+            if(step === 1){
+                if(!quotationData.start || !quotationData.end){
+                    setError("All fields are required")
                     return
-                }else if(end <= now){
-                    setError("The end date must be later than the current date")
-                    return
-                }else if(end <= start){
-                    setError("The end date must be later than the start date")
-                    return
+                }else{
+                    const now = new Date()
+                    const start = new Date(quotationData.start)
+                    const end = new Date(quotationData.end)
+                    if(start <= now){
+                        setError("The start date must be later than the current date")
+                        return
+                    }else if(end <= now){
+                        setError("The end date must be later than the current date")
+                        return
+                    }else if(end <= start){
+                        setError("The end date must be later than the start date")
+                        return
+                    }
                 }
             }
-        }
 
-        if(step === 2 && quotationData.products.length === 0){
-            console.log("entrou aqui")
-            setError("Select at least one product")
-            return
-        }
+            if(step === 2 && quotationData.products.length === 0){
+                setError("Select at least one product")
+                return
+            }
 
-        if(step === 3){
-            console.log(quotationData)
+            setError("")
+            setStep(step + 1)
+        }else{
+            if(quotationData.suppliers.length === 0){
+                setError("Select at least one supplier")
+                return
+            }else{
+                handleSave()
+            }
         }
-
-        if(step === 3 && quotationData.suppliers.length === 0){
-            setError("Select at least one supplier")
-            return
-        }
-
-        setError("")
-        setStep(step + 1)
     }
 
     const prevStep = () => setStep(step - 1)
@@ -192,9 +191,6 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                 />
             )}
 
-            <Alert message={error} />
-            {success && <p className="success">{success}</p>}
-
             {step === 2 && (
                 <QuotationCreateStep2
                     selectedProducts={quotationData.products} 
@@ -210,10 +206,13 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                     selectedSuppliers={quotationData.suppliers} 
                     onChange={(suppliers) => handleStepChange("suppliers", suppliers)}
                     onBack={prevStep}
-                    onFinish={handleSave}
+                    onFinish={nextStep}
                     loading={loading}
                 />
             )}
+
+            <Alert message={error} />
+            {success && <p className="success">{success}</p>}
         </div>
     )
 }

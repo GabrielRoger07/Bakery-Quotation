@@ -7,6 +7,7 @@ import com.bakeryquotation.backend.Participation.Participation;
 import com.bakeryquotation.backend.Participation.ParticipationRepository;
 import com.bakeryquotation.backend.Product.Product;
 import com.bakeryquotation.backend.Product.ProductRepository;
+import com.bakeryquotation.backend.exception.BidAboveLowestException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,6 +77,12 @@ public class BidService {
 
         Participation participation = participationRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + participationId + " does not exists"));
         Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
+
+        BidResponseDTO actualLowestBid = getLowestBid(participationId, productId).getBody();
+
+        if(actualLowestBid != null && bidRequestDTO.getPrice().compareTo(actualLowestBid.getPrice()) >= 0){
+            throw new BidAboveLowestException("Bid must be lower than the lowest bid");
+        }
 
         BidId bidId = new BidId(participationId, productId, LocalDateTime.now());
 

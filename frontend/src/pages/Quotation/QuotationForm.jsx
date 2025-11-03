@@ -47,16 +47,41 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
     useEffect(() => {
         fetchEditData()
     }, [initialData, mode, request])
+    
+    const handleStepChange = (field, value) => {
+        setQuotationData(prev => ({...prev, [field]: value}))
+    }
 
     const nextStep = () => {
-        if(step === 1 && (!quotationData.start || !quotationData.end)){
-            setError("All fields are required")
-            return
+        if(step === 1){
+            if(!quotationData.start || !quotationData.end){
+                setError("All fields are required")
+                return
+            }else{
+                const now = new Date()
+                const start = new Date(quotationData.start)
+                const end = new Date(quotationData.end)
+                if(start <= now){
+                    setError("The start date must be later than the current date")
+                    return
+                }else if(end <= now){
+                    setError("The end date must be later than the current date")
+                    return
+                }else if(end <= start){
+                    setError("The end date must be later than the start date")
+                    return
+                }
+            }
         }
 
         if(step === 2 && quotationData.products.length === 0){
+            console.log("entrou aqui")
             setError("Select at least one product")
             return
+        }
+
+        if(step === 3){
+            console.log(quotationData)
         }
 
         if(step === 3 && quotationData.suppliers.length === 0){
@@ -72,10 +97,6 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
 
     const handleSave = async (suppliers = null) => {
         const finalData = suppliers ? {...quotationData, suppliers} : quotationData
-        console.log("valor de finalData: ")
-        console.log(finalData)
-        console.log("valor de quotationData: ")
-        console.log(quotationData)
         setError("")
         setSuccess("")
         setLoading(true)
@@ -130,8 +151,6 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
     }
 
     const saveRelatedData = async (quotationId, mode, data) => {
-        console.log("valor de data: ")
-        console.log(data)
         const productsPayload = data.products.map(p => ({
             productId: p.productId,
             quotationId,
@@ -167,7 +186,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                 <QuotationCreateStep1 
                     start={quotationData.start} 
                     end={quotationData.end} 
-                    onChange={(field, value) => setQuotationData({...quotationData, [field]: value})}
+                    onChange={handleStepChange}
                     onNext={nextStep}
                     loading={loading}
                 />
@@ -179,7 +198,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             {step === 2 && (
                 <QuotationCreateStep2
                     selectedProducts={quotationData.products} 
-                    onChange={(products) => setQuotationData({...quotationData, products})}
+                    onChange={(products) => handleStepChange("products", products)}
                     onBack={prevStep}
                     onNext={nextStep}
                     loading={loading}
@@ -189,7 +208,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             {step === 3 && (
                 <QuotationCreateStep3
                     selectedSuppliers={quotationData.suppliers} 
-                    onChange={(suppliers) => setQuotationData({...quotationData, suppliers})}
+                    onChange={(suppliers) => handleStepChange("suppliers", suppliers)}
                     onBack={prevStep}
                     onFinish={handleSave}
                     loading={loading}

@@ -45,13 +45,19 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) =>
             return
         }
         
-        setLocalSelected([...localSelected, { ...product, quantity: Number(quantity), bonusLimit: Number(bonus)}])
+        const updatedList = [...localSelected, { ...product, quantity: Number(quantity), bonusLimit: Number(bonus)}]
+        setLocalSelected(updatedList)
         setError("")
     }
 
     const handleRemoveProduct = (productId) => {
-        setLocalSelected(localSelected.filter(p => p.productId !== productId))
+        const updatedList = localSelected.filter(p => p.productId !== productId)
+        setLocalSelected(updatedList)
     }
+
+    useEffect(() => {
+        onChange(localSelected)
+    }, [localSelected])
 
     return (
         <div className="step-products">
@@ -68,17 +74,17 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) =>
 
                 <div className="quantity-bonus-group">
                     <Input 
+                        label="Quantity"
                         type="number"
                         value={quantity}
                         onChange={e => setQuantity(e.target.value)}
-                        label="Quantity"
                         min="1"
                     />
                     <Input 
+                        label="Bonus"
                         type="number"
                         value={bonus}
                         onChange={e => setBonus(e.target.value)}
-                        label="Bonus"
                         min="0"
                     />
                 </div>

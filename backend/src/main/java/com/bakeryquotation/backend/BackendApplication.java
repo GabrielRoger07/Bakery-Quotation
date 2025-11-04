@@ -1,5 +1,7 @@
 package com.bakeryquotation.backend;
 
+import com.bakeryquotation.backend.Bid.Bid;
+import com.bakeryquotation.backend.Bid.BidRepository;
 import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Company.CompanyRepository;
 import com.bakeryquotation.backend.Contain.Contain;
@@ -18,7 +20,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
@@ -41,6 +42,7 @@ public class BackendApplication {
                                  QuotationRepository quotationRepository,
                                  ContainRepository containRepository,
                                  ParticipationRepository participationRepository,
+                                 BidRepository bidRepository,
                                  PasswordEncoder passwordEncoder){
         return args -> {
             Faker faker = new Faker(new Locale("pt-BR"));
@@ -101,6 +103,14 @@ public class BackendApplication {
             participationRepository.save(participation1);
             participationRepository.save(participation2);
             participationRepository.save(participation3);
+
+            Bid bid1 = new Bid(participation1, products.getFirst(), BigDecimal.valueOf(100.0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(0.0));
+            Bid bid2 = new Bid(participation2, products.getFirst(), BigDecimal.valueOf(95.0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(0.0));
+            Bid bid3 = new Bid(participation1, products.get(1), BigDecimal.valueOf(200.0), BigDecimal.valueOf(5.0), BigDecimal.valueOf(0.0));
+
+            bidRepository.save(bid1);
+            bidRepository.save(bid2);
+            bidRepository.save(bid3);
         };
     }
 

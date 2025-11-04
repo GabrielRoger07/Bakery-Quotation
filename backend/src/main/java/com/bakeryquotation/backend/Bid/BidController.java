@@ -38,6 +38,11 @@ public class BidController {
         return bidService.getBidsByQuotationId(quotationId);
     }
 
+    @GetMapping("/participations/{participationId}")
+    public ResponseEntity<List<BidResponseDTO>> getBidsByParticipationId(@PathVariable("participationId") Long participationId){
+        return bidService.getBidsByParticipationId(participationId);
+    }
+
     @PostMapping
     public ResponseEntity<BidResponseDTO> createBid(@Valid @RequestBody BidRequestDTO bidRequestDTO){
         return bidService.createBid(bidRequestDTO);

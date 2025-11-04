@@ -58,7 +58,6 @@ public class BidService {
     }
 
     public ResponseEntity<BidResponseDTO> getLowestBid(Long participationId, Long productId){
-
         participationRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + participationId + " does not exists"));
         productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
 
@@ -69,6 +68,12 @@ public class BidService {
             bidResponseDTO = bidMapper.toDto(lowestBid.get());
         }
         return ResponseEntity.status(HttpStatus.OK).body(bidResponseDTO);
+    }
+
+    public ResponseEntity<List<BidResponseDTO>> getBidsByQuotationId(Long quotationId){
+        List<Bid> bids = bidRepository.findAllByParticipation_Quotation_Id(quotationId);
+        List<BidResponseDTO> bidResponseDTOS = bids.stream().map(bidMapper::toDto).toList();
+        return ResponseEntity.status(HttpStatus.OK).body(bidResponseDTOS);
     }
 
     public ResponseEntity<BidResponseDTO> createBid(BidRequestDTO bidRequestDTO){

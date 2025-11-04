@@ -1,0 +1,131 @@
+.quotation-monitor-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f4f6f8;
+    min-height: 100vh;
+    padding: 2.5rem 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #1f2937;
+}
+
+.monitor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width:1000px;
+    margin-bottom: 2rem;
+}
+
+.monitor-header h2 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: #0a66c2;
+    letter-spacing: 0.5px;
+}
+
+.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+}
+
+.monitor-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 1100px;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.monitor-stats div {
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #374151;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.monitor-stats div:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.monitor-sections {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1000px;
+    gap: 2rem;
+}
+
+.monitor-section {
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.monitor-section:hover {
+    transform: translateY(-3px);
+}
+
+.monitor-section h3 {
+    color: #0a66c2;
+    margin-bottom: 1.25rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+
+    .monitor-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .monitor-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .monitor-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .monitor-section {
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .monitor-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .monitor-header h2 {
+        text-align: center;
+        width: 100%;
+    }
+}

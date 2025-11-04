@@ -22,7 +22,7 @@ function App() {
 
 function AppContent(){
   const location = useLocation()
-  const showNavbarRoutes = ["/suppliers", "/products", "/quotations"]
+  const showNavbarRoutes = ["/suppliers", "/products", "/quotations", "/quotations/monitor"]
   const shouldShowNavbar = showNavbarRoutes.includes(location.pathname)
 
   return (

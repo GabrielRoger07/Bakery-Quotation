@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useFetch from '../../hooks/useFetch'
 import useWebSocket from '../../hooks/useWebSocket'
 import Button from '../../components/Button'
 import Table from '../../components/Table'
+import './QuotationMonitor.css'
 
 const QuotationMonitor = () => {
 
@@ -15,18 +16,28 @@ const QuotationMonitor = () => {
 
     const [quotation, setQuotation] = useState(null)
     const [products, setProducts] = useState([])
+    const [bids, setBids] = useState([])
+
     const [stats, setStats] = useState({
         totalBids: 0,
+        uniqueSuppliers: 0,
         productsWithBids: [],
-        timeRemaining: ''
+        timeRemaining: '',
+        status: ''
     })
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchQuotationData = async () => {
             const quotationRes = await request("GET", `/quotations/${quotationId}`)
 
             if(quotationRes.ok){
                 setQuotation(quotationRes.data)
+            }
+
+            const participationRes = await request("GET", `/participations/quotations/${quotationId}`)
+
+            if(participationRes.ok){
+                setStats(prev => ({...prev, uniqueSuppliers: participationRes.data.length}))
             }
 
             const containsRes = await request("GET", `/contains/${quotationId}`)
@@ -34,48 +45,110 @@ const QuotationMonitor = () => {
             if(containsRes.ok){
                 setProducts(containsRes.data)
             }
+
+            const bidsRes = await request("GET", `/bids/quotations/${quotationId}`)
+            if(bidsRes.ok){
+                setBids(bidsRes.data)
+            }
         }
 
-        fetchData()
+        fetchQuotationData()
     }, [quotationId])
 
     useEffect(() => {
         if(!quotation) return
 
+        const start = new Date(quotation.quotationStart)
         const end = new Date(quotation.quotationEnd)
-        const interval = setInterval(() => {
+
+        const updateCountdown = () => {
             const now = new Date()
-            const diff = end - now
-            if(diff <= 0){
-                setStats(prev => ({...prev, timeRemaining: "Ended"}))
-                clearInterval(interval)
+            if(now < start){
+                const diff = start - now
+                setStats(prev => ({...prev, status: 'Scheduled', timeRemaining: formatTime(diff)}))
+            }else if(now >= start && now <= end){
+                const diff = end - now
+                setStats(prev => ({...prev, status: 'Active', timeRemaining: formatTime(diff)}))
             }else{
-                const days = Math.floor(diff / 86400000)
-                const hours = Math.floor(diff % 86400000 / 36000000)
-                const mins = Math.floor((diff % 3600000) / 60000)
-                const secs = Math.floor((diff % 60000) / 1000)
-                setStats(prev => ({...prev, timeRemaining: `${days}days ${hours}h ${mins}m ${secs}s` }))
+                setStats(prev => ({...prev, status: 'Closed', timeRemaining: 'Closed'}))
             }
-        }, 1000)
+        }
+
+        const formatTime = (ms) => {
+            const days = Math.floor(ms / 86400000)
+            const hours = Math.floor(ms % 86400000 / 36000000)
+            const mins = Math.floor((ms % 3600000) / 60000)
+            const secs = Math.floor((ms % 60000) / 1000)
+            return days > 0 ? `${days} days ${hours}h ${mins}m ${secs}s` : `${hours}h ${mins}m ${secs}s`
+        }
+
+        updateCountdown() 
+
+        const interval = setInterval(updateCountdown, 1000)
         return () => clearInterval(interval)
+        
     }, [quotation])
 
+    useEffect(() => {
+        if(bids.length === 0) return
+
+        const productsWithBids = [...new Set(bids.map(b => b.productId))]
+
+        setStats(prev => ({
+            ...prev, totalBids: bids.length, productsWithBids
+        }))
+
+    }, [bids])
+
+    useEffect(() => {
+        if(products.length === 0 || bids.length === 0) return
+
+        const lowestBids = {}
+
+        for(const bid of bids){
+            const { productId, price, supplierName } = bid
+            if(!lowestBids[productId] || price < lowestBids[productId].price){
+                lowestBids[productId] = { price, supplierName }
+            }
+        }
+
+        setProducts(prev => prev.map(p => {
+            const lowest = lowestBids[p.productId]
+            return lowest ? {...p, lowestBid: lowest.price, supplierName: lowest.supplierName || p.supplierName || "-"} : p
+        }))
+    }, [products.length, bids.length])
+
     const handleNewBid = useCallback(bid => {
-        setProducts(prev => prev.map(p => p.productId === bid.productId ? {...p, lowestBid: bid.price, supplierName: bid.supplierName || "Unknown"} : p))
-        setStats(prev => ({...prev, totalBids: prev.totalBids + 1, productsWithBids: [...new Set([...prev.productsWithBids, bid.productId])]}))
+        setBids(prev => [bid, ...prev])
+        setProducts(prev => 
+            prev.map(p => 
+                p.productId === bid.productId 
+                    ? {
+                        ...p, 
+                        lowestBid: !p.lowestBid || bid.price < p.lowestBid ? bid.price : p.lowestBid, 
+                        supplierName: bid.supplierName || p.supplierName || "Unknown"
+                    } 
+                    : p
+                )
+            )
     }, [])
 
     useWebSocket(quotationId, handleNewBid)
 
-    if(!quotation) return <p>Loading...</p>
-
-    const productColumns = [
+    const productColumns = useMemo(() => [
         {key: "productName", label: "Product"},
         {key: "quantity", label: "Quantity"},
         {key: "bonusLimit", label: "Bonus Limit"},
         {key: "lowestBid", label: "Lowest Bid"},
         {key: "supplierName", label: "Supplier"},
-    ]
+    ], [])
+
+    const bidColumns = useMemo(() => [
+        {key: "supplierName", label: "Supplier"},
+        {key: "productName", label: "Product"},
+        {key: "price", label: "Price"},
+        {key: "createdAt", label: "Date/Hour"},
+    ], [])
 
     const formattedProducts = products.map(p => ({
         ...p, 
@@ -83,26 +156,46 @@ const QuotationMonitor = () => {
         supplierName: p.supplierName || "-"
     }))
 
+    const formattedBids = bids.map(b => ({
+        ...b, 
+        price: `R$ ${b.price.toFixed(2)}`, 
+        createdAt: new Date(b.createdAt).toLocaleString()
+    }))
+
+    if(!quotation) return <p>Loading...</p>
+
     return (
         <div className="quotation-monitor-container">
-            <div>
+            <div className="monitor-header">
                 <Button onClick={() => navigate(-1)}>Back</Button>
+                <h2>Monitoring Quotation #{quotation.quotationId}</h2>
             </div>
-            <h2 className="text-xl font-semibold mb-2">Monitoring Quotation #{quotation.quotationId}</h2>
             
-            <div className="stats">
-                <div>Time remaining: {stats.timeRemaining}</div>
+            <div className="monitor-stats">
+                <div>Status: {stats.status}</div>
+                {(stats.status === 'Active' || stats.status === 'Scheduled') && <div>Time remaining: {stats.timeRemaining}</div>}
                 <div>Total bids: {stats.totalBids}</div>
+                <div>Suppliers: {stats.uniqueSuppliers}</div>
                 <div>Products with bids: {stats.productsWithBids.length}</div>
             </div>
 
-            <Table
-                title="Quotation Products"
-                columns={productColumns}
-                data={formattedProducts}
-                loading={false}
-                emptyMessage="No products found for this quotation."
-            />
+            <div className="monitor-sections">
+                    <Table
+                        title="Quotation Products"
+                        columns={productColumns}
+                        data={formattedProducts}
+                        loading={false}
+                        emptyMessage="No products found for this quotation."
+                    />
+
+                    <Table
+                        title="Bids"
+                        columns={bidColumns}
+                        data={formattedBids}
+                        loading={false}
+                        emptyMessage="No bids found for this quotation."
+                    />
+            </div>
         </div>
     )
 }

@@ -36,6 +36,19 @@ public class Bid {
     public Bid() {
     }
 
+    public Bid(Participation participation, Product product, BigDecimal price, BigDecimal quantity, BigDecimal bonus) {
+        this.participation = participation;
+        this.product = product;
+        this.price = price;
+        this.quantity = quantity;
+        this.bonus = bonus;
+
+        this.bidId = new BidId();
+        this.bidId.setParticipationId(participation.getId());
+        this.bidId.setProductId(product.getId());
+        this.bidId.setCreatedAt(LocalDateTime.now());
+    }
+
     public Bid(BidId bidId, Participation participation, Product product, BigDecimal price, BigDecimal quantity, BigDecimal bonus) {
         this.bidId = bidId;
         this.participation = participation;

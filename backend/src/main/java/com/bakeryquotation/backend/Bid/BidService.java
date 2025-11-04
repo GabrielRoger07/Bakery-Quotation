@@ -76,6 +76,12 @@ public class BidService {
         return ResponseEntity.status(HttpStatus.OK).body(bidResponseDTOS);
     }
 
+    public ResponseEntity<List<BidResponseDTO>> getBidsByParticipationId(Long participationId){
+        List<Bid> bids = bidRepository.findAllByParticipation_Id(participationId);
+        List<BidResponseDTO> bidResponseDTOS = bids.stream().map(bidMapper::toDto).toList();
+        return ResponseEntity.status(HttpStatus.OK).body(bidResponseDTOS);
+    }
+
     public ResponseEntity<BidResponseDTO> createBid(BidRequestDTO bidRequestDTO){
         Long participationId = bidRequestDTO.getParticipationId();
         Long productId = bidRequestDTO.getProductId();

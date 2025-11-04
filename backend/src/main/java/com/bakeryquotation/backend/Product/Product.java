@@ -1,5 +1,6 @@
 package com.bakeryquotation.backend.Product;
 
+import com.bakeryquotation.backend.Bid.Bid;
 import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Contain.Contain;
 import com.bakeryquotation.backend.Participation.Participation;
@@ -39,6 +40,9 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = {CascadeType.REMOVE})
     private List<Contain> contains = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.REMOVE})
+    private List<Bid> bids = new ArrayList<>();
+
     public Product() {
     }
 
@@ -48,12 +52,13 @@ public class Product {
         this.company = company;
     }
 
-    public Product(Long id, String productName, UnitOfMeasure unitOfMeasure, Company company, List<Contain> contains) {
+    public Product(Long id, String productName, UnitOfMeasure unitOfMeasure, Company company, List<Contain> contains, List<Bid> bids) {
         this.id = id;
         this.productName = productName;
         this.unitOfMeasure = unitOfMeasure;
         this.company = company;
         this.contains = contains;
+        this.bids = bids;
     }
 
     public Long getId() {
@@ -94,6 +99,14 @@ public class Product {
 
     public void setContains(List<Contain> contains) {
         this.contains = contains;
+    }
+
+    public List<Bid> getBids() {
+        return bids;
+    }
+
+    public void setBids(List<Bid> bids) {
+        this.bids = bids;
     }
 
     @Override

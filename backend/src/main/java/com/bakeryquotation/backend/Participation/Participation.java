@@ -1,8 +1,12 @@
 package com.bakeryquotation.backend.Participation;
 
+import com.bakeryquotation.backend.Bid.Bid;
 import com.bakeryquotation.backend.Quotation.Quotation;
 import com.bakeryquotation.backend.Supplier.Supplier;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table( name = "participation",
@@ -43,6 +47,9 @@ public class Participation {
     @Column(name = "accessToken", nullable = false)
     private String accessToken;
 
+    @OneToMany(mappedBy = "participation", cascade = {CascadeType.REMOVE})
+    private List<Bid> bids = new ArrayList<>();
+
     public Participation() {
     }
 
@@ -59,6 +66,15 @@ public class Participation {
         this.supplier = supplier;
         this.link = link;
         this.accessToken = accessToken;
+    }
+
+    public Participation(Long id, Quotation quotation, Supplier supplier, String link, String accessToken, List<Bid> bids) {
+        this.id = id;
+        this.quotation = quotation;
+        this.supplier = supplier;
+        this.link = link;
+        this.accessToken = accessToken;
+        this.bids = bids;
     }
 
     public Long getId() {
@@ -99,5 +115,13 @@ public class Participation {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public List<Bid> getBids() {
+        return bids;
+    }
+
+    public void setBids(List<Bid> bids) {
+        this.bids = bids;
     }
 }

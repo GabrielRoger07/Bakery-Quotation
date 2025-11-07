@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import useFetch from '../../hooks/useFetch'
+import './SupplierQuotation.css'
 
 const QuotationProductItem = ({ product, participationId, currentLowestBid }) => {
     
@@ -29,6 +30,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
             return
         }
 
+        /*
         if(!quantity){
             setError("Quantity is required")
             return
@@ -48,13 +50,14 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
             setError("Bonus cannot be higher than requested")
             return
         }
+        */
 
         const body = {
             participationId,
             productId: product.productId,
             price: parseFloat(price),
-            quantity: parseFloat(quantity),
-            bonus: parseFloat(bonus)
+            quantity: parseFloat(product.quantity),
+            bonus: 0
         }
 
         setLoading(true)
@@ -64,22 +67,26 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         if(res.ok){
             setSuccess("Bid submitted successfully!")
             setPrice("")
-            setBonus(0)
+            //setBonus(0)
         }else{
             setError(res.data?.message || "Failed to submit bid")
         }
     }
 
     return (
-        <div>
-            <h3>{product.productName}</h3>
-            <p>Quantity: {product.quantity} {product.unitOfMeasure}</p>
-            <p>Bonus limit: {product.bonusLimit}</p>
-            <p>Current Lowest Bid: {currentLowestBid ? `R$ ${currentLowestBid.price}` : "No bids yet"}</p>
-            <form onSubmit={handleBidSubmit}>
-                <Input label="Price" type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="Your bid price" />
+        <div className="quotation-product-item">
+            <div>
+                <h3>{product.productName}</h3>
+                <p>Quantity: {product.quantity} {product.unitOfMeasure}</p>
+                <p>Bonus limit: {product.bonusLimit}</p>
+                <p>Current Lowest Bid: {currentLowestBid ? `R$ ${(currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus)).toFixed(2)}/${product.unitOfMeasure}` : "No bids yet"}</p>
+            </div>
+            <form className="bid-form" onSubmit={handleBidSubmit}>
+                <Input label="Price" type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="Enter your price" />
+                {/* 
                 <Input label="Quantity" type="number" value={quantity} onChange={e => setQuantity(e.target.value)} placeholder="Quantity"/>
                 <Input label="Bonus" type="number" value={bonus} onChange={e => setBonus(e.target.value)} placeholder="Bonus"/>
+                */}
                 {error && <p>{error}</p>}
                 {success && <p>{success}</p>}
                 <Button type="submit" disabled={loading}>{loading ? "Submitting..." : "Submit Bid"}</Button>

@@ -71,12 +71,14 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
     { key: "price", label: "Price" },
     { key: "quantity", label: "Quantity" },
     { key: "bonus", label: "Bonus" },
+    { key: "pricePerUnit", label: "Price Per Unit"},
     { key: "createdAt", label: "Date/Time" },
   ], [])
 
   const formattedBids = bids.map(b => ({
     ...b,
     price: `R$ ${b.price.toFixed(2)}`,
+    pricePerUnit: `R$ ${(b.price / (b.quantity + b.bonus)).toFixed(2)}`,
     createdAt: new Date(b.createdAt).toLocaleString()
   }))
 

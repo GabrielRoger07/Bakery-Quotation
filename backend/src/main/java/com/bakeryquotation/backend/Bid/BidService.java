@@ -14,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +64,7 @@ public class BidService {
         participationRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + participationId + " does not exists"));
         productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
 
-        Optional<Bid> lowestBid = bidRepository.findTopByParticipation_IdAndProduct_IdOrderByPriceAsc(participationId, productId);
+        Optional<Bid> lowestBid = bidRepository.findLowestBid(participationId, productId);
 
         BidResponseDTO bidResponseDTO = null;
         if(lowestBid.isPresent()){
@@ -91,8 +94,15 @@ public class BidService {
 
         BidResponseDTO actualLowestBid = getLowestBid(participationId, productId).getBody();
 
-        if(actualLowestBid != null && bidRequestDTO.getPrice().compareTo(actualLowestBid.getPrice()) >= 0){
-            throw new BidAboveLowestException("Bid must be lower than the lowest bid");
+        if(actualLowestBid != null){
+            BigDecimal totalQuantityLowest = actualLowestBid.getQuantity().add(actualLowestBid.getBonus());
+            BigDecimal totalQuantityRequest = bidRequestDTO.getQuantity().add(bidRequestDTO.getBonus());
+            BigDecimal pricePerUnitLowest = numberFormat(actualLowestBid.getPrice(), totalQuantityLowest);
+            BigDecimal pricePerUnitRequest = numberFormat(bidRequestDTO.getPrice(), totalQuantityRequest);
+
+            if(pricePerUnitRequest.compareTo(pricePerUnitLowest) >= 0){
+                throw new BidAboveLowestException("Bid must be lower than the lowest bid");
+            }
         }
 
         BidId bidId = new BidId(participationId, productId, LocalDateTime.now());
@@ -128,5 +138,15 @@ public class BidService {
 
         bidRepository.deleteAll();
         return ResponseEntity.status(HttpStatus.OK).body(bidResponseDTOS);
+    }
+
+    public static BigDecimal numberFormat(BigDecimal value, BigDecimal totalQuantity){
+        BigDecimal pricePerUnit = value.divide(totalQuantity, MathContext.DECIMAL128);
+        int scale = pricePerUnit.stripTrailingZeros().scale();
+        if(scale <= 2){
+            return pricePerUnit.setScale(2, RoundingMode.UNNECESSARY);
+        }else{
+            return pricePerUnit.setScale(2, RoundingMode.HALF_UP);
+        }
     }
 }

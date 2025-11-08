@@ -104,7 +104,7 @@ public class BackendApplication {
             participationRepository.save(participation2);
             participationRepository.save(participation3);
 
-            Bid bid1 = new Bid(participation1, products.getFirst(), BigDecimal.valueOf(100.0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(0.0));
+            Bid bid1 = new Bid(participation1, products.getFirst(), BigDecimal.valueOf(100.0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(1.0));
             Bid bid2 = new Bid(participation2, products.getFirst(), BigDecimal.valueOf(95.0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(0.0));
             Bid bid3 = new Bid(participation1, products.get(1), BigDecimal.valueOf(200.0), BigDecimal.valueOf(5.0), BigDecimal.valueOf(0.0));
 

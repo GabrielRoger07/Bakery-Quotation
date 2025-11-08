@@ -73,14 +73,22 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
     { key: "bonus", label: "Bonus" },
     { key: "pricePerUnit", label: "Price Per Unit"},
     { key: "createdAt", label: "Date/Time" },
+    { key: "status", label: "Status" }
   ], [])
 
-  const formattedBids = bids.map(b => ({
-    ...b,
-    price: `R$ ${b.price.toFixed(2)}`,
-    pricePerUnit: `R$ ${(b.price / (b.quantity + b.bonus)).toFixed(2)}`,
-    createdAt: new Date(b.createdAt).toLocaleString()
-  }))
+  const formattedBids = bids.map(b => {
+
+    const lowestBid = lowestBids[b.productId]
+    const isLowest = lowestBid && lowestBid.participationId === b.participationId && lowestBid.price === b.price
+
+    return {
+      ...b,
+      price: `R$ ${b.price.toFixed(2)}`,
+      pricePerUnit: `R$ ${(b.price / (b.quantity + b.bonus)).toFixed(2)}`,
+      createdAt: new Date(b.createdAt).toLocaleString(),
+      status: isLowest ? "Lowest" : "Outbid"
+    }
+  })
 
   if(loading) return <p>Loading products...</p>
   if(error) return <p>{error}</p>

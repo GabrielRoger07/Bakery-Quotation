@@ -29,8 +29,8 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
             return
         }
 
-        if(currentLowestBid && currentLowestBid.price <= numericPrice){
-            setError("Bid must be lower than the current one")
+        if(currentLowestBid && ((currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus)) <= (numericPrice / (quantity + bonus)))){
+            setError("Bid must be lower than the lowest bid")
             return
         }
 

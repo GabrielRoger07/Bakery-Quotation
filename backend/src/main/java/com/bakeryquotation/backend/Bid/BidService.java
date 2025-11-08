@@ -7,6 +7,7 @@ import com.bakeryquotation.backend.Participation.Participation;
 import com.bakeryquotation.backend.Participation.ParticipationRepository;
 import com.bakeryquotation.backend.Product.Product;
 import com.bakeryquotation.backend.Product.ProductRepository;
+import com.bakeryquotation.backend.Quotation.QuotationRepository;
 import com.bakeryquotation.backend.exception.BidAboveLowestException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -29,17 +30,20 @@ public class BidService {
     private final BidMapper bidMapper;
     private final ParticipationRepository participationRepository;
     private final ProductRepository productRepository;
+    private final QuotationRepository quotationRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
     public BidService(BidRepository bidRepository,
                       BidMapper bidMapper,
                       ParticipationRepository participationRepository,
                       ProductRepository productRepository,
+                      QuotationRepository quotationRepository,
                       SimpMessagingTemplate messagingTemplate){
         this.bidRepository = bidRepository;
         this.bidMapper = bidMapper;
         this.participationRepository = participationRepository;
         this.productRepository = productRepository;
+        this.quotationRepository = quotationRepository;
         this.messagingTemplate = messagingTemplate;
     }
 
@@ -60,11 +64,11 @@ public class BidService {
         return ResponseEntity.status(HttpStatus.OK).body(bidResponseDTOS);
     }
 
-    public ResponseEntity<BidResponseDTO> getLowestBid(Long participationId, Long productId){
-        participationRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + participationId + " does not exists"));
+    public ResponseEntity<BidResponseDTO> getLowestBid(Long quotationId, Long productId){
+        quotationRepository.findById(quotationId).orElseThrow(() -> new ResourceNotFoundException("Quotation with id " + quotationId + " does not exists"));
         productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
 
-        Optional<Bid> lowestBid = bidRepository.findLowestBid(participationId, productId);
+        Optional<Bid> lowestBid = bidRepository.findLowestBid(quotationId, productId);
 
         BidResponseDTO bidResponseDTO = null;
         if(lowestBid.isPresent()){

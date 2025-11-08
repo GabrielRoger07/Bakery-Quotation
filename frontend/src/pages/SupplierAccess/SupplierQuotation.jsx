@@ -33,7 +33,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
         setError("")
 
         resProducts.data.forEach(async (product) => {
-          const bidRes = await request("GET", `/bids/lowest?participationId=${participationId}&productId=${product.productId}`)
+          const bidRes = await request("GET", `/bids/lowest?quotationId=${quotationId}&productId=${product.productId}`)
 
           if(bidRes.ok){
             setLowestBids(prev => ({...prev, [product.productId]: bidRes.data}))

@@ -29,8 +29,8 @@ public class BidController {
     }
 
     @GetMapping("/lowest")
-    public ResponseEntity<BidResponseDTO> getLowestBid(@RequestParam("participationId") Long participationId, @RequestParam("productId") Long productId){
-        return bidService.getLowestBid(participationId, productId);
+    public ResponseEntity<BidResponseDTO> getLowestBid(@RequestParam("quotationId") Long quotationId, @RequestParam("productId") Long productId){
+        return bidService.getLowestBid(quotationId, productId);
     }
 
     @GetMapping("/quotations/{quotationId}")

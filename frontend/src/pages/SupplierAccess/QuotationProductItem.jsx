@@ -3,12 +3,14 @@ import Input from '../../components/Input'
 import Button from '../../components/Button'
 import useFetch from '../../hooks/useFetch'
 import './SupplierQuotation.css'
+import { useCurrencyMask } from '../../hooks/useCurrencyMask'
 
 const QuotationProductItem = ({ product, participationId, currentLowestBid }) => {
     
     const {request} = useFetch("http://localhost:8080/api/v1")
 
-    const [price, setPrice] = useState("")
+    const { value: price, handleChange: handlePriceChange, getNumericValue, setValue: setPrice } = useCurrencyMask("")
+
     const [quantity, setQuantity] = useState(product.quantity)
     const [bonus, setBonus] = useState(0)
     const [error, setError] = useState("")
@@ -20,12 +22,14 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         setError("")
         setSuccess("")
 
-        if(!price){
+        const numericPrice = getNumericValue()
+
+        if(!numericPrice){
             setError("Price is required")
             return
         }
 
-        if(currentLowestBid && currentLowestBid.price <= price){
+        if(currentLowestBid && currentLowestBid.price <= numericPrice){
             setError("Bid must be lower than the current one")
             return
         }
@@ -55,7 +59,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         const body = {
             participationId,
             productId: product.productId,
-            price: parseFloat(price),
+            price: numericPrice,
             quantity: parseFloat(product.quantity),
             bonus: 0
         }
@@ -82,7 +86,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
                 <p>Current Lowest Bid: {currentLowestBid ? `R$ ${(currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus)).toFixed(2)}/${product.unitOfMeasure}` : "No bids yet"}</p>
             </div>
             <form className="bid-form" onSubmit={handleBidSubmit}>
-                <Input label="Price" type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="Enter your price" />
+                <Input label="Price" type="text" value={price} onChange={handlePriceChange} placeholder="R$0,00" />
                 {/* 
                 <Input label="Quantity" type="number" value={quantity} onChange={e => setQuantity(e.target.value)} placeholder="Quantity"/>
                 <Input label="Bonus" type="number" value={bonus} onChange={e => setBonus(e.target.value)} placeholder="Bonus"/>

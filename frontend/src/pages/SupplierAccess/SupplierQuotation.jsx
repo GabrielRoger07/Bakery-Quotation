@@ -86,7 +86,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
       price: `R$ ${b.price.toFixed(2)}`,
       pricePerUnit: `R$ ${(b.price / (b.quantity + b.bonus)).toFixed(2)}`,
       createdAt: new Date(b.createdAt).toLocaleString(),
-      status: isLowest ? "Lowest" : "Outbid"
+      status: isLowest ? <span style={{color: "green"}}>Lowest</span> : <span style={{color: "red"}}>Outbid</span>
     }
   })
 

@@ -51,6 +51,27 @@
     margin-bottom: 0.25rem;
 }
 
+.confirm-container {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.confirm-container p {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.confirm-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
 @media (max-width: 768px){
     .supplier-products, .supplier-bids {
         width: 95%;

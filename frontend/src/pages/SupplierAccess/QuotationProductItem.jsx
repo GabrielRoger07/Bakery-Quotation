@@ -1,9 +1,9 @@
 import { useState } from 'react'
+import { useCurrencyMask } from '../../hooks/useCurrencyMask'
+import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
-import useFetch from '../../hooks/useFetch'
 import './SupplierQuotation.css'
-import { useCurrencyMask } from '../../hooks/useCurrencyMask'
 
 const QuotationProductItem = ({ product, participationId, currentLowestBid }) => {
     
@@ -16,6 +16,8 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
     const [loading, setLoading] = useState(false)
+    const [confirming, setConfirming] = useState(false)
+    const [pendingBidValue, setPendingBidValue] = useState(null)
 
     const handleBidSubmit = async (e) => {
         e.preventDefault()
@@ -29,7 +31,9 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
             return
         }
 
-        if(currentLowestBid && ((currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus)) <= (numericPrice / (quantity + bonus)))){
+        const pricePerUnit = numericPrice / (quantity + bonus)
+
+        if(currentLowestBid && ((currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus)) <= pricePerUnit)){
             setError("Bid must be lower than the lowest bid")
             return
         }
@@ -56,25 +60,38 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         }
         */
 
+        setPendingBidValue(pricePerUnit)
+        setConfirming(true)
+    }
+
+    const confirmBid = async () => {
+        setConfirming(false)
+        setLoading(true)
+
         const body = {
             participationId,
             productId: product.productId,
-            price: numericPrice,
+            price: getNumericValue(),
             quantity: parseFloat(product.quantity),
             bonus: 0
         }
 
-        setLoading(true)
         const res = await request("POST", "/bids", body)
         setLoading(false)
 
         if(res.ok){
             setSuccess("Bid submitted successfully!")
             setPrice("")
+            setTimeout(() => setSuccess(""), 2000)
             //setBonus(0)
         }else{
             setError(res.data?.message || "Failed to submit bid")
         }
+    }
+
+    const cancelBid = () => {
+        setConfirming(false)
+        setError("")
     }
 
     return (
@@ -91,9 +108,21 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
                 <Input label="Quantity" type="number" value={quantity} onChange={e => setQuantity(e.target.value)} placeholder="Quantity"/>
                 <Input label="Bonus" type="number" value={bonus} onChange={e => setBonus(e.target.value)} placeholder="Bonus"/>
                 */}
+
+                {!confirming ? (
+                    <Button type="submit" disabled={loading}>{loading ? "Submitting..." : "Submit Bid"}</Button>
+                ) : (
+                    <div className="confirm-container">
+                        <p>Confirm bid of{" "} <strong>R$ {pendingBidValue.toFixed(2)}/{product.unitOfMeasure}</strong>{" "} for <strong>{product.productName}</strong>?</p>
+                        <div className="confirm-buttons">
+                        <Button type="button" onClick={confirmBid} variant="success">Yes</Button>
+                        <Button type="button" onClick={cancelBid} variant="danger">Cancel</Button>
+                        </div>
+                    </div>
+                )}
+
                 {error && <p>{error}</p>}
                 {success && <p>{success}</p>}
-                <Button type="submit" disabled={loading}>{loading ? "Submitting..." : "Submit Bid"}</Button>
             </form>
         </div>
     )

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import QuotationProductItem from './QuotationProductItem'
-import useFetch from '../../hooks/useFetch'
 import useWebSocket from '../../hooks/useWebSocket'
+import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
+import QuotationProductItem from './QuotationProductItem'
 import './SupplierQuotation.css'
 
 const SupplierQuotation = ({ participationId, quotationId }) => {
@@ -90,6 +90,10 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
     }
   })
 
+  const winningCount = Object.values(lowestBids).filter(
+    bid => bid && bid.participationId === participationId
+  ).length
+
   if(loading) return <p>Loading products...</p>
   if(error) return <p>{error}</p>
   if(!products.length) return <p>No products found for this quotation</p>
@@ -97,7 +101,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   return (
       <div className="supplier-quotation-container">
         <h2>Quotation #{quotationId}</h2>
-        <p>Total Products: {products.length}</p>
+        <p>Total Products: <strong>{products.length}</strong>{" "} | Winning: <strong style={{color: "#1a7f37"}}>{winningCount}</strong>/{products.length}</p>
 
         <div className="supplier-products">
           {products.map(product => (

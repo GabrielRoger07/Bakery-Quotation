@@ -106,7 +106,12 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
         <h2>Quotation #{quotationId}</h2>
         <div className="quotation-summary">
           <p>Total Products: <strong>{products.length}</strong></p>
-          <Button onClick={() => setIsWinningModalOpen(true)}>Winning: {winningCount}/{products.length}</Button>
+          <div className="winning-section">
+            <span className="winning-text">
+              Winning: {winningCount}/{products.length}
+            </span>
+            <Button onClick={() => setIsWinningModalOpen(true)}>View</Button>
+          </div>
         </div>
 
         <div className="supplier-products">

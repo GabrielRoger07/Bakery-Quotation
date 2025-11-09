@@ -3,7 +3,7 @@
     flex-direction: column;
     align-items: center;
     padding: 2rem;
-    background-color: #f3f4f6;
+    background-color: #f9fafb;
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -11,19 +11,50 @@
 .supplier-quotation-container h2 {
     color: #0a66c2;
     font-size: 1.8rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .supplier-quotation-container p {
     font-size: 1rem;
     color: #374151;
+    margin-bottom: 1.25rem;
+}
+
+.quotation-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    max-width: 1000px;
+    background: #fff;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     margin-bottom: 1.5rem;
+}
+
+.quotation-summary p {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+.winning-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.winning-text {
+    font-weight: 600;
+    color: #1a7f37;
 }
 
 .supplier-products {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-    gap: 1rem;
+    gap: 1.25rem;
     width: 100%;
     max-width: 1000px;
 }
@@ -38,17 +69,25 @@
     background: #fff;
     padding: 1.5rem;
     border-radius: 0.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.quotation-product-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .quotation-product-item h3 {
     color: #0a66c2;
     margin-bottom: 0.5rem;
+    font-size: 1.5rem;
 }
 
 .quotation-product-item p {
     color: #374151;
     margin-bottom: 0.25rem;
+    font-size: 0.95rem;
 }
 
 .confirm-container {
@@ -72,29 +111,6 @@
     gap: 10px;
 }
 
-.quotation-summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-}
-
-.winning-info {
-    background-color: #e6f4ea;
-    color: #1a7f37;
-    border: 1px solid #a8d5b8;
-    border-radius: 0.5rem;
-    padding: 0.4rem 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.winning-info:hover {
-    background-color: #d2ecda;
-    transform: scale(1.02);
-}
-
 .winning-list {
     list-style: none;
     padding: 0;
@@ -107,7 +123,17 @@
 }
 
 @media (max-width: 768px){
+    .supplier-quotation-container {
+        padding: 1rem;
+    }
+
+    .quotation-summary {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
     .supplier-products, .supplier-bids {
-        width: 95%;
+        width: 100%;
     }
 }

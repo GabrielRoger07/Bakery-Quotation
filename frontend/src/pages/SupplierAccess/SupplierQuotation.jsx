@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import useWebSocket from '../../hooks/useWebSocket'
 import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
+import Modal from '../../components/Modal'
+import Button from '../../components/Button'
 import QuotationProductItem from './QuotationProductItem'
 import './SupplierQuotation.css'
 
@@ -13,6 +15,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   const [lowestBids, setLowestBids] = useState([])
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [isWinningModalOpen, setIsWinningModalOpen] = useState(false)
 
   useEffect(() => {
 
@@ -101,7 +104,10 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   return (
       <div className="supplier-quotation-container">
         <h2>Quotation #{quotationId}</h2>
-        <p>Total Products: <strong>{products.length}</strong>{" "} | Winning: <strong style={{color: "#1a7f37"}}>{winningCount}</strong>/{products.length}</p>
+        <div className="quotation-summary">
+          <p>Total Products: <strong>{products.length}</strong></p>
+          <Button onClick={() => setIsWinningModalOpen(true)}>Winning: {winningCount}/{products.length}</Button>
+        </div>
 
         <div className="supplier-products">
           {products.map(product => (
@@ -112,6 +118,27 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
         <div className="supplier-bids">
           <Table title="Your bids" columns={bidColumns} data={formattedBids} loading={loading} emptyMessage="You haven't placed any bids yet."/>
         </div>
+
+        <Modal isOpen={isWinningModalOpen} onClose={() => setIsWinningModalOpen(false)} title="Winning Bids">
+          {winningCount > 0 ? (
+            <ul className="winning-list">
+              {Object.entries(lowestBids)
+                .filter(([_, bid]) => bid && bid.participationId === participationId)
+                .map(([productId, bid]) => {
+                  const product = products.find(p => p.productId === Number(productId))
+                  const pricePerUnit = (bid.price / (bid.quantity + bid.bonus)).toFixed(2)
+                  return (
+                    <li key={productId} className="winning-item">
+                      <strong>{product?.productName}</strong> - R$ {bid.price.toFixed(2)} - R$ {pricePerUnit}/{product?.unitOfMeasure}
+                    </li>
+                  )
+                })
+              }
+            </ul>
+          ) : (
+            <p>You are not winning any products right now.</p>
+          )}
+        </Modal>
 
       </div>
     )

@@ -72,6 +72,40 @@
     gap: 10px;
 }
 
+.quotation-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.winning-info {
+    background-color: #e6f4ea;
+    color: #1a7f37;
+    border: 1px solid #a8d5b8;
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.winning-info:hover {
+    background-color: #d2ecda;
+    transform: scale(1.02);
+}
+
+.winning-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.winning-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
 @media (max-width: 768px){
     .supplier-products, .supplier-bids {
         width: 95%;

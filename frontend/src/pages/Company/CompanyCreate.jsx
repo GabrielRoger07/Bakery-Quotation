@@ -5,14 +5,16 @@ import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import '../../components/Auth.css'
+import useCharLimit from '../../hooks/useCharLimit'
 
 const CompanyCreate = () => {
 
-    const [companyCnpj, setCompanyCnpj] = useState("")
-    const [companyName, setCompanyName] = useState("")
-    const [companyEmail, setCompanyEmail] = useState("")
-    const [companyWhatsappNumber, setCompanyWhatsappNumber] = useState("")
-    const [companyPassword, setCompanyPassword] = useState("")
+    const { value: companyCnpj, onChange: handleCnpjChange, onBlur: handleCnpjBlur, warning: cnpjWarning } = useCharLimit(14, "CNPJ")
+    const { value: companyName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning } = useCharLimit(45, "Company Name")
+    const { value: companyEmail, onChange: handleEmailChange, onBlur: handleEmailBlur, warning: emailWarning } = useCharLimit(60, "Company Email")
+    const { value: companyWhatsappNumber, onChange: handleWhatsappChange, onBlur: handleWhatsappBlur, warning: whatsappWarning } = useCharLimit(16, "Whatsapp Number")
+    const { value: companyPassword, onChange: handlePasswordChange, onBlur: handlePasswordBlur, warning: passwordWarning } = useCharLimit(255, "Company Password")
+
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
@@ -32,6 +34,18 @@ const CompanyCreate = () => {
             setError("Email must be valid.");
             setSuccess("");
             return;
+        }
+
+        if(
+            companyCnpj.length > 14 ||
+            companyName.length > 45 ||
+            companyWhatsappNumber.length > 16 ||
+            companyEmail.length > 60 ||
+            companyPassword.length > 255
+        ){
+            setError("Please review field length limits before submitting.")
+            setSuccess("")
+            return
         }
 
         setError("")
@@ -61,11 +75,21 @@ const CompanyCreate = () => {
             <div className="auth-box">
                 <h1>Create Company</h1>
                 <form onSubmit={handleCreateCompany}>
-                    <Input label="CNPJ" type="text" value={companyCnpj} onChange={(e) => setCompanyCnpj(e.target.value)} placeholder="Enter CNPJ"/>
-                    <Input label="Company Name" type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Enter Company Name"/>
-                    <Input label="Company E-mail" type="text" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} placeholder="Enter Company Email"/>
-                    <Input label="Whatsapp Number" type="text" value={companyWhatsappNumber} onChange={(e) => setCompanyWhatsappNumber(e.target.value)} placeholder="Enter Whatsapp Number"/>
-                    <Input label="Company Password" type="password" value={companyPassword} onChange={(e) => setCompanyPassword(e.target.value)} placeholder="Enter Password"/>
+                    <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} onBlur={handleCnpjBlur} placeholder="Enter CNPJ"/>
+                    {cnpjWarning && <div className="warning">{cnpjWarning}</div>}
+
+                    <Input label="Company Name" type="text" value={companyName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder="Enter Company Name"/>
+                    {nameWarning && <div className="warning">{nameWarning}</div>}
+
+                    <Input label="Company E-mail" type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder="Enter Company Email"/>
+                    {emailWarning && <div className="warning">{emailWarning}</div>}
+
+                    <Input label="Whatsapp Number" type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder="Enter Whatsapp Number"/>
+                    {whatsappWarning && <div className="warning">{whatsappWarning}</div>}
+
+                    <Input label="Company Password" type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder="Enter Password"/>
+                    {passwordWarning && <div className="warning">{passwordWarning}</div>}
+
                     <Alert message={error} />
                     {success && <div className="success">{success}</div>}
                     <Button type="submit">Create Company</Button>

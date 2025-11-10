@@ -1,7 +1,7 @@
 import React from 'react'
 import './Input.css'
 
-const Input = ({ label, type, name, value, onChange, placeholder, min, max, step }) => {
+const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, max, step }) => {
   return (
     <div className='input-container'>
         <label>{label}</label>
@@ -9,7 +9,8 @@ const Input = ({ label, type, name, value, onChange, placeholder, min, max, step
             type={type} 
             name={name}
             value={value} 
-            onChange={onChange} 
+            onChange={onChange}
+            onBlur={onBlur}
             placeholder={placeholder}
             min={min}
             max={max}

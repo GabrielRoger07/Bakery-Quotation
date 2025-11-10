@@ -6,13 +6,14 @@ import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import '../../components/Auth.css'
 import useCharLimit from '../../hooks/useCharLimit'
+import usePhoneMask from '../../hooks/usePhoneMask'
 
 const CompanyCreate = () => {
 
     const { value: companyCnpj, onChange: handleCnpjChange, onBlur: handleCnpjBlur, warning: cnpjWarning } = useCharLimit(14, "CNPJ")
     const { value: companyName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning } = useCharLimit(45, "Company Name")
     const { value: companyEmail, onChange: handleEmailChange, onBlur: handleEmailBlur, warning: emailWarning } = useCharLimit(60, "Company Email")
-    const { value: companyWhatsappNumber, onChange: handleWhatsappChange, onBlur: handleWhatsappBlur, warning: whatsappWarning } = useCharLimit(16, "Whatsapp Number")
+    const { maskedValue: companyWhatsappNumber, rawValue: companyWhatsappRaw, onChange: handleWhatsappChange } = usePhoneMask()
     const { value: companyPassword, onChange: handlePasswordChange, onBlur: handlePasswordBlur, warning: passwordWarning } = useCharLimit(255, "Company Password")
 
     const [error, setError] = useState("")
@@ -25,7 +26,6 @@ const CompanyCreate = () => {
         cnpjWarning ||
         nameWarning ||
         emailWarning ||
-        whatsappWarning ||
         passwordWarning ||
         !companyCnpj ||
         !companyName ||
@@ -56,7 +56,7 @@ const CompanyCreate = () => {
             companyCnpj,
             companyName,
             companyEmail,
-            companyWhatsappNumber,
+            companyWhatsappNumber: companyWhatsappRaw,
             companyPassword
         }
 
@@ -86,8 +86,7 @@ const CompanyCreate = () => {
                     <Input label="Company E-mail" type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder="Enter Company Email" required />
                     {emailWarning && <div className="warning">{emailWarning}</div>}
 
-                    <Input label="Whatsapp Number" type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder="Enter Whatsapp Number" required />
-                    {whatsappWarning && <div className="warning">{whatsappWarning}</div>}
+                    <Input label="Whatsapp Number" type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} placeholder="Enter Whatsapp Number" required />
 
                     <Input label="Company Password" type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder="Enter Password" required />
                     {passwordWarning && <div className="warning">{passwordWarning}</div>}

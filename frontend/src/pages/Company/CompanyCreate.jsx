@@ -21,31 +21,33 @@ const CompanyCreate = () => {
     const { request } = useFetch("http://localhost:8080/api/v1")
     const navigate = useNavigate();
 
+    const isDisabled = 
+        cnpjWarning ||
+        nameWarning ||
+        emailWarning ||
+        whatsappWarning ||
+        passwordWarning ||
+        !companyCnpj ||
+        !companyName ||
+        !companyEmail ||
+        !companyWhatsappNumber ||
+        !companyPassword
+
     const handleCreateCompany = async (e) => {
         e.preventDefault();
 
+        /*
         if(!companyCnpj || !companyName || !companyWhatsappNumber || !companyEmail || !companyPassword){
             setError("All fields are required")
             setSuccess("")
             return
         }
+        */
 
         if (!/\S+@\S+\.\S+/.test(companyEmail)) {
             setError("Email must be valid.");
             setSuccess("");
             return;
-        }
-
-        if(
-            companyCnpj.length > 14 ||
-            companyName.length > 45 ||
-            companyWhatsappNumber.length > 16 ||
-            companyEmail.length > 60 ||
-            companyPassword.length > 255
-        ){
-            setError("Please review field length limits before submitting.")
-            setSuccess("")
-            return
         }
 
         setError("")
@@ -75,24 +77,24 @@ const CompanyCreate = () => {
             <div className="auth-box">
                 <h1>Create Company</h1>
                 <form onSubmit={handleCreateCompany}>
-                    <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} onBlur={handleCnpjBlur} placeholder="Enter CNPJ"/>
+                    <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} onBlur={handleCnpjBlur} placeholder="Enter CNPJ" required />
                     {cnpjWarning && <div className="warning">{cnpjWarning}</div>}
 
-                    <Input label="Company Name" type="text" value={companyName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder="Enter Company Name"/>
+                    <Input label="Company Name" type="text" value={companyName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder="Enter Company Name" required />
                     {nameWarning && <div className="warning">{nameWarning}</div>}
 
-                    <Input label="Company E-mail" type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder="Enter Company Email"/>
+                    <Input label="Company E-mail" type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder="Enter Company Email" required />
                     {emailWarning && <div className="warning">{emailWarning}</div>}
 
-                    <Input label="Whatsapp Number" type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder="Enter Whatsapp Number"/>
+                    <Input label="Whatsapp Number" type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder="Enter Whatsapp Number" required />
                     {whatsappWarning && <div className="warning">{whatsappWarning}</div>}
 
-                    <Input label="Company Password" type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder="Enter Password"/>
+                    <Input label="Company Password" type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder="Enter Password" required />
                     {passwordWarning && <div className="warning">{passwordWarning}</div>}
 
                     <Alert message={error} />
                     {success && <div className="success">{success}</div>}
-                    <Button type="submit">Create Company</Button>
+                    <Button type="submit" disabled={isDisabled}>Create Company</Button>
                 </form>
                 <p>
                     <Link to="/login">Already have an account? Login!</Link>

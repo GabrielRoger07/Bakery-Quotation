@@ -67,3 +67,16 @@
   margin-bottom: 0.75rem;
   font-style: italic;
 }
+
+.required-asterisk {
+  margin-left: 2px;
+  font-weight: bold;
+}
+
+.required-asterisk.empty {
+  color: red;
+}
+
+.required-asterisk.filled {
+  color: black;
+}

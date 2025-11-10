@@ -96,9 +96,9 @@ public class BackendApplication {
             containRepository.save(contain5);
 
             List<Supplier> suppliers = supplierRepository.findAll();
-            Participation participation1 = new Participation(quotation1, suppliers.get(0), "Link de Acesso 1", "accessToken");
-            Participation participation2 = new Participation(quotation1, suppliers.get(1), "Link de Acesso 2", "accessToken");
-            Participation participation3 = new Participation(quotation2, suppliers.get(2), "Link de Acesso 3", "accessToken");
+            Participation participation1 = new Participation(quotation1, suppliers.get(0), "accessToken");
+            Participation participation2 = new Participation(quotation1, suppliers.get(1), "accessToken");
+            Participation participation3 = new Participation(quotation2, suppliers.get(2), "accessToken");
 
             participationRepository.save(participation1);
             participationRepository.save(participation2);

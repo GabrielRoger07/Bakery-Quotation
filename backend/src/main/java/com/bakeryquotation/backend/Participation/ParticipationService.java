@@ -90,7 +90,6 @@ public class ParticipationService {
 
         String accessToken = generateDigitToken(8);
         participation.setAccessToken(accessToken);
-        participation.setLink("Link de teste");
 
         ParticipationResponseDTO participationSaved = participationMapper.toDto(participationRepository.save(participation));
         return ResponseEntity.status(HttpStatus.CREATED).body(participationSaved);
@@ -116,9 +115,8 @@ public class ParticipationService {
             participation.setQuotation(quotation);
             participation.setSupplier(supplier);
 
-            String link = generateDigitToken(8);
-            participation.setLink(link);
-            participation.setAccessToken("Access Token de teste");
+            String accessToken = generateDigitToken(8);
+            participation.setAccessToken(accessToken);
 
             ParticipationResponseDTO participationSaved = participationMapper.toDto(participationRepository.save(participation));
             participationResponseDTOS.add(participationSaved);
@@ -151,7 +149,6 @@ public class ParticipationService {
             newParticipation.setSupplier(supplier);
             String accessToken = generateDigitToken(8);
             newParticipation.setAccessToken(accessToken);
-            newParticipation.setLink("Link de teste");
 
             Participation participationSaved = participationRepository.save(newParticipation);
             participationResponseDTOS.add(participationMapper.toDto(participationSaved));

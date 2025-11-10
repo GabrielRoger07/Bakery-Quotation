@@ -41,9 +41,6 @@ public class Participation {
     )
     private Supplier supplier;
 
-    @Column(name = "link")
-    private String link;
-
     @Column(name = "accessToken", nullable = false)
     private String accessToken;
 
@@ -53,26 +50,23 @@ public class Participation {
     public Participation() {
     }
 
-    public Participation(Quotation quotation, Supplier supplier, String link, String accessToken) {
+    public Participation(Quotation quotation, Supplier supplier, String accessToken) {
         this.quotation = quotation;
         this.supplier = supplier;
-        this.link = link;
         this.accessToken = accessToken;
     }
 
-    public Participation(Long id, Quotation quotation, Supplier supplier, String link, String accessToken) {
+    public Participation(Long id, Quotation quotation, Supplier supplier, String accessToken) {
         this.id = id;
         this.quotation = quotation;
         this.supplier = supplier;
-        this.link = link;
         this.accessToken = accessToken;
     }
 
-    public Participation(Long id, Quotation quotation, Supplier supplier, String link, String accessToken, List<Bid> bids) {
+    public Participation(Long id, Quotation quotation, Supplier supplier, String accessToken, List<Bid> bids) {
         this.id = id;
         this.quotation = quotation;
         this.supplier = supplier;
-        this.link = link;
         this.accessToken = accessToken;
         this.bids = bids;
     }
@@ -99,14 +93,6 @@ public class Participation {
 
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
     }
 
     public String getAccessToken() {

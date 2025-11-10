@@ -8,6 +8,7 @@ import Alert from '../../components/Alert'
 
 const ProductCreate = ({ onClose, onSave }) => {
 
+    const [productBarCodeNumber, setProductBarCodeNumber] = useState("")
     const [productName, setProductName] = useState("")
     const [unitOfMeasure, setUnitOfMeasure] = useState("")
     const [error, setError] = useState("")
@@ -18,7 +19,7 @@ const ProductCreate = ({ onClose, onSave }) => {
     const handleProductCreate = async(e) => {
         e.preventDefault()
 
-        if(!productName || !unitOfMeasure){
+        if(!productBarCodeNumber || !productName || !unitOfMeasure){
             setError("All fields are required.")
             setSuccess("")
             return;
@@ -31,6 +32,7 @@ const ProductCreate = ({ onClose, onSave }) => {
         const cnpj = decoded.companyCnpj;
 
         const product = {
+            productBarCodeNumber,
             productName,
             unitOfMeasure,
             companyCnpj: cnpj
@@ -51,6 +53,7 @@ const ProductCreate = ({ onClose, onSave }) => {
 
     return (
         <form onSubmit={handleProductCreate}>
+            <Input label="BarCodeNumber" type="text" name="productBarCodeNumber" value={productBarCodeNumber} onChange={(e) => setProductBarCodeNumber(e.target.value)} placeholder="Enter Product Barcode Number"/>
             <Input label="Name" type="text" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Enter Product Name"/>
             <div className="input-group">
                 <label htmlFor="unitOfMeasure" className="input-label">

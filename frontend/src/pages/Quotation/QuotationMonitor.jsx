@@ -137,6 +137,7 @@ const QuotationMonitor = () => {
 
     const productColumns = useMemo(() => [
         {key: "productName", label: "Product"},
+        {key: "productBarCodeNumber", label: "Bar Code Number"},
         {key: "quantity", label: "Quantity"},
         {key: "bonusLimit", label: "Bonus Limit"},
         {key: "lowestBid", label: "Lowest Bid"},
@@ -146,6 +147,7 @@ const QuotationMonitor = () => {
     const bidColumns = useMemo(() => [
         {key: "supplierName", label: "Supplier"},
         {key: "productName", label: "Product"},
+        {key: "productBarCodeNumber", label: "Bar Code Number"},
         {key: "price", label: "Price"},
         {key: "createdAt", label: "Date/Hour"},
     ], [])

@@ -111,6 +111,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
 
   const bidColumns = useMemo(() => [
     { key: "productName", label: "Product" },
+    { key: "productBarCodeNumber", label: "Bar Code Number" },
     { key: "price", label: "Price" },
     { key: "quantity", label: "Quantity" },
     { key: "bonus", label: "Bonus" },

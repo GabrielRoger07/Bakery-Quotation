@@ -11,6 +11,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
     const [success, setSuccess] = useState("")
 
     const [formData, setFormData] = useState({
+        productBarCodeNumber: '',
         productName: '',
         unitOfMeasure: ''
     })
@@ -18,6 +19,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
     useEffect(() => {
         if(product){
             setFormData({
+                productBarCodeNumber: product.productBarCodeNumber,
                 productName: product.productName,
                 unitOfMeasure: product.unitOfMeasure
             })
@@ -32,7 +34,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
         e.preventDefault()
         if(!product) return
 
-        if(!formData.productName.trim() || !formData.unitOfMeasure){
+        if(!formData.productBarCodeNumber.trim() || !formData.productName.trim() || !formData.unitOfMeasure){
             setError("All fields are required.")
             setSuccess("")
             return;
@@ -41,6 +43,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
         setError("")
 
         const body = {
+            productBarCodeNumber: formData.productBarCodeNumber.trim(),
             productName: formData.productName.trim(),
             unitOfMeasure: formData.unitOfMeasure,
             companyCnpj: product.companyCnpj
@@ -61,6 +64,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
 
     return (
         <form onSubmit={handleSubmit}>
+            <Input label="BarCodeNumber" type="text" name="productBarCodeNumber" value={formData.productBarCodeNumber} onChange={handleChange} placeholder="Enter Product Barcode Number" required/>
             <Input label="Name" type="text" name="productName" value={formData.productName} onChange={handleChange} placeholder="Enter Product Name" required/>
             <div className="input-group">
                 <label htmlFor="unitOfMeasure" className="input-label">

@@ -98,6 +98,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         <div className="quotation-product-item">
             <div>
                 <h3>{product.productName}</h3>
+                <p>Bar Code Number: <strong>{product.productBarCodeNumber}</strong></p>
                 <p>Quantity: {product.quantity} {product.unitOfMeasure}</p>
                 <p>Bonus limit: {product.bonusLimit}</p>
                 <p>Current Lowest Bid: {currentLowestBid ? `R$ ${(currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus)).toFixed(2)}/${product.unitOfMeasure}` : "No bids yet"}</p>

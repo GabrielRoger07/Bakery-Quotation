@@ -22,7 +22,7 @@ const ProductList = () => {
     const [productToEdit, setProductToEdit] = useState(null)
 
     const columns = [
-        { key: "productId", label: "ID" },
+        { key: "productBarCodeNumber", label: "Barcode Number" },
         { key: "productName", label: "Name" },
         { key: "unitOfMeasure", label: "Unit of Measure" }
     ]

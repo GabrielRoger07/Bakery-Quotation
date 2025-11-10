@@ -86,6 +86,10 @@
     max-width: 1000px;
 }
 
+.supplier-bids .table-container {
+    max-width: 1600px;
+}
+
 .quotation-product-item {
     background: #fff;
     padding: 1.5rem;

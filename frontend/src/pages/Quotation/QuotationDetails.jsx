@@ -61,7 +61,7 @@ const QuotationDetails = ({ quotation }) => {
                     <ul>
                         {products.map(p => (
                             <li key={p.productId}>
-                                {p.productName} - Qtd: {p.quantity} ({p.unitOfMeasure})
+                                {p.productBarCodeNumber} - {p.productName} - Qtd: {p.quantity} ({p.unitOfMeasure})
                             </li>
                         ))}
                     </ul>

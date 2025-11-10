@@ -20,6 +20,13 @@
     margin-bottom: 1.25rem;
 }
 
+.supplier-name {
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin-bottom: 0.75rem;
+    font-style: italic;
+}
+
 .quotation-info {
     display: flex;
     justify-content: center;

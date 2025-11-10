@@ -12,6 +12,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   const { request } = useFetch("http://localhost:8080/api/v1")
 
   const [quotation, setQuotation] = useState(null)
+  const [participation, setParticipation] = useState(null)
   const [products, setProducts] = useState([]) 
   const [bids, setBids] = useState([]) 
   const [lowestBids, setLowestBids] = useState([])
@@ -29,6 +30,12 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
 
       if(resQuotation.ok){
         setQuotation(resQuotation.data)
+      }
+
+      const resParticipation = await request("GET", `/participations/${participationId}`)
+
+      if(resParticipation.ok){
+        setParticipation(resParticipation.data)
       }
 
       const resBids = await request("GET", `/bids/participations/${participationId}`)
@@ -137,6 +144,10 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   return (
       <div className="supplier-quotation-container">
         <h2>Quotation #{quotationId}</h2>
+
+        {participation?.supplierName && (
+          <p className="supplier-name">Supplier: {participation.supplierName}</p>
+        )}
 
         {quotation && (
           <div className="quotation-info">

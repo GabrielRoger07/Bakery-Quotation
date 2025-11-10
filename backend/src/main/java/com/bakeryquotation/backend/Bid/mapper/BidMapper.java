@@ -18,6 +18,7 @@ public interface BidMapper {
     @Mapping(source = "product.id", target = "productId")
     @Mapping(source = "participation.supplier.supplierName", target = "supplierName")
     @Mapping(source = "product.productName", target = "productName")
+    @Mapping(source = "product.productBarCodeNumber", target = "productBarCodeNumber")
     @Mapping(source = "bidId.createdAt", target = "createdAt")
     BidResponseDTO toDto(Bid bid);
 }

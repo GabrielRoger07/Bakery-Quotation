@@ -12,6 +12,7 @@ public class BidResponseDTO {
     private BigDecimal bonus;
     private LocalDateTime createdAt;
     private String productName;
+    private String productBarCodeNumber;
     private String supplierName;
 
     public BidResponseDTO() {
@@ -26,7 +27,7 @@ public class BidResponseDTO {
         this.createdAt = createdAt;
     }
 
-    public BidResponseDTO(Long participationId, Long productId, BigDecimal price, BigDecimal quantity, BigDecimal bonus, LocalDateTime createdAt, String productName, String supplierName) {
+    public BidResponseDTO(Long participationId, Long productId, BigDecimal price, BigDecimal quantity, BigDecimal bonus, LocalDateTime createdAt, String productName, String productBarCodeNumber, String supplierName) {
         this.participationId = participationId;
         this.productId = productId;
         this.price = price;
@@ -34,6 +35,7 @@ public class BidResponseDTO {
         this.bonus = bonus;
         this.createdAt = createdAt;
         this.productName = productName;
+        this.productBarCodeNumber = productBarCodeNumber;
         this.supplierName = supplierName;
     }
 
@@ -91,6 +93,14 @@ public class BidResponseDTO {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getProductBarCodeNumber() {
+        return productBarCodeNumber;
+    }
+
+    public void setProductBarCodeNumber(String productBarCodeNumber) {
+        this.productBarCodeNumber = productBarCodeNumber;
     }
 
     public String getSupplierName() {

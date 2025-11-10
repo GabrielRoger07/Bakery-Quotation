@@ -23,6 +23,9 @@ public class Product {
     @Column(name = "productName", nullable = false, length = 30)
     private String productName;
 
+    @Column(name = "productBarCodeNumber", nullable = false, length = 13)
+    private String productBarCodeNumber;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "unitOfMeasure", nullable = false)
     private UnitOfMeasure unitOfMeasure;
@@ -46,8 +49,9 @@ public class Product {
     public Product() {
     }
 
-    public Product(String productName, UnitOfMeasure unitOfMeasure, Company company) {
+    public Product(String productName, String productBarCodeNumber, UnitOfMeasure unitOfMeasure, Company company) {
         this.productName = productName;
+        this.productBarCodeNumber = productBarCodeNumber;
         this.unitOfMeasure = unitOfMeasure;
         this.company = company;
     }
@@ -75,6 +79,14 @@ public class Product {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getProductBarCodeNumber() {
+        return productBarCodeNumber;
+    }
+
+    public void setProductBarCodeNumber(String productBarCodeNumber) {
+        this.productBarCodeNumber = productBarCodeNumber;
     }
 
     public UnitOfMeasure getUnitOfMeasure() {
@@ -113,11 +125,11 @@ public class Product {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(id, product.id) && Objects.equals(productName, product.productName) && unitOfMeasure == product.unitOfMeasure && Objects.equals(company, product.company);
+        return Objects.equals(id, product.id) && Objects.equals(productName, product.productName) && Objects.equals(productBarCodeNumber, product.productBarCodeNumber) && unitOfMeasure == product.unitOfMeasure && Objects.equals(company, product.company) && Objects.equals(contains, product.contains) && Objects.equals(bids, product.bids);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, productName, unitOfMeasure, company);
+        return Objects.hash(id, productName, productBarCodeNumber, unitOfMeasure, company, contains, bids);
     }
 }

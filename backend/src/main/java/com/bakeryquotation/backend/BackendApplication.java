@@ -68,15 +68,16 @@ public class BackendApplication {
             for(int i = 0; i < 10; i++){
 
                 UnitOfMeasure unit = UnitOfMeasure.values()[rnd.nextInt(UnitOfMeasure.values().length)];
+                String barcode = String.format("%013d", Math.abs(rnd.nextLong()) % 10000000000000L);
 
                 if(i < 5){
                     Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), company1);
-                    Product product = new Product(faker.commerce().productName(), unit, company1);
+                    Product product = new Product(faker.commerce().productName(), barcode, unit, company1);
                     supplierRepository.save(supplier);
                     productRepository.save(product);
                 }else{
                     Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), company2);
-                    Product product = new Product(faker.commerce().productName(), unit, company2);
+                    Product product = new Product(faker.commerce().productName(), barcode, unit, company2);
                     supplierRepository.save(supplier);
                     productRepository.save(product);
                 }

@@ -66,6 +66,7 @@ public class ProductService {
         if(!productRequestDTO.getCompanyCnpj().equals(product.getCompany().getCompanyCnpj())){
             throw new ImmutableResourceException("Company CNPJ cannot be changed");
         }
+        product.setProductBarCodeNumber(productRequestDTO.getProductBarCodeNumber());
         product.setProductName(productRequestDTO.getProductName());
         product.setUnitOfMeasure(productRequestDTO.getUnitOfMeasure());
         Product productUpdated = productRepository.save(product);

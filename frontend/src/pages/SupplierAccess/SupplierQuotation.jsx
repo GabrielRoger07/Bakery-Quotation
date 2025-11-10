@@ -137,6 +137,14 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   return (
       <div className="supplier-quotation-container">
         <h2>Quotation #{quotationId}</h2>
+
+        {quotation && (
+          <div className="quotation-info">
+            <p><strong>Start:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
+            <p><strong>End:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
+          </div>
+        )}
+
         <div className="quotation-summary">
           <p>Total Products: <strong>{products.length}</strong></p>
           {timeRemaining && <p>Time Remaining: {timeRemaining}</p>}

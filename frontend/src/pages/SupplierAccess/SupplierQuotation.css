@@ -20,6 +20,19 @@
     margin-bottom: 1.25rem;
 }
 
+.quotation-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    background-color: #e5e7eb;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    color: #374151;
+}
+
 .quotation-summary {
     display: flex;
     align-items: center;

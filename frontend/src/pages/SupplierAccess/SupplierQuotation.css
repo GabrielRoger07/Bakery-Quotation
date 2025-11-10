@@ -147,6 +147,33 @@
     border-bottom: 1px solid #eee;
 }
 
+.bonus-radio {
+    margin: 1rem 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.bonus-radio p {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.bonus-radio label {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 1rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.bonus-radio input[type="radio"] {
+    margin-right: 0.4rem;
+    accent-color: #0a66c2;
+}
+
+.input-container {
+    margin-top: 0.5rem;
+}
+
 @media (max-width: 768px){
     .supplier-quotation-container {
         padding: 1rem;

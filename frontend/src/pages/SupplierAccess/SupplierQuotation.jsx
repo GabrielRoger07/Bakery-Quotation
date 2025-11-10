@@ -10,17 +10,26 @@ import './SupplierQuotation.css'
 const SupplierQuotation = ({ participationId, quotationId }) => {
 
   const { request } = useFetch("http://localhost:8080/api/v1")
+
+  const [quotation, setQuotation] = useState(null)
   const [products, setProducts] = useState([]) 
   const [bids, setBids] = useState([]) 
   const [lowestBids, setLowestBids] = useState([])
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [isWinningModalOpen, setIsWinningModalOpen] = useState(false)
+  const [timeRemaining, setTimeRemaining] = useState("")
 
   useEffect(() => {
 
     const fetchData = async () => {
       setLoading(true)
+
+      const resQuotation = await request("GET", `/quotations/${quotationId}`)
+
+      if(resQuotation.ok){
+        setQuotation(resQuotation.data)
+      }
 
       const resBids = await request("GET", `/bids/participations/${participationId}`)
 
@@ -51,6 +60,30 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
     fetchData()
 
   }, [quotationId, participationId])
+
+  useEffect(() => {
+    if(!quotation) return
+
+    const end = new Date(quotation.quotationEnd)
+
+    const updateCountdown = () => {
+      const now = new Date()
+      const diff = end - now
+      if(diff <= 0){
+        setTimeRemaining("Closed")
+        return
+      }
+
+      const hours = Math.floor(diff / 3600000)
+      const mins = Math.floor((diff % 3600000) / 60000)
+      const secs = Math.floor((diff % 60000) / 1000)
+      setTimeRemaining(`${hours}h ${mins}m ${secs}s`)
+    }
+
+    updateCountdown()
+    const interval = setInterval(updateCountdown, 1000)
+    return () => clearInterval(interval)
+  }, [quotation])
 
   const handleNewBid = useCallback((bid) => {
 
@@ -106,6 +139,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
         <h2>Quotation #{quotationId}</h2>
         <div className="quotation-summary">
           <p>Total Products: <strong>{products.length}</strong></p>
+          {timeRemaining && <p>Time Remaining: {timeRemaining}</p>}
           <div className="winning-section">
             <span className="winning-text">
               Winning: {winningCount}/{products.length}

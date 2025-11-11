@@ -39,6 +39,11 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
 
         const pricePerUnit = numericPrice / (product.quantity + (addBonus ? bonus : 0))
 
+        if(pricePerUnit < 0.01) {
+            setError("Bid per unit must be at least R$0,01")
+            return
+        }
+
         if(currentLowestBid && ((currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus)) <= pricePerUnit)){
             setError("Bid must be lower than the lowest bid")
             return

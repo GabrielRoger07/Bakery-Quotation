@@ -5,14 +5,13 @@ import useFetch from '../../hooks/useFetch'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 
-const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish }) => {
+const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, loading }) => {
     const { request } = useFetch("http://localhost:8080/api/v1")
     const [availableSuppliers, setAvailableSuppliers] = useState([])
     const [localSelected, setLocalSelected] = useState(selectedSuppliers)
     const [error, setError] = useState("")
 
     useEffect(() => {
-
         const token = Cookies.get("token")
         const decoded = jwtDecode(token)
         const cnpj = decoded.companyCnpj
@@ -25,6 +24,10 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish })
         }
         fetchSuppliers()
     }, [request])
+
+    useEffect(() => {
+        onChange(localSelected)
+    }, [localSelected])
 
     const handleAddSupplier = (supplier) => {
         if(localSelected.find(s => s.supplierId === supplier.supplierId)){
@@ -40,9 +43,15 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish })
         setLocalSelected(updatedList)
     }
 
-    useEffect(() => {
-        onChange(localSelected)
-    }, [localSelected])
+    const handleFinishClick = () => {
+        if(localSelected.length === 0) {
+            setError("Select at least one supplier")
+            return
+        }
+
+        setError("")
+        onFinish(localSelected)
+    }
 
     return (
         <div className="step-suppliers">
@@ -53,13 +62,13 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish })
                     {availableSuppliers.filter(s => !localSelected.some(sel => sel.supplierId === s.supplierId)).map(s => (
                         <li key={s.supplierId} className="available-supplier-item">
                             {s.supplierName} ({s.employerName}){" "}
-                            <Button className="add-supplier-btn" onClick={() => handleAddSupplier(s)}>Add</Button>
+                            <Button className="add-supplier-btn" onClick={() => handleAddSupplier(s)} disabled={loading}>Add</Button>
                         </li>
                     ))}
                 </ul>
             </div>
 
-            <Alert message={error} />
+            {error && <Alert message={error} />}
 
             <div className="selected-suppliers">
                 <h3>Suppliers Added ({localSelected.length})</h3>
@@ -67,17 +76,15 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish })
                     {localSelected.map(s => (
                         <li key={s.supplierId} className="selected-supplier-item">
                             {s.supplierName} ({s.employerName}){" "}
-                            <Button className="remove-supplier-btn" onClick={() => handleRemoveSupplier(s.supplierId)}>Remove</Button>
+                            <Button className="remove-supplier-btn" onClick={() => handleRemoveSupplier(s.supplierId)} disabled={loading}>Remove</Button>
                         </li>
                     ))}
                 </ul>
             </div>
 
             <div className="step-navigation">
-                <Button onClick={onBack}>Back</Button>
-                <Button onClick={() => {
-                    onFinish(localSelected)
-                }}>Finish</Button>
+                <Button onClick={onBack} disabled={loading}>Back</Button>
+                <Button onClick={handleFinishClick} disabled={loading}>{loading ? "Saving..." : "Finish"}</Button>
             </div>
         </div>
     )

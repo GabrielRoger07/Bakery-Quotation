@@ -31,7 +31,9 @@ const CompanyCreate = () => {
         !companyName ||
         !companyEmail ||
         !companyWhatsappNumber ||
-        !companyPassword
+        !companyPassword ||
+        isCnpjInvalid ||
+        isWhatsappInvalid
 
     const handleCreateCompany = async (e) => {
         e.preventDefault();

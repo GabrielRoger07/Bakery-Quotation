@@ -11,7 +11,6 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
 
     const { value: price, handleChange: handlePriceChange, getNumericValue, setValue: setPrice } = useCurrencyMask("")
 
-    const [quantity, setQuantity] = useState(product.quantity)
     const [bonus, setBonus] = useState("")
     const [addBonus, setAddBonus] = useState(false)
     const [error, setError] = useState("")
@@ -38,34 +37,12 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
             return
         }
 
-        const pricePerUnit = numericPrice / (quantity + (addBonus ? bonus : 0))
+        const pricePerUnit = numericPrice / (product.quantity + (addBonus ? bonus : 0))
 
         if(currentLowestBid && ((currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus)) <= pricePerUnit)){
             setError("Bid must be lower than the lowest bid")
             return
         }
-
-        /*
-        if(!quantity){
-            setError("Quantity is required")
-            return
-        }
-
-        if(quantity > product.quantity){
-            setError("Quantity cannot be higher than requested")
-            return
-        }
-
-        if(!bonus){
-            setError("Bonus is required")
-            return
-        }
-
-        if(bonus > product.bonusLimit){
-            setError("Bonus cannot be higher than requested")
-            return
-        }
-        */
 
         setPendingBidValue(pricePerUnit)
         setConfirming(true)

@@ -7,10 +7,11 @@ import Alert from '../../components/Alert'
 import '../../components/Auth.css'
 import useCharLimit from '../../hooks/useCharLimit'
 import usePhoneMask from '../../hooks/usePhoneMask'
+import useCnpjMask from '../../hooks/useCnpjMask'
 
 const CompanyCreate = () => {
 
-    const { value: companyCnpj, onChange: handleCnpjChange, onBlur: handleCnpjBlur, warning: cnpjWarning } = useCharLimit(14, "CNPJ")
+    const { value: companyCnpj, handleChange: handleCnpjChange, getNumericValue: getCnpjRaw } = useCnpjMask("")
     const { value: companyName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning } = useCharLimit(45, "Company Name")
     const { value: companyEmail, onChange: handleEmailChange, onBlur: handleEmailBlur, warning: emailWarning } = useCharLimit(60, "Company Email")
     const { maskedValue: companyWhatsappNumber, rawValue: companyWhatsappRaw, onChange: handleWhatsappChange } = usePhoneMask()
@@ -23,7 +24,6 @@ const CompanyCreate = () => {
     const navigate = useNavigate();
 
     const isDisabled = 
-        cnpjWarning ||
         nameWarning ||
         emailWarning ||
         passwordWarning ||
@@ -36,14 +36,6 @@ const CompanyCreate = () => {
     const handleCreateCompany = async (e) => {
         e.preventDefault();
 
-        /*
-        if(!companyCnpj || !companyName || !companyWhatsappNumber || !companyEmail || !companyPassword){
-            setError("All fields are required")
-            setSuccess("")
-            return
-        }
-        */
-
         if (!/\S+@\S+\.\S+/.test(companyEmail)) {
             setError("Email must be valid.");
             setSuccess("");
@@ -53,7 +45,7 @@ const CompanyCreate = () => {
         setError("")
 
         const company = {
-            companyCnpj,
+            companyCnpj: getCnpjRaw(),
             companyName,
             companyEmail,
             companyWhatsappNumber: companyWhatsappRaw,
@@ -77,8 +69,7 @@ const CompanyCreate = () => {
             <div className="auth-box">
                 <h1>Create Company</h1>
                 <form onSubmit={handleCreateCompany}>
-                    <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} onBlur={handleCnpjBlur} placeholder="Enter CNPJ" required />
-                    {cnpjWarning && <div className="warning">{cnpjWarning}</div>}
+                    <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} placeholder="Enter CNPJ" required />
 
                     <Input label="Company Name" type="text" value={companyName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder="Enter Company Name" required />
                     {nameWarning && <div className="warning">{nameWarning}</div>}

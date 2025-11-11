@@ -8,6 +8,7 @@ import Table from '../../components/Table'
 import './SupplierList.css'
 import Alert from '../../components/Alert'
 import SupplierCreate from './SupplierCreate'
+import Button from '../../components/Button'
 
 const SupplierList = () => {
 
@@ -20,6 +21,9 @@ const SupplierList = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [supplierToEdit, setSupplierToEdit] = useState(null)
+
+    const [confirmOpen, setConfirmOpen] = useState(false)
+    const [supplierToRemove, setSupplierToRemove] = useState(null)
 
     const columns = [
         { key: "supplierName", label: "Name"},
@@ -38,6 +42,8 @@ const SupplierList = () => {
         setSupplierToEdit(null)
         setIsEditModalOpen(false)
         setIsCreateModalOpen(false)
+        setConfirmOpen(false)
+        setSupplierToRemove(null)
     }
 
     const handleSaveCreate = (newSupplier) => {
@@ -48,15 +54,25 @@ const SupplierList = () => {
         setSuppliers(prev => prev.map(s => s.supplierId === updatedSupplier.supplierId ? updatedSupplier : s))
     }
 
-    const handleDelete = async (supplierId) => {
-        const res = await request("DELETE", `/suppliers/${supplierId}`)
+    const requestRemove = (supplierId) => {
+        const supplier = suppliers.find(s => s.supplierId === supplierId)
+        setSupplierToRemove(supplier)
+        setConfirmOpen(true)
+    }
+
+    const confirmRemove = async () => {
+
+        if(!supplierToRemove) return
+
+        const res = await request("DELETE", `/suppliers/${supplierToRemove.supplierId}`)
 
         if(res.ok){
-            setSuppliers(prevSuppliers => prevSuppliers.filter(s => s.supplierId !== supplierId));
+            setSuppliers(prevSuppliers => prevSuppliers.filter(s => s.supplierId !== supplierToRemove.supplierId));
             setError("")
         }else{
             setError(res.data?.message || "Failed to delete supplier")
         }
+        closeModals()
     }
 
     const fetchSuppliers = async () => {
@@ -89,7 +105,7 @@ const SupplierList = () => {
             idKey="supplierId"
             loading={loading}
             onEdit={openEditModal}
-            onDelete={handleDelete}
+            onDelete={requestRemove}
             onAdd={() => setIsCreateModalOpen(true)}
             onReload={fetchSuppliers}
             emptyMessage="No suppliers found."
@@ -108,6 +124,16 @@ const SupplierList = () => {
                 onSave={handleSaveCreate}
                 onClose={closeModals} 
             />
+        </Modal>
+
+        <Modal isOpen={confirmOpen} onClose={closeModals} title="Confirm Removal">
+            <div className="confirm-container">
+                <p className="confirm-message">Are you sure you want to remove supplier <strong>{supplierToRemove?.supplierName}</strong> from <strong>{supplierToRemove?.employerName}</strong>?</p>
+                <div className="confirm-buttons">
+                    <Button onClick={closeModals}>Cancel</Button>
+                    <Button onClick={confirmRemove} disabled={loading}>Confirm</Button>
+                </div>
+            </div>
         </Modal>
     </div>
   )

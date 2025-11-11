@@ -22,6 +22,8 @@ public class SupplierRequestDTO {
     @NotEmpty(message = "Employer name cannot be empty")
     private String employerName;
 
+    @NotNull(message = "Employer CNPJ is required")
+    @NotEmpty(message = "Employer CNPJ cannot be empty")
     @CNPJ(message = "Employer CNPJ must be valid")
     private String employerCnpj;
 

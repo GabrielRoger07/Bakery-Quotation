@@ -34,7 +34,7 @@ public class Supplier {
     @Column(name = "employerName", nullable = false, length = 45)
     private String employerName;
 
-    @Column(name = "employerCnpj", length = 14)
+    @Column(name = "employerCnpj", nullable = false, length = 14)
     private String employerCnpj;
 
     @Column(name = "createdAt", nullable = false, updatable = false, columnDefinition = "DATETIME")

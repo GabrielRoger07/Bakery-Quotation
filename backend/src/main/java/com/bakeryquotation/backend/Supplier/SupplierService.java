@@ -2,8 +2,6 @@ package com.bakeryquotation.backend.Supplier;
 
 import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Company.CompanyRepository;
-import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
-import com.bakeryquotation.backend.Product.Product;
 import com.bakeryquotation.backend.Supplier.DTO.SupplierRequestDTO;
 import com.bakeryquotation.backend.Supplier.DTO.SupplierResponseDTO;
 import com.bakeryquotation.backend.Supplier.mapper.SupplierMapper;

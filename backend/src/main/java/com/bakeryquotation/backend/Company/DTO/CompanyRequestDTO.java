@@ -9,7 +9,7 @@ public class CompanyRequestDTO {
 
     @NotNull(message = "CNPJ is required")
     @NotEmpty(message = "CNPJ cannot be empty")
-    //@CNPJ(message = "CNPJ must be valid")
+    @CNPJ(message = "CNPJ must be valid")
     private String companyCnpj;
 
     @NotNull(message = "Company name is required")

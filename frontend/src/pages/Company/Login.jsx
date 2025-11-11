@@ -35,23 +35,18 @@ const Login = () => {
             companyPassword
         }
 
-        console.log(login)
-
         const res = await request("POST", "/companies/login", login)
 
         if(res.ok){
             setSuccess("Login successfully!")
             setError("")
             const token = res.data.token
-            console.log(token)
             Cookies.set("token", token)
             setTimeout(() => navigate("/suppliers"), 1000)
         }else{
             setSuccess("")
             setError(res.data?.message)
         }
-
-        console.log(res.data.token)
     }
 
     return (

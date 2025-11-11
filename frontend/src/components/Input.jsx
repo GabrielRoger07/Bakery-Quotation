@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import './Input.css'
 import { Eye, EyeOff } from 'lucide-react'
-import Button from './Button'
 
 const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, max, step, required, isInvalid }) => {
   

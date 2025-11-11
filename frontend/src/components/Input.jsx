@@ -1,7 +1,7 @@
 import React from 'react'
 import './Input.css'
 
-const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, max, step, required }) => {
+const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, max, step, required, isInvalid }) => {
   const isEmpty = required && !value 
   return (
     <div className='input-container'>
@@ -16,6 +16,7 @@ const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, m
             min={min}
             max={max}
             step={step}
+            className={isInvalid ? "error" : ""}
         />
     </div>
   )

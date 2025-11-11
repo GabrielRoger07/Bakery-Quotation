@@ -11,11 +11,11 @@ import useCnpjMask from '../../hooks/useCnpjMask'
 
 const CompanyCreate = () => {
 
-    const { value: companyCnpj, handleChange: handleCnpjChange, getNumericValue: getCnpjRaw } = useCnpjMask("")
-    const { value: companyName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning } = useCharLimit(45, "Company Name")
-    const { value: companyEmail, onChange: handleEmailChange, onBlur: handleEmailBlur, warning: emailWarning } = useCharLimit(60, "Company Email")
-    const { maskedValue: companyWhatsappNumber, rawValue: companyWhatsappRaw, onChange: handleWhatsappChange } = usePhoneMask()
-    const { value: companyPassword, onChange: handlePasswordChange, onBlur: handlePasswordBlur, warning: passwordWarning } = useCharLimit(255, "Company Password")
+    const { value: companyCnpj, handleChange: handleCnpjChange, handleBlur: handleCnpjBlur, getNumericValue: getCnpjRaw, isInvalid: isCnpjInvalid } = useCnpjMask("")
+    const { value: companyName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(45, "Company Name")
+    const { value: companyEmail, onChange: handleEmailChange, onBlur: handleEmailBlur, warning: emailWarning, isInvalid: isEmailInvalid } = useCharLimit(60, "Company Email")
+    const { value: companyWhatsappNumber, handleChange: handleWhatsappChange, handleBlur: handleWhatsappBlur, getNumericValue: getWhatsappRaw, isInvalid: isWhatsappInvalid } = usePhoneMask("")
+    const { value: companyPassword, onChange: handlePasswordChange, onBlur: handlePasswordBlur, warning: passwordWarning, isInvalid: isPasswordInvalid } = useCharLimit(255, "Company Password")
 
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
@@ -48,7 +48,7 @@ const CompanyCreate = () => {
             companyCnpj: getCnpjRaw(),
             companyName,
             companyEmail,
-            companyWhatsappNumber: companyWhatsappRaw,
+            companyWhatsappNumber: getWhatsappRaw(),
             companyPassword
         }
 
@@ -69,17 +69,19 @@ const CompanyCreate = () => {
             <div className="auth-box">
                 <h1>Create Company</h1>
                 <form onSubmit={handleCreateCompany}>
-                    <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} placeholder="Enter CNPJ" required />
+                    <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} onBlur={handleCnpjBlur} placeholder="Enter CNPJ" isInvalid={isCnpjInvalid} required />
+                    {isCnpjInvalid && <div className="warning">CNPJ must be valid.</div>}
 
-                    <Input label="Company Name" type="text" value={companyName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder="Enter Company Name" required />
+                    <Input label="Company Name" type="text" value={companyName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder="Enter Company Name" isInvalid={isNameInvalid} required />
                     {nameWarning && <div className="warning">{nameWarning}</div>}
 
-                    <Input label="Company E-mail" type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder="Enter Company Email" required />
+                    <Input label="Company E-mail" type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder="Enter Company Email" isInvalid={isEmailInvalid} required />
                     {emailWarning && <div className="warning">{emailWarning}</div>}
 
-                    <Input label="Whatsapp Number" type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} placeholder="Enter Whatsapp Number" required />
+                    <Input label="Whatsapp Number" type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder="Enter Whatsapp Number" isInvalid={isWhatsappInvalid} required />
+                    {isWhatsappInvalid && <div className="warning">Whatsapp number must be valid.</div>}
 
-                    <Input label="Company Password" type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder="Enter Password" required />
+                    <Input label="Company Password" type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder="Enter Password" isInvalid={isPasswordInvalid} required />
                     {passwordWarning && <div className="warning">{passwordWarning}</div>}
 
                     <Alert message={error} />

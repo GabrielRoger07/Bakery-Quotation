@@ -80,3 +80,12 @@
 .required-asterisk.filled {
   color: black;
 }
+
+.input-container input.error {
+  border: 2px solid red;
+  outline: none;
+}
+
+.input-container input.error:focus {
+  border-color: darkred;
+}

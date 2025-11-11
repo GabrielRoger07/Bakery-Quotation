@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export default function useCnpjMask(initialValue = "") {
     const [value, setValue] = useState(initialValue)
+    const [isInvalid, setIsInvalid] = useState(false)
 
     const formatCnpj = (input) => {
         const digits = input.replace(/\D/g, "").slice(0, 14)
@@ -14,10 +15,20 @@ export default function useCnpjMask(initialValue = "") {
     }
 
     const handleChange = (e) => {
-        setValue(formatCnpj(e.target.value))
+        const formatted = formatCnpj(e.target.value)
+        setValue(formatted)
+
+        if(isInvalid && formatted.replace(/\D/g, "").length === 14) {
+            setIsInvalid(false)
+        }
+    }
+
+    const handleBlur = () => {
+        const digits = value.replace(/\D/g, "")
+        setIsInvalid(digits.length !== 14)
     }
 
     const getNumericValue = () => value.replace(/\D/g, "")
 
-    return { value, handleChange, setValue, getNumericValue }
+    return { value, handleChange, handleBlur, setValue, getNumericValue, isInvalid }
 }

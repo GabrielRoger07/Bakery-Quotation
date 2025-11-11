@@ -1,39 +1,37 @@
 import { useState } from "react";
 
-export default function usePhoneMask () {
-    const [maskedValue, setMaskedValue] = useState("")
-    const [rawValue, setRawValue] = useState("")
+export default function usePhoneMask(initialValue = "") {
+    const [value, setValue] = useState(initialValue)
+    const [isInvalid, setIsInvalid] = useState(false)
 
-    const handleChange = (e) => {
-        let input = e.target.value.replace(/\D/g, "")
-        if(input.length > 11){
-            input = input.slice(0, 11)
-        }
+    const formatPhone = (input) => {
+        const digits = input.replace(/\D/g, "").slice(0, 11)
         
-        setRawValue(input)
-
-        if(input.length === 0){
-            setMaskedValue("")
-            return
+        if(digits.length === 0) return ""
+        if(digits.length <= 2) return `(${digits})`
+        if(digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
+        if(digits.length <= 10){
+            return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
         }
-
-        const ddd = input.slice(0, 2)
-        const number = input.slice(2)
-
-        let formatted = `(${ddd}) `
-
-        if(number.length <= 4){
-            formatted += number
-        } else if(number.length === 8){
-            formatted += number.slice(0, 4) + "-" + number.slice(4)
-        } else if(number.length >= 9){
-            formatted += number.slice(0, 5) + "-" + number.slice(5)
-        } else {
-            formatted += number
-        }
-
-        setMaskedValue(formatted)
+        return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
     }
 
-    return { maskedValue, rawValue, onChange: handleChange }
+    const handleChange = (e) => {
+        const formatted = formatPhone(e.target.value)
+        setValue(formatted)
+
+        if(isInvalid && (formatted.replace(/\D/g, "").length === 10 || formatted.replace(/\D/g, "").length === 11)) {
+            setIsInvalid(false)
+        }
+    }
+
+    const handleBlur = () => {
+        const digits = value.replace(/\D/g, "")
+        console.log(digits.length)
+        setIsInvalid((digits.length !== 10 && digits.length !== 11))
+    }
+
+    const getNumericValue = () => value.replace(/\D/g, "")
+
+    return { value, handleChange, handleBlur, setValue, getNumericValue, isInvalid }
 }

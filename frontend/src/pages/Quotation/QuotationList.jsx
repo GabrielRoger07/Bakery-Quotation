@@ -10,11 +10,11 @@ import QuotationCreate from './QuotationCreate'
 import QuotationEdit from './QuotationEdit'
 import QuotationDetails from './QuotationDetails'
 import './QuotationList.css'
+import Button from '../../components/Button'
 
 const QuotationList = () => {
 
     const { request, loading } = useFetch("http://localhost:8080/api/v1")
-
     const navigate = useNavigate()
 
     const [quotations, setQuotations] = useState([])
@@ -26,6 +26,10 @@ const QuotationList = () => {
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
     const [quotationToEdit, setQuotationToEdit] = useState(null)
     const [quotationToView, setQuotationToView] = useState(null)
+
+    const [confirmOpen, setConfirmOpen] = useState(false)
+    const [quotationToRemove, setQuotationToRemove] = useState(null)
+    const [cannotDelete, setCannotDelete] = useState(false)
 
     const columns = [
         { key: "quotationId", label: "ID" },
@@ -50,6 +54,9 @@ const QuotationList = () => {
         setIsEditModalOpen(false)
         setIsCreateModalOpen(false)
         setIsDetailsModalOpen(false)
+        setConfirmOpen(false)
+        setQuotationToRemove(null)
+        setCannotDelete(false)
     }
 
     const handleSaveCreate = (newQuotation) => {
@@ -64,16 +71,30 @@ const QuotationList = () => {
         )
     }
 
-    const handleDelete = async (quotationId, started) => {
-        if(started) return
+    const requestRemove = (quotationId) => {
+        const q = quotations.find((x) => x.quotationId === quotationId)
+        if(new Date(q.quotationStart) <= new Date()){
+            setCannotDelete(true)
+            setConfirmOpen(true)
+            setQuotationToRemove(null)
+        }else{
+            setQuotationToRemove(q)
+            setCannotDelete(false)
+            setConfirmOpen(true)
+        }
+    }
 
-        const res = await request("DELETE", `/quotations/${quotationId}`)
+    const confirmRemove = async () => {
+        if(!quotationToRemove) return
+
+        const res = await request("DELETE", `/quotations/${quotationToRemove.quotationId}`)
         if(res.ok){
-            setQuotations(prevQuotations => prevQuotations.filter(q => q.quotationId !== quotationId))
+            setQuotations(prevQuotations => prevQuotations.filter(q => q.quotationId !== quotationToRemove.quotationId))
             setError("")
         }else{
             setError(res.data?.message || "Failed to delete quotation")
         }
+        closeModals()
     }
 
     const handleMonitor = (quotation) => {
@@ -109,6 +130,7 @@ const QuotationList = () => {
 
         {error && <Alert message={error} />}
         {status === 0 && <Alert message="Server Internal Error"/>}
+
         <Table 
             title="All Quotations"
             columns={columns}
@@ -116,11 +138,7 @@ const QuotationList = () => {
             idKey="quotationId"
             loading={loading}
             onEdit={openEditModal}
-            onDelete={(id) => {
-                const q = quotations.find((x) => x.quotationId === id)
-                const started = new Date(q.quotationStart) <= new Date()
-                handleDelete(id, started)
-            }}
+            onDelete={requestRemove}
             onAdd={() => setIsCreateModalOpen(true)}
             onReload={fetchQuotations}
             onView={openDetailsModal}
@@ -147,6 +165,20 @@ const QuotationList = () => {
             <QuotationDetails
                 quotation={quotationToView}
             />
+        </Modal>
+
+        <Modal isOpen={confirmOpen} onClose={closeModals} title="Confirm Removal">
+            {cannotDelete ? (
+                <p className="confirm-message">You cannot remove a quotation that has already started.</p>
+            ) : (
+                <div className="confirm-container">
+                    <p className="confirm-message">Are you sure want to remove quotation <strong>{quotationToRemove?.quotationId}</strong>?</p>
+                    <div className="confirm-buttons">
+                        <Button onClick={closeModals}>Cancel</Button>
+                        <Button onClick={confirmRemove} disabled={loading}>Confirm</Button>
+                    </div>
+                </div>
+            )}
         </Modal>
     </div>
   )

@@ -7,6 +7,7 @@ import useCharLimit from '../../hooks/useCharLimit'
 import usePhoneMask from '../../hooks/usePhoneMask'
 import useCnpjMask from '../../hooks/useCnpjMask'
 import { formatPhone } from '../../utils/formatPhone'
+import { formatCnpj } from '../../utils/formatCnpj'
 
 const SupplierEdit = ({supplier, onSave, onClose}) => {
     
@@ -18,7 +19,7 @@ const SupplierEdit = ({supplier, onSave, onClose}) => {
     const { value: supplierEmail, setValue: setSupplierEmail, onChange: handleSupplierEmailChange, onBlur: handleSupplierEmailBlur, warning: supplierEmailWarning, isInvalid: isSupplierEmailInvalid } = useCharLimit(60, "Supplier Email")
     const { value: supplierWhatsappNumber, setValue: setSupplierWhatsappNumber, handleChange: handleSupplierWhatsappNumberChange, handleBlur: handleSupplierWhatsappNumberBlur, getNumericValue: getSupplierWhatsappNumberRaw, isInvalid: isSupplierWhatsappNumberInvalid } = usePhoneMask()
     const { value: employerName, setValue: setEmployerName, onChange: handleEmployerNameChange, onBlur: handleEmployerNameBlur, warning: employerNameWarning, isInvalid: isEmployerNameInvalid } = useCharLimit(45, "Company Name")
-    const { value: employerCnpj, setValue: setEmployerCnpj, handleChange: handleEmployerCnpjChange, handleBlur: handleEmployerCnpjBlur, getNumericValue: getEmployerCnpjRaw, isInvalid: isEmployerCnpjInvalid } = useCnpjMask("")
+    const { value: employerCnpj, setValue: setEmployerCnpj, handleChange: handleEmployerCnpjChange, handleBlur: handleEmployerCnpjBlur, getNumericValue: getEmployerCnpjRaw, isInvalid: isEmployerCnpjInvalid } = useCnpjMask()
 
     useEffect(() => {
         if(supplier){
@@ -26,7 +27,7 @@ const SupplierEdit = ({supplier, onSave, onClose}) => {
             setSupplierEmail(supplier.supplierEmail || "")
             setSupplierWhatsappNumber(formatPhone(supplier.supplierWhatsappNumber || ""))
             setEmployerName(supplier.employerName || "")
-            setEmployerCnpj(supplier.employerCnpj || "")
+            setEmployerCnpj(formatCnpj(supplier.employerCnpj || ""))
         }
     }, [supplier])
 

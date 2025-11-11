@@ -54,6 +54,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
 
     const nextStep = () => {
         if(step !== 3){
+            /*
             if(step === 1){
                 if(!quotationData.start || !quotationData.end){
                     setError("All fields are required")
@@ -74,6 +75,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                     }
                 }
             }
+            */
 
             if(step === 2 && quotationData.products.length === 0){
                 setError("Select at least one product")

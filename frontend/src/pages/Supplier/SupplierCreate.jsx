@@ -13,7 +13,7 @@ const SupplierCreate = ({ onClose, onSave }) => {
 
     const { value: supplierName, onChange: handleSupplierNameChange, onBlur: handleSupplierNameBlur, warning: supplierNameWarning, isInvalid: isSupplierNameInvalid } = useCharLimit(30, "Supplier Name")
     const { value: supplierEmail, onChange: handleSupplierEmailChange, onBlur: handleSupplierEmailBlur, warning: supplierEmailWarning, isInvalid: isSupplierEmailInvalid } = useCharLimit(60, "Supplier Email")
-    const { value: supplierWhatsappNumber, handleChange: handleSupplierWhatsappNumberChange, handleBlur: handleSupplierWhatsappNumberBlur, getNumericValue: getSupplierWhatsappNumberRaw, isInvalid: isSupplierWhatsappNumberInvalid } = usePhoneMask("")
+    const { value: supplierWhatsappNumber, handleChange: handleSupplierWhatsappNumberChange, handleBlur: handleSupplierWhatsappNumberBlur, getNumericValue: getSupplierWhatsappNumberRaw, isInvalid: isSupplierWhatsappNumberInvalid } = usePhoneMask()
     const { value: employerName, onChange: handleEmployerNameChange, onBlur: handleEmployerNameBlur, warning: employerNameWarning, isInvalid: isEmployerNameInvalid } = useCharLimit(45, "Company Name")
     const { value: employerCnpj, handleChange: handleEmployerCnpjChange, handleBlur: handleEmployerCnpjBlur, getNumericValue: getEmployerCnpjRaw, isInvalid: isEmployerCnpjInvalid } = useCnpjMask("")
 
@@ -83,13 +83,13 @@ const SupplierCreate = ({ onClose, onSave }) => {
             <Input label="Company Name" type="text" value={employerName} onChange={handleEmployerNameChange} onBlur={handleEmployerNameBlur} placeholder="Enter Company Name" isInvalid={isEmployerNameInvalid} required />
             {employerNameWarning && <div className="warning">{employerNameWarning}</div>}
 
-            <Input label="Company Cnpj" type="text" value={employerCnpj} onChange={handleEmployerCnpjChange} onBlur={handleEmployerCnpjBlur} placeholder="Enter Company Cnpj" isInvalid={isEmployerCnpjInvalid} required />
-            {isEmployerCnpjInvalid && <div className="warning">Employer CNPJ must be valid.</div>}
+            <Input label="Company Cnpj" type="text" value={employerCnpj} onChange={handleEmployerCnpjChange} onBlur={handleEmployerCnpjBlur} placeholder="Enter Company CNPJ" isInvalid={isEmployerCnpjInvalid} required />
+            {isEmployerCnpjInvalid && <div className="warning">Company CNPJ must be valid.</div>}
 
             <Alert message={error} />
             {success && <div className="success">{success}</div>}
 
-            <Button type="submit" disabled={isDisabled}>Create Company</Button>
+            <Button type="submit" disabled={isDisabled}>Create Supplier</Button>
         </form>
     )
 }

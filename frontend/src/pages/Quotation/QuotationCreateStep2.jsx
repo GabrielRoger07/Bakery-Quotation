@@ -6,7 +6,7 @@ import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 
-const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) => {
+const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, loading }) => {
 
     const { request } = useFetch("http://localhost:8080/api/v1")
     const [availableProducts, setAvailableProducts] = useState([])
@@ -33,15 +33,30 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) =>
         fetchProducts()
     }, [request])
 
+    useEffect(() => {
+        onChange(localSelected)
+    }, [localSelected])
+
     const handleAddProduct = () => {
 
-        if(!selectedProductId) return
+        if(!selectedProductId){
+            setError("Select a product first")
+            return
+        }
 
         const product = availableProducts.find(p => p.productId === selectedProductId)
-        if(!product) return
+        if(!product) {
+            setError("Invalid product")
+            return
+        }
 
         if(localSelected.find(p => p.productId === selectedProductId)){
             setError("Product already added!")
+            return
+        }
+
+        if(quantity <= 0) {
+            setError("Quantity must be greater than 0")
             return
         }
         
@@ -55,9 +70,16 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) =>
         setLocalSelected(updatedList)
     }
 
-    useEffect(() => {
+    const handleNextClick = () => {
+        if(localSelected.length === 0) {
+            setError("Select at least one product")
+            return
+        }
+
+        setError("")
         onChange(localSelected)
-    }, [localSelected])
+        onNext()
+    }
 
     return (
         <div className="step-products">
@@ -67,7 +89,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) =>
                 <select value={selectedProductId} onChange={e => setSelectedProductId(Number(e.target.value))} className="custom-select">
                     {availableProducts.map(p => (
                         <option key={p.productId} value={p.productId}>
-                            {p.productName}
+                            {p.productBarCodeNumber} - {p.productName}
                         </option>
                     ))}
                 </select>
@@ -79,6 +101,9 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) =>
                         value={quantity}
                         onChange={e => setQuantity(e.target.value)}
                         min="1"
+                        onKeyDown={e => {
+                            if(e.key === '-' || e.key === 'e' || e.key === 'E') e.preventDefault()
+                        }}
                     />
                     <Input 
                         label="Bonus"
@@ -86,13 +111,16 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) =>
                         value={bonus}
                         onChange={e => setBonus(e.target.value)}
                         min="0"
+                        onKeyDown={e => {
+                            if(e.key === '-' || e.key === 'e' || e.key === 'E') e.preventDefault()
+                        }}
                     />
                 </div>
 
-                <Button onClick={handleAddProduct}>Add Product</Button>
+                <Button onClick={handleAddProduct} disabled={loading}>Add Product</Button>
             </div>
 
-            <Alert message={error} />
+            {error && <Alert message={error} />}
 
             <div className="selected-products">
                 <h3>Products Added ({localSelected.length})</h3>
@@ -107,8 +135,8 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack }) =>
             </div>
 
             <div className="step-navigation">
-                <Button onClick={onBack}>Back</Button>
-                <Button onClick={() => {onChange(localSelected); onNext()}}>Next</Button>
+                <Button onClick={onBack} disabled={loading}>Back</Button>
+                <Button onClick={handleNextClick} disabled={loading}>{loading ? "Loading..." : "Next"}</Button>
             </div>
         </div>
     )

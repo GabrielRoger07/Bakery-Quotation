@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import './Input.css'
 import { Eye, EyeOff } from 'lucide-react'
 
-const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, max, step, required, isInvalid }) => {
+const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, max, step, required, isInvalid, ...rest }) => {
   
   const [showPassword, setShowPassword] = useState(false)
   const isPasswordField = type === "password"
@@ -24,6 +24,7 @@ const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, m
               max={max}
               step={step}
               className={isInvalid ? "error" : ""}
+              {...rest}
             />
 
             {isPasswordField && (

@@ -77,10 +77,12 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             }
             */
 
+            /*
             if(step === 2 && quotationData.products.length === 0){
                 setError("Select at least one product")
                 return
             }
+            */
 
             setError("")
             setStep(step + 1)

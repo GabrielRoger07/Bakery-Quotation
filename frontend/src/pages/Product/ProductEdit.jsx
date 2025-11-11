@@ -3,38 +3,38 @@ import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
+import useCharLimit from '../../hooks/useCharLimit'
 
 const ProductEdit = ({product, onSave, onClose}) => {
 
-    const { request, loading } = useFetch("http://localhost:8080/api/v1")
+    const {value: productBarCodeNumber, setValue: setProductBarCodeNumber, onChange: handleBarCodeChange, onBlur: handleBarCodeBlur, warning: barCodeWarning, isInvalid: isBarCodeInvalid } = useCharLimit(13, "Product Barcode Number")
+    const {value: productName, setValue: setProductName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(30, "Product Name")
+
+    const { request } = useFetch("http://localhost:8080/api/v1")
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
-
-    const [formData, setFormData] = useState({
-        productBarCodeNumber: '',
-        productName: '',
-        unitOfMeasure: ''
-    })
+    const [unitOfMeasure, setUnitOfMeasure] = useState("")
 
     useEffect(() => {
         if(product){
-            setFormData({
-                productBarCodeNumber: product.productBarCodeNumber,
-                productName: product.productName,
-                unitOfMeasure: product.unitOfMeasure
-            })
+            setProductBarCodeNumber(product.productBarCodeNumber || "")
+            setProductName(product.productName || "")
+            setUnitOfMeasure(product.unitOfMeasure || "")
         }
     }, [product])
 
-    const handleChange = (e) => {
-        setFormData(prev => ({...prev, [e.target.name]: e.target.value}))
-    }
+    const isDisabled = 
+        barCodeWarning ||
+        nameWarning ||
+        !productBarCodeNumber ||
+        !productName ||
+        !unitOfMeasure
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         if(!product) return
 
-        if(!formData.productBarCodeNumber.trim() || !formData.productName.trim() || !formData.unitOfMeasure){
+        if(!productBarCodeNumber.trim() || !productName.trim() || !unitOfMeasure){
             setError("All fields are required.")
             setSuccess("")
             return;
@@ -43,9 +43,9 @@ const ProductEdit = ({product, onSave, onClose}) => {
         setError("")
 
         const body = {
-            productBarCodeNumber: formData.productBarCodeNumber.trim(),
-            productName: formData.productName.trim(),
-            unitOfMeasure: formData.unitOfMeasure,
+            productBarCodeNumber: productBarCodeNumber.trim(),
+            productName: productName.trim(),
+            unitOfMeasure,
             companyCnpj: product.companyCnpj
         }
 
@@ -64,28 +64,33 @@ const ProductEdit = ({product, onSave, onClose}) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Input label="BarCodeNumber" type="text" name="productBarCodeNumber" value={formData.productBarCodeNumber} onChange={handleChange} placeholder="Enter Product Barcode Number" required/>
-            <Input label="Name" type="text" name="productName" value={formData.productName} onChange={handleChange} placeholder="Enter Product Name" required/>
-            <div className="input-group">
-                <label htmlFor="unitOfMeasure" className="input-label">
-                    Unit of Measure
+            <Input label="Barcode Number" type="text" name="productBarCodeNumber" value={productBarCodeNumber} onChange={handleBarCodeChange} onBlur={handleBarCodeBlur} placeholder="Enter Product Barcode Number" isInvalid={isBarCodeInvalid} required />
+            {barCodeWarning && <div className="warning">{barCodeWarning}</div>}
+            
+            <Input label="Name" type="text" name="productName" value={productName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder="Enter Product Name" isInvalid={isNameInvalid} required />
+            {nameWarning && <div className="warning">{nameWarning}</div>}
+
+            <div className="input-container">
+                <label htmlFor="unitOfMeasure">
+                    Unit of Measure<span className={`required-asterisk ${!unitOfMeasure ? "empty" : "filled"}`}>*</span>
                 </label>
-                <select id="unitOfMeasure" name="unitOfMeasure" value={formData.unitOfMeasure} onChange={handleChange} className="custom-select">
-                    <option value="" disabled>Select a unit</option>
-                    <option value="mg">mg</option> 
-                    <option value="g">g</option> 
-                    <option value="kg">kg</option> 
-                    <option value="ml">ml</option> 
-                    <option value="l">l</option> 
-                    <option value="und">und</option> 
-                </select>
+                <div className="select-wrapper">
+                    <select id="unitOfMeasure" name="unitOfMeasure" value={unitOfMeasure} onChange={(e) => setUnitOfMeasure(e.target.value)} className="custom-select" required >
+                        <option value="" disabled>Select a unit</option>
+                        <option value="mg">mg</option> 
+                        <option value="g">g</option> 
+                        <option value="kg">kg</option> 
+                        <option value="ml">ml</option> 
+                        <option value="l">l</option> 
+                        <option value="und">und</option> 
+                    </select>
+                    <span className="select-arrow"></span>
+                </div>
             </div>
             <Alert message={error} />
             {success && <div className="success">{success}</div>}
 
-            <Button type="submit" disabled={loading}>
-                {loading ? "Saving..." : "Save"}
-            </Button>
+            <Button type="submit" disabled={isDisabled}>Save</Button>
         </form>
     )
 }

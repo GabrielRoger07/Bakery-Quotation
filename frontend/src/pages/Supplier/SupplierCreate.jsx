@@ -5,36 +5,35 @@ import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
+import useCharLimit from '../../hooks/useCharLimit'
+import usePhoneMask from '../../hooks/usePhoneMask'
+import useCnpjMask from '../../hooks/useCnpjMask'
 
 const SupplierCreate = ({ onClose, onSave }) => {
 
-    const [supplierName, setSupplierName] = useState("")
-    const [supplierEmail, setSupplierEmail] = useState("")
-    const [supplierWhatsappNumber, setSupplierWhatsappNumber] = useState("")
-    const [employerName, setEmployerName] = useState("")
-    const [employerCnpj, setEmployerCnpj] = useState("")
+    const { value: supplierName, onChange: handleSupplierNameChange, onBlur: handleSupplierNameBlur, warning: supplierNameWarning, isInvalid: isSupplierNameInvalid } = useCharLimit(30, "Supplier Name")
+    const { value: supplierEmail, onChange: handleSupplierEmailChange, onBlur: handleSupplierEmailBlur, warning: supplierEmailWarning, isInvalid: isSupplierEmailInvalid } = useCharLimit(60, "Supplier Email")
+    const { value: supplierWhatsappNumber, handleChange: handleSupplierWhatsappNumberChange, handleBlur: handleSupplierWhatsappNumberBlur, getNumericValue: getSupplierWhatsappNumberRaw, isInvalid: isSupplierWhatsappNumberInvalid } = usePhoneMask("")
+    const { value: employerName, onChange: handleEmployerNameChange, onBlur: handleEmployerNameBlur, warning: employerNameWarning, isInvalid: isEmployerNameInvalid } = useCharLimit(45, "Company Name")
+    const { value: employerCnpj, handleChange: handleEmployerCnpjChange, handleBlur: handleEmployerCnpjBlur, getNumericValue: getEmployerCnpjRaw, isInvalid: isEmployerCnpjInvalid } = useCnpjMask("")
+
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
-    const { request, loading } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch("http://localhost:8080/api/v1")
 
-    const validate = () => {
-        const newErrors = {}
-        if(!supplierName) newErrors.supplierName = "Supplier name is required"
-        if(!supplierWhatsappNumber) newErrors.supplierWhatsappNumber = "Supplier whatsapp number is required"
-        if(!employerName) newErrors.employerName = "Employer name is required"
-        return newErrors
-    }
+    const isDisabled = 
+        supplierNameWarning ||
+        employerNameWarning ||
+        !supplierName ||
+        !supplierWhatsappNumber ||
+        !employerName ||
+        !employerCnpj ||
+        isSupplierWhatsappNumberInvalid ||
+        isEmployerCnpjInvalid
 
     const handleSupplierCreate = async(e) => {
         e.preventDefault();
-
-        const validationErrors = validate();
-        if(validationErrors.length > 0){
-            setError(validationErrors)
-            setSuccess("")
-            return
-        }
 
         if (supplierEmail && !/\S+@\S+\.\S+/.test(supplierEmail)) {
             setError("Email must be valid.");
@@ -49,12 +48,11 @@ const SupplierCreate = ({ onClose, onSave }) => {
         const cnpj = decoded.companyCnpj;
 
         const supplier = {
-
             supplierName,
-            supplierEmail,
-            supplierWhatsappNumber,
+            supplierEmail: supplierEmail || null,
+            supplierWhatsappNumber: getSupplierWhatsappNumberRaw(),
             employerName,
-            employerCnpj,
+            employerCnpj: getEmployerCnpjRaw(),
             companyCnpj: cnpj
         }
 
@@ -73,17 +71,25 @@ const SupplierCreate = ({ onClose, onSave }) => {
 
     return (
         <form onSubmit={handleSupplierCreate}>
-            <Input label="Name" type="text" name="supplierName" value={supplierName} onChange={(e) => setSupplierName(e.target.value)} placeholder="Enter Supplier Name"/>
-            <Input label="Email" type="email" name="supplierEmail" value={supplierEmail} onChange={(e) => setSupplierEmail(e.target.value)} placeholder="Enter Supplier Email"/>
-            <Input label="Whatsapp Number" type="text" name="supplierWhatsappNumber" value={supplierWhatsappNumber} onChange={(e) => setSupplierWhatsappNumber(e.target.value)} placeholder="Enter Whatsapp Number"/>
-            <Input label="Company Name" type="text" name="employerName" value={employerName} onChange={(e) => setEmployerName(e.target.value)} placeholder="Enter Company Name"/>
-            <Input label="Company Cnpj" type="text" name="employerCnpj" value={employerCnpj} onChange={(e) => setEmployerCnpj(e.target.value)} placeholder="Enter Company Cnpj"/>
+            <Input label="Supplier Name" type="text" value={supplierName} onChange={handleSupplierNameChange} onBlur={handleSupplierNameBlur} placeholder="Enter Supplier Name" isInvalid={isSupplierNameInvalid} required />
+            {supplierNameWarning && <div className="warning">{supplierNameWarning}</div>}
+            
+            <Input label="Supplier Email" type="email" value={supplierEmail} onChange={handleSupplierEmailChange} onBlur={handleSupplierEmailBlur} placeholder="Enter Supplier Email" isInvalid={isSupplierEmailInvalid} />
+            {supplierEmail && supplierEmailWarning && <div className="warning">{supplierEmailWarning}</div>}
+            
+            <Input label="Whatsapp Number" type="text" value={supplierWhatsappNumber} onChange={handleSupplierWhatsappNumberChange} onBlur={handleSupplierWhatsappNumberBlur} placeholder="Enter Whatsapp Number" isInvalid={isSupplierWhatsappNumberInvalid} required />
+            {isSupplierWhatsappNumberInvalid && <div className="warning">Whatsapp number must be valid.</div>}
+
+            <Input label="Company Name" type="text" value={employerName} onChange={handleEmployerNameChange} onBlur={handleEmployerNameBlur} placeholder="Enter Company Name" isInvalid={isEmployerNameInvalid} required />
+            {employerNameWarning && <div className="warning">{employerNameWarning}</div>}
+
+            <Input label="Company Cnpj" type="text" value={employerCnpj} onChange={handleEmployerCnpjChange} onBlur={handleEmployerCnpjBlur} placeholder="Enter Company Cnpj" isInvalid={isEmployerCnpjInvalid} required />
+            {isEmployerCnpjInvalid && <div className="warning">Employer CNPJ must be valid.</div>}
+
             <Alert message={error} />
             {success && <div className="success">{success}</div>}
 
-            <Button type="submit" disabled={loading}>
-                {loading ? "Creating..." : "Create Supplier"}
-            </Button>
+            <Button type="submit" disabled={isDisabled}>Create Company</Button>
         </form>
     )
 }

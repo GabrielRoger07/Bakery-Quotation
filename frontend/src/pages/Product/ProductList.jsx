@@ -7,6 +7,7 @@ import Modal from '../../components/Modal'
 import Alert from '../../components/Alert'
 import ProductCreate from './ProductCreate'
 import ProductEdit from './ProductEdit'
+import Button from '../../components/Button'
 import './ProductList.css'
 
 const ProductList = () => {
@@ -20,6 +21,9 @@ const ProductList = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [productToEdit, setProductToEdit] = useState(null)
+
+    const [confirmOpen, setConfirmOpen] = useState(false)
+    const [productToRemove, setProductToRemove] = useState(null)
 
     const columns = [
         { key: "productBarCodeNumber", label: "Barcode Number" },
@@ -36,6 +40,8 @@ const ProductList = () => {
         setProductToEdit(null)
         setIsEditModalOpen(false)
         setIsCreateModalOpen(false)
+        setConfirmOpen(false)
+        setProductToRemove(null)
     }
 
     const handleSaveCreate = (newProduct) => {
@@ -46,14 +52,24 @@ const ProductList = () => {
         setProducts(prev => prev.map(p => p.productId === updatedProduct.productId ? updatedProduct : p))
     }
 
-    const handleDelete = async (productId) => {
-        const res = await request("DELETE", `/products/${productId}`)
+    const requestRemove = (productId) => {
+        const product = products.find(p => p.productId === productId)
+        setProductToRemove(product)
+        setConfirmOpen(true)
+    }
+
+    const confirmRemove = async () => {
+
+        if(!productToRemove) return
+
+        const res = await request("DELETE", `/products/${productToRemove.productId}`)
         if(res.ok){
-            setProducts(prevProducts => prevProducts.filter(p => p.productId !== productId))
+            setProducts(prevProducts => prevProducts.filter(p => p.productId !== productToRemove.productId))
             setError("")
         }else{
             setError(res.data?.message || "Failed to delete product")
         }
+        closeModals()
     }
 
     const fetchProducts = async () => {
@@ -86,7 +102,7 @@ const ProductList = () => {
             idKey="productId"
             loading={loading}
             onEdit={openEditModal}
-            onDelete={handleDelete}
+            onDelete={requestRemove}
             onAdd={() => setIsCreateModalOpen(true)}
             onReload={fetchProducts}
             emptyMessage="No products found."
@@ -105,6 +121,17 @@ const ProductList = () => {
                 onSave={handleSaveCreate} 
                 onClose={closeModals} 
             />
+        </Modal>
+
+        <Modal isOpen={confirmOpen} onClose={closeModals} title="Confirm Removal">
+            <div className="confirm-container">
+                <p className="confirm-message">Are you sure you want to remove product <strong>{productToRemove?.productName}</strong>?</p>
+                <div className="confirm-buttons">
+                    <Button onClick={closeModals}>Cancel</Button>
+                    <Button onClick={confirmRemove} disabled={loading}>Confirm</Button>
+                </div>
+            </div>
+
         </Modal>
     </div>
   )

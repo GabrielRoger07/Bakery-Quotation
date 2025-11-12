@@ -8,6 +8,7 @@ import '../../components/Auth.css'
 import useCharLimit from '../../hooks/useCharLimit'
 import usePhoneMask from '../../hooks/usePhoneMask'
 import useCnpjMask from '../../hooks/useCnpjMask'
+import { ENV } from '../../config/env'
 
 const CompanyCreate = () => {
 
@@ -20,7 +21,7 @@ const CompanyCreate = () => {
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
-    const { request } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate();
 
     const isDisabled = 

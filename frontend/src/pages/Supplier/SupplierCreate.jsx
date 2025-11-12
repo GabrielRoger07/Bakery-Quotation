@@ -8,6 +8,7 @@ import Alert from '../../components/Alert'
 import useCharLimit from '../../hooks/useCharLimit'
 import usePhoneMask from '../../hooks/usePhoneMask'
 import useCnpjMask from '../../hooks/useCnpjMask'
+import { ENV } from '../../config/env'
 
 const SupplierCreate = ({ onClose, onSave }) => {
 
@@ -20,7 +21,7 @@ const SupplierCreate = ({ onClose, onSave }) => {
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
-    const { request } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch(ENV.API_BASE_URL)
 
     const isDisabled = 
         supplierNameWarning ||

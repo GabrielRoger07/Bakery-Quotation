@@ -6,6 +6,7 @@ import Alert from '../../components/Alert'
 import QuotationCreateStep1 from './QuotationCreateStep1'
 import QuotationCreateStep2 from './QuotationCreateStep2'
 import QuotationCreateStep3 from './QuotationCreateStep3'
+import { ENV } from '../../config/env'
 
 const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave }) => {
     
@@ -14,7 +15,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
-    const { request } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch(ENV.API_BASE_URL)
 
     const [quotationData, setQuotationData] = useState({
         start: "",

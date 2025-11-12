@@ -4,10 +4,11 @@ import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import './SupplierQuotation.css'
+import { ENV } from '../../config/env'
 
 const QuotationProductItem = ({ product, participationId, currentLowestBid }) => {
     
-    const {request} = useFetch("http://localhost:8080/api/v1")
+    const {request} = useFetch(ENV.API_BASE_URL)
 
     const { value: price, handleChange: handlePriceChange, getNumericValue, setValue: setPrice } = useCurrencyMask("")
 

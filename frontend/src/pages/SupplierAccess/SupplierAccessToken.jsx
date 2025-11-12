@@ -3,6 +3,7 @@ import Input from '../../components/Input'
 import Button from '../../components/Button'
 import useFetch from '../../hooks/useFetch'
 import '../../components/Auth.css'
+import { ENV } from '../../config/env'
 
 const SupplierAccessToken = ({ participationId, onAccessGranted }) => {
 
@@ -10,7 +11,7 @@ const SupplierAccessToken = ({ participationId, onAccessGranted }) => {
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
 
-    const { request } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch(ENV.API_BASE_URL)
 
     const handleSubmit = async (e) => {
         e.preventDefault()

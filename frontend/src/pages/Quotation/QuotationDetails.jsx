@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import useFetch from '../../hooks/useFetch'
 import Alert from '../../components/Alert'
+import { ENV } from '../../config/env'
 
 const QuotationDetails = ({ quotation }) => {
     
-    const { request } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch(ENV.API_BASE_URL)
     const [products, setProducts] = useState([])
     const [suppliers, setSuppliers] = useState([])
     const [error, setError] = useState("")

@@ -11,10 +11,11 @@ import QuotationEdit from './QuotationEdit'
 import QuotationDetails from './QuotationDetails'
 import './QuotationList.css'
 import Button from '../../components/Button'
+import { ENV } from '../../config/env'
 
 const QuotationList = () => {
 
-    const { request, loading } = useFetch("http://localhost:8080/api/v1")
+    const { request, loading } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate()
 
     const [quotations, setQuotations] = useState([])

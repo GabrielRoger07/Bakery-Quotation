@@ -6,10 +6,11 @@ import Modal from '../../components/Modal'
 import Button from '../../components/Button'
 import QuotationProductItem from './QuotationProductItem'
 import './SupplierQuotation.css'
+import { ENV } from '../../config/env'
 
 const SupplierQuotation = ({ participationId, quotationId }) => {
 
-  const { request } = useFetch("http://localhost:8080/api/v1")
+  const { request } = useFetch(ENV.API_BASE_URL)
 
   const [quotation, setQuotation] = useState(null)
   const [participation, setParticipation] = useState(null)

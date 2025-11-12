@@ -4,13 +4,14 @@ import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import useCharLimit from '../../hooks/useCharLimit'
+import { ENV } from '../../config/env'
 
 const ProductEdit = ({product, onSave, onClose}) => {
 
     const {value: productBarCodeNumber, setValue: setProductBarCodeNumber, onChange: handleBarCodeChange, onBlur: handleBarCodeBlur, warning: barCodeWarning, isInvalid: isBarCodeInvalid } = useCharLimit(13, "Product Barcode Number")
     const {value: productName, setValue: setProductName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(30, "Product Name")
 
-    const { request } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch(ENV.API_BASE_URL)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
     const [unitOfMeasure, setUnitOfMeasure] = useState("")

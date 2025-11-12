@@ -9,10 +9,11 @@ import ProductCreate from './ProductCreate'
 import ProductEdit from './ProductEdit'
 import Button from '../../components/Button'
 import './ProductList.css'
+import { ENV } from '../../config/env'
 
 const ProductList = () => {
 
-    const { request, loading } = useFetch("http://localhost:8080/api/v1")
+    const { request, loading } = useFetch(ENV.API_BASE_URL)
 
     const [products, setProducts] = useState([])
     const [error, setError] = useState("")

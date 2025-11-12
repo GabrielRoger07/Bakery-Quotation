@@ -6,6 +6,7 @@ import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import useCharLimit from '../../hooks/useCharLimit'
+import { ENV } from '../../config/env'
 
 const ProductCreate = ({ onClose, onSave }) => {
 
@@ -16,7 +17,7 @@ const ProductCreate = ({ onClose, onSave }) => {
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
-    const { request } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch(ENV.API_BASE_URL)
 
     const isDisabled = 
         barCodeWarning ||

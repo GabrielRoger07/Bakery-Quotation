@@ -4,9 +4,10 @@ import Cookies from 'js-cookie'
 import useFetch from '../../hooks/useFetch'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
+import { ENV } from '../../config/env'
 
 const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, loading }) => {
-    const { request } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch(ENV.API_BASE_URL)
     const [availableSuppliers, setAvailableSuppliers] = useState([])
     const [localSelected, setLocalSelected] = useState(selectedSuppliers)
     const [error, setError] = useState("")

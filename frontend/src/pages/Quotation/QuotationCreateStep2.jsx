@@ -5,10 +5,11 @@ import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
+import { ENV } from '../../config/env'
 
 const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, loading }) => {
 
-    const { request } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch(ENV.API_BASE_URL)
     const [availableProducts, setAvailableProducts] = useState([])
     const [localSelected, setLocalSelected] = useState(selectedProducts)
     const [selectedProductId, setSelectedProductId] = useState("")

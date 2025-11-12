@@ -5,6 +5,7 @@ import useWebSocket from '../../hooks/useWebSocket'
 import Button from '../../components/Button'
 import Table from '../../components/Table'
 import './QuotationMonitor.css'
+import { ENV } from '../../config/env'
 
 const QuotationMonitor = () => {
 
@@ -12,7 +13,7 @@ const QuotationMonitor = () => {
     const quotationId = searchParams.get('id')
 
     const navigate = useNavigate()
-    const { request } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch(ENV.API_BASE_URL)
 
     const [quotation, setQuotation] = useState(null)
     const [products, setProducts] = useState([])

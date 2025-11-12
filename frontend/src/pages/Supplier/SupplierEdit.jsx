@@ -8,10 +8,11 @@ import usePhoneMask from '../../hooks/usePhoneMask'
 import useCnpjMask from '../../hooks/useCnpjMask'
 import { formatPhone } from '../../utils/formatPhone'
 import { formatCnpj } from '../../utils/formatCnpj'
+import { ENV } from '../../config/env'
 
 const SupplierEdit = ({supplier, onSave, onClose}) => {
     
-    const { request } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch(ENV.API_BASE_URL)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 

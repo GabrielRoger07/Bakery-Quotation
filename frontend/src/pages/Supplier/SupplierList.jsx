@@ -9,10 +9,11 @@ import './SupplierList.css'
 import Alert from '../../components/Alert'
 import SupplierCreate from './SupplierCreate'
 import Button from '../../components/Button'
+import { ENV } from '../../config/env'
 
 const SupplierList = () => {
 
-    const { request, loading } = useFetch("http://localhost:8080/api/v1")
+    const { request, loading } = useFetch(ENV.API_BASE_URL)
     
     const [suppliers, setSuppliers] = useState([])
     const [error, setError] = useState("")

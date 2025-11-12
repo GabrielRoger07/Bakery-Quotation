@@ -6,6 +6,7 @@ import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import '../../components/Auth.css'
+import { ENV } from '../../config/env'
 
 const Login = () => {
     const [companyEmail, setCompanyEmail] = useState("")
@@ -13,7 +14,7 @@ const Login = () => {
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
-    const { request, loading } = useFetch("http://localhost:8080/api/v1")
+    const { request, loading } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate()
 
     const handleLogin = async (e) => {

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { ENV } from "../config/env";
 
 export default function useWebSocket(quotationId, onMessage){
   const clientRef = useRef(null)
@@ -9,7 +10,7 @@ export default function useWebSocket(quotationId, onMessage){
     if(!quotationId) return
 
     const client = new Client({
-      webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+      webSocketFactory: () => new SockJS(ENV.SOCKET_URL),
       debug: (str) => console.log(str),
       reconnectDelay: 0,
       heartbeatIncoming: 4000,

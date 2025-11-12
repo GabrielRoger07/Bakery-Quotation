@@ -3,6 +3,7 @@ import SupplierAccessToken from './SupplierAccessToken'
 import SupplierQuotation from './SupplierQuotation'
 import { useSearchParams } from 'react-router-dom'
 import useFetch from '../../hooks/useFetch'
+import { ENV } from '../../config/env'
 
 const SupplierPage = () => {
 
@@ -14,7 +15,7 @@ const SupplierPage = () => {
     const [participationId, setParticipationId] = useState(null)
     const [error, setError] = useState("")
 
-    const { request } = useFetch("http://localhost:8080/api/v1")
+    const { request } = useFetch(ENV.API_BASE_URL)
 
     useEffect(() => {
         if(quotationId && supplierId){

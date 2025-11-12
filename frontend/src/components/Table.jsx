@@ -1,6 +1,7 @@
 import React from 'react'
 import './Table.css'
 import Button from './Button'
+import { Pencil, Trash, Eye, Activity } from 'lucide-react'
 
 const Table = ({title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload, onMonitor}) => {
   return (
@@ -39,16 +40,16 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                                 {(onEdit || onDelete || onView || onMonitor) && (
                                     <td className="actions">
                                         {onEdit && (
-                                            <Button onClick={() => onEdit(item)}>Edit</Button>
+                                            <Button onClick={() => onEdit(item)}><Pencil size={18}/></Button>
                                         )}
                                         {onDelete && (
-                                            <Button onClick={() => onDelete(item[idKey])}>Delete</Button>
+                                            <Button onClick={() => onDelete(item[idKey])}><Trash size={18}/></Button>
                                         )}
                                         {onView && (
-                                            <Button onClick={() => onView(item)}>View</Button>
+                                            <Button onClick={() => onView(item)}><Eye size={18}/></Button>
                                         )}
                                         {onMonitor && (
-                                            <Button onClick={() => onMonitor(item)}>Monitor</Button>
+                                            <Button onClick={() => onMonitor(item)}><Activity size={18}/></Button>
                                         )}
                                     </td>
 

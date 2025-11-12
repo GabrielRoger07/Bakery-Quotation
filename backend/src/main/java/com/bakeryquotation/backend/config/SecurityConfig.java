@@ -33,6 +33,17 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/companies/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/companies/register").permitAll()
                         .requestMatchers("/ws/**").permitAll()
+
+                        //rotas fornecedor
+                        .requestMatchers(HttpMethod.GET, "/api/v1/participations/*/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/participations/*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/participations/validateToken/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/quotations/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/contains/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/bids/participations/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/bids/lowest").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/bids").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

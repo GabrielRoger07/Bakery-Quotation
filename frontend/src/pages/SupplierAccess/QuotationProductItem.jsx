@@ -123,7 +123,16 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
                 </div>
 
                 {addBonus && (
-                    <Input label="Bonus Quantity" type="number" value={bonus} onChange={handleBonusChange} placeholder="Enter Bonus Quantity" min={0} />
+                    <Input 
+                        label="Bonus Quantity" 
+                        type="number" 
+                        value={bonus} 
+                        onChange={handleBonusChange} 
+                        placeholder="Enter Bonus Quantity" 
+                        onKeyDown={e => {
+                            if(e.key === '-' || e.key === 'e' || e.key === 'E') e.preventDefault()
+                        }} 
+                    />
                 )}
 
                 {!confirming ? (

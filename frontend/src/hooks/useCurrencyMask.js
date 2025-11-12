@@ -13,6 +13,10 @@ export function useCurrencyMask(initialValue = ""){
             return
         }
 
+        if(inputValue.length > 6){
+            inputValue = inputValue.slice(0, 6)
+        }
+
         const numeric = (parseInt(inputValue, 10) / 100).toFixed(2)
 
         const formatted = `R$ ${numeric

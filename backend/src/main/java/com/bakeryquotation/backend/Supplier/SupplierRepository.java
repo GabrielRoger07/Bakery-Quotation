@@ -1,5 +1,7 @@
 package com.bakeryquotation.backend.Supplier;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +16,5 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
 
     Optional<Supplier> findByCompany_CompanyCnpjAndSupplierWhatsappNumber(String companyCompanyCnpj, String supplierWhatsappNumber);
 
-    List<Supplier> findByCompany_CompanyCnpj(String companyCompanyCnpj);
+    Page<Supplier> findByCompany_CompanyCnpj(String companyCompanyCnpj, Pageable pageable);
 }

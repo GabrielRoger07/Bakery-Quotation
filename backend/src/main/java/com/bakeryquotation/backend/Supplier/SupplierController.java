@@ -3,6 +3,9 @@ package com.bakeryquotation.backend.Supplier;
 import com.bakeryquotation.backend.Supplier.DTO.SupplierRequestDTO;
 import com.bakeryquotation.backend.Supplier.DTO.SupplierResponseDTO;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +32,8 @@ public class SupplierController {
     }
 
     @GetMapping("/company/{companyCnpj}")
-    public ResponseEntity<List<SupplierResponseDTO>> getSuppliersByCompanyCnpj(@PathVariable("companyCnpj") String cnpj){
-        return supplierService.getSuppliersByCompanyCnpj(cnpj);
+    public ResponseEntity<Page<SupplierResponseDTO>> getSuppliersByCompanyCnpj(@PathVariable("companyCnpj") String cnpj, @PageableDefault(size = 10) Pageable pageable){
+        return supplierService.getSuppliersByCompanyCnpj(cnpj, pageable);
     }
 
     @PostMapping

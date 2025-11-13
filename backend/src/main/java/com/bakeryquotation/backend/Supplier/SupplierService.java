@@ -8,6 +8,10 @@ import com.bakeryquotation.backend.Supplier.mapper.SupplierMapper;
 import com.bakeryquotation.backend.exception.DuplicateResourceException;
 import com.bakeryquotation.backend.exception.ImmutableResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,6 +22,9 @@ import java.util.Optional;
 
 @Service
 public class SupplierService {
+
+    @Value("${app.pagination-size}")
+    private int pageSize;
 
     private final SupplierRepository supplierRepository;
     private final SupplierMapper supplierMapper;
@@ -43,12 +50,10 @@ public class SupplierService {
         return ResponseEntity.status(HttpStatus.OK).body(supplierResponseDTOS);
     }
 
-    public ResponseEntity<List<SupplierResponseDTO>> getSuppliersByCompanyCnpj(String cnpj){
-        List<Supplier> suppliersByCompany = supplierRepository.findByCompany_CompanyCnpj(cnpj);
-        List<SupplierResponseDTO> suppliersResponseDTOByCompany = new ArrayList<>();
-        suppliersByCompany.forEach(supplier -> {
-            suppliersResponseDTOByCompany.add(supplierMapper.toDto(supplier));
-        });
+    public ResponseEntity<Page<SupplierResponseDTO>> getSuppliersByCompanyCnpj(String cnpj, Pageable pageable){
+        Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
+        Page<Supplier> suppliersByCompany = supplierRepository.findByCompany_CompanyCnpj(cnpj, safePageable);
+        Page<SupplierResponseDTO> suppliersResponseDTOByCompany = suppliersByCompany.map(supplierMapper::toDto);
         return ResponseEntity.status(HttpStatus.OK).body(suppliersResponseDTOByCompany);
     }
 

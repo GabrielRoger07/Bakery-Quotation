@@ -107,9 +107,7 @@ const QuotationMonitor = () => {
         const lowestBids = {}
 
         for(const bid of bids){
-
             const pricePerUnit = bid.price / (bid.quantity + bid.bonus)
-
             if(!lowestBids[bid.productId] || pricePerUnit < lowestBids[bid.productId].pricePerUnit){
                 lowestBids[bid.productId] = { 
                     price: bid.price, 
@@ -181,16 +179,22 @@ const QuotationMonitor = () => {
         {key: "quantity", label: "Quantity"},
         {key: "bonus", label: "Bonus"},
         {key: "pricePerUnit", label: "Price Per Unit"},
-        {key: "supplierName", label: "Supplier Name"},
-        {key: "employerName", label: "Company Name"},
+        {key: "supplierName", label: "Supplier"},
+        {key: "employerName", label: "Company"},
         {key: "employerCnpj", label: "Company CNPJ"},
     ], [])
 
     const bidColumns = useMemo(() => [
         {key: "supplierName", label: "Supplier"},
+        {key: "employerName", label: "Company"},
+        {key: "employerCnpj", label: "Company CNPJ"},
         {key: "productName", label: "Product"},
-        {key: "productBarCodeNumber", label: "Bar Code Number"},
-        {key: "price", label: "Price"},
+        {key: "productBarCodeNumber", label: "Barcode Number"},
+        {key: "price", label: "Total Price"},
+        {key: "quantity", label: "Quantity"},
+        {key: "bonus", label: "Bonus"},
+        {key: "pricePerUnit", label: "Price Per Unit"},
+        {key: "status", label: "Status"},
         {key: "createdAt", label: "Date/Hour"},
     ], [])
 
@@ -204,11 +208,19 @@ const QuotationMonitor = () => {
         employerCnpj: p.employerCnpj || "-"
     }))
 
-    const formattedBids = bids.map(b => ({
-        ...b, 
-        price: `R$ ${b.price.toFixed(2)}`, 
-        createdAt: new Date(b.createdAt).toLocaleString()
-    }))
+    const formattedBids = bids.map(b => {
+
+        const lowest = products.find(p => p.productId === b.productId)?.lowestBid
+        const isLowest = lowest && b.price === lowest
+
+        return {
+            ...b, 
+            price: `R$ ${b.price.toFixed(2)}`, 
+            pricePerUnit: `R$ ${((b.price) / (b.quantity + b.bonus)).toFixed(2)}`,
+            createdAt: new Date(b.createdAt).toLocaleString(),
+            status: isLowest ? <span>Lowest</span> : <span>Outbid</span>
+        }
+    })
 
     if(!quotation) return <p>Loading...</p>
 

@@ -65,12 +65,12 @@ public class BackendApplication {
             quotationRepository.save(quotation2);
             quotationRepository.save(quotation3);
 
-            for(int i = 0; i < 10; i++){
+            for(int i = 0; i < 26; i++){
 
                 UnitOfMeasure unit = UnitOfMeasure.values()[rnd.nextInt(UnitOfMeasure.values().length)];
                 String barcode = String.format("%013d", Math.abs(rnd.nextLong()) % 10000000000000L);
 
-                if(i < 5){
+                if(i < 21){
                     Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), company1);
                     Product product = new Product(faker.commerce().productName(), barcode, unit, company1);
                     supplierRepository.save(supplier);

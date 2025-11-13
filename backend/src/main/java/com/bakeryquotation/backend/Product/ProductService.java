@@ -7,6 +7,10 @@ import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import com.bakeryquotation.backend.Product.mapper.ProductMapper;
 import com.bakeryquotation.backend.exception.ImmutableResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,6 +20,9 @@ import java.util.List;
 
 @Service
 public class ProductService {
+
+    @Value("${app.pagination-size}")
+    private int pageSize;
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
@@ -41,12 +48,10 @@ public class ProductService {
         return ResponseEntity.status(HttpStatus.OK).body(productResponseDTOS);
     }
 
-    public ResponseEntity<List<ProductResponseDTO>> getProductsByCompanyCnpj(String cnpj){
-        List<Product> productsByCompany = productRepository.findByCompany_CompanyCnpj(cnpj);
-        List<ProductResponseDTO> productsResponseDTOByCompany = new ArrayList<>();
-        productsByCompany.forEach(product -> {
-            productsResponseDTOByCompany.add(productMapper.toDto(product));
-        });
+    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyCnpj(String cnpj, Pageable pageable){
+        Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
+        Page<Product> productsByCompany = productRepository.findByCompany_CompanyCnpj(cnpj, safePageable);
+        Page<ProductResponseDTO> productsResponseDTOByCompany = productsByCompany.map(productMapper::toDto);
         return ResponseEntity.status(HttpStatus.OK).body(productsResponseDTOByCompany);
     }
 

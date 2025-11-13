@@ -105,6 +105,20 @@
     opacity: 0.7;
 }
 
+.loading-spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 0.15rem solid #cccccc;
+    border-top-color: #555555;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg) }
+}
+
 @media (max-width: 768px) {
     .table-header {
         flex-direction: column;

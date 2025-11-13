@@ -9,6 +9,7 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
         <div className="table-header">
             <h1>{title}</h1>
             <div className="table-header-buttons">
+                {loading && <div className="loading-spinner"></div>}
                 {onReload && <Button onClick={onReload}>Reload</Button>}
                 {onAdd && <Button onClick={onAdd}>Add</Button>}
             </div>

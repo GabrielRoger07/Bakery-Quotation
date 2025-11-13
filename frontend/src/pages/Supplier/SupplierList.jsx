@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
-import useFetch from '../../hooks/useFetch'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
-import Modal from '../../components/Modal'
-import SupplierEdit from './SupplierEdit'
+import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
-import './SupplierList.css'
+import Modal from '../../components/Modal'
 import Alert from '../../components/Alert'
 import SupplierCreate from './SupplierCreate'
+import SupplierEdit from './SupplierEdit'
 import Button from '../../components/Button'
+import Pagination from '../../components/Pagination'
+import './SupplierList.css'
 import { ENV } from '../../config/env'
 
 const SupplierList = () => {
@@ -25,6 +26,12 @@ const SupplierList = () => {
 
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [supplierToRemove, setSupplierToRemove] = useState(null)
+
+    const [currentPage, setCurrentPage] = useState(0)
+    const [totalPages, setTotalPages] = useState(0)
+
+    const [sortField, setSortField] = useState(null)
+    const [sortDirection, setSortDirection] = useState("asc")
 
     const columns = [
         { key: "supplierName", label: "Name"},
@@ -47,8 +54,8 @@ const SupplierList = () => {
         setSupplierToRemove(null)
     }
 
-    const handleSaveCreate = (newSupplier) => {
-        setSuppliers(prev => [...prev, newSupplier])
+    const handleSaveCreate = () => {
+        fetchSuppliers()
     }
 
     const handleSaveEdit = (updatedSupplier) => {
@@ -68,7 +75,7 @@ const SupplierList = () => {
         const res = await request("DELETE", `/suppliers/${supplierToRemove.supplierId}`)
 
         if(res.ok){
-            setSuppliers(prevSuppliers => prevSuppliers.filter(s => s.supplierId !== supplierToRemove.supplierId));
+            fetchSuppliers();
             setError("")
         }else{
             setError(res.data?.message || "Failed to delete supplier")
@@ -76,13 +83,21 @@ const SupplierList = () => {
         closeModals()
     }
 
-    const fetchSuppliers = async () => {
+    const fetchSuppliers = async (page = 0) => {
         const token = Cookies.get("token")
         const decoded = jwtDecode(token)
         const cnpj = decoded.companyCnpj
-        const res = await request("GET", `/suppliers/company/${cnpj}`)
+
+        let sortQuery = ""
+        if(sortField) {
+            sortQuery = `&sort=${sortField},${sortDirection}`
+        }
+
+        const res = await request("GET", `/suppliers/company/${cnpj}?page=${page}${sortQuery}`)
         if(res.ok){
-            setSuppliers(res.data);
+            setSuppliers(res.data.content);
+            setTotalPages(res.data.totalPages)
+            setCurrentPage(res.data.number)
             setError("")
         }else{
             setError(res.data?.message)
@@ -90,9 +105,20 @@ const SupplierList = () => {
         setStatus(res.status)
     }
 
+    const handleColumnSort = (columnKey) => {
+        if(sortField === columnKey){
+            setSortDirection(prev => prev === "asc" ? "desc" : "asc")
+        } else {
+            setSortField(columnKey)
+            setSortDirection("asc")
+        }
+
+        setCurrentPage(0)
+    }
+
     useEffect(() => {
-        fetchSuppliers();
-    }, [])
+        fetchSuppliers(currentPage);
+    }, [sortField, sortDirection, currentPage])
 
     return (
     <div className="supplier-list-container">
@@ -109,8 +135,13 @@ const SupplierList = () => {
             onDelete={requestRemove}
             onAdd={() => setIsCreateModalOpen(true)}
             onReload={fetchSuppliers}
+            onSort={handleColumnSort}
+            sortField={sortField}
+            sortDirection={sortDirection}
             emptyMessage="No suppliers found."
         />
+
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => fetchSuppliers(page)} />
 
         <Modal isOpen={isEditModalOpen} onClose={closeModals} title="Edit Supplier">
             <SupplierEdit 

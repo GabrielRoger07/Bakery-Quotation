@@ -222,6 +222,13 @@ const QuotationMonitor = () => {
         }
     })
 
+    const totalEstimated = products.reduce((sum, p) => {
+        if(!p.lowestBid || p.lowestBid === "-") return sum
+        return sum + p.lowestBid
+    }, 0)
+
+    const formattedTotalEstimated = `R$ ${totalEstimated.toFixed(2)}`
+
     if(!quotation) return <p>Loading...</p>
 
     return (
@@ -244,6 +251,7 @@ const QuotationMonitor = () => {
                 <div>Total bids: {stats.totalBids}</div>
                 <div>Suppliers: {stats.uniqueSuppliers}</div>
                 <div>Products with bids: {stats.productsWithBids.length}/{products.length}</div>
+                <div className="total-highlight"><strong>Total:</strong> {formattedTotalEstimated}</div>
             </div>
 
             <div className="monitor-sections">

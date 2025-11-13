@@ -73,6 +73,12 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.monitor-stats div.total-highlight {
+    background-color: #e0f2fe;
+    border-left: 4px solid #0284c7;
+    font-weight: 600;
+}
+
 .monitor-stats div:hover {
     transform: translateY(-2px);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);

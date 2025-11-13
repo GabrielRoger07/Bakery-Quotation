@@ -53,7 +53,7 @@ const Login = () => {
     return (
         <div className='auth-container'>
             <div className='auth-box'>
-                <h1>Pani Premium Login</h1>
+                <h1>Login</h1>
                 <form onSubmit={handleLogin}>
                     <Input label="Email" type="email" name="companyEmail" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} placeholder="Enter your email" />
                     <Input label="Password" type="password" name="companyPassword" value={companyPassword} onChange={(e) => setCompanyPassword(e.target.value)} placeholder="Enter your password" />

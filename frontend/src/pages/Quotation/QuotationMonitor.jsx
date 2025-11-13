@@ -173,13 +173,20 @@ const QuotationMonitor = () => {
                 <Button onClick={() => navigate(-1)}>Back</Button>
                 <h2>Monitoring Quotation #{quotation.quotationId}</h2>
             </div>
+
+            {quotation && (
+            <div className="quotation-info">
+                <p><strong>Start:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
+                <p><strong>End:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
+            </div>
+            )}
             
             <div className="monitor-stats">
                 <div>Status: {stats.status}</div>
                 {(stats.status === 'Active' || stats.status === 'Scheduled') && <div>Time remaining: {stats.timeRemaining}</div>}
                 <div>Total bids: {stats.totalBids}</div>
                 <div>Suppliers: {stats.uniqueSuppliers}</div>
-                <div>Products with bids: {stats.productsWithBids.length}</div>
+                <div>Products with bids: {stats.productsWithBids.length}/{products.length}</div>
             </div>
 
             <div className="monitor-sections">

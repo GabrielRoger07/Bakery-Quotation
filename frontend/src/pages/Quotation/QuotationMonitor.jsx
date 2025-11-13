@@ -107,27 +107,65 @@ const QuotationMonitor = () => {
         const lowestBids = {}
 
         for(const bid of bids){
-            const { productId, price, supplierName } = bid
-            if(!lowestBids[productId] || price < lowestBids[productId].price){
-                lowestBids[productId] = { price, supplierName }
+
+            const pricePerUnit = bid.price / (bid.quantity + bid.bonus)
+
+            if(!lowestBids[bid.productId] || pricePerUnit < lowestBids[bid.productId].pricePerUnit){
+                lowestBids[bid.productId] = { 
+                    price: bid.price, 
+                    quantity: bid.quantity, 
+                    bonus: bid.bonus, 
+                    supplierName: bid.supplierName,
+                    employerName: bid.employerName,
+                    employerCnpj: bid.employerCnpj,
+                    pricePerUnit 
+                }
             }
         }
 
         setProducts(prev => prev.map(p => {
             const lowest = lowestBids[p.productId]
-            return lowest ? {...p, lowestBid: lowest.price, supplierName: lowest.supplierName || p.supplierName || "-"} : p
+            return lowest ? {
+                ...p, 
+                lowestBid: lowest.price, 
+                bonus: lowest.bonus, 
+                pricePerUnit: lowest.pricePerUnit,
+                supplierName: lowest.supplierName || "-",
+                employerName: lowest.employerName || "-",
+                employerCnpj: lowest.employerCnpj || "-"
+            } : 
+            {
+                ...p,
+                lowestBid: null,
+                bonus: "-",
+                pricePerUnit: "-",
+                supplierName: "-",
+                employerName: "-",
+                employerCnpj: "-"
+            }
         }))
     }, [products.length, bids.length])
 
     const handleNewBid = useCallback(bid => {
+
+        const pricePerUnit = bid.price / (bid.quantity + bid.bonus)
+
         setBids(prev => [bid, ...prev])
         setProducts(prev => 
             prev.map(p => 
                 p.productId === bid.productId 
                     ? {
                         ...p, 
-                        lowestBid: !p.lowestBid || bid.price < p.lowestBid ? bid.price : p.lowestBid, 
-                        supplierName: bid.supplierName || p.supplierName || "Unknown"
+                        ...( !p.pricePerUnit || pricePerUnit < p.pricePerUnit
+                            ? {
+                                lowestBid: bid.price,
+                                bonus: bid.bonus,
+                                pricePerUnit,
+                                supplierName: bid.supplierName,
+                                employerName: bid.employerName,
+                                employerCnpj: bid.employerCnpj
+                            } : {}
+                        )
                     } 
                     : p
                 )
@@ -138,11 +176,14 @@ const QuotationMonitor = () => {
 
     const productColumns = useMemo(() => [
         {key: "productName", label: "Product"},
-        {key: "productBarCodeNumber", label: "Bar Code Number"},
-        {key: "quantity", label: "Quantity"},
-        {key: "bonusLimit", label: "Bonus Limit"},
+        {key: "productBarCodeNumber", label: "Barcode Number"},
         {key: "lowestBid", label: "Lowest Bid"},
-        {key: "supplierName", label: "Supplier"},
+        {key: "quantity", label: "Quantity"},
+        {key: "bonus", label: "Bonus"},
+        {key: "pricePerUnit", label: "Price Per Unit"},
+        {key: "supplierName", label: "Supplier Name"},
+        {key: "employerName", label: "Company Name"},
+        {key: "employerCnpj", label: "Company CNPJ"},
     ], [])
 
     const bidColumns = useMemo(() => [
@@ -155,8 +196,12 @@ const QuotationMonitor = () => {
 
     const formattedProducts = products.map(p => ({
         ...p, 
-        lowestBid: p.lowestBid ? `R$ ${p.lowestBid}` : "-", 
-        supplierName: p.supplierName || "-"
+        lowestBid: p.lowestBid ? `R$ ${p.lowestBid.toFixed(2)}` : "-",
+        bonus: p.bonus ?? "-",
+        pricePerUnit: p.pricePerUnit && p.pricePerUnit !== "-" ? `R$ ${p.pricePerUnit.toFixed(2)}` : "-",
+        supplierName: p.supplierName || "-",
+        employerName: p.employerName || "-",
+        employerCnpj: p.employerCnpj || "-"
     }))
 
     const formattedBids = bids.map(b => ({

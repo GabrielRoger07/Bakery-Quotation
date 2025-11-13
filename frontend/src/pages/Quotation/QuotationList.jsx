@@ -6,11 +6,12 @@ import useFetch from '../../hooks/useFetch'
 import Modal from '../../components/Modal'
 import Table from '../../components/Table'
 import Alert from '../../components/Alert'
+import Button from '../../components/Button'
+import Pagination from '../../components/Pagination'
 import QuotationCreate from './QuotationCreate'
 import QuotationEdit from './QuotationEdit'
 import QuotationDetails from './QuotationDetails'
 import './QuotationList.css'
-import Button from '../../components/Button'
 import { ENV } from '../../config/env'
 
 const QuotationList = () => {
@@ -32,12 +33,25 @@ const QuotationList = () => {
     const [quotationToRemove, setQuotationToRemove] = useState(null)
     const [cannotDelete, setCannotDelete] = useState(false)
 
+    const [currentPage, setCurrentPage] = useState(0)
+    const [totalPages, setTotalPages] = useState(0)
+
+    const [sortField, setSortField] = useState(null)
+    const [sortDirection, setSortDirection] = useState("asc")
+
     const columns = [
         { key: "quotationId", label: "ID" },
         { key: "quotationStart", label: "Start Date" },
         { key: "quotationEnd", label: "End Date" },
         { key: "status", label: "Status" }
     ]
+
+    const sortMap = {
+        quotationId: "id",
+        quotationStart: "quotationStart",
+        quotationEnd: "quotationEnd",
+        status: null
+    }
 
     const openEditModal = (quotation) => {
         setQuotationToEdit(quotation)
@@ -60,9 +74,8 @@ const QuotationList = () => {
         setCannotDelete(false)
     }
 
-    const handleSaveCreate = (newQuotation) => {
-        const status = new Date(newQuotation.quotationStart) > new Date() ? 'Scheduled' : new Date(newQuotation.quotationEnd) < new Date() ? 'Closed' : 'Active' 
-        setQuotations((prev) => [...prev, { ...newQuotation, status}])
+    const handleSaveCreate = () => {
+        fetchQuotations()
     }
 
     const handleSaveEdit = (updatedQuotation) => {
@@ -90,7 +103,7 @@ const QuotationList = () => {
 
         const res = await request("DELETE", `/quotations/${quotationToRemove.quotationId}`)
         if(res.ok){
-            setQuotations(prevQuotations => prevQuotations.filter(q => q.quotationId !== quotationToRemove.quotationId))
+            fetchQuotations()
             setError("")
         }else{
             setError(res.data?.message || "Failed to delete quotation")
@@ -102,19 +115,28 @@ const QuotationList = () => {
         navigate(`/quotations/monitor?id=${quotation.quotationId}`)
     }
 
-    const fetchQuotations = async () => {
+    const fetchQuotations = async (page = 0) => {
         const token = Cookies.get("token")
         const decoded = jwtDecode(token)
         const cnpj = decoded.companyCnpj
 
-        const res = await request("GET", `/quotations/company/${cnpj}`)
+        let sortQuery = ""
+        const backendSortField = sortMap[sortField]
+
+        if(sortField) {
+            sortQuery = `&sort=${backendSortField},${sortDirection}`
+        }
+
+        const res = await request("GET", `/quotations/company/${cnpj}?page=${page}${sortQuery}`)
         if(res.ok){
-            const mapped = res.data.map((q) => ({
+            const mapped = res.data.content.map((q) => ({
                 ...q, 
                 status:
                 new Date(q.quotationStart) > new Date() ? 'Scheduled' : new Date(q.quotationEnd) < new Date() ? 'Closed' : 'Active'
             }))
             setQuotations(mapped);
+            setTotalPages(res.data.totalPages)
+            setCurrentPage(res.data.number)
             setError("")
         }else{
             setError(res.data?.message)
@@ -122,13 +144,28 @@ const QuotationList = () => {
         setStatus(res.status)
     }
 
+    const handleColumnSort = (columnKey) => {
+
+        if(!sortMap[columnKey]) {
+            return
+        }
+
+        if(sortField === columnKey) {
+            setSortDirection(prev => prev === "asc" ? "desc" : "asc")
+        } else {
+            setSortField(columnKey)
+            setSortDirection("asc")
+        }
+
+        setCurrentPage(0)
+    }
+
     useEffect(() => {
-        fetchQuotations();
-    }, [])
+        fetchQuotations(currentPage);
+    }, [sortField, sortDirection, currentPage])
 
     return (
     <div className="quotation-list-container">
-
         {error && <Alert message={error} />}
         {status === 0 && <Alert message="Server Internal Error"/>}
 
@@ -142,10 +179,15 @@ const QuotationList = () => {
             onDelete={requestRemove}
             onAdd={() => setIsCreateModalOpen(true)}
             onReload={fetchQuotations}
+            onSort={handleColumnSort}
+            sortField={sortField}
+            sortDirection={sortDirection}
             onView={openDetailsModal}
             onMonitor={handleMonitor}
             emptyMessage="No quotations found."
         />
+
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => fetchQuotations(page)} />
 
         <Modal isOpen={isEditModalOpen} onClose={closeModals} title="Edit Quotation">
             <QuotationEdit

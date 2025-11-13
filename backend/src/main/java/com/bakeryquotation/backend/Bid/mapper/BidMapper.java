@@ -17,6 +17,8 @@ public interface BidMapper {
     @Mapping(source = "participation.id", target = "participationId")
     @Mapping(source = "product.id", target = "productId")
     @Mapping(source = "participation.supplier.supplierName", target = "supplierName")
+    @Mapping(source = "participation.supplier.employerName", target = "employerName")
+    @Mapping(source = "participation.supplier.employerCnpj", target = "employerCnpj")
     @Mapping(source = "product.productName", target = "productName")
     @Mapping(source = "product.productBarCodeNumber", target = "productBarCodeNumber")
     @Mapping(source = "bidId.createdAt", target = "createdAt")

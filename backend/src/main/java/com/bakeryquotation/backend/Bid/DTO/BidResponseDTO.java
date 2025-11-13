@@ -14,6 +14,8 @@ public class BidResponseDTO {
     private String productName;
     private String productBarCodeNumber;
     private String supplierName;
+    private String employerName;
+    private String employerCnpj;
 
     public BidResponseDTO() {
     }
@@ -27,7 +29,7 @@ public class BidResponseDTO {
         this.createdAt = createdAt;
     }
 
-    public BidResponseDTO(Long participationId, Long productId, BigDecimal price, BigDecimal quantity, BigDecimal bonus, LocalDateTime createdAt, String productName, String productBarCodeNumber, String supplierName) {
+    public BidResponseDTO(Long participationId, Long productId, BigDecimal price, BigDecimal quantity, BigDecimal bonus, LocalDateTime createdAt, String productName, String productBarCodeNumber, String supplierName, String employerName, String employerCnpj) {
         this.participationId = participationId;
         this.productId = productId;
         this.price = price;
@@ -37,6 +39,8 @@ public class BidResponseDTO {
         this.productName = productName;
         this.productBarCodeNumber = productBarCodeNumber;
         this.supplierName = supplierName;
+        this.employerName = employerName;
+        this.employerCnpj = employerCnpj;
     }
 
     public Long getParticipationId() {
@@ -109,5 +113,21 @@ public class BidResponseDTO {
 
     public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
+    }
+
+    public String getEmployerName() {
+        return employerName;
+    }
+
+    public void setEmployerName(String employerName) {
+        this.employerName = employerName;
+    }
+
+    public String getEmployerCnpj() {
+        return employerCnpj;
+    }
+
+    public void setEmployerCnpj(String employerCnpj) {
+        this.employerCnpj = employerCnpj;
     }
 }

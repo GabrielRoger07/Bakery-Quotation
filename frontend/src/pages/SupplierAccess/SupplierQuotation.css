@@ -147,6 +147,14 @@
     border-bottom: 1px solid #eee;
 }
 
+.winning-total {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #f3f3f3;
+    border-radius: 0.5rem;
+    font-size: 1.1rem;
+}
+
 .bonus-radio {
     margin: 1rem 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

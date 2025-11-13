@@ -26,7 +26,7 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                 <table className="custom-table">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            {!onMonitor && <th></th>}
                             {columns.map((col) => (
                                 <th key={col.key} onClick={() => onSort && onSort(col.key)} className="sortable-column">{col.label} {sortField === col.key && (
                                     <span className="sort-indicator">{sortDirection == "asc" ? "▲" : "▼"}</span>
@@ -38,7 +38,7 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                     <tbody>
                         {data.map((item, index) => (
                             <tr key={item[idKey] || index}>
-                                <td>{index + 1}</td>
+                                {!onMonitor && <td>{index + 1}</td>}
                                 {columns.map((col) => (
                                     <td key={col.key}>{item[col.key]}</td>
                                 ))}

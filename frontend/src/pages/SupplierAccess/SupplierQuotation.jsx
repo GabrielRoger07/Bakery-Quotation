@@ -139,6 +139,10 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
     bid => bid && bid.participationId === participationId
   ).length
 
+  const totalWinningValue = Object.values(lowestBids)
+    .filter(bid => bid && bid.participationId === participationId)
+    .reduce((sum, bid) => sum + bid.price, 0)
+
   if(loading) return <p>Loading products...</p>
   if(error) return <p>{error}</p>
   if(!products.length) return <p>No products found for this quotation</p>
@@ -181,20 +185,25 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
 
         <Modal isOpen={isWinningModalOpen} onClose={() => setIsWinningModalOpen(false)} title="Winning Bids">
           {winningCount > 0 ? (
-            <ul className="winning-list">
-              {Object.entries(lowestBids)
-                .filter(([_, bid]) => bid && bid.participationId === participationId)
-                .map(([productId, bid]) => {
-                  const product = products.find(p => p.productId === Number(productId))
-                  const pricePerUnit = (bid.price / (bid.quantity + bid.bonus)).toFixed(2)
-                  return (
-                    <li key={productId} className="winning-item">
-                      <strong>{product?.productName}</strong> - R$ {bid.price.toFixed(2)} - R$ {pricePerUnit}/{product?.unitOfMeasure}
-                    </li>
-                  )
-                })
-              }
-            </ul>
+            <>
+              <ul className="winning-list">
+                {Object.entries(lowestBids)
+                  .filter(([_, bid]) => bid && bid.participationId === participationId)
+                  .map(([productId, bid]) => {
+                    const product = products.find(p => p.productId === Number(productId))
+                    const pricePerUnit = (bid.price / (bid.quantity + bid.bonus)).toFixed(2)
+                    return (
+                      <li key={productId} className="winning-item">
+                        <strong>{product?.productName}</strong> - R$ {bid.price.toFixed(2)} - R$ {pricePerUnit}/{product?.unitOfMeasure}
+                      </li>
+                    )
+                  })
+                }
+              </ul>
+              <div className="winning-total">
+                <strong>Total Value: </strong>R$ {totalWinningValue.toFixed(2)}
+              </div>
+            </>
           ) : (
             <p>You are not winning any products right now.</p>
           )}

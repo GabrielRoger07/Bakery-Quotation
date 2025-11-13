@@ -51,7 +51,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         }
 
         if(bonus && bonus > product.bonusLimit) {
-            setError("Bonus bid cannot be higher than the bonus limit")
+            setError("Bonus bid cannot be greater than the bonus limit")
             return
         }
 
@@ -116,17 +116,19 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
             <form className="bid-form" onSubmit={handleBidSubmit}>
                 <Input label="Price" type="text" value={price} onChange={handlePriceChange} placeholder="R$0,00" />
 
-                <div className="bonus-radio">
-                    <p>Add bonus quantity?</p>
-                    <label>
-                        <input type="radio" name={`addBonus-${product.productId}`} value="no" checked={!addBonus} onChange={() => setAddBonus(false)} />
-                        No
-                    </label>
-                    <label>
-                        <input type="radio" name={`addBonus-${product.productId}`} value="yes" checked={addBonus} onChange={() => setAddBonus(true)} />
-                        Yes
-                    </label>
-                </div>
+                {product.bonusLimit > 0 && (
+                    <div className="bonus-radio">
+                        <p>Add bonus quantity?</p>
+                        <label>
+                            <input type="radio" name={`addBonus-${product.productId}`} value="no" checked={!addBonus} onChange={() => setAddBonus(false)} />
+                            No
+                        </label>
+                        <label>
+                            <input type="radio" name={`addBonus-${product.productId}`} value="yes" checked={addBonus} onChange={() => setAddBonus(true)} />
+                            Yes
+                        </label>
+                    </div>
+                )}
 
                 {addBonus && (
                     <Input 

@@ -134,7 +134,7 @@ const SupplierList = () => {
             onEdit={openEditModal}
             onDelete={requestRemove}
             onAdd={() => setIsCreateModalOpen(true)}
-            onReload={fetchSuppliers}
+            onReload={() => fetchSuppliers(currentPage)}
             onSort={handleColumnSort}
             sortField={sortField}
             sortDirection={sortDirection}

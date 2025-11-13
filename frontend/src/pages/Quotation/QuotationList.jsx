@@ -178,7 +178,7 @@ const QuotationList = () => {
             onEdit={openEditModal}
             onDelete={requestRemove}
             onAdd={() => setIsCreateModalOpen(true)}
-            onReload={fetchQuotations}
+            onReload={() => fetchQuotations(currentPage)}
             onSort={handleColumnSort}
             sortField={sortField}
             sortDirection={sortDirection}

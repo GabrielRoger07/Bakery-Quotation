@@ -8,9 +8,9 @@ import Alert from '../../components/Alert'
 import ProductCreate from './ProductCreate'
 import ProductEdit from './ProductEdit'
 import Button from '../../components/Button'
+import Pagination from '../../components/Pagination'
 import './ProductList.css'
 import { ENV } from '../../config/env'
-import Pagination from '../../components/Pagination'
 
 const ProductList = () => {
 
@@ -29,6 +29,9 @@ const ProductList = () => {
 
     const [currentPage, setCurrentPage] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
+
+    const [sortField, setSortField] = useState(null)
+    const [sortDirection, setSortDirection] = useState("asc")
 
     const columns = [
         { key: "productBarCodeNumber", label: "Barcode Number" },
@@ -82,9 +85,13 @@ const ProductList = () => {
         const decoded = jwtDecode(token)
         const cnpj = decoded.companyCnpj
 
-        const res = await request("GET", `/products/company/${cnpj}?page=${page}`)
+        let sortQuery = ""
+        if(sortField) {
+            sortQuery = `&sort=${sortField},${sortDirection}`
+        }
+
+        const res = await request("GET", `/products/company/${cnpj}?page=${page}${sortQuery}`)
         if(res.ok){
-            console.log(res)
             setProducts(res.data.content);
             setTotalPages(res.data.totalPages)
             setCurrentPage(res.data.number)
@@ -95,21 +102,20 @@ const ProductList = () => {
         setStatus(res.status)
     }
 
-    const handleNextPage = () => {
-        if(currentPage + 1 < totalPages) {
-            fetchProducts(currentPage + 1)
+    const handleColumnSort = (columnKey) => {
+        if(sortField === columnKey){
+            setSortDirection(prev => (prev === "asc" ? "desc" : "asc"))
+        } else {
+            setSortField(columnKey)
+            setSortDirection("asc")
         }
-    }
 
-    const handlePreviousPage = () => {
-        if(currentPage > 0){
-            fetchProducts(currentPage - 1)
-        }
+        setCurrentPage(0)
     }
 
     useEffect(() => {
-        fetchProducts();
-    }, [])
+        fetchProducts(currentPage);
+    }, [sortField, sortDirection, currentPage])
 
     return (
     <div className="product-list-container">
@@ -126,6 +132,9 @@ const ProductList = () => {
             onDelete={requestRemove}
             onAdd={() => setIsCreateModalOpen(true)}
             onReload={() => fetchProducts(currentPage)}
+            onSort={handleColumnSort}
+            sortField={sortField}
+            sortDirection={sortDirection}
             emptyMessage="No products found."
         />
 

@@ -1,6 +1,5 @@
 package com.bakeryquotation.backend.Supplier;
 
-import com.bakeryquotation.backend.Company.Company;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

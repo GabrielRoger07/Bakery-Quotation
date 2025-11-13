@@ -3,14 +3,11 @@ package com.bakeryquotation.backend.Quotation;
 import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Contain.Contain;
 import com.bakeryquotation.backend.Participation.Participation;
-import com.bakeryquotation.backend.Product.Product;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "quotation")

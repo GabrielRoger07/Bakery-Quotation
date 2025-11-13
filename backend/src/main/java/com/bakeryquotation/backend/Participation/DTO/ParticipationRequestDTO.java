@@ -1,6 +1,5 @@
 package com.bakeryquotation.backend.Participation.DTO;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public class ParticipationRequestDTO {

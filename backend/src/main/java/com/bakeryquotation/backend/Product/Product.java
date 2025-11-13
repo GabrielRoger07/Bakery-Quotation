@@ -3,11 +3,7 @@ package com.bakeryquotation.backend.Product;
 import com.bakeryquotation.backend.Bid.Bid;
 import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Contain.Contain;
-import com.bakeryquotation.backend.Participation.Participation;
-import com.bakeryquotation.backend.Quotation.Quotation;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.*;
 

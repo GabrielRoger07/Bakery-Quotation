@@ -1,6 +1,5 @@
 package com.bakeryquotation.backend.Bid.DTO;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;

@@ -1,6 +1,5 @@
 package com.bakeryquotation.backend.Quotation;
 
-import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationRequestDTO;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationResponseDTO;
 import jakarta.validation.Valid;

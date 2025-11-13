@@ -10,6 +10,7 @@ import ProductEdit from './ProductEdit'
 import Button from '../../components/Button'
 import './ProductList.css'
 import { ENV } from '../../config/env'
+import Pagination from '../../components/Pagination'
 
 const ProductList = () => {
 
@@ -128,11 +129,7 @@ const ProductList = () => {
             emptyMessage="No products found."
         />
 
-        <div className="pagination-controls">
-            <Button onClick={handlePreviousPage} disabled={currentPage === 0 || loading}>Previous</Button>
-            <span className="page-info">Page {currentPage + 1} of {totalPages}</span>
-            <Button onClick={handleNextPage} disabled={currentPage + 1 >= totalPages || loading}>Next</Button>
-        </div>
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => fetchProducts(page)}/>
 
         <Modal isOpen={isEditModalOpen} onClose={closeModals} title="Edit Product">
             <ProductEdit 

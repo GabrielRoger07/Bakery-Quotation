@@ -50,6 +50,11 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
             return
         }
 
+        if(bonus && bonus > product.bonusLimit) {
+            setError("Bonus bid cannot be higher than the bonus limit")
+            return
+        }
+
         setPendingBidValue(pricePerUnit)
         setConfirming(true)
     }

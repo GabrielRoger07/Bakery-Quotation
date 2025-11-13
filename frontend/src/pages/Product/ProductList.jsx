@@ -26,6 +26,9 @@ const ProductList = () => {
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [productToRemove, setProductToRemove] = useState(null)
 
+    const [currentPage, setCurrentPage] = useState(0)
+    const [totalPages, setTotalPages] = useState(0)
+
     const columns = [
         { key: "productBarCodeNumber", label: "Barcode Number" },
         { key: "productName", label: "Name" },
@@ -45,8 +48,8 @@ const ProductList = () => {
         setProductToRemove(null)
     }
 
-    const handleSaveCreate = (newProduct) => {
-        setProducts(prev => [...prev, newProduct])
+    const handleSaveCreate = () => {
+        fetchProducts()
     }
 
     const handleSaveEdit = (updatedProduct) => {
@@ -65,7 +68,7 @@ const ProductList = () => {
 
         const res = await request("DELETE", `/products/${productToRemove.productId}`)
         if(res.ok){
-            setProducts(prevProducts => prevProducts.filter(p => p.productId !== productToRemove.productId))
+            fetchProducts(currentPage)
             setError("")
         }else{
             setError(res.data?.message || "Failed to delete product")
@@ -73,18 +76,34 @@ const ProductList = () => {
         closeModals()
     }
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (page = 0) => {
         const token = Cookies.get("token")
         const decoded = jwtDecode(token)
         const cnpj = decoded.companyCnpj
-        const res = await request("GET", `/products/company/${cnpj}`)
+
+        const res = await request("GET", `/products/company/${cnpj}?page=${page}`)
         if(res.ok){
-            setProducts(res.data);
+            console.log(res)
+            setProducts(res.data.content);
+            setTotalPages(res.data.totalPages)
+            setCurrentPage(res.data.number)
             setError("")
         }else{
             setError(res.data?.message)
         }
         setStatus(res.status)
+    }
+
+    const handleNextPage = () => {
+        if(currentPage + 1 < totalPages) {
+            fetchProducts(currentPage + 1)
+        }
+    }
+
+    const handlePreviousPage = () => {
+        if(currentPage > 0){
+            fetchProducts(currentPage - 1)
+        }
     }
 
     useEffect(() => {
@@ -105,9 +124,15 @@ const ProductList = () => {
             onEdit={openEditModal}
             onDelete={requestRemove}
             onAdd={() => setIsCreateModalOpen(true)}
-            onReload={fetchProducts}
+            onReload={() => fetchProducts(currentPage)}
             emptyMessage="No products found."
         />
+
+        <div className="pagination-controls">
+            <Button onClick={handlePreviousPage} disabled={currentPage === 0 || loading}>Previous</Button>
+            <span className="page-info">Page {currentPage + 1} of {totalPages}</span>
+            <Button onClick={handleNextPage} disabled={currentPage + 1 >= totalPages || loading}>Next</Button>
+        </div>
 
         <Modal isOpen={isEditModalOpen} onClose={closeModals} title="Edit Product">
             <ProductEdit 

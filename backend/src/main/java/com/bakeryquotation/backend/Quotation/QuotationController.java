@@ -3,6 +3,9 @@ package com.bakeryquotation.backend.Quotation;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationRequestDTO;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationResponseDTO;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +32,8 @@ public class QuotationController {
     }
 
     @GetMapping("/company/{companyCnpj}")
-    public ResponseEntity<List<QuotationResponseDTO>> getQuotationsByCompanyCnpj(@PathVariable("companyCnpj") String cnpj){
-        return quotationService.getQuotationsByCompanyCnpj(cnpj);
+    public ResponseEntity<Page<QuotationResponseDTO>> getQuotationsByCompanyCnpj(@PathVariable("companyCnpj") String cnpj, @PageableDefault(size = 10) Pageable pageable){
+        return quotationService.getQuotationsByCompanyCnpj(cnpj, pageable);
     }
 
     @PostMapping

@@ -7,6 +7,10 @@ import com.bakeryquotation.backend.Quotation.DTO.QuotationResponseDTO;
 import com.bakeryquotation.backend.Quotation.mapper.QuotationMapper;
 import com.bakeryquotation.backend.exception.ImmutableResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,6 +20,9 @@ import java.util.List;
 
 @Service
 public class QuotationService {
+
+    @Value("${app.pagination-size}")
+    private int pageSize;
 
     private final QuotationRepository quotationRepository;
     private final QuotationMapper quotationMapper;
@@ -41,12 +48,10 @@ public class QuotationService {
         return ResponseEntity.status(HttpStatus.OK).body(quotationResponseDTOS);
     }
 
-    public ResponseEntity<List<QuotationResponseDTO>> getQuotationsByCompanyCnpj(String cnpj){
-        List<Quotation> quotationsByCompany = quotationRepository.findByCompany_CompanyCnpj(cnpj);
-        List<QuotationResponseDTO> quotationsResponseDTOByCompany = new ArrayList<>();
-        quotationsByCompany.forEach(quotation -> {
-            quotationsResponseDTOByCompany.add(quotationMapper.toDto(quotation));
-        });
+    public ResponseEntity<Page<QuotationResponseDTO>> getQuotationsByCompanyCnpj(String cnpj, Pageable pageable){
+        Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
+        Page<Quotation> quotationsByCompany = quotationRepository.findByCompany_CompanyCnpj(cnpj, safePageable);
+        Page<QuotationResponseDTO> quotationsResponseDTOByCompany = quotationsByCompany.map(quotationMapper::toDto);
         return ResponseEntity.status(HttpStatus.OK).body(quotationsResponseDTOByCompany);
     }
 

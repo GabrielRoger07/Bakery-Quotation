@@ -1,0 +1,12 @@
+{
+    "login": "Entrar",
+    "email": "E-mail",
+    "password": "Senha",
+    "enter_email": "Digite seu e-mail",
+    "enter_password": "Digite sua senha",
+    "fill_all_fields": "Preencha todos os campos",
+    "invalid_email": "E-mail inválido",
+    "login_success": "Login realizado com sucesso!",
+    "login_error": "E-mail ou senha inválidos",
+    "new_company": "Nova empresa? Criar conta!"
+  }

@@ -34,6 +34,9 @@
     "navbar_quotations": "Quotations",
     "navbar_logout": "Logout",
 
+    "pagination_previous": "Previous",
+    "pagination_next": "Next",
+
     "table_reload": "Reload",
     "table_add": "Add",
     "table_actions": "Actions",

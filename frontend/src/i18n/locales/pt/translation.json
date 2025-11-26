@@ -34,6 +34,9 @@
     "navbar_quotations": "Cotações",
     "navbar_logout": "Sair",
 
+    "pagination_previous": "Anterior",
+    "pagination_next": "Próximo",
+
     "table_reload": "Atualizar",
     "table_add": "Adicionar",
     "table_actions": "Ações",

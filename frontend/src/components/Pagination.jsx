@@ -1,9 +1,11 @@
-import React from 'react'
+import { useTranslation } from 'react-i18next'
 import Button from './Button'
 import './Pagination.css'
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     
+    const { t } = useTranslation()
+
     if(totalPages <= 1) return null
 
     const getPageNumbers = () => {
@@ -43,7 +45,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
     return (
         <div className="pagination-container">
-            <Button disabled={currentPage === 0} onClick={() => onPageChange(currentPage - 1)}>← Previous</Button>
+            <Button disabled={currentPage === 0} onClick={() => onPageChange(currentPage - 1)}>← {t("pagination_previous")}</Button>
             <div className="pagination-pages">
                 {pages.map((page, index) => {
                     if(page === "ellipsis-start" || page === "ellipsis-end"){
@@ -57,7 +59,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                     )
                 })}
             </div>
-            <Button disabled={currentPage === totalPages - 1} onClick={() => onPageChange(currentPage + 1)}>Next →</Button>
+            <Button disabled={currentPage === totalPages - 1} onClick={() => onPageChange(currentPage + 1)}>{t("pagination_next")} →</Button>
         </div>
     )
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
+import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
@@ -12,10 +13,12 @@ import { ENV } from '../../config/env'
 
 const SupplierCreate = ({ onClose, onSave }) => {
 
-    const { value: supplierName, onChange: handleSupplierNameChange, onBlur: handleSupplierNameBlur, warning: supplierNameWarning, isInvalid: isSupplierNameInvalid } = useCharLimit(30, "Supplier Name")
-    const { value: supplierEmail, onChange: handleSupplierEmailChange, onBlur: handleSupplierEmailBlur, warning: supplierEmailWarning, isInvalid: isSupplierEmailInvalid } = useCharLimit(60, "Supplier Email")
+    const { t } = useTranslation()
+
+    const { value: supplierName, onChange: handleSupplierNameChange, onBlur: handleSupplierNameBlur, warning: supplierNameWarning, isInvalid: isSupplierNameInvalid } = useCharLimit(30, "supplier_name")
+    const { value: supplierEmail, onChange: handleSupplierEmailChange, onBlur: handleSupplierEmailBlur, warning: supplierEmailWarning, isInvalid: isSupplierEmailInvalid } = useCharLimit(60, "supplier_email")
     const { value: supplierWhatsappNumber, handleChange: handleSupplierWhatsappNumberChange, handleBlur: handleSupplierWhatsappNumberBlur, getNumericValue: getSupplierWhatsappNumberRaw, isInvalid: isSupplierWhatsappNumberInvalid } = usePhoneMask()
-    const { value: employerName, onChange: handleEmployerNameChange, onBlur: handleEmployerNameBlur, warning: employerNameWarning, isInvalid: isEmployerNameInvalid } = useCharLimit(45, "Company Name")
+    const { value: employerName, onChange: handleEmployerNameChange, onBlur: handleEmployerNameBlur, warning: employerNameWarning, isInvalid: isEmployerNameInvalid } = useCharLimit(45, "company_name")
     const { value: employerCnpj, handleChange: handleEmployerCnpjChange, handleBlur: handleEmployerCnpjBlur, getNumericValue: getEmployerCnpjRaw, isInvalid: isEmployerCnpjInvalid } = useCnpjMask()
 
     const [error, setError] = useState("")
@@ -37,7 +40,7 @@ const SupplierCreate = ({ onClose, onSave }) => {
         e.preventDefault();
 
         if (supplierEmail && !/\S+@\S+\.\S+/.test(supplierEmail)) {
-            setError("Email must be valid.");
+            setError(t("invalid_email"));
             setSuccess("");
             return;
         }
@@ -60,32 +63,62 @@ const SupplierCreate = ({ onClose, onSave }) => {
         const res = await request("POST", "/suppliers", supplier)
 
         if(res.ok){
-            setSuccess("Supplier created successfully!")
+            setSuccess(t("supplier_created_success"))
             setError("")
             onSave && onSave(res.data)
             setTimeout(() => onClose(), 800)
         }else{
             setSuccess("")
-            setError(res.data?.message)
+            setError(t("supplier_created_error"))
         }
     }
 
     return (
         <form onSubmit={handleSupplierCreate}>
-            <Input label="Supplier Name" type="text" value={supplierName} onChange={handleSupplierNameChange} onBlur={handleSupplierNameBlur} placeholder="Enter Supplier Name" isInvalid={isSupplierNameInvalid} required />
-            {supplierNameWarning && <div className="warning">{supplierNameWarning}</div>}
-            
-            <Input label="Supplier Email" type="email" value={supplierEmail} onChange={handleSupplierEmailChange} onBlur={handleSupplierEmailBlur} placeholder="Enter Supplier Email" isInvalid={isSupplierEmailInvalid} />
-            {supplierEmail && supplierEmailWarning && <div className="warning">{supplierEmailWarning}</div>}
-            
-            <Input label="Whatsapp Number" type="text" value={supplierWhatsappNumber} onChange={handleSupplierWhatsappNumberChange} onBlur={handleSupplierWhatsappNumberBlur} placeholder="Enter Whatsapp Number" isInvalid={isSupplierWhatsappNumberInvalid} required />
-            {isSupplierWhatsappNumberInvalid && <div className="warning">Whatsapp number must be valid.</div>}
+            <Input label={t("supplier_name")} type="text" value={supplierName} onChange={handleSupplierNameChange} onBlur={handleSupplierNameBlur} placeholder={t("enter_supplier_name")} isInvalid={isSupplierNameInvalid} required />
+            {supplierNameWarning && (
+                <div className="warning">
+                    {supplierNameWarning.type === "too_short" &&
+                        t("char_limit_too_short", { min: supplierNameWarning.min, field: t(supplierNameWarning.fieldName) })
+                    }
 
-            <Input label="Company Name" type="text" value={employerName} onChange={handleEmployerNameChange} onBlur={handleEmployerNameBlur} placeholder="Enter Company Name" isInvalid={isEmployerNameInvalid} required />
-            {employerNameWarning && <div className="warning">{employerNameWarning}</div>}
+                    {supplierNameWarning.type === "too_long" &&
+                        t("char_limit_too_long", { max: supplierNameWarning.max, field: t(supplierNameWarning.fieldName) })
+                    }
+                </div>
+            )}
+            
+            <Input label={t("supplier_email")} type="email" value={supplierEmail} onChange={handleSupplierEmailChange} onBlur={handleSupplierEmailBlur} placeholder={t("enter_supplier_email")} isInvalid={isSupplierEmailInvalid} />
+            {supplierEmail && supplierEmailWarning && (
+                <div className="warning">
+                    {supplierEmailWarning.type === "too_short" &&
+                        t("char_limit_too_short", { min: supplierEmailWarning.min, field: t(supplierEmailWarning.fieldName) })
+                    }
 
-            <Input label="Company Cnpj" type="text" value={employerCnpj} onChange={handleEmployerCnpjChange} onBlur={handleEmployerCnpjBlur} placeholder="Enter Company CNPJ" isInvalid={isEmployerCnpjInvalid} required />
-            {isEmployerCnpjInvalid && <div className="warning">Company CNPJ must be valid.</div>}
+                    {supplierEmailWarning.type === "too_long" &&
+                        t("char_limit_too_long", { max: supplierEmailWarning.max, field: t(supplierEmailWarning.fieldName) })
+                    }
+                </div>
+            )}
+            
+            <Input label={t("supplier_whatsapp")}  type="text" value={supplierWhatsappNumber} onChange={handleSupplierWhatsappNumberChange} onBlur={handleSupplierWhatsappNumberBlur} placeholder={t("enter_supplier_whatsapp")} isInvalid={isSupplierWhatsappNumberInvalid} required />
+            {isSupplierWhatsappNumberInvalid && <div className="warning">{t("invalid_whatsapp")}</div>}
+
+            <Input label={t("employer_name")} type="text" value={employerName} onChange={handleEmployerNameChange} onBlur={handleEmployerNameBlur} placeholder={t("enter_employer_name")} isInvalid={isEmployerNameInvalid} required />
+            {employerNameWarning && (
+                <div className="warning">
+                    {employerNameWarning.type === "too_short" &&
+                        t("char_limit_too_short", { min: employerNameWarning.min, field: t(employerNameWarning.fieldName) })
+                    }
+
+                    {employerNameWarning.type === "too_long" &&
+                        t("char_limit_too_long", { max: employerNameWarning.max, field: t(employerNameWarning.fieldName) })
+                    }
+                </div>
+            )}
+
+            <Input label={t("employer_cnpj")} type="text" value={employerCnpj} onChange={handleEmployerCnpjChange} onBlur={handleEmployerCnpjBlur} placeholder={t("enter_employer_cnpj")} isInvalid={isEmployerCnpjInvalid} required />
+            {isEmployerCnpjInvalid && <div className="warning">{t("invalid_cnpj")}</div>}
 
             <Alert message={error} />
             {success && <div className="success">{success}</div>}

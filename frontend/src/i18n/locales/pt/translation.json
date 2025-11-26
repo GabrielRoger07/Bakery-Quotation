@@ -59,12 +59,17 @@
     "confirm_removal": "Confirmar Remoção",
     "supplier_remove_confirm": "Tem certeza de que você deseja remover o fornecedor <strong>{{supplier}}</strong> da empresa <strong>{{employer}}</strong>?",
 
-    "supplier_updated_success": "Fornecedor atualizado com sucesso!",
-    "supplier_updated_error": "Não foi possível atualizar o fornecedor. Por favor tente novamente.",
+    "supplier_created_success": "Fornecedor criado com sucesso!",
+    "supplier_created_error": "Não foi possível criar o fornecedor. Por favor tente novamente.",
 
     "enter_supplier_name": "Digite o nome do fornecedor",
     "enter_supplier_email": "Digite o e-mail do fornecedor",
     "enter_supplier_whatsapp": "Enter o Whatsapp do fornecedor",
     "enter_employer_name": "Digite o nome da empresa do fornecedor",
-    "enter_employer_cnpj": "Digite o CNPJ da empresa do fornecedor"
+    "enter_employer_cnpj": "Digite o CNPJ da empresa do fornecedor",
+
+    "supplier_create": "Criar Fornecedor",
+
+    "supplier_updated_success": "Fornecedor atualizado com sucesso!",
+    "supplier_updated_error": "Não foi possível atualizar o fornecedor. Por favor tente novamente."
 }

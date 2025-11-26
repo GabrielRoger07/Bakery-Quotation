@@ -92,13 +92,33 @@ const CompanyCreate = () => {
                     )}
 
                     <Input label={t("company_email")} type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder={t("enter_company_email")} isInvalid={isEmailInvalid} required />
-                    {emailWarning && <div className="warning">{emailWarning}</div>}
+                    {emailWarning && (
+                        <div className="warning">
+                            {emailWarning.type === "too_short" &&
+                                t("char_limit_too_short", { min: emailWarning.min, field: t(emailWarning.fieldName) })
+                            }
+
+                            {emailWarning.type === "too_long" &&
+                                t("char_limit_too_long", { max: emailWarning.max, field: t(emailWarning.fieldName) })
+                            }
+                        </div>
+                    )}
 
                     <Input label={t("company_whatsapp")} type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder={t("enter_company_whatsapp")} isInvalid={isWhatsappInvalid} required />
                     {isWhatsappInvalid && <div className="warning">{t("invalid_whatsapp")}</div>}
 
                     <Input label={t("company_password")} type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder={t("enter_company_password")} isInvalid={isPasswordInvalid} required />
-                    {passwordWarning && <div className="warning">{passwordWarning}</div>}
+                    {passwordWarning && (
+                        <div className="warning">
+                            {passwordWarning.type === "too_short" &&
+                                t("char_limit_too_short", { min: passwordWarning.min, field: t(passwordWarning.fieldName) })
+                            }
+
+                            {passwordWarning.type === "too_long" &&
+                                t("char_limit_too_long", { max: passwordWarning.max, field: t(passwordWarning.fieldName) })
+                            }
+                        </div>
+                    )}
 
                     <Alert message={error} />
                     {success && <div className="success">{success}</div>}

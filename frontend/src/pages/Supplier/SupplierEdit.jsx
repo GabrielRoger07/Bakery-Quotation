@@ -83,16 +83,46 @@ const SupplierEdit = ({supplier, onSave, onClose}) => {
     return (
         <form onSubmit={handleSubmit}>
             <Input label={t("supplier_name")} type="text" value={supplierName} onChange={handleSupplierNameChange} onBlur={handleSupplierNameBlur} placeholder={t("enter_supplier_name")} isInvalid={isSupplierNameInvalid} required />
-            {supplierNameWarning && <div className="warning">{supplierNameWarning}</div>}
+            {supplierNameWarning && (
+                <div className="warning">
+                    {supplierNameWarning.type === "too_short" &&
+                        t("char_limit_too_short", { min: supplierNameWarning.min, field: t(supplierNameWarning.fieldName) })
+                    }
+
+                    {supplierNameWarning.type === "too_long" &&
+                        t("char_limit_too_long", { max: supplierNameWarning.max, field: t(supplierNameWarning.fieldName) })
+                    }
+                </div>
+            )}
             
             <Input label={t("supplier_email")} type="email" value={supplierEmail} onChange={handleSupplierEmailChange} onBlur={handleSupplierEmailBlur} placeholder={t("enter_supplier_email")} isInvalid={isSupplierEmailInvalid} />
-            {supplierEmail && supplierEmailWarning && <div className="warning">{supplierEmailWarning}</div>}
+            {supplierEmail && supplierEmailWarning && (
+                <div className="warning">
+                    {supplierEmailWarning.type === "too_short" &&
+                        t("char_limit_too_short", { min: supplierEmailWarning.min, field: t(supplierEmailWarning.fieldName) })
+                    }
+
+                    {supplierEmailWarning.type === "too_long" &&
+                        t("char_limit_too_long", { max: supplierEmailWarning.max, field: t(supplierEmailWarning.fieldName) })
+                    }
+                </div>
+            )}
 
             <Input label={t("supplier_whatsapp")} type="text" value={supplierWhatsappNumber} onChange={handleSupplierWhatsappNumberChange} onBlur={handleSupplierWhatsappNumberBlur} placeholder={t("enter_supplier_whatsapp")} isInvalid={isSupplierWhatsappNumberInvalid} required />
             {isSupplierWhatsappNumberInvalid && <div className="warning">{t("invalid_whatsapp")}</div>}
 
             <Input label={t("employer_name")} type="text" value={employerName} onChange={handleEmployerNameChange} onBlur={handleEmployerNameBlur} placeholder={t("enter_employer_name")} isInvalid={isEmployerNameInvalid} required />
-            {supplierNameWarning && <div className="warning">{supplierNameWarning}</div>}
+            {employerNameWarning && (
+                <div className="warning">
+                    {employerNameWarning.type === "too_short" &&
+                        t("char_limit_too_short", { min: employerNameWarning.min, field: t(employerNameWarning.fieldName) })
+                    }
+
+                    {employerNameWarning.type === "too_long" &&
+                        t("char_limit_too_long", { max: employerNameWarning.max, field: t(employerNameWarning.fieldName) })
+                    }
+                </div>
+            )}
 
             <Input label={t("employer_cnpj")} type="text" value={employerCnpj} onChange={handleEmployerCnpjChange} onBlur={handleEmployerCnpjBlur} placeholder={t("enter_employer_cnpj")} isInvalid={isEmployerCnpjInvalid} required />
             {isEmployerCnpjInvalid && <div className="warning">{t("invalid_cnpj")}</div>}

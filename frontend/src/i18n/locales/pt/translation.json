@@ -34,6 +34,10 @@
     "navbar_quotations": "Cotações",
     "navbar_logout": "Sair",
 
+    "table_reload": "Atualizar",
+    "table_add": "Adicionar",
+    "table_actions": "Ações",
+
     "supplier_name": "Nome",
     "supplier_email": "E-mail",
     "supplier_whatsapp": "Whatsapp",

@@ -41,13 +41,20 @@
     "table_add": "Add",
     "table_actions": "Actions",
 
+    "server_internal_error": "Server Internal Error",
+    "cancel_button": "Cancel",
+    "confirm_button": "Confirm",
+
     "supplier_name": "Name",
     "supplier_email": "Email",
     "supplier_whatsapp": "Whatsapp",
     "employer_name": "Employer Name",
     "employer_cnpj": "Employer CNPJ",
     "delete_supplier_error": "Failed to delete supplier. Please try again.",
-    "server_internal_error": "Server Internal Error",
-    "suppliers_title": "Suppliers",
-    "suppliers_empty": "No suppliers found."
+    "suppliers_title_list": "Suppliers",
+    "suppliers_empty": "No suppliers found.",
+    "suppliers_title_edit": "Edit Supplier",
+    "suppliers_title_create": "Create Supplier",
+    "confirm_removal": "Confirm Removal",
+    "supplier_remove_confirm": "Are you sure you want to remove supplier <strong>{{supplier}}</strong> from <strong>{{employer}}</strong>?"
 }

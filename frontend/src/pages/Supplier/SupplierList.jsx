@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
+import { useTranslation, Trans } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
 import Modal from '../../components/Modal'
@@ -13,6 +14,8 @@ import './SupplierList.css'
 import { ENV } from '../../config/env'
 
 const SupplierList = () => {
+
+    const { t } = useTranslation()
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
     
@@ -34,11 +37,11 @@ const SupplierList = () => {
     const [sortDirection, setSortDirection] = useState("asc")
 
     const columns = [
-        { key: "supplierName", label: "Name"},
-        { key: "supplierEmail", label: "Email"},
-        { key: "supplierWhatsappNumber", label: "Whatsapp"},
-        { key: "employerName", label: "Employer Name"},
-        { key: "employerCnpj", label: "Employer CNPJ"}
+        { key: "supplierName", label: t("supplier_name")},
+        { key: "supplierEmail", label: t("supplier_email")},
+        { key: "supplierWhatsappNumber", label: t("supplier_whatsapp")},
+        { key: "employerName", label: t("employer_name")},
+        { key: "employerCnpj", label: t("employer_cnpj")}
     ]
 
     const openEditModal = (supplier) => {
@@ -78,7 +81,7 @@ const SupplierList = () => {
             fetchSuppliers();
             setError("")
         }else{
-            setError(res.data?.message || "Failed to delete supplier")
+            setError(t("delete_supplier_error"))
         }
         closeModals()
     }
@@ -123,10 +126,10 @@ const SupplierList = () => {
     return (
     <div className="supplier-list-container">
         {error && <Alert message={error}/>}
-        {status === 0 && <Alert message="Server Internal Error" />}
+        {status === 0 && <Alert message={t("server_internal_error")} />}
 
         <Table 
-            title="All Suppliers"
+            title={t("suppliers_title_list")}
             columns={columns}
             data={suppliers}
             idKey="supplierId"
@@ -138,12 +141,12 @@ const SupplierList = () => {
             onSort={handleColumnSort}
             sortField={sortField}
             sortDirection={sortDirection}
-            emptyMessage="No suppliers found."
+            emptyMessage={t("suppliers_empty")}
         />
 
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => fetchSuppliers(page)} />
 
-        <Modal isOpen={isEditModalOpen} onClose={closeModals} title="Edit Supplier">
+        <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("suppliers_title_edit")}>
             <SupplierEdit 
                 supplier={supplierToEdit} 
                 onSave={handleSaveEdit}
@@ -151,19 +154,19 @@ const SupplierList = () => {
             />
         </Modal>
 
-        <Modal isOpen={isCreateModalOpen} onClose={closeModals} title="Create Supplier">
+        <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={t("suppliers_title_create")}>
             <SupplierCreate
                 onSave={handleSaveCreate}
                 onClose={closeModals} 
             />
         </Modal>
 
-        <Modal isOpen={confirmOpen} onClose={closeModals} title="Confirm Removal">
+        <Modal isOpen={confirmOpen} onClose={closeModals} title={t("confirm_removal")}>
             <div className="confirm-container">
-                <p className="confirm-message">Are you sure you want to remove supplier <strong>{supplierToRemove?.supplierName}</strong> from <strong>{supplierToRemove?.employerName}</strong>?</p>
+                <p className="confirm-message"><Trans i18nKey="supplier_remove_confirm" values={{supplier: supplierToRemove?.supplierName, employer: supplierToRemove?.employerName}} components={{strong: <strong />}}/></p>
                 <div className="confirm-buttons">
-                    <Button onClick={closeModals}>Cancel</Button>
-                    <Button onClick={confirmRemove} disabled={loading}>Confirm</Button>
+                    <Button onClick={closeModals}>{t("cancel_button")}</Button>
+                    <Button onClick={confirmRemove} disabled={loading}>{t("confirm_button")}</Button>
                 </div>
             </div>
         </Modal>

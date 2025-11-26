@@ -48,6 +48,12 @@
     "employer_cnpj": "CNPJ da Empresa",
     "delete_supplier_error": "Erro ao remover fornecedor. Por favor tente novamente.",
     "server_internal_error": "Erro Interno do Servidor",
-    "suppliers_title": "Fornecedores",
-    "suppliers_empty": "Nenhum fornecedor encontrado."
+    "suppliers_title_list": "Fornecedores",
+    "suppliers_empty": "Nenhum fornecedor encontrado.",
+    "suppliers_title_edit": "Editar Fornecedor",
+    "suppliers_title_create": "Criar Fornecedor",
+    "confirm_removal": "Confirmar Remoção",
+    "cancel_button": "Cancelar",
+    "confirm_button": "Confirmar",
+    "supplier_remove_confirm": "Tem certeza de que você deseja remover o fornecedor <strong>{{supplier}}</strong> da empresa <strong>{{employer}}</strong>?"
   }

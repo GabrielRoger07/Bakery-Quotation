@@ -17,14 +17,14 @@
     "enter_cnpj": "Enter CNPJ",
     "invalid_cnpj": "Invalid CNPJ",
     "company_name": "Company Name",
-    "enter_company_name": "Enter Company Name",
+    "enter_company_name": "Enter company name",
     "company_email": "Company Email",
-    "enter_company_email": "Enter Company Email",
+    "enter_company_email": "Enter company email",
     "company_whatsapp": "Whatsapp Number",
-    "enter_company_whatsapp": "Enter Whatsapp Number",
+    "enter_company_whatsapp": "Enter Whatsapp number",
     "invalid_whatsapp": "Invalid Whatsapp Number",
     "company_password": "Company Password",
-    "enter_company_password": "Enter Password",
+    "enter_company_password": "Enter password",
     "already_have_account": "Already have an account? Login!",
     "char_limit_too_short": "Minimum of {{min}} characters required for {{field}}.",
     "char_limit_too_long": "Maximum of {{max}} characters allowed for {{field}}.",
@@ -44,6 +44,7 @@
     "server_internal_error": "Server Internal Error",
     "cancel_button": "Cancel",
     "confirm_button": "Confirm",
+    "save_button": "Save",
 
     "supplier_name": "Name",
     "supplier_email": "Email",
@@ -56,5 +57,14 @@
     "suppliers_title_edit": "Edit Supplier",
     "suppliers_title_create": "Create Supplier",
     "confirm_removal": "Confirm Removal",
-    "supplier_remove_confirm": "Are you sure you want to remove supplier <strong>{{supplier}}</strong> from <strong>{{employer}}</strong>?"
+    "supplier_remove_confirm": "Are you sure you want to remove supplier <strong>{{supplier}}</strong> from <strong>{{employer}}</strong>?",
+
+    "supplier_updated_success": "Supplier updated successfully!",
+    "supplier_updated_error": "Unable to update the supplier. Please try again.",
+
+    "enter_supplier_name": "Enter supplier name",
+    "enter_supplier_email": "Enter supplier email",
+    "enter_supplier_whatsapp": "Enter supplier Whatsapp",
+    "enter_employer_name": "Enter employer name",
+    "enter_employer_cnpj": "Enter employer CNPJ"
 }

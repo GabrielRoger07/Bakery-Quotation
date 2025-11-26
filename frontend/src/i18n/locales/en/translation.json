@@ -27,5 +27,20 @@
     "enter_company_password": "Enter Password",
     "already_have_account": "Already have an account? Login!",
     "char_limit_too_short": "Minimum of {{min}} characters required for {{field}}.",
-    "char_limit_too_long": "Maximum of {{max}} characters allowed for {{field}}."
+    "char_limit_too_long": "Maximum of {{max}} characters allowed for {{field}}.",
+
+    "navbar_suppliers": "Suppliers",
+    "navbar_products": "Products",
+    "navbar_quotations": "Quotations",
+    "navbar_logout": "Logout",
+
+    "supplier_name": "Name",
+    "supplier_email": "Email",
+    "supplier_whatsapp": "Whatsapp",
+    "employer_name": "Employer Name",
+    "employer_cnpj": "Employer CNPJ",
+    "delete_supplier_error": "Failed to delete supplier. Please try again.",
+    "server_internal_error": "Server Internal Error",
+    "suppliers_title": "Suppliers",
+    "suppliers_empty": "No suppliers found."
 }

@@ -27,5 +27,20 @@
     "enter_company_password": "Digite a senha",
     "already_have_account": "Já possui uma conta? Entre!",
     "char_limit_too_short": "É permitido ter no mínimo {{min}} caracteres para {{field}}.",
-    "char_limit_too_long": "É permitido ter no máximo {{max}} caracteres para {{field}}."
+    "char_limit_too_long": "É permitido ter no máximo {{max}} caracteres para {{field}}.",
+
+    "navbar_suppliers": "Fornecedores",
+    "navbar_products": "Produtos",
+    "navbar_quotations": "Cotações",
+    "navbar_logout": "Sair",
+
+    "supplier_name": "Nome",
+    "supplier_email": "E-mail",
+    "supplier_whatsapp": "Whatsapp",
+    "employer_name": "Nome da Empresa",
+    "employer_cnpj": "CNPJ da Empresa",
+    "delete_supplier_error": "Erro ao remover fornecedor. Por favor tente novamente.",
+    "server_internal_error": "Erro Interno do Servidor",
+    "suppliers_title": "Fornecedores",
+    "suppliers_empty": "Nenhum fornecedor encontrado."
   }

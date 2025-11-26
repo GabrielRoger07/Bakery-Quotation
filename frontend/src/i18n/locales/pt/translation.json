@@ -8,5 +8,24 @@
     "invalid_email": "E-mail inválido",
     "login_success": "Login realizado com sucesso!",
     "login_error": "E-mail ou senha inválidos",
-    "new_company": "Nova empresa? Criar conta!"
+    "connection_lost": "Serviço temporariamente indisponível. Por favor, tente novamente mais tarde",
+    "new_company": "Nova empresa? Criar conta!",
+
+    "company_created_success": "Empresa cadastrada com sucesso!",
+    "company_created_error": "Não foi possível cadastrar a empresa. Por favor tente novamente.",
+    "create_company": "Criar Conta",
+    "enter_cnpj": "Digite o CNPJ",
+    "invalid_cnpj": "CNPJ inválido",
+    "company_name": "Nome da Empresa",
+    "enter_company_name": "Digite o nome da empresa",
+    "company_email": "E-mail da empresa",
+    "enter_company_email": "Digite o e-mail da empresa",
+    "company_whatsapp": "Número do Whatsapp",
+    "enter_company_whatsapp": "Digite o número do Whatsapp",
+    "invalid_whatsapp": "Número de Whatsapp inválido",
+    "company_password": "Senha",
+    "enter_company_password": "Digite a senha",
+    "already_have_account": "Já possui uma conta? Entre!",
+    "char_limit_too_short": "É permitido ter no mínimo {{min}} caracteres para {{field}}.",
+    "char_limit_too_long": "É permitido ter no máximo {{max}} caracteres para {{field}}."
   }

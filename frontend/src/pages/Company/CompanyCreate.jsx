@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
@@ -12,11 +13,13 @@ import { ENV } from '../../config/env'
 
 const CompanyCreate = () => {
 
+    const { t } = useTranslation()
+
     const { value: companyCnpj, handleChange: handleCnpjChange, handleBlur: handleCnpjBlur, getNumericValue: getCnpjRaw, isInvalid: isCnpjInvalid } = useCnpjMask("")
-    const { value: companyName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(45, "Company Name")
-    const { value: companyEmail, onChange: handleEmailChange, onBlur: handleEmailBlur, warning: emailWarning, isInvalid: isEmailInvalid } = useCharLimit(60, "Company Email")
+    const { value: companyName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(45, "company_name")
+    const { value: companyEmail, onChange: handleEmailChange, onBlur: handleEmailBlur, warning: emailWarning, isInvalid: isEmailInvalid } = useCharLimit(60, "company_email")
     const { value: companyWhatsappNumber, handleChange: handleWhatsappChange, handleBlur: handleWhatsappBlur, getNumericValue: getWhatsappRaw, isInvalid: isWhatsappInvalid } = usePhoneMask("")
-    const { value: companyPassword, onChange: handlePasswordChange, onBlur: handlePasswordBlur, warning: passwordWarning, isInvalid: isPasswordInvalid } = useCharLimit(255, "Company Password", 6)
+    const { value: companyPassword, onChange: handlePasswordChange, onBlur: handlePasswordBlur, warning: passwordWarning, isInvalid: isPasswordInvalid } = useCharLimit(255, "company_password", 6)
 
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
@@ -40,7 +43,7 @@ const CompanyCreate = () => {
         e.preventDefault();
 
         if (!/\S+@\S+\.\S+/.test(companyEmail)) {
-            setError("Email must be valid.");
+            setError(t("invalid_email"));
             setSuccess("");
             return;
         }
@@ -58,41 +61,51 @@ const CompanyCreate = () => {
         const res = await request("POST", "/companies/register", company)
 
         if(res.ok){
-            setSuccess("Company created successfully!")
+            setSuccess(t("company_created_success"))
             setError("")
             setTimeout(() => navigate("/"), 1000)
         }else{
             setSuccess("")
-            setError(res.data?.message)
+            setError(t("company_created_error"))
         }
     }
 
     return (
         <div className="auth-container">
             <div className="auth-box">
-                <h1>Create Company</h1>
+                <h1>{t("create_company")}</h1>
                 <form onSubmit={handleCreateCompany}>
-                    <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} onBlur={handleCnpjBlur} placeholder="Enter CNPJ" isInvalid={isCnpjInvalid} required />
-                    {isCnpjInvalid && <div className="warning">CNPJ must be valid.</div>}
+                    <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} onBlur={handleCnpjBlur} placeholder={t("enter_cnpj")} isInvalid={isCnpjInvalid} required />
+                    {isCnpjInvalid && <div className="warning">{t("invalid_cnpj")}</div>}
 
-                    <Input label="Company Name" type="text" value={companyName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder="Enter Company Name" isInvalid={isNameInvalid} required />
-                    {nameWarning && <div className="warning">{nameWarning}</div>}
+                    <Input label={t("company_name")} type="text" value={companyName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder={t("enter_company_name")} isInvalid={isNameInvalid} required />
+                    {nameWarning && (
+                        <div className="warning">
+                            {nameWarning.type === "too_short" &&
+                                t("char_limit_too_short", { min: nameWarning.min, field: t(nameWarning.fieldName) })
+                            }
 
-                    <Input label="Company E-mail" type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder="Enter Company Email" isInvalid={isEmailInvalid} required />
+                            {nameWarning.type === "too_long" &&
+                                t("char_limit_too_long", { max: nameWarning.max, field: t(nameWarning.fieldName) })
+                            }
+                        </div>
+                    )}
+
+                    <Input label={t("company_email")} type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder={t("enter_company_email")} isInvalid={isEmailInvalid} required />
                     {emailWarning && <div className="warning">{emailWarning}</div>}
 
-                    <Input label="Whatsapp Number" type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder="Enter Whatsapp Number" isInvalid={isWhatsappInvalid} required />
-                    {isWhatsappInvalid && <div className="warning">Whatsapp number must be valid.</div>}
+                    <Input label={t("company_whatsapp")} type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder={t("enter_company_whatsapp")} isInvalid={isWhatsappInvalid} required />
+                    {isWhatsappInvalid && <div className="warning">{t("invalid_whatsapp")}</div>}
 
-                    <Input label="Company Password" type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder="Enter Password" isInvalid={isPasswordInvalid} required />
+                    <Input label={t("company_password")} type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder={t("enter_company_password")} isInvalid={isPasswordInvalid} required />
                     {passwordWarning && <div className="warning">{passwordWarning}</div>}
 
                     <Alert message={error} />
                     {success && <div className="success">{success}</div>}
-                    <Button type="submit" disabled={isDisabled}>Create Company</Button>
+                    <Button type="submit" disabled={isDisabled}>{t("create-company")}</Button>
                 </form>
                 <p>
-                    <Link to="/login">Already have an account? Login!</Link>
+                    <Link to="/login">{t("already_have_account")}</Link>
                 </p>
             </div>
         </div>

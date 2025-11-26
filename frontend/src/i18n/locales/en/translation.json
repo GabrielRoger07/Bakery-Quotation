@@ -8,5 +8,24 @@
     "invalid_email": "Invalid email address",
     "login_success": "Login successfully!",
     "login_error": "Invalid email or password",
-    "new_company": "New company? Create an account!"
+    "connection_lost": "Service temporarily unavailable. Please try again later",
+    "new_company": "New company? Create an account!",
+
+    "company_created_success": "Company created successfully!",
+    "company_created_error": "Unable to create the company. Please try again.",
+    "create_company": "Create Account",
+    "enter_cnpj": "Enter CNPJ",
+    "invalid_cnpj": "Invalid CNPJ",
+    "company_name": "Company Name",
+    "enter_company_name": "Enter Company Name",
+    "company_email": "Company Email",
+    "enter_company_email": "Enter Company Email",
+    "company_whatsapp": "Whatsapp Number",
+    "enter_company_whatsapp": "Enter Whatsapp Number",
+    "invalid_whatsapp": "Invalid Whatsapp Number",
+    "company_password": "Company Password",
+    "enter_company_password": "Enter Password",
+    "already_have_account": "Already have an account? Login!",
+    "char_limit_too_short": "Minimum of {{min}} characters required for {{field}}.",
+    "char_limit_too_long": "Maximum of {{max}} characters allowed for {{field}}."
 }

@@ -8,7 +8,6 @@ import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import '../../components/Auth.css'
 import { ENV } from '../../config/env'
-import PublicHeader from '../../components/PublicHeader'
 
 const Login = () => {
 
@@ -51,14 +50,12 @@ const Login = () => {
             setTimeout(() => navigate("/suppliers"), 1000)
         }else{
             setSuccess("")
-            console.log(res.data)
-            setError(t("login_error"))
+            setError(res.status == 500 ? t("login_error") : t("connection_lost"))
         }
     }
 
     return (
         <div className='auth-container'>
-            <PublicHeader />
             <div className='auth-box'>
                 <h1>{t("login")}</h1>
                 <form onSubmit={handleLogin}>

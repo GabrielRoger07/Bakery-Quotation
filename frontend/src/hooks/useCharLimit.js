@@ -17,14 +17,14 @@ export default function useCharLimit(max, fieldName, min = 0) {
 
     const handleBlur = () => {
         if(value.length < min) {
-            setWarning(`Minimum of ${min} characters required for ${fieldName}.`)
+            setWarning({ type: "too_short", min, fieldName })
             setIsInvalid(true)
         } else if(value.length > max){
-            setWarning(`Maximum of ${max} characters allowed for ${fieldName}.`)
+            setWarning({ type: "too_long", max, fieldName })
             setIsInvalid(true)
         } else {
             setIsInvalid(false)
-            setWarning("")
+            setWarning(null)
         }
     }
 

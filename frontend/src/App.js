@@ -10,6 +10,7 @@ import QuotationList from './pages/Quotation/QuotationList';
 import SupplierPage from './pages/SupplierAccess/SupplierPage';
 import Navbar from './components/Navbar';
 import QuotationMonitor from './pages/Quotation/QuotationMonitor';
+import PublicHeader from './components/PublicHeader';
 
 function App() {
 
@@ -27,7 +28,7 @@ function AppContent(){
 
   return (
     <div className="App">
-      {shouldShowNavbar && <Navbar />}
+      {shouldShowNavbar ? <Navbar /> : <PublicHeader />}
         <Routes>
           <Route path="/" element={<Navigate to="/login" />}></Route>
           <Route path="/login" element={<Login />}></Route>

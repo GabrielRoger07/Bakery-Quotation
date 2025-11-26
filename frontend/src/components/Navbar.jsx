@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import Button from "./Button";
+import LangSwitcher from "./LangSwitcher";
 import './Navbar.css'
 
 const Navbar = () => {
@@ -20,6 +21,7 @@ const Navbar = () => {
                 <NavLink to="/quotations">Quotations</NavLink>
             </div>
             <div className="navbar-right">
+                <LangSwitcher />
                 <Button onClick={logout}> Logout</Button>
             </div>
         </nav>

@@ -116,5 +116,9 @@
     "quotation_end_lower_start": "End date must be later than the start date",
     "quotation_step_1": "Step 1: Quotation Dates",
     "quotation_step_1_subtitle_1": "Select the start and end dates for your quotation period.",
-    "quotation_step_1_subtitle_2": "Make sure they are future dates."
+    "quotation_step_1_subtitle_2": "Make sure they are future dates.",
+
+    "created": "created",
+    "updated": "updated",
+    "successfully": "successfully"
 }

@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
+import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Alert from '../../components/Alert'
 import QuotationCreateStep1 from './QuotationCreateStep1'
@@ -10,6 +11,8 @@ import { ENV } from '../../config/env'
 
 const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave }) => {
     
+    const { t } = useTranslation()
+
     const [step, setStep] = useState(1)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
@@ -113,7 +116,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         }
 
         setLoading(false)
-        setSuccess(`Quotation ${mode === "create" ? "created" : "updated"} successfully!`)
+        setSuccess(`${t("quotation")} ${mode === "create" ? t("created") : t("updated")} ${t("successfully")}!`)
         onSave && onSave(updatedQuotation)
 
         setTimeout(() => onClose(), 800)

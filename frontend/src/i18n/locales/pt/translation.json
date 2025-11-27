@@ -116,5 +116,9 @@
     "quotation_end_lower_start": "Data de fim deve ser posterior à data de início",
     "quotation_step_1": "Etapa 1: Datas da Cotação",
     "quotation_step_1_subtitle_1": "Selecione as datas de início e fim da cotação.",
-    "quotation_step_1_subtitle_2": "Lembre-se que elas precisam estar no futuro."
+    "quotation_step_1_subtitle_2": "Lembre-se que elas precisam estar no futuro.",
+
+    "created": "criada",
+    "updated": "atualizada",
+    "successfully": "com sucesso"
 }

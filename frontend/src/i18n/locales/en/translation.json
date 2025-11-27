@@ -101,5 +101,12 @@
     "quotations_title_create": "Create Quotation",
     "quotations_title_details": "Quotation Details",
     "quotation_cannot_delete": "You cannot remove a quotation that has already started.",
-    "quotation_remove_confirm": "Are you sure you want to remove quotation <strong>{{quotation}}</strong>?"
+    "quotation_remove_confirm": "Are you sure you want to remove quotation <strong>{{quotation}}</strong>?",
+    "quotation_fetch_products_fail": "Failed to fetch products",
+    "quotation_fetch_suppliers_fail": "Failed to fetch suppliers",
+    "quotation": "Quotation",
+    "quotation_start": "Start",
+    "quotation_end": "End",
+    "quotation_no_products_linked": "No products linked.",
+    "quotation_no_suppliers_linked": "No suppliers linked."
 }

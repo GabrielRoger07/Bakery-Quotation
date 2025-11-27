@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Alert from '../../components/Alert'
 import { ENV } from '../../config/env'
 
 const QuotationDetails = ({ quotation }) => {
     
+    const { t } = useTranslation()
+
     const { request } = useFetch(ENV.API_BASE_URL)
     const [products, setProducts] = useState([])
     const [suppliers, setSuppliers] = useState([])
@@ -19,7 +22,7 @@ const QuotationDetails = ({ quotation }) => {
             setProducts(resProducts.data);
             setError("")
         }else{
-            setError(resProducts.data?.message || "Failed to fetch products")
+            setError(t("quotation_fetch_products_fail"))
         }
         setStatus(resProducts.status)
     }
@@ -32,7 +35,7 @@ const QuotationDetails = ({ quotation }) => {
             setSuppliers(resSuppliers.data);
             setError("")
         }else{
-            setError(resSuppliers.data?.message || "Failed to fetch suppliers")
+            setError(t("quotation_fetch_suppliers_fail"))
         }
         setStatus(resSuppliers.status)
     }
@@ -50,14 +53,14 @@ const QuotationDetails = ({ quotation }) => {
         <div className="quotation-details-container">
             {error && <Alert message={error}/>}
 
-            <h3>Quotation {quotation.quotationId}</h3>
-            <p><strong>Start: </strong> {quotation.quotationStart}</p>
-            <p><strong>End: </strong> {quotation.quotationEnd}</p>
+            <h3>{t("quotation")} {quotation.quotationId}</h3>
+            <p><strong>{t("quotation_start")}: </strong> {quotation.quotationStart}</p>
+            <p><strong>{t("quotation_end")}: </strong> {quotation.quotationEnd}</p>
 
             <div className="details-section">
-                <h4>Products</h4>
+                <h4>{t("products_title_list")}</h4>
                 {products.length === 0 ? (
-                    <p>No products linked.</p>
+                    <p>{t("quotation_no_products_linked")}</p>
                 ) : (
                     <ul>
                         {products.map(p => (
@@ -70,9 +73,9 @@ const QuotationDetails = ({ quotation }) => {
             </div>
 
             <div className="details-section">
-                <h4>Suppliers</h4>
+                <h4>{t("suppliers_title_list")}</h4>
                 {suppliers.length === 0 ? (
-                    <p>No suppliers linked.</p>
+                    <p>{t("quotation_no_suppliers_linked")}</p>
                 ) : (
                     <ul>
                         {suppliers.map(s => (

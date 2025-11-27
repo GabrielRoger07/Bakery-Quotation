@@ -101,5 +101,12 @@
     "quotations_title_create": "Criar Cotação",
     "quotations_title_details": "Detalhes da Cotação",
     "quotation_cannot_delete": "Você não pode remover uma cotação que já começou.",
-    "quotation_remove_confirm": "Tem certeza de que você deseja remover a cotação <strong>{{quotation}}</strong>?"
+    "quotation_remove_confirm": "Tem certeza de que você deseja remover a cotação <strong>{{quotation}}</strong>?",
+    "quotation_fetch_products_fail": "Erro ao buscar produtos",
+    "quotation_fetch_suppliers_fail": "Erro ao buscar fornecedores",
+    "quotation": "Cotação",
+    "quotation_start": "Início",
+    "quotation_end": "Fim",
+    "quotation_no_products_linked": "Nenhum produto atrelado a essa cotação.",
+    "quotation_no_suppliers_linked": "Nenhum fornecedor atrelado a essa cotação."
 }

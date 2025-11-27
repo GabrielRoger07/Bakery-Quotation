@@ -47,6 +47,7 @@
     "save_button": "Save",
     "all_fields_required": "All fields are required",
     "create": "Create",
+    "confirm_removal": "Confirm Removal",
 
     "supplier_name": "Name",
     "supplier_email": "Email",
@@ -58,7 +59,6 @@
     "suppliers_empty": "No suppliers found.",
     "suppliers_title_edit": "Edit Supplier",
     "suppliers_title_create": "Create Supplier",
-    "confirm_removal": "Confirm Removal",
     "supplier_remove_confirm": "Are you sure you want to remove supplier <strong>{{supplier}}</strong> from <strong>{{employer}}</strong>?",
     
     "supplier_created_success": "Supplier created successfully!",
@@ -79,8 +79,12 @@
     "enter_product_name": "Enter product name",
     "unit_of_measure": "Unit of Measure",
     "unit_of_measure_select": "Select",
+    "delete_product_error": "Failed to delete product. Please try again.",
+    "products_empty": "No products found.",
+    "products_title_list": "Products",
     "products_title_create": "Create Product",
     "products_title_edit": "Edit Product",
+    "product_remove_confirm": "Are you sure you want to remove product <strong>{{product}}</strong>?",
 
     "product_created_success": "Product created successfully!",
     "product_created_error": "Unable to create the product. Please try again.",

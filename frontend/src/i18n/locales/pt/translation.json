@@ -47,6 +47,7 @@
     "save_button": "Salvar",
     "all_fields_required": "All fields are required",
     "create_button": "Criar",
+    "confirm_removal": "Confirmar Remoção",
 
     "supplier_name": "Nome",
     "supplier_email": "E-mail",
@@ -56,9 +57,8 @@
     "delete_supplier_error": "Erro ao remover fornecedor. Por favor tente novamente.",
     "suppliers_title_list": "Fornecedores",
     "suppliers_empty": "Nenhum fornecedor encontrado.",
-    "suppliers_title_edit": "Editar Fornecedor",
     "suppliers_title_create": "Criar Fornecedor",
-    "confirm_removal": "Confirmar Remoção",
+    "suppliers_title_edit": "Editar Fornecedor",
     "supplier_remove_confirm": "Tem certeza de que você deseja remover o fornecedor <strong>{{supplier}}</strong> da empresa <strong>{{employer}}</strong>?",
 
     "supplier_created_success": "Fornecedor criado com sucesso!",
@@ -79,8 +79,12 @@
     "enter_product_name": "Digite o nome do produto",
     "unit_of_measure": "Unidade de Medida",
     "unit_of_measure_select": "Selecione",
+    "delete_product_error": "Erro ao remover produto. Por favor tente novamente.",
+    "products_empty": "Nenhum produto encontrado.",
+    "products_title_list": "Produtos",
     "products_title_create": "Criar Produto",
     "products_title_edit": "Editar Produto",
+    "product_remove_confirm": "Tem certeza de que você deseja remover o produto <strong>{{product}}</strong>?",
 
     "product_created_success": "Produto criado com sucesso!",
     "product_created_error": "Não foi possível criar o produto. Por favor tente novamente.",

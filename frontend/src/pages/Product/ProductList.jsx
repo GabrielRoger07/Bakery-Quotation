@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
+import { useTranslation, Trans } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
 import Modal from '../../components/Modal'
@@ -13,6 +14,8 @@ import './ProductList.css'
 import { ENV } from '../../config/env'
 
 const ProductList = () => {
+    
+    const { t } = useTranslation()
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
 
@@ -34,9 +37,9 @@ const ProductList = () => {
     const [sortDirection, setSortDirection] = useState("asc")
 
     const columns = [
-        { key: "productBarCodeNumber", label: "Barcode Number" },
-        { key: "productName", label: "Name" },
-        { key: "unitOfMeasure", label: "Unit of Measure" }
+        { key: "productBarCodeNumber", label: t("barcode_number") },
+        { key: "productName", label: t("product_name") },
+        { key: "unitOfMeasure", label: t("unit_of_measure") }
     ]
 
     const openEditModal = (product) => {
@@ -75,7 +78,7 @@ const ProductList = () => {
             fetchProducts(currentPage)
             setError("")
         }else{
-            setError(res.data?.message || "Failed to delete product")
+            setError(t("delete_product_error"))
         }
         closeModals()
     }
@@ -120,10 +123,10 @@ const ProductList = () => {
     return (
     <div className="product-list-container">
         {error && <Alert message={error}/>}
-        {status === 0 && <Alert message="Server Internal Error" />}
+        {status === 0 && <Alert message={t("server_internal_error")} />}
 
         <Table 
-            title="All Products" 
+            title={t("products_title_list")}
             columns={columns}
             data={products}
             idKey="productId"
@@ -135,12 +138,12 @@ const ProductList = () => {
             onSort={handleColumnSort}
             sortField={sortField}
             sortDirection={sortDirection}
-            emptyMessage="No products found."
+            emptyMessage={t("products_empty")}
         />
 
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => fetchProducts(page)}/>
 
-        <Modal isOpen={isEditModalOpen} onClose={closeModals} title="Edit Product">
+        <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("products_title_edit")}>
             <ProductEdit 
                 product={productToEdit} 
                 onSave={handleSaveEdit} 
@@ -148,19 +151,19 @@ const ProductList = () => {
             />
         </Modal>
 
-        <Modal isOpen={isCreateModalOpen} onClose={closeModals} title="Create Product">
+        <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={t("products_title_create")}>
             <ProductCreate
                 onSave={handleSaveCreate} 
                 onClose={closeModals} 
             />
         </Modal>
 
-        <Modal isOpen={confirmOpen} onClose={closeModals} title="Confirm Removal">
+        <Modal isOpen={confirmOpen} onClose={closeModals} title={t("confirm_removal")}>
             <div className="confirm-container">
-                <p className="confirm-message">Are you sure you want to remove product <strong>{productToRemove?.productName}</strong>?</p>
+                <p className="confirm-message"><Trans i18nKey="product_remove_confirm" values={{product: productToRemove?.productName}} components={{strong: <strong />}}/></p>
                 <div className="confirm-buttons">
-                    <Button onClick={closeModals}>Cancel</Button>
-                    <Button onClick={confirmRemove} disabled={loading}>Confirm</Button>
+                    <Button onClick={closeModals}>{t("cancel_button")}</Button>
+                    <Button onClick={confirmRemove} disabled={loading}>{t("confirm_button")}</Button>
                 </div>
             </div>
 

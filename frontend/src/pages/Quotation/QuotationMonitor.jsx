@@ -2,12 +2,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useFetch from '../../hooks/useFetch'
 import useWebSocket from '../../hooks/useWebSocket'
+import { useTranslation } from 'react-i18next'
 import Button from '../../components/Button'
 import Table from '../../components/Table'
 import './QuotationMonitor.css'
 import { ENV } from '../../config/env'
 
 const QuotationMonitor = () => {
+
+    const { t } = useTranslation()
 
     const [searchParams] = useSearchParams()
     const quotationId = searchParams.get('id')
@@ -80,7 +83,7 @@ const QuotationMonitor = () => {
             const hours = Math.floor(ms % 86400000 / 36000000)
             const mins = Math.floor((ms % 3600000) / 60000)
             const secs = Math.floor((ms % 60000) / 1000)
-            return days > 0 ? `${days} days ${hours}h ${mins}m ${secs}s` : `${hours}h ${mins}m ${secs}s`
+            return days > 0 ? `${days}d ${hours}h ${mins}m ${secs}s` : `${hours}h ${mins}m ${secs}s`
         }
 
         updateCountdown() 
@@ -173,29 +176,29 @@ const QuotationMonitor = () => {
     useWebSocket(quotationId, handleNewBid)
 
     const productColumns = useMemo(() => [
-        {key: "productName", label: "Product"},
-        {key: "productBarCodeNumber", label: "Barcode Number"},
-        {key: "lowestBid", label: "Lowest Bid"},
-        {key: "quantity", label: "Quantity"},
-        {key: "bonus", label: "Bonus"},
-        {key: "pricePerUnit", label: "Price Per Unit"},
-        {key: "supplierName", label: "Supplier"},
-        {key: "employerName", label: "Company"},
-        {key: "employerCnpj", label: "Company CNPJ"},
+        {key: "productName", label: t("product")},
+        {key: "productBarCodeNumber", label: t("barcode_number")},
+        {key: "lowestBid", label: t("lowest_bid")},
+        {key: "quantity", label: t("quantity")},
+        {key: "bonus", label: t("bonus")},
+        {key: "pricePerUnit", label: t("price_per_unit")},
+        {key: "supplierName", label: t("supplier")},
+        {key: "employerName", label: t("company")},
+        {key: "employerCnpj", label: t("company_cnpj")},
     ], [])
 
     const bidColumns = useMemo(() => [
-        {key: "supplierName", label: "Supplier"},
-        {key: "employerName", label: "Company"},
-        {key: "employerCnpj", label: "Company CNPJ"},
-        {key: "productName", label: "Product"},
-        {key: "productBarCodeNumber", label: "Barcode Number"},
-        {key: "price", label: "Total Price"},
-        {key: "quantity", label: "Quantity"},
-        {key: "bonus", label: "Bonus"},
-        {key: "pricePerUnit", label: "Price Per Unit"},
+        {key: "supplierName", label: t("supplier")},
+        {key: "employerName", label: t("company")},
+        {key: "employerCnpj", label: t("company_cnpj")},
+        {key: "productName", label: t("product")},
+        {key: "productBarCodeNumber", label: t("barcode_number")},
+        {key: "price", label: t("total_price")},
+        {key: "quantity", label: t("quantity")},
+        {key: "bonus", label: t("bonus")},
+        {key: "pricePerUnit", label: t("price_per_unit")},
         {key: "status", label: "Status"},
-        {key: "createdAt", label: "Date/Hour"},
+        {key: "createdAt", label: t("date_hour")},
     ], [])
 
     const formattedProducts = products.map(p => ({
@@ -218,7 +221,7 @@ const QuotationMonitor = () => {
             price: `R$ ${b.price.toFixed(2)}`, 
             pricePerUnit: `R$ ${((b.price) / (b.quantity + b.bonus)).toFixed(2)}`,
             createdAt: new Date(b.createdAt).toLocaleString(),
-            status: isLowest ? <span>Lowest</span> : <span>Outbid</span>
+            status: isLowest ? <span>{t("lowest")}</span> : <span>{t("outbid")}</span>
         }
     })
 
@@ -229,46 +232,46 @@ const QuotationMonitor = () => {
 
     const formattedTotalEstimated = `R$ ${totalEstimated.toFixed(2)}`
 
-    if(!quotation) return <p>Loading...</p>
+    if(!quotation) return <p>{t("loading_message")}</p>
 
     return (
         <div className="quotation-monitor-container">
             <div className="monitor-header">
-                <Button onClick={() => navigate(-1)}>Back</Button>
-                <h2>Monitoring Quotation #{quotation.quotationId}</h2>
+                <Button onClick={() => navigate(-1)}>{t("back_button")}</Button>
+                <h2>{t("monitoring_quotation")} #{quotation.quotationId}</h2>
             </div>
 
             {quotation && (
             <div className="quotation-info">
-                <p><strong>Start:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
-                <p><strong>End:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
+                <p><strong>{t("start_uppercase")}:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
+                <p><strong>{t("end_uppercase")}:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
             </div>
             )}
             
             <div className="monitor-stats">
                 <div>Status: {stats.status}</div>
-                {(stats.status === 'Active' || stats.status === 'Scheduled') && <div>Time remaining: {stats.timeRemaining}</div>}
-                <div>Total bids: {stats.totalBids}</div>
-                <div>Suppliers: {stats.uniqueSuppliers}</div>
-                <div>Products with bids: {stats.productsWithBids.length}/{products.length}</div>
+                {(stats.status === 'Active' || stats.status === 'Scheduled') && <div>{t("time_remaining")}: {stats.timeRemaining}</div>}
+                <div>{t("total_bids")}: {stats.totalBids}</div>
+                <div>{t("navbar_suppliers")}: {stats.uniqueSuppliers}</div>
+                <div>{t("products_with_bids")}: {stats.productsWithBids.length}/{products.length}</div>
                 <div className="total-highlight"><strong>Total:</strong> {formattedTotalEstimated}</div>
             </div>
 
             <div className="monitor-sections">
                     <Table
-                        title="Quotation Products"
+                        title={t("products_title_list")}
                         columns={productColumns}
                         data={formattedProducts}
                         loading={false}
-                        emptyMessage="No products found for this quotation."
+                        emptyMessage={t("empty_products_quotation")}
                     />
 
                     <Table
-                        title="Bids"
+                        title={t("bids_title_list")}
                         columns={bidColumns}
                         data={formattedBids}
                         loading={false}
-                        emptyMessage="No bids found for this quotation."
+                        emptyMessage={t("empty_bids_products")}
                     />
             </div>
         </div>

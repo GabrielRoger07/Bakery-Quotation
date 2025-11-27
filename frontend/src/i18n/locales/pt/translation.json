@@ -136,5 +136,25 @@
 
     "created": "criada",
     "updated": "atualizada",
-    "successfully": "com sucesso"
+    "successfully": "com sucesso",
+    "product": "Produto",
+    "supplier": "Fornecedor",
+    "lowest_bid": "Menor Lance",
+    "bonus": "Bônus",
+    "price_per_unit": "Preço Unitário",
+    "company": "Empresa",
+    "company_cnpj": "CNPJ da Empresa",
+    "total_price": "Preço Total",
+    "date_hour": "Data/Hora",
+    "lowest": "Menor",
+    "outbid": "Superado",
+    "monitoring_quotation": "Monitoramento Cotação",
+    "start_uppercase": "Início",
+    "end_uppercase": "Fim",
+    "total_bids": "Total de Lances",
+    "time_remaining": "Tempo Restante",
+    "products_with_bids": "Products com lances",
+    "empty_products_quotation": "Nenhum produto encontrado para essa cotação.",
+    "empty_bids_quotation": "Nenhum lance encontrado para essa cotação.",
+    "bids_title_list": "Lances"
 }

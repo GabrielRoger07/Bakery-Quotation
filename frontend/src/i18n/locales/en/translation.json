@@ -136,5 +136,25 @@
 
     "created": "created",
     "updated": "updated",
-    "successfully": "successfully"
+    "successfully": "successfully",
+    "product": "Product",
+    "supplier": "Supplier",
+    "lowest_bid": "Lowest Bid",
+    "bonus": "Bonus",
+    "price_per_unit": "Price Per Unit",
+    "company": "Company",
+    "company_cnpj": "Company CNPJ",
+    "total_price": "Total Price",
+    "date_hour": "Date/Hour",
+    "lowest": "Lowest",
+    "outbid": "Outbid",
+    "monitoring_quotation": "Monitoring Quotation",
+    "start_uppercase": "Start",
+    "end_uppercase": "End",
+    "total_bids": "Total Bids",
+    "time_remaining": "Time Remaining",
+    "products_with_bids": "Products with bids",
+    "empty_products_quotation": "No products found for this quotation.",
+    "empty_bids_quotation": "No bids found for this quotation.",
+    "bids_title_list": "Bids"
 }

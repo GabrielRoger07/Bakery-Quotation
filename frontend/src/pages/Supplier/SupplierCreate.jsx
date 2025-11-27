@@ -123,7 +123,7 @@ const SupplierCreate = ({ onClose, onSave }) => {
             <Alert message={error} />
             {success && <div className="success">{success}</div>}
 
-            <Button type="submit" disabled={isDisabled}>Create Supplier</Button>
+            <Button type="submit" disabled={isDisabled}>{t("create_button")}</Button>
         </form>
     )
 }

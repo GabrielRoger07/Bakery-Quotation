@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
+import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
@@ -10,8 +11,10 @@ import { ENV } from '../../config/env'
 
 const ProductCreate = ({ onClose, onSave }) => {
 
-    const { value: productBarCodeNumber, onChange: handleBarCodeChange, onBlur: handleBarCodeBlur, warning: barCodeWarning, isInvalid: isBarCodeInvalid } = useCharLimit(13, "Product Barcode Number")
-    const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(30, "Product Name")
+    const { t } = useTranslation()
+
+    const { value: productBarCodeNumber, onChange: handleBarCodeChange, onBlur: handleBarCodeBlur, warning: barCodeWarning, isInvalid: isBarCodeInvalid } = useCharLimit(13, "barcode_number")
+    const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(30, "product_name")
 
     const [unitOfMeasure, setUnitOfMeasure] = useState("")
     const [error, setError] = useState("")
@@ -31,7 +34,7 @@ const ProductCreate = ({ onClose, onSave }) => {
         e.preventDefault()
 
         if(!productBarCodeNumber || !productName || !unitOfMeasure){
-            setError("All fields are required.")
+            setError(t("all_fields_required"))
             setSuccess("")
             return;
         }
@@ -52,31 +55,51 @@ const ProductCreate = ({ onClose, onSave }) => {
         const res = await request("POST", "/products", product)
 
         if(res.ok){
-            setSuccess("Product created successfully!")
+            setSuccess("product_created_success")
             setError("")
             onSave && onSave(res.data)
             setTimeout(() => onClose(), 800)
         }else{
             setSuccess("")
-            setError(res.data?.message || "Failed to create product")
+            setError("product_created_error")
         }
     }
 
     return (
         <form onSubmit={handleProductCreate}>
-            <Input label="Barcode Number" type="text" name="productBarCodeNumber" value={productBarCodeNumber} onChange={handleBarCodeChange} onBlur={handleBarCodeBlur} placeholder="Enter Product Barcode Number" isInvalid={isBarCodeInvalid} required />
-            {barCodeWarning && <div className="warning">{barCodeWarning}</div>}
+            <Input label={t("barcode_number")} type="text" name="productBarCodeNumber" value={productBarCodeNumber} onChange={handleBarCodeChange} onBlur={handleBarCodeBlur} placeholder={t("enter_barcode_number")} isInvalid={isBarCodeInvalid} required />
+            {barCodeWarning && (
+                <div className="warning">
+                    {barCodeWarning.type === "too_short" &&
+                        t("char_limit_too_short", { min: barCodeWarning.min, field: t(barCodeWarning.fieldName) })
+                    }
+
+                    {barCodeWarning.type === "too_long" &&
+                        t("char_limit_too_long", { max: barCodeWarning.max, field: t(barCodeWarning.fieldName) })
+                    }
+                </div>
+            )}
             
-            <Input label="Name" type="text" name="productName" value={productName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder="Enter Product Name" isInvalid={isNameInvalid} required />
-            {nameWarning && <div className="warning">{nameWarning}</div>}
+            <Input label={t("product_name")} type="text" name="productName" value={productName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder={t("enter_product_name")} isInvalid={isNameInvalid} required />
+            {nameWarning && (
+                <div className="warning">
+                    {nameWarning.type === "too_short" &&
+                        t("char_limit_too_short", { min: nameWarning.min, field: t(nameWarning.fieldName) })
+                    }
+
+                    {nameWarning.type === "too_long" &&
+                        t("char_limit_too_long", { max: nameWarning.max, field: t(nameWarning.fieldName) })
+                    }
+                </div>
+            )}
             
             <div className="input-container">
                 <label htmlFor="unitOfMeasure">
-                    Unit of Measure<span className={`required-asterisk ${!unitOfMeasure ? "empty" : "filled"}`}>*</span>
+                    {t("unit_of_measure")}<span className={`required-asterisk ${!unitOfMeasure ? "empty" : "filled"}`}>*</span>
                 </label>
                 <div className="select-wrapper">
                     <select id="unitOfMeasure" name="unitOfMeasure" value={unitOfMeasure} onChange={(e) => setUnitOfMeasure(e.target.value)} className="custom-select" required >
-                        <option value="" disabled>Select a unit</option>
+                        <option value="" disabled>{t("unit_of_measure_select")}</option>
                         <option value="mg">mg</option>
                         <option value="g">g</option>
                         <option value="kg">kg</option>
@@ -89,7 +112,7 @@ const ProductCreate = ({ onClose, onSave }) => {
             </div>
             <Alert message={error} />
             {success && <div className="success">{success}</div>}
-            <Button type="submit" disabled={isDisabled}>Create Product</Button>
+            <Button type="submit" disabled={isDisabled}>{t("create_button")}</Button>
         </form>
     )
 }

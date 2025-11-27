@@ -45,6 +45,8 @@
     "cancel_button": "Cancelar",
     "confirm_button": "Confirmar",
     "save_button": "Salvar",
+    "all_fields_required": "All fields are required",
+    "create_button": "Criar",
 
     "supplier_name": "Nome",
     "supplier_email": "E-mail",
@@ -68,8 +70,21 @@
     "enter_employer_name": "Digite o nome da empresa do fornecedor",
     "enter_employer_cnpj": "Digite o CNPJ da empresa do fornecedor",
 
-    "supplier_create": "Criar Fornecedor",
-
     "supplier_updated_success": "Fornecedor atualizado com sucesso!",
-    "supplier_updated_error": "Não foi possível atualizar o fornecedor. Por favor tente novamente."
+    "supplier_updated_error": "Não foi possível atualizar o fornecedor. Por favor tente novamente.",
+
+    "barcode_number": "Código de Barras",
+    "enter_barcode_number": "Digite o código de barras",
+    "product_name": "Nome do Produto",
+    "enter_product_name": "Digite o nome do produto",
+    "unit_of_measure": "Unidade de Medida",
+    "unit_of_measure_select": "Selecione",
+    "products_title_create": "Criar Produto",
+    "products_title_edit": "Editar Produto",
+
+    "product_created_success": "Produto criado com sucesso!",
+    "product_created_error": "Não foi possível criar o produto. Por favor tente novamente.",
+
+    "product_updated_success": "Produto atualizado com sucesso!",
+    "product_updated_error": "Não foi possível atualizar o produto. Por favor tente novamente."
 }

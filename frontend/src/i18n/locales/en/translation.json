@@ -45,6 +45,8 @@
     "cancel_button": "Cancel",
     "confirm_button": "Confirm",
     "save_button": "Save",
+    "all_fields_required": "All fields are required",
+    "create": "Create",
 
     "supplier_name": "Name",
     "supplier_email": "Email",
@@ -68,8 +70,21 @@
     "enter_employer_name": "Enter employer name",
     "enter_employer_cnpj": "Enter employer CNPJ",
 
-    "supplier_create": "Create Supplier",
-
     "supplier_updated_success": "Supplier updated successfully!",
-    "supplier_updated_error": "Unable to update the supplier. Please try again."
+    "supplier_updated_error": "Unable to update the supplier. Please try again.",
+
+    "barcode_number": "Barcode Number",
+    "enter_barcode_number": "Enter barcode number",
+    "product_name": "Product Name",
+    "enter_product_name": "Enter product name",
+    "unit_of_measure": "Unit of Measure",
+    "unit_of_measure_select": "Select",
+    "products_title_create": "Create Product",
+    "products_title_edit": "Edit Product",
+
+    "product_created_success": "Product created successfully!",
+    "product_created_error": "Unable to create the product. Please try again.",
+
+    "product_updated_success": "Product updated successfully!",
+    "product_updated_error": "Unable to update the product. Please try again."
 }

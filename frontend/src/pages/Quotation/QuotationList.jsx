@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
+import { useTranslation, Trans } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Modal from '../../components/Modal'
 import Table from '../../components/Table'
@@ -15,6 +16,8 @@ import './QuotationList.css'
 import { ENV } from '../../config/env'
 
 const QuotationList = () => {
+
+    const { t } = useTranslation()
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate()
@@ -40,10 +43,10 @@ const QuotationList = () => {
     const [sortDirection, setSortDirection] = useState("asc")
 
     const columns = [
-        { key: "quotationId", label: "ID" },
-        { key: "quotationStart", label: "Start Date" },
-        { key: "quotationEnd", label: "End Date" },
-        { key: "status", label: "Status" }
+        { key: "quotationId", label: t("quotation_id") },
+        { key: "quotationStart", label: t("quotation_start_date") },
+        { key: "quotationEnd", label: t("quotation_end_date") },
+        { key: "status", label: t("quotation_status") }
     ]
 
     const sortMap = {
@@ -79,7 +82,7 @@ const QuotationList = () => {
     }
 
     const handleSaveEdit = (updatedQuotation) => {
-        const status = new Date(updatedQuotation.quotationStart) > new Date() ? 'Scheduled' : new Date(updatedQuotation.quotationEnd) < new Date() ? 'Closed' : 'Active'
+        const status = new Date(updatedQuotation.quotationStart) > new Date() ? t("quotation_scheduled") : new Date(updatedQuotation.quotationEnd) < new Date() ? t("quotation_closed") : t("quotation_active")
         setQuotations((prev) => 
             prev.map((q) => q.quotationId === updatedQuotation.quotationId ? {...updatedQuotation, status} : q)
         )
@@ -106,7 +109,7 @@ const QuotationList = () => {
             fetchQuotations()
             setError("")
         }else{
-            setError(res.data?.message || "Failed to delete quotation")
+            setError(t("delete_quotation_error"))
         }
         closeModals()
     }
@@ -132,7 +135,7 @@ const QuotationList = () => {
             const mapped = res.data.content.map((q) => ({
                 ...q, 
                 status:
-                new Date(q.quotationStart) > new Date() ? 'Scheduled' : new Date(q.quotationEnd) < new Date() ? 'Closed' : 'Active'
+                new Date(q.quotationStart) > new Date() ? t("quotation_scheduled") : new Date(q.quotationEnd) < new Date() ? t("quotation_closed") : t("quotation_active")
             }))
             setQuotations(mapped);
             setTotalPages(res.data.totalPages)
@@ -167,10 +170,10 @@ const QuotationList = () => {
     return (
     <div className="quotation-list-container">
         {error && <Alert message={error} />}
-        {status === 0 && <Alert message="Server Internal Error"/>}
+        {status === 0 && <Alert message={t("server_internal_error")} />}
 
         <Table 
-            title="All Quotations"
+            title={t("quotations_title_list")}
             columns={columns}
             data={quotations}
             idKey="quotationId"
@@ -184,12 +187,12 @@ const QuotationList = () => {
             sortDirection={sortDirection}
             onView={openDetailsModal}
             onMonitor={handleMonitor}
-            emptyMessage="No quotations found."
+            emptyMessage={t("quotations_empty")}
         />
 
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => fetchQuotations(page)} />
 
-        <Modal isOpen={isEditModalOpen} onClose={closeModals} title="Edit Quotation">
+        <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("quotations_title_edit")}>
             <QuotationEdit
                 quotation={quotationToEdit}
                 onSave={handleSaveEdit}
@@ -197,28 +200,28 @@ const QuotationList = () => {
             />
         </Modal>
 
-        <Modal isOpen={isCreateModalOpen} onClose={closeModals} title="Create Quotation">
+        <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={t("quotations_title_create")}>
             <QuotationCreate
                 onSave={handleSaveCreate}
                 onClose={closeModals}
             />
         </Modal>
 
-        <Modal isOpen={isDetailsModalOpen} onClose={closeModals} title="Quotation Details">
+        <Modal isOpen={isDetailsModalOpen} onClose={closeModals} title={t("quotations_title_details")}>
             <QuotationDetails
                 quotation={quotationToView}
             />
         </Modal>
 
-        <Modal isOpen={confirmOpen} onClose={closeModals} title="Confirm Removal">
+        <Modal isOpen={confirmOpen} onClose={closeModals} title={t("confirm_removal")}>
             {cannotDelete ? (
-                <p className="confirm-message">You cannot remove a quotation that has already started.</p>
+                <p className="confirm-message">{t("quotation_cannot_delete")}</p>
             ) : (
                 <div className="confirm-container">
-                    <p className="confirm-message">Are you sure want to remove quotation <strong>{quotationToRemove?.quotationId}</strong>?</p>
+                    <p className="confirm-message"><Trans i18nKey="quotation_remove_confirm" values={{quotation: quotationToRemove?.quotationId}} components={{strong: <strong />}}/></p>
                     <div className="confirm-buttons">
-                        <Button onClick={closeModals}>Cancel</Button>
-                        <Button onClick={confirmRemove} disabled={loading}>Confirm</Button>
+                        <Button onClick={closeModals}>{t("cancel_button")}</Button>
+                        <Button onClick={confirmRemove} disabled={loading}>{t("confirm_button")}</Button>
                     </div>
                 </div>
             )}

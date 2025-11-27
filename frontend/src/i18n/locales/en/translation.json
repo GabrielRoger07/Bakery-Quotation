@@ -60,16 +60,13 @@
     "suppliers_title_edit": "Edit Supplier",
     "suppliers_title_create": "Create Supplier",
     "supplier_remove_confirm": "Are you sure you want to remove supplier <strong>{{supplier}}</strong> from <strong>{{employer}}</strong>?",
-    
     "supplier_created_success": "Supplier created successfully!",
     "supplier_created_error": "Unable to create the supplier. Please try again.",
-
     "enter_supplier_name": "Enter supplier name",
     "enter_supplier_email": "Enter supplier email",
     "enter_supplier_whatsapp": "Enter supplier Whatsapp",
     "enter_employer_name": "Enter employer name",
     "enter_employer_cnpj": "Enter employer CNPJ",
-
     "supplier_updated_success": "Supplier updated successfully!",
     "supplier_updated_error": "Unable to update the supplier. Please try again.",
 
@@ -85,10 +82,24 @@
     "products_title_create": "Create Product",
     "products_title_edit": "Edit Product",
     "product_remove_confirm": "Are you sure you want to remove product <strong>{{product}}</strong>?",
-
     "product_created_success": "Product created successfully!",
     "product_created_error": "Unable to create the product. Please try again.",
-
     "product_updated_success": "Product updated successfully!",
-    "product_updated_error": "Unable to update the product. Please try again."
+    "product_updated_error": "Unable to update the product. Please try again.",
+
+    "quotation_id": "ID",
+    "quotation_start_date": "Start Date",
+    "quotation_end_date": "End Date",
+    "quotation_status": "Status",
+    "quotation_scheduled": "Scheduled",
+    "quotation_closed": "Closed",
+    "quotation_active": "Active",
+    "delete_quotation_error": "Failed to delete quotation. Please try again.",
+    "quotations_title_list": "Quotations",
+    "quotations_empty": "No quotations found.",
+    "quotations_title_edit": "Edit Quotation",
+    "quotations_title_create": "Create Quotation",
+    "quotations_title_details": "Quotation Details",
+    "quotation_cannot_delete": "You cannot remove a quotation that has already started.",
+    "quotation_remove_confirm": "Are you sure you want to remove quotation <strong>{{quotation}}</strong>?"
 }

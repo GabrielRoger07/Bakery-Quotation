@@ -48,6 +48,8 @@
     "all_fields_required": "All fields are required",
     "create_button": "Criar",
     "confirm_removal": "Confirmar Remoção",
+    "loading_message": "Carregando...",
+    "next_button": "Próximo",
 
     "supplier_name": "Nome",
     "supplier_email": "E-mail",
@@ -108,5 +110,11 @@
     "quotation_start": "Início",
     "quotation_end": "Fim",
     "quotation_no_products_linked": "Nenhum produto atrelado a essa cotação.",
-    "quotation_no_suppliers_linked": "Nenhum fornecedor atrelado a essa cotação."
+    "quotation_no_suppliers_linked": "Nenhum fornecedor atrelado a essa cotação.",
+    "quotation_start_bigger_now": "Data de início deve ser posterior à data atual",
+    "quotation_end_lower_now": "Data de fim deve ser posterior à data atual",
+    "quotation_end_lower_start": "Data de fim deve ser posterior à data de início",
+    "quotation_step_1": "Etapa 1: Datas da Cotação",
+    "quotation_step_1_subtitle_1": "Selecione as datas de início e fim da cotação.",
+    "quotation_step_1_subtitle_2": "Lembre-se que elas precisam estar no futuro."
 }

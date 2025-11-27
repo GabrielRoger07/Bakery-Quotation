@@ -48,6 +48,8 @@
     "all_fields_required": "All fields are required",
     "create": "Create",
     "confirm_removal": "Confirm Removal",
+    "loading_message": "Loading...",
+    "next_button": "Next",
 
     "supplier_name": "Name",
     "supplier_email": "Email",
@@ -108,5 +110,11 @@
     "quotation_start": "Start",
     "quotation_end": "End",
     "quotation_no_products_linked": "No products linked.",
-    "quotation_no_suppliers_linked": "No suppliers linked."
+    "quotation_no_suppliers_linked": "No suppliers linked.",
+    "quotation_start_bigger_now": "Start date must be later than the current date",
+    "quotation_end_lower_now": "End date must be later than the current date",
+    "quotation_end_lower_start": "End date must be later than the start date",
+    "quotation_step_1": "Step 1: Quotation Dates",
+    "quotation_step_1_subtitle_1": "Select the start and end dates for your quotation period.",
+    "quotation_step_1_subtitle_2": "Make sure they are future dates."
 }

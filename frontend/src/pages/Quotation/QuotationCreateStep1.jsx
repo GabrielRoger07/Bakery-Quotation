@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 
 const QuotationCreateStep1 = ({ start, end, onChange, onNext, loading }) => {
     
+    const { t } = useTranslation()
+
     const [localStart, setLocalStart] = useState(start || "")
     const [localEnd, setLocalEnd] = useState(end || "")
     const [localError, setLocalError] = useState("")
@@ -19,7 +22,7 @@ const QuotationCreateStep1 = ({ start, end, onChange, onNext, loading }) => {
         onChange("end", localEnd)
 
         if(!localStart || !localEnd) {
-            setLocalError("All fields are required")
+            setLocalError(t("all_fields_required"))
             return
         }
 
@@ -28,13 +31,13 @@ const QuotationCreateStep1 = ({ start, end, onChange, onNext, loading }) => {
         const e = new Date(localEnd)
 
         if(s <= now){
-            setLocalError("Start date must be later than the current date")
+            setLocalError(t("quotation_start_bigger_now"))
             return
         } else if(e <= now) {
-            setLocalError("End date must be later than the current date")
+            setLocalError(t("quotation_end_lower_now"))
             return
         } else if(e <= s){
-            setLocalError("End date must be later than the start date")
+            setLocalError(t("quotation_end_lower_start"))
             return
         }
 
@@ -44,22 +47,22 @@ const QuotationCreateStep1 = ({ start, end, onChange, onNext, loading }) => {
     
     return (
         <div className="step-dates-container">
-            <h2 className="step-title">Step 1: Quotation Dates</h2>
+            <h2 className="step-title">{t("quotation_step_1")}</h2>
 
             <p className="step-subtitle">
-                Select the start and end dates for your quotation period. <br />
-                Make sure they are future dates.
+                {t("quotation_step_1_subtitle_1")} <br />
+                {t("quotation_step_1_subtitle_2")}
             </p>
 
             <div className="date-inputs">
                 <div className="date-input-item">
-                    <label htmlFor="quotation-start">Start Date & Time</label>
+                    <label htmlFor="quotation-start">{t("quotation_start_date")}</label>
                     <Input id="quotation-start" type="datetime-local" value={localStart} onChange={e => setLocalStart(e.target.value)} className={localError && !localStart ? "input-error" : ""} />
                 </div>
             </div>
             <div className="date-inputs">
                 <div className="date-input-item">
-                    <label htmlFor="quotation-end">End Date & Time</label>
+                    <label htmlFor="quotation-end">{t("quotation_end_date")}</label>
                     <Input id="quotation-end" type="datetime-local" value={localEnd} onChange={e => setLocalEnd(e.target.value)} className={localError && !localEnd ? "input-error" : ""} />
                 </div>
             </div>
@@ -67,7 +70,7 @@ const QuotationCreateStep1 = ({ start, end, onChange, onNext, loading }) => {
             {localError && <Alert message={localError}/>}
 
             <div className="step-navigation">
-                <Button onClick={handleNextClick} disabled={loading}>{loading ? "Loading..." : "Next"}</Button>
+                <Button onClick={handleNextClick} disabled={loading}>{loading ? t("loading_message") : t("next_button")}</Button>
             </div>
 
         </div>

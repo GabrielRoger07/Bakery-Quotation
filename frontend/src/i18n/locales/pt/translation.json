@@ -193,5 +193,8 @@
     "enter_bonus_quantity": "Digite a quantidade bônus",
     "submit_bid": "Enviar Lance",
     "bid_confirm": "Confirmar lance de <strong>R$ {{pricePerUnit}}/{{unitOfMeasure}}</strong> para <strong>{{productName}}</strong>?",
-    "no_bids_yet": "Sem lances"
+    "no_bids_yet": "Sem lances",
+
+    "unable_fetch_participation": "Não foi possível encontrar a participação",
+    "quotation_missing_url": "Está faltando quotationId e/ou supplierId na URL"
 }

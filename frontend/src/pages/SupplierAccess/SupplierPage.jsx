@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import SupplierAccessToken from './SupplierAccessToken'
+import { useTranslation } from 'react-i18next'
 import SupplierQuotation from './SupplierQuotation'
 import { useSearchParams } from 'react-router-dom'
 import useFetch from '../../hooks/useFetch'
 import { ENV } from '../../config/env'
 
 const SupplierPage = () => {
+
+    const { t } = useTranslation()
 
     const [searchParams] = useSearchParams()
     const quotationId = searchParams.get('quotationId')
@@ -25,19 +28,19 @@ const SupplierPage = () => {
                     setParticipationId(res.data.participationId)
                     setError("")
                 }else{
-                    setError(res.data?.message || "Unable to fetch participation")
+                    setError(t("unable_fetch_participation"))
                 }
             }
 
             fetchParticipationId()
 
         }else{
-            setError("Missing quotationId or supplierId in URL")
+            setError(t("quotation_missing_url"))
         }
     }, [quotationId, supplierId])
 
     if(error) return <p>{error}</p>
-    if(!participationId) return <p>Loading...</p>
+    if(!participationId) return <p>{t("loading_message")}</p>
 
     return (
         <div className="supplier-page">

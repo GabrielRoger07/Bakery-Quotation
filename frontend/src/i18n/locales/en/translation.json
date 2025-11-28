@@ -193,5 +193,8 @@
     "enter_bonus_quantity": "Enter bonus quantity",
     "submit_bid": "Submit Bid",
     "bid_confirm": "Confirm bid of <strong>R$ {{pricePerUnit}}/{{unitOfMeasure}}</strong> for <strong>{{productName}}</strong>?",
-    "no_bids_yet": "No bids yet"
+    "no_bids_yet": "No bids yet",
+
+    "unable_fetch_participation": "Unable to fetch participation",
+    "quotation_missing_url": "Missing quotationId or supplierId in URL"
 }

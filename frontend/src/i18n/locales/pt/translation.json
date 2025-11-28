@@ -53,6 +53,7 @@
     "next_button": "Próximo",
     "remove_button": "Remover",
     "back_button": "Voltar",
+    "validating_message": "Validando...",
 
     "supplier_name": "Nome",
     "supplier_email": "E-mail",
@@ -156,5 +157,11 @@
     "products_with_bids": "Products com lances",
     "empty_products_quotation": "Nenhum produto encontrado para essa cotação.",
     "empty_bids_quotation": "Nenhum lance encontrado para essa cotação.",
-    "bids_title_list": "Lances"
+    "bids_title_list": "Lances",
+
+    "access_token_required": "Token de acesso é obrigatório",
+    "invalid_access_token": "Token inválido",
+    "enter_access_token": "Digite o seu token de acesso",
+    "access_token": "Token de acesso",
+    "access_quotation": "Acessar Cotação"
 }

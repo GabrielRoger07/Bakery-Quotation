@@ -53,6 +53,7 @@
     "next_button": "Next",
     "remove_button": "Remove",
     "back_button": "Back",
+    "validating_message": "Validating...",
 
     "supplier_name": "Name",
     "supplier_email": "Email",
@@ -156,5 +157,11 @@
     "products_with_bids": "Products with bids",
     "empty_products_quotation": "No products found for this quotation.",
     "empty_bids_quotation": "No bids found for this quotation.",
-    "bids_title_list": "Bids"
+    "bids_title_list": "Bids",
+
+    "required_access_token": "Access token is required",
+    "invalid_access_token": "Invalid token",
+    "enter_access_token": "Enter your access token",
+    "access_token": "Access token",
+    "access_quotation": "Access Quotation"
 }

@@ -249,7 +249,7 @@ const QuotationMonitor = () => {
             )}
             
             <div className="monitor-stats">
-                <div>Status: {stats.status}</div>
+                <div>Status: {stats.status === 'Active' ? t("quotation_active") : stats.status === 'Scheduled' ? t("quotation_scheduled") : t("quotation_closed")}</div>
                 {(stats.status === 'Active' || stats.status === 'Scheduled') && <div>{t("time_remaining")}: {stats.timeRemaining}</div>}
                 <div>{t("total_bids")}: {stats.totalBids}</div>
                 <div>{t("navbar_suppliers")}: {stats.uniqueSuppliers}</div>

@@ -56,7 +56,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
         const res = await request("PUT", `/products/${product.productId}`, body)
 
         if(res.ok){
-            setSuccess("product_updated_success")
+            setSuccess(t("product_updated_success"))
             setError("")
             onSave(res.data)
             setTimeout(() => onClose(), 800)

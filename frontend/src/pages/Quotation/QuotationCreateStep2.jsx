@@ -76,7 +76,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
 
     const handleNextClick = () => {
         if(localSelected.length === 0) {
-            setError("quotation_step_2_any_selected_product")
+            setError("quotation_step_2_no_selected_product")
             return
         }
 

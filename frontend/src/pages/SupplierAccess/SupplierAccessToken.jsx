@@ -2,10 +2,13 @@ import React, { useState } from 'react'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import useFetch from '../../hooks/useFetch'
+import { useTranslation } from 'react-i18next'
 import '../../components/Auth.css'
 import { ENV } from '../../config/env'
 
 const SupplierAccessToken = ({ participationId, onAccessGranted }) => {
+
+    const { t } = useTranslation()
 
     const [accessToken, setAccessToken] = useState("")
     const [error, setError] = useState("")
@@ -17,7 +20,7 @@ const SupplierAccessToken = ({ participationId, onAccessGranted }) => {
         e.preventDefault()
 
         if(!accessToken.trim()){
-            setError("Access token is required")
+            setError(t("access_token_required"))
             return
         }
 
@@ -36,18 +39,18 @@ const SupplierAccessToken = ({ participationId, onAccessGranted }) => {
             setError("")
             onAccessGranted()
         }else{
-            setError(res.data?.message || "Invalid token")
+            setError(t("invalid_access_token"))
         }
     }
 
     return (
         <div className="auth-container">
             <div className="auth-box">
-                <h2>Enter your access token</h2>
+                <h2>{t("enter_access_token")}</h2>
                 <form onSubmit={handleSubmit}>
-                    <Input type="text" value={accessToken} onChange={e => setAccessToken(e.target.value)} placeholder="Access Token"></Input>
+                    <Input type="text" value={accessToken} onChange={e => setAccessToken(e.target.value)} placeholder={t("access_token")}></Input>
                     {error && <p style={{ color: "red" }}>{error}</p>}
-                    <Button type="submit" disabled={loading}>{loading ? "Validating..." : "Access Quotation"}</Button>
+                    <Button type="submit" disabled={loading}>{loading ? t("validating_message") : t("access_quotation")}</Button>
                 </form>
             </div>
         </div>

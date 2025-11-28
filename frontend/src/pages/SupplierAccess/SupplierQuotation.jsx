@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useWebSocket from '../../hooks/useWebSocket'
 import useFetch from '../../hooks/useFetch'
+import { useTranslation } from 'react-i18next'
 import Table from '../../components/Table'
 import Modal from '../../components/Modal'
 import Button from '../../components/Button'
@@ -9,6 +10,8 @@ import './SupplierQuotation.css'
 import { ENV } from '../../config/env'
 
 const SupplierQuotation = ({ participationId, quotationId }) => {
+
+  const { t } = useTranslation()
 
   const { request } = useFetch(ENV.API_BASE_URL)
 
@@ -61,7 +64,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
         })
 
       }else{
-        setError(resProducts.data?.message || "Failed to load products")
+        setError(t("load_products_failed"))
       }
     }
 
@@ -78,14 +81,15 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
       const now = new Date()
       const diff = end - now
       if(diff <= 0){
-        setTimeRemaining("Closed")
+        setTimeRemaining(t("quotation_closed"))
         return
       }
 
-      const hours = Math.floor(diff / 3600000)
+      const days = Math.floor(diff / 86400000)
+      const hours = Math.floor((diff  % 86400000) / 3600000)
       const mins = Math.floor((diff % 3600000) / 60000)
       const secs = Math.floor((diff % 60000) / 1000)
-      setTimeRemaining(`${hours}h ${mins}m ${secs}s`)
+      setTimeRemaining(days > 0 ? `${days}d ${hours}h ${mins}m ${secs}s` : `${hours}h ${mins}m ${secs}s`)
     }
 
     updateCountdown()
@@ -111,13 +115,13 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   useWebSocket(quotationId, handleNewBid)
 
   const bidColumns = useMemo(() => [
-    { key: "productName", label: "Product" },
-    { key: "productBarCodeNumber", label: "Bar Code Number" },
-    { key: "price", label: "Price" },
-    { key: "quantity", label: "Quantity" },
-    { key: "bonus", label: "Bonus" },
-    { key: "pricePerUnit", label: "Price Per Unit"},
-    { key: "createdAt", label: "Date/Time" },
+    { key: "productName", label: t("product") },
+    { key: "productBarCodeNumber", label: t("barcode_number") },
+    { key: "price", label: t("total_price") },
+    { key: "quantity", label: t("quantity") },
+    { key: "bonus", label: t("bonus") },
+    { key: "pricePerUnit", label: t("price_per_unit")},
+    { key: "createdAt", label: t("date_hour") },
     { key: "status", label: "Status" }
   ], [])
 
@@ -131,7 +135,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
       price: `R$ ${b.price.toFixed(2)}`,
       pricePerUnit: `R$ ${(b.price / (b.quantity + b.bonus)).toFixed(2)}`,
       createdAt: new Date(b.createdAt).toLocaleString(),
-      status: isLowest ? <span style={{color: "green"}}>Lowest</span> : <span style={{color: "red"}}>Outbid</span>
+      status: isLowest ? <span style={{color: "green"}}>{t("lowest")}</span> : <span style={{color: "red"}}>{t("outbid")}</span>
     }
   })
 
@@ -143,33 +147,33 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
     .filter(bid => bid && bid.participationId === participationId)
     .reduce((sum, bid) => sum + bid.price, 0)
 
-  if(loading) return <p>Loading products...</p>
+  if(loading) return <p>{t("loading_products")}</p>
   if(error) return <p>{error}</p>
-  if(!products.length) return <p>No products found for this quotation</p>
+  if(!products.length) return <p>{t("no_products_quotation")}</p>
 
   return (
       <div className="supplier-quotation-container">
-        <h2>Quotation #{quotationId}</h2>
+        <h2>{t("quotation")} #{quotationId}</h2>
 
         {participation?.supplierName && (
-          <p className="supplier-name">Supplier: {participation.supplierName}</p>
+          <p className="supplier-name">{t("supplier")}: {participation.supplierName}</p>
         )}
 
         {quotation && (
           <div className="quotation-info">
-            <p><strong>Start:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
-            <p><strong>End:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
+            <p><strong>{t("start_uppercase")}:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
+            <p><strong>{t("end_uppercase")}:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
           </div>
         )}
 
         <div className="quotation-summary">
-          <p>Total Products: <strong>{products.length}</strong></p>
-          {timeRemaining && <p>Time Remaining: {timeRemaining}</p>}
+          <p>{t("total_products")}: <strong>{products.length}</strong></p>
+          {timeRemaining && <p>{t("time_remaining")}: {timeRemaining}</p>}
           <div className="winning-section">
             <span className="winning-text">
-              Winning: {winningCount}/{products.length}
+              {t("winning")}: {winningCount}/{products.length}
             </span>
-            <Button onClick={() => setIsWinningModalOpen(true)}>View</Button>
+            <Button onClick={() => setIsWinningModalOpen(true)}>{t("view")}</Button>
           </div>
         </div>
 
@@ -180,10 +184,10 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
         </div>
 
         <div className="supplier-bids">
-          <Table title="Your bids" columns={bidColumns} data={formattedBids} loading={loading} emptyMessage="You haven't placed any bids yet."/>
+          <Table title={t("your_bids")} columns={bidColumns} data={formattedBids} loading={loading} emptyMessage={t("empty_bids")}/>
         </div>
 
-        <Modal isOpen={isWinningModalOpen} onClose={() => setIsWinningModalOpen(false)} title="Winning Bids">
+        <Modal isOpen={isWinningModalOpen} onClose={() => setIsWinningModalOpen(false)} title={t("winning_bids")}>
           {winningCount > 0 ? (
             <>
               <ul className="winning-list">
@@ -201,11 +205,11 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
                 }
               </ul>
               <div className="winning-total">
-                <strong>Total Value: </strong>R$ {totalWinningValue.toFixed(2)}
+                <strong>{t("total_value")}: </strong>R$ {totalWinningValue.toFixed(2)}
               </div>
             </>
           ) : (
-            <p>You are not winning any products right now.</p>
+            <p>{t("not_winning_bids")}</p>
           )}
         </Modal>
 

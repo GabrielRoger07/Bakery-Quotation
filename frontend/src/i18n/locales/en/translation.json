@@ -54,6 +54,7 @@
     "remove_button": "Remove",
     "back_button": "Back",
     "validating_message": "Validating...",
+    "view": "View",
 
     "supplier_name": "Name",
     "supplier_email": "Email",
@@ -158,10 +159,21 @@
     "empty_products_quotation": "No products found for this quotation.",
     "empty_bids_quotation": "No bids found for this quotation.",
     "bids_title_list": "Bids",
+    "total_products": "Total Products",
 
     "required_access_token": "Access token is required",
     "invalid_access_token": "Invalid token",
     "enter_access_token": "Enter your access token",
     "access_token": "Access token",
-    "access_quotation": "Access Quotation"
+    "access_quotation": "Access Quotation",
+
+    "load_products_failed": "Failed to load products",
+    "loading_products": "Loading products...",
+    "no_products_quotation": "No products found for this quotation",
+    "winning": "Winning",
+    "your_bids": "Your Bids",
+    "empty_bids": "You haven't placed any bids yet.",
+    "winning_bids": "Winning Bids",
+    "total_value": "Total Value",
+    "not_winning_bids": "You are not winning any products right now."
 }

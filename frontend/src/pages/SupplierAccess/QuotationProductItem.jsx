@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useCurrencyMask } from '../../hooks/useCurrencyMask'
 import useFetch from '../../hooks/useFetch'
+import { useTranslation, Trans } from 'react-i18next'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import './SupplierQuotation.css'
@@ -8,6 +9,8 @@ import { ENV } from '../../config/env'
 
 const QuotationProductItem = ({ product, participationId, currentLowestBid }) => {
     
+    const { t } = useTranslation()
+
     const {request} = useFetch(ENV.API_BASE_URL)
 
     const { value: price, handleChange: handlePriceChange, getNumericValue, setValue: setPrice } = useCurrencyMask("")
@@ -34,24 +37,24 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         const numericPrice = getNumericValue()
 
         if(!numericPrice){
-            setError("Price is required")
+            setError(t("required_price"))
             return
         }
 
         const pricePerUnit = numericPrice / (product.quantity + (addBonus ? bonus : 0))
 
         if(pricePerUnit < 0.01) {
-            setError("Bid per unit must be at least R$0,01")
+            setError(t("minimum_bid"))
             return
         }
 
         if(currentLowestBid && ((currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus)) <= pricePerUnit)){
-            setError("Bid must be lower than the lowest bid")
+            setError(t("bid_must_be_lower"))
             return
         }
 
         if(bonus && bonus > product.bonusLimit) {
-            setError("Bonus bid cannot be greater than the bonus limit")
+            setError(t("bonus_greater"))
             return
         }
 
@@ -89,13 +92,13 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         setLoading(false)
 
         if(res.ok){
-            setSuccess("Bid submitted successfully!")
+            setSuccess(t("bid_success"))
             setPrice("")
             setBonus(0)
             setAddBonus(false)
             setTimeout(() => setSuccess(""), 2000)
         }else{
-            setError(res.data?.message || "Failed to submit bid")
+            setError(t("bid_error"))
         }
     }
 
@@ -108,35 +111,35 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         <div className="quotation-product-item">
             <div>
                 <h3>{product.productName}</h3>
-                <p>Bar Code Number: <strong>{product.productBarCodeNumber}</strong></p>
-                <p>Quantity: {product.quantity} {product.unitOfMeasure}</p>
-                <p>Bonus limit: {product.bonusLimit}</p>
-                <p>Current Lowest Bid: {currentLowestBid ? `R$ ${(currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus)).toFixed(2)}/${product.unitOfMeasure}` : "No bids yet"}</p>
+                <p>{t("barcode_number")}: <strong>{product.productBarCodeNumber}</strong></p>
+                <p>{t("quantity")}: {product.quantity} {product.unitOfMeasure}</p>
+                <p>{t("bonus_limit")}: {product.bonusLimit}</p>
+                <p>{t("current_lowest_bid")}: {currentLowestBid ? `R$ ${(currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus)).toFixed(2)}/${product.unitOfMeasure}` : t("no_bids_yet")}</p>
             </div>
             <form className="bid-form" onSubmit={handleBidSubmit}>
-                <Input label="Price" type="text" value={price} onChange={handlePriceChange} placeholder="R$0,00" />
+                <Input label={t("price")} type="text" value={price} onChange={handlePriceChange} placeholder="R$0,00" />
 
                 {product.bonusLimit > 0 && (
                     <div className="bonus-radio">
-                        <p>Add bonus quantity?</p>
+                        <p>{t("add_bonus_quantity")}</p>
                         <label>
                             <input type="radio" name={`addBonus-${product.productId}`} value="no" checked={!addBonus} onChange={() => setAddBonus(false)} />
-                            No
+                            {t("no")}
                         </label>
                         <label>
                             <input type="radio" name={`addBonus-${product.productId}`} value="yes" checked={addBonus} onChange={() => setAddBonus(true)} />
-                            Yes
+                            {t("yes")}
                         </label>
                     </div>
                 )}
 
                 {addBonus && (
                     <Input 
-                        label="Bonus Quantity" 
+                        label={t("bonus_quantity")} 
                         type="number" 
                         value={bonus} 
                         onChange={handleBonusChange} 
-                        placeholder="Enter Bonus Quantity" 
+                        placeholder={t("enter_bonus_quantity")} 
                         onKeyDown={e => {
                             if(e.key === '-' || e.key === 'e' || e.key === 'E') e.preventDefault()
                         }} 
@@ -144,13 +147,13 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
                 )}
 
                 {!confirming ? (
-                    <Button type="submit" disabled={loading}>{loading ? "Submitting..." : "Submit Bid"}</Button>
+                    <Button type="submit" disabled={loading}>{loading ? t("submitting_message") : t("submit_bid")}</Button>
                 ) : (
                     <div className="confirm-container">
-                        <p>Confirm bid of{" "} <strong>R$ {pendingBidValue.toFixed(2)}/{product.unitOfMeasure}</strong>{" "} for <strong>{product.productName}</strong>?</p>
+                        <p><Trans i18nKey="bid_confirm" values={{pricePerUnit: pendingBidValue.toFixed(2), unitOfMeasure: product.unitOfMeasure, productName: product.productName}} components={{strong: <strong />}}/></p>
                         <div className="confirm-buttons">
-                        <Button type="button" onClick={confirmBid} variant="success">Yes</Button>
-                        <Button type="button" onClick={cancelBid} variant="danger">Cancel</Button>
+                            <Button type="button" onClick={confirmBid} variant="success">{t("yes")}</Button>
+                            <Button type="button" onClick={cancelBid} variant="danger">{t("cancel_button")}</Button>
                         </div>
                     </div>
                 )}

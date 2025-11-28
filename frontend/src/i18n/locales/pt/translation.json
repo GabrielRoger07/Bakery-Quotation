@@ -55,6 +55,9 @@
     "back_button": "Voltar",
     "validating_message": "Validando...",
     "view": "Visualizar",
+    "yes": "Sim",
+    "no": "Não",
+    "submitting_message": "Enviando...",
 
     "supplier_name": "Nome",
     "supplier_email": "E-mail",
@@ -175,5 +178,20 @@
     "empty_bids": "Você ainda não tem nenhum lance.",
     "winning_bids": "Lances Vencedores",
     "total_value": "Valor Total",
-    "not_winning_bids": "Você não está vencendo nenhum produto agora."
+    "not_winning_bids": "Você não está vencendo nenhum produto agora.",
+
+    "required_price": "Preço é obrigatório",
+    "minimum_bid": "Lance unitário deve ser de pelo menos R$0,01",
+    "current_lowest_bid": "Menor Lance Atual",
+    "bid_must_be_lower": "Seu lance precisa ser mais baixo que o menor lance",
+    "bonus_greater": "Seu bônus não pode ser maior que o limite de bônus",
+    "bid_success": "Lance enviado com sucesso!",
+    "bid_error": "Falha ao submeter lance",
+    "price": "Preço",
+    "add_bonus_quantity": "Adicionar quantidade bônus?",
+    "bonus_quantity": "Quantidade Bônus",
+    "enter_bonus_quantity": "Digite a quantidade bônus",
+    "submit_bid": "Enviar Lance",
+    "bid_confirm": "Confirmar lance de <strong>R$ {{pricePerUnit}}/{{unitOfMeasure}}</strong> para <strong>{{productName}}</strong>?",
+    "no_bids_yet": "Sem lances"
 }

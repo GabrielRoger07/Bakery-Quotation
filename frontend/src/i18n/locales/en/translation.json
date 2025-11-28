@@ -55,6 +55,9 @@
     "back_button": "Back",
     "validating_message": "Validating...",
     "view": "View",
+    "yes": "Yes",
+    "no": "No",
+    "submitting_message": "Submitting...",
 
     "supplier_name": "Name",
     "supplier_email": "Email",
@@ -175,5 +178,20 @@
     "empty_bids": "You haven't placed any bids yet.",
     "winning_bids": "Winning Bids",
     "total_value": "Total Value",
-    "not_winning_bids": "You are not winning any products right now."
+    "not_winning_bids": "You are not winning any products right now.",
+
+    "required_price": "Price is required",
+    "minimum_bid": "Bid per unit must be at least R$0,01",
+    "current_lowest_bid": "Current Lowest Bid",
+    "bid_must_be_lower": "Bid must be lower than the lowest bid",
+    "bonus_greater": "Bonus bid cannot be greater than the bonus limit",
+    "bid_success": "Bid submitted successfully!",
+    "bid_error": "Failed to submit bid",
+    "price": "Price",
+    "add_bonus_quantity": "Add bonus quantity?",
+    "bonus_quantity": "Bonus Quantity",
+    "enter_bonus_quantity": "Enter bonus quantity",
+    "submit_bid": "Submit Bid",
+    "bid_confirm": "Confirm bid of <strong>R$ {{pricePerUnit}}/{{unitOfMeasure}}</strong> for <strong>{{productName}}</strong>?",
+    "no_bids_yet": "No bids yet"
 }

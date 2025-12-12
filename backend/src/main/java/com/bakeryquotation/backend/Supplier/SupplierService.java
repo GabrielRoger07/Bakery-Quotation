@@ -50,9 +50,55 @@ public class SupplierService {
         return ResponseEntity.status(HttpStatus.OK).body(supplierResponseDTOS);
     }
 
-    public ResponseEntity<Page<SupplierResponseDTO>> getSuppliersByCompanyCnpj(String cnpj, Pageable pageable){
+    public ResponseEntity<Page<SupplierResponseDTO>> getSuppliersByCompanyCnpj(String cnpj, Pageable pageable, String field, String value, List<Long> excludedIds){
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
-        Page<Supplier> suppliersByCompany = supplierRepository.findByCompany_CompanyCnpj(cnpj, safePageable);
+        Page<Supplier> suppliersByCompany;
+
+        boolean applyFilter = field != null && value != null && !value.isBlank();
+        boolean hasExcludedIds = excludedIds != null && !excludedIds.isEmpty();
+
+        if(applyFilter){
+            if(field.equals("employerCnpj")){
+                if(hasExcludedIds){
+                    suppliersByCompany = supplierRepository.findByCompanyCnpjAndEmployerCnpjExcludingIds(cnpj, value, excludedIds, safePageable);
+                } else {
+                    suppliersByCompany = supplierRepository.findByCompany_CompanyCnpjAndEmployerCnpjContainsIgnoreCase(cnpj, value, safePageable);
+                }
+            } else if(field.equals("employerName")){
+                if(hasExcludedIds){
+                    suppliersByCompany = supplierRepository.findByCompanyCnpjAndEmployerNameExcludingIds(cnpj, value, excludedIds, safePageable);
+                } else {
+                    suppliersByCompany = supplierRepository.findByCompany_CompanyCnpjAndEmployerNameContainingIgnoreCase(cnpj, value, safePageable);
+                }
+            } else if(field.equals("supplierWhatsappNumber")){
+                if(hasExcludedIds){
+                    suppliersByCompany = supplierRepository.findByCompanyCnpjAndWhatsappExcludingIds(cnpj, value, excludedIds, safePageable);
+                } else {
+                    suppliersByCompany = supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumberContainingIgnoreCase(cnpj, value, safePageable);
+                }
+            } else if(field.equals("supplierName")){
+                if(hasExcludedIds){
+                    suppliersByCompany = supplierRepository.findByCompanyCnpjAndSupplierNameExcludingIds(cnpj, value, excludedIds, safePageable);
+                } else {
+                    suppliersByCompany = supplierRepository.findByCompany_CompanyCnpjAndSupplierNameContainingIgnoreCase(cnpj, value, safePageable);
+                }
+            } else if(field.equals("supplierEmail")){
+                if(hasExcludedIds){
+                    suppliersByCompany = supplierRepository.findByCompanyCnpjAndEmailExcludingIds(cnpj, value, excludedIds, safePageable);
+                } else {
+                    suppliersByCompany = supplierRepository.findByCompany_CompanyCnpjAndSupplierEmailContainingIgnoreCase(cnpj, value, safePageable);
+                }
+            } else {
+                throw new ResourceNotFoundException("Invalid field");
+            }
+        } else {
+            if(hasExcludedIds){
+                suppliersByCompany = supplierRepository.findByCompanyCnpjExcludingIds(cnpj, excludedIds, safePageable);
+            } else {
+                suppliersByCompany = supplierRepository.findByCompany_CompanyCnpj(cnpj, safePageable);
+            }
+        }
+
         Page<SupplierResponseDTO> suppliersResponseDTOByCompany = suppliersByCompany.map(supplierMapper::toDto);
         return ResponseEntity.status(HttpStatus.OK).body(suppliersResponseDTOByCompany);
     }

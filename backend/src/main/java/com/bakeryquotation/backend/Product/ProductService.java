@@ -52,15 +52,7 @@ public class ProductService {
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
         Page<Product> productsByCompany;
 
-        System.out.println("valor de cnpj: " + cnpj);
-        System.out.println("valor de safePageable: " + safePageable);
-        System.out.println("valor de field: " + field);
-        System.out.println("valor de value: " + value);
-        System.out.println(excludedIds);
-        System.out.println("\n\n");
-
         boolean applyFilter = field != null && value != null && !value.isBlank();
-
         boolean hasExcludedIds = excludedIds != null && !excludedIds.isEmpty();
 
         if(applyFilter){
@@ -79,6 +71,7 @@ public class ProductService {
             } else {
                 throw new ResourceNotFoundException("Invalid field");
             }
+
         } else {
             if(hasExcludedIds) {
                 productsByCompany = productRepository.findByCompanyCnpjExcludingIds(cnpj, excludedIds, safePageable);

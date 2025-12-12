@@ -32,8 +32,14 @@ public class SupplierController {
     }
 
     @GetMapping("/company/{companyCnpj}")
-    public ResponseEntity<Page<SupplierResponseDTO>> getSuppliersByCompanyCnpj(@PathVariable("companyCnpj") String cnpj, @PageableDefault(size = 10) Pageable pageable){
-        return supplierService.getSuppliersByCompanyCnpj(cnpj, pageable);
+    public ResponseEntity<Page<SupplierResponseDTO>> getSuppliersByCompanyCnpj(
+            @PathVariable("companyCnpj") String cnpj,
+            @PageableDefault(size = 10) Pageable pageable,
+            @RequestParam(value = "field", required = false) String field,
+            @RequestParam(value = "value", required = false) String value,
+            @RequestParam(value = "excludedIds", required = false) List<Long> excludedIds
+    ){
+        return supplierService.getSuppliersByCompanyCnpj(cnpj, pageable, field, value, excludedIds);
     }
 
     @PostMapping

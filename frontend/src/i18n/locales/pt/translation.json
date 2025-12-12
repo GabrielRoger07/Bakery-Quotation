@@ -58,6 +58,7 @@
     "yes": "Sim",
     "no": "Não",
     "submitting_message": "Enviando...",
+    "search_button": "Buscar",
 
     "supplier_name": "Nome",
     "supplier_email": "E-mail",
@@ -85,7 +86,7 @@
     "product_name": "Nome do Produto",
     "enter_product_name": "Digite o nome do produto",
     "unit_of_measure": "Unidade de Medida",
-    "unit_of_measure_select": "Selecione",
+    "select_field": "Selecione",
     "delete_product_error": "Erro ao remover produto. Por favor tente novamente.",
     "products_empty": "Nenhum produto encontrado.",
     "products_title_list": "Produtos",
@@ -196,5 +197,6 @@
     "no_bids_yet": "Sem lances",
 
     "unable_fetch_participation": "Não foi possível encontrar a participação",
-    "quotation_missing_url": "Está faltando quotationId e/ou supplierId na URL"
+    "quotation_missing_url": "Está faltando quotationId e/ou supplierId na URL",
+    "enter_search": "Digite o campo"
 }

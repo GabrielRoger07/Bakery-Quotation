@@ -19,15 +19,26 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const [quantity, setQuantity] = useState(1)
     const [bonus, setBonus] = useState(0)
     const [error, setError] = useState("")
+    const [searchField, setSearchField] = useState("")
+    const [searchWord, setSearchWord] = useState("")
 
     useEffect(() => {
+        onChange(localSelected)
+    }, [localSelected])
+
+    const handleSearchProducts = () => {
 
         const token = Cookies.get("token")
         const decoded = jwtDecode(token)
         const cnpj = decoded.companyCnpj
 
         const fetchProducts = async () => {
-            const res = await request("GET", `/products/company/${cnpj}`)
+            console.log("valor de field: " + searchField)
+            console.log("valor de word: " + searchWord)
+            const res = await request("GET", `/products/company/${cnpj}?field=${searchField}&value=${searchWord}`)
+
+            console.log(res.data)
+
             if(res.ok) {
                 setAvailableProducts(res.data.content)
                 if(res.data.content.length > 0) setSelectedProductId(res.data.content[0].productId)
@@ -35,11 +46,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         }
 
         fetchProducts()
-    }, [request])
-
-    useEffect(() => {
-        onChange(localSelected)
-    }, [localSelected])
+    }
 
     const handleAddProduct = () => {
 
@@ -50,17 +57,17 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
 
         const product = availableProducts.find(p => p.productId === selectedProductId)
         if(!product) {
-            setError("quotation_step_2_invalid_product")
+            setError(t("quotation_step_2_invalid_product"))
             return
         }
 
         if(localSelected.find(p => p.productId === selectedProductId)){
-            setError("quotation_step_2_product_already_added")
+            setError(t("quotation_step_2_product_already_added"))
             return
         }
 
         if(quantity <= 0) {
-            setError("quotation_step_2_low_quantity")
+            setError(t("quotation_step_2_low_quantity"))
             return
         }
         
@@ -88,6 +95,25 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     return (
         <div className="step-products">
             <h2>{t("quotation_step_2")}</h2>
+
+            <div className="select-wrapper">
+                <select id="searchField" name="searchField" value={searchField} onChange={(e) => setSearchField(e.target.value)} className="custom-select" required >
+                    <option value="" disabled>{t("select_field")}</option>
+                    <option value="productBarCodeNumber">{t("barcode_number")}</option>
+                    <option value="productName">{t("product_name")}</option>
+                </select>
+                <span className="select-arrow"></span>
+            </div>
+
+            <Input 
+                label={t("quantity")}
+                type="text"
+                value={searchWord}
+                onChange={e => setSearchWord(e.target.value)}
+                placeholder={t("enter_search")}
+            />
+
+            <Button onClick={handleSearchProducts} disabled={loading}>{t("search_button")}</Button>
             
             <div className="product-add-form">
                 <select value={selectedProductId} onChange={e => setSelectedProductId(Number(e.target.value))} className="custom-select">

@@ -58,6 +58,7 @@
     "yes": "Yes",
     "no": "No",
     "submitting_message": "Submitting...",
+    "search_button": "Search",
 
     "supplier_name": "Name",
     "supplier_email": "Email",
@@ -85,7 +86,7 @@
     "product_name": "Product Name",
     "enter_product_name": "Enter product name",
     "unit_of_measure": "Unit of Measure",
-    "unit_of_measure_select": "Select",
+    "select_field": "Select",
     "delete_product_error": "Failed to delete product. Please try again.",
     "products_empty": "No products found.",
     "products_title_list": "Products",
@@ -196,5 +197,6 @@
     "no_bids_yet": "No bids yet",
 
     "unable_fetch_participation": "Unable to fetch participation",
-    "quotation_missing_url": "Missing quotationId or supplierId in URL"
+    "quotation_missing_url": "Missing quotationId or supplierId in URL",
+    "enter_search": "Enter search"
 }

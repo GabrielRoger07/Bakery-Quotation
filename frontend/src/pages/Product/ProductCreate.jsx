@@ -99,7 +99,7 @@ const ProductCreate = ({ onClose, onSave }) => {
                 </label>
                 <div className="select-wrapper">
                     <select id="unitOfMeasure" name="unitOfMeasure" value={unitOfMeasure} onChange={(e) => setUnitOfMeasure(e.target.value)} className="custom-select" required >
-                        <option value="" disabled>{t("unit_of_measure_select")}</option>
+                        <option value="" disabled>{t("select_field")}</option>
                         <option value="mg">mg</option>
                         <option value="g">g</option>
                         <option value="kg">kg</option>

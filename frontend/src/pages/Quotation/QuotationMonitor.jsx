@@ -59,6 +59,14 @@ const QuotationMonitor = () => {
         fetchQuotationData()
     }, [quotationId])
 
+    const formatTime = (ms) => {
+        const days = Math.floor(ms / 86400000)
+        const hours = Math.floor(ms % 86400000 / 3600000)
+        const mins = Math.floor((ms % 3600000) / 60000)
+        const secs = Math.floor((ms % 60000) / 1000)
+        return days > 0 ? `${days}d ${hours}h ${mins}m ${secs}s` : `${hours}h ${mins}m ${secs}s`
+    }
+
     useEffect(() => {
         if(!quotation) return
 
@@ -76,14 +84,6 @@ const QuotationMonitor = () => {
             }else{
                 setStats(prev => ({...prev, status: 'Closed', timeRemaining: 'Closed'}))
             }
-        }
-
-        const formatTime = (ms) => {
-            const days = Math.floor(ms / 86400000)
-            const hours = Math.floor(ms % 86400000 / 36000000)
-            const mins = Math.floor((ms % 3600000) / 60000)
-            const secs = Math.floor((ms % 60000) / 1000)
-            return days > 0 ? `${days}d ${hours}h ${mins}m ${secs}s` : `${hours}h ${mins}m ${secs}s`
         }
 
         updateCountdown() 

@@ -54,6 +54,10 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         }
     }
 
+    useEffect(() => {
+        fetchProducts(0)
+    }, [])
+
     const handleSearchProducts = () => {
         setCurrentPage(0)
         fetchProducts(0)
@@ -95,7 +99,6 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const handleRemoveProduct = (productId) => {
         const updatedList = localSelected.filter(p => p.productId !== productId)
         setLocalSelected(updatedList)
-
         fetchProducts(currentPage)
     }
 

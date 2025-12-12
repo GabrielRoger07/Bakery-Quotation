@@ -198,5 +198,6 @@
 
     "unable_fetch_participation": "Unable to fetch participation",
     "quotation_missing_url": "Missing quotationId or supplierId in URL",
-    "enter_search": "Enter search"
+    "enter_search": "Enter search",
+    "no_products_available": "No products available"
 }

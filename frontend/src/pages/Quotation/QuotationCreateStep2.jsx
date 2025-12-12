@@ -6,6 +6,7 @@ import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
+import Pagination from '../../components/Pagination'
 import { ENV } from '../../config/env'
 
 const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, loading }) => {
@@ -21,31 +22,41 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const [error, setError] = useState("")
     const [searchField, setSearchField] = useState("")
     const [searchWord, setSearchWord] = useState("")
+    const [currentPage, setCurrentPage] = useState(0)
+    const [totalPages, setTotalPages] = useState(0)
 
     useEffect(() => {
         onChange(localSelected)
     }, [localSelected])
 
-    const handleSearchProducts = () => {
+    const fetchProducts = async (page = 0) => {
 
         const token = Cookies.get("token")
         const decoded = jwtDecode(token)
         const cnpj = decoded.companyCnpj
 
-        const fetchProducts = async () => {
-            console.log("valor de field: " + searchField)
-            console.log("valor de word: " + searchWord)
-            const res = await request("GET", `/products/company/${cnpj}?field=${searchField}&value=${searchWord}`)
+        const excludedIds = localSelected.map(p => p.productId)
 
-            console.log(res.data)
+        let query = `?page=${page}`
+        if(searchField) query += `&field=${searchField}`
+        if(searchWord) query += `&value=${searchWord}`
+        if(excludedIds.length > 0) query += `&excludedIds=${excludedIds.join(",")}`
 
-            if(res.ok) {
-                setAvailableProducts(res.data.content)
-                if(res.data.content.length > 0) setSelectedProductId(res.data.content[0].productId)
-            }
+        const res = await request("GET", `/products/company/${cnpj}${query}`)
+
+        if(res.ok) {
+            setAvailableProducts(res.data.content)
+            setCurrentPage(res.data.number)
+            setTotalPages(res.data.totalPages)
+            setError("")
+        }else{
+            setError(res.data?.message)
         }
+    }
 
-        fetchProducts()
+    const handleSearchProducts = () => {
+        setCurrentPage(0)
+        fetchProducts(0)
     }
 
     const handleAddProduct = () => {
@@ -73,12 +84,19 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         
         const updatedList = [...localSelected, { ...product, quantity: Number(quantity), bonusLimit: Number(bonus)}]
         setLocalSelected(updatedList)
+        setSelectedProductId("")
+        setQuantity(1)
+        setBonus(0)
         setError("")
+
+        fetchProducts(currentPage)
     }
 
     const handleRemoveProduct = (productId) => {
         const updatedList = localSelected.filter(p => p.productId !== productId)
         setLocalSelected(updatedList)
+
+        fetchProducts(currentPage)
     }
 
     const handleNextClick = () => {
@@ -117,12 +135,23 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
             
             <div className="product-add-form">
                 <select value={selectedProductId} onChange={e => setSelectedProductId(Number(e.target.value))} className="custom-select">
+                    
+                    <option value="" disabled>
+                        {availableProducts.length === 0 ? t("no_products_available") : t("select_field")}
+                    </option>
+
                     {availableProducts.map(p => (
                         <option key={p.productId} value={p.productId}>
                             {p.productBarCodeNumber} - {p.productName}
                         </option>
                     ))}
                 </select>
+
+                <Pagination 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => fetchProducts(page)}
+                />
 
                 <div className="quantity-bonus-group">
                     <Input 
@@ -132,7 +161,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                         onChange={e => setQuantity(e.target.value)}
                         min="1"
                         onKeyDown={e => {
-                            if(e.key === '-' || e.key === 'e' || e.key === 'E') e.preventDefault()
+                            if(['-', 'e', 'E'].includes(e.key)) e.preventDefault()
                         }}
                     />
                     <Input 
@@ -142,7 +171,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                         onChange={e => setBonus(e.target.value)}
                         min="0"
                         onKeyDown={e => {
-                            if(e.key === '-' || e.key === 'e' || e.key === 'E') e.preventDefault()
+                            if(['-', 'e', 'E'].includes(e.key)) e.preventDefault()
                         }}
                     />
                 </div>

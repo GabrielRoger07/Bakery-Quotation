@@ -48,24 +48,43 @@ public class ProductService {
         return ResponseEntity.status(HttpStatus.OK).body(productResponseDTOS);
     }
 
-    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyCnpj(String cnpj, Pageable pageable, String field, String value){
+    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyCnpj(String cnpj, Pageable pageable, String field, String value, List<Long> excludedIds){
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
         Page<Product> productsByCompany;
 
+        System.out.println("valor de cnpj: " + cnpj);
+        System.out.println("valor de safePageable: " + safePageable);
+        System.out.println("valor de field: " + field);
+        System.out.println("valor de value: " + value);
+        System.out.println(excludedIds);
+        System.out.println("\n\n");
+
         boolean applyFilter = field != null && value != null && !value.isBlank();
 
-        System.out.println("valor de applyFilter: " + applyFilter);
+        boolean hasExcludedIds = excludedIds != null && !excludedIds.isEmpty();
 
         if(applyFilter){
             if(field.equals("productBarCodeNumber")){
-                productsByCompany = productRepository.findByCompany_CompanyCnpjAndProductBarCodeNumberContainsIgnoreCase(cnpj, value, safePageable);
+                if(hasExcludedIds){
+                    productsByCompany = productRepository.findByCompanyCnpjAndBarcodeExcludingIds(cnpj, value, excludedIds, safePageable);
+                } else {
+                    productsByCompany = productRepository.findByCompany_CompanyCnpjAndProductBarCodeNumberContainsIgnoreCase(cnpj, value, safePageable);
+                }
             } else if(field.equals("productName")){
-                productsByCompany = productRepository.findByCompany_CompanyCnpjAndProductNameContainsIgnoreCase(cnpj, value, safePageable);
+                if(hasExcludedIds){
+                    productsByCompany = productRepository.findByCompanyCnpjAndNameExcludingIds(cnpj, value, excludedIds, safePageable);
+                } else {
+                    productsByCompany = productRepository.findByCompany_CompanyCnpjAndProductNameContainsIgnoreCase(cnpj, value, safePageable);
+                }
             } else {
                 throw new ResourceNotFoundException("Invalid field");
             }
         } else {
-            productsByCompany = productRepository.findByCompany_CompanyCnpj(cnpj, safePageable);
+            if(hasExcludedIds) {
+                productsByCompany = productRepository.findByCompanyCnpjExcludingIds(cnpj, excludedIds, safePageable);
+            } else {
+                productsByCompany = productRepository.findByCompany_CompanyCnpj(cnpj, safePageable);
+            }
         }
 
         Page<ProductResponseDTO> productsResponseDTOByCompany = productsByCompany.map(productMapper::toDto);

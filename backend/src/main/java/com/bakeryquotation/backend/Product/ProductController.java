@@ -36,9 +36,10 @@ public class ProductController {
             @PathVariable("companyCnpj") String cnpj,
             @PageableDefault(size = 10) Pageable pageable,
             @RequestParam(value = "field", required = false) String field,
-            @RequestParam(value = "value", required = false) String value
+            @RequestParam(value = "value", required = false) String value,
+            @RequestParam(value = "excludedIds", required = false) List<Long> excludedIds
     ){
-        return productService.getProductsByCompanyCnpj(cnpj, pageable, field, value);
+        return productService.getProductsByCompanyCnpj(cnpj, pageable, field, value, excludedIds);
     }
 
     @PostMapping

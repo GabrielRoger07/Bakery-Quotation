@@ -57,9 +57,9 @@ public class BackendApplication {
             companyRepository.save(company1);
             companyRepository.save(company2);
 
-            Quotation quotation1 = new Quotation(LocalDateTime.parse("2025-12-12T08:00:00"), LocalDateTime.parse("2025-12-12T10:00:00"), company1);
-            Quotation quotation2 = new Quotation(LocalDateTime.parse("2025-12-15T16:00:00"), LocalDateTime.parse("2025-12-15T18:00:00"), company1);
-            Quotation quotation3 = new Quotation(LocalDateTime.parse("2025-11-11T08:00:00"), LocalDateTime.parse("2025-11-11T10:00:00"), company2);
+            Quotation quotation1 = new Quotation(LocalDateTime.parse("2025-12-22T08:00:00"), LocalDateTime.parse("2025-12-22T10:00:00"), company1);
+            Quotation quotation2 = new Quotation(LocalDateTime.parse("2025-12-25T16:00:00"), LocalDateTime.parse("2025-12-25T18:00:00"), company1);
+            Quotation quotation3 = new Quotation(LocalDateTime.parse("2025-12-21T08:00:00"), LocalDateTime.parse("2025-12-21T10:00:00"), company2);
 
             quotationRepository.save(quotation1);
             quotationRepository.save(quotation2);

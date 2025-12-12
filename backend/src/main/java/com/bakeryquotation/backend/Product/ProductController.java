@@ -32,8 +32,13 @@ public class ProductController {
     }
 
     @GetMapping("/company/{companyCnpj}")
-    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyCnpj(@PathVariable("companyCnpj") String cnpj, @PageableDefault(size = 10) Pageable pageable){
-        return productService.getProductsByCompanyCnpj(cnpj, pageable);
+    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyCnpj(
+            @PathVariable("companyCnpj") String cnpj,
+            @PageableDefault(size = 10) Pageable pageable,
+            @RequestParam(value = "field", required = false) String field,
+            @RequestParam(value = "value", required = false) String value
+    ){
+        return productService.getProductsByCompanyCnpj(cnpj, pageable, field, value);
     }
 
     @PostMapping

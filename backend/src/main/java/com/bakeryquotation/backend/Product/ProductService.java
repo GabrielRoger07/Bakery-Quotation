@@ -48,9 +48,26 @@ public class ProductService {
         return ResponseEntity.status(HttpStatus.OK).body(productResponseDTOS);
     }
 
-    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyCnpj(String cnpj, Pageable pageable){
+    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyCnpj(String cnpj, Pageable pageable, String field, String value){
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
-        Page<Product> productsByCompany = productRepository.findByCompany_CompanyCnpj(cnpj, safePageable);
+        Page<Product> productsByCompany;
+
+        boolean applyFilter = field != null && value != null && !value.isBlank();
+
+        System.out.println("valor de applyFilter: " + applyFilter);
+
+        if(applyFilter){
+            if(field.equals("productBarCodeNumber")){
+                productsByCompany = productRepository.findByCompany_CompanyCnpjAndProductBarCodeNumberContainsIgnoreCase(cnpj, value, safePageable);
+            } else if(field.equals("productName")){
+                productsByCompany = productRepository.findByCompany_CompanyCnpjAndProductNameContainsIgnoreCase(cnpj, value, safePageable);
+            } else {
+                throw new ResourceNotFoundException("Invalid field");
+            }
+        } else {
+            productsByCompany = productRepository.findByCompany_CompanyCnpj(cnpj, safePageable);
+        }
+
         Page<ProductResponseDTO> productsResponseDTOByCompany = productsByCompany.map(productMapper::toDto);
         return ResponseEntity.status(HttpStatus.OK).body(productsResponseDTOByCompany);
     }

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import SupplierAccessToken from './SupplierAccessToken'
 import { useTranslation } from 'react-i18next'
-import SupplierQuotation from './SupplierQuotation'
 import { useSearchParams } from 'react-router-dom'
 import useFetch from '../../hooks/useFetch'
 import { ENV } from '../../config/env'
+import SupplierQuotationRouter from './SupplierQuotationRouter'
 
 const SupplierPage = () => {
 
@@ -50,7 +50,7 @@ const SupplierPage = () => {
                     onAccessGranted={() => {setAccessGranted(true)}} 
                 />
             ) : (
-                <SupplierQuotation participationId={participationId} quotationId={quotationId} />
+                <SupplierQuotationRouter quotationId={quotationId} participationId={participationId} />
             )}
         </div>
     )

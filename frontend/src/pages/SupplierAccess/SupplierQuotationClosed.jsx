@@ -1,0 +1,130 @@
+import { useEffect, useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
+import useFetch from "../../hooks/useFetch"
+import { ENV } from "../../config/env"
+import Table from "../../components/Table"
+import Button from "../../components/Button"
+import "./SupplierQuotation.css"
+
+const SupplierQuotationClosed = ({ quotation, participationId }) => {
+
+    const { t } = useTranslation()
+    const { request } = useFetch(ENV.API_BASE_URL)
+
+    const [products, setProducts] = useState([])
+    const [lowestBids, setLowestBids] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState("")
+
+    useEffect(() => {
+        const fetchFinalResults = async () => {
+            setLoading(true)
+
+            const resProducts = await request("GET", `/contains/${quotation.quotationId}`)
+            if(!resProducts.ok) {
+                setError(t("load_products_failed"))
+                setLoading(false)
+                return
+            }
+
+            const productsData = resProducts.data
+            setProducts(productsData)
+
+            const bidsMap = {}
+
+            for(const product of productsData){
+                const bidRes = await request("GET", `/bids/lowest?quotationId=${quotation.quotationId}&productId=${product.productId}`)
+            
+                if(bidRes.ok && bidRes.data){
+                    bidsMap[product.productId] = bidRes.data
+                }
+            }
+
+            setLowestBids(bidsMap)
+            setLoading(false)
+        }
+
+        fetchFinalResults()
+    }, [quotation.quotationId])
+
+    const winningItems = useMemo(() => {
+        return Object.entries(lowestBids)
+        .filter(([_, bid]) => bid && bid.participationId === participationId)
+        .map(([productId, bid]) => {
+            const product = products.find(p => p.productId === Number(productId))
+            const pricePerUnit = bid.price / (bid.quantity + bid.bonus)
+
+            return {
+                productName: product?.productName ?? "-",
+                unitOfMeasure: product?.unitOfMeasure ?? "-",
+                price: bid.price,
+                quantity: bid.quantity,
+                bonus: bid.bonus,
+                pricePerUnit
+            }
+        })
+    }, [lowestBids, products, participationId])
+
+    const totalWinningValue = winningItems.reduce((sum, item) => sum + item.price, 0)
+
+    const columns = useMemo(() => [
+        { key: "productName", label: t("product")},
+        { key: "quantity", label: t("quantity")},
+        { key: "bonus", label: t("bonus")},
+        { key: "price", label: t("total_price")},
+        { key: "pricePerUnit", label: t("price_per_unit")}
+    ], [])
+
+    const formattedItems = winningItems.map(item => ({
+        ...item,
+        price: `R$ ${item.price.toFixed(2)}`,
+        pricePerUnit: `R$ ${item.pricePerUnit.toFixed(2)}/${item.unitOfMeasure}`
+    }))
+
+    if (loading) return <p>{t("loading_message")}</p>
+    if (error) return <p>{error}</p>
+
+    return (
+        <div className="supplier-quotation-container">
+            <h2>{t("quotation_closed")}</h2>
+
+            <div className="quotation-info">
+                <p>
+                    <strong>{t("start_uppercase")}:</strong>{" "}
+                    {new Date(quotation.quotationStart).toLocaleString()}
+                </p>
+                <p>
+                    <strong>{t("end_uppercase")}:</strong>{" "}
+                    {new Date(quotation.quotationEnd).toLocaleString()}
+                </p>
+            </div>
+
+            {winningItems.length === 0 ? (
+                <p>{t("not_winning_bids")}</p>
+            ) : (
+                <>
+                    <Table
+                        title={t("winning_bids")}
+                        columns={columns}
+                        data={formattedItems}
+                        loading={false}
+                        emptyMessage={t("not_winning_bids")}
+                    />
+
+                    <div className="winning-total">
+                        <strong>{t("total_value")}:</strong>{" "}
+                        R$ {totalWinningValue.toFixed(2)}
+                    </div>
+                </>
+            )}
+
+            <div style={{ marginTop: "1.5rem" }}>
+                <Button onClick={() => window.print()}>
+                    {t("print_results")}
+                </Button>
+            </div>
+        </div>
+    )
+}
+
+export default SupplierQuotationClosed

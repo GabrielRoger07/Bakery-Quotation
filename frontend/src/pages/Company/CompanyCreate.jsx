@@ -122,7 +122,7 @@ const CompanyCreate = () => {
 
                     <Alert message={error} />
                     {success && <div className="success">{success}</div>}
-                    <Button type="submit" disabled={isDisabled}>{t("create-company")}</Button>
+                    <Button type="submit" disabled={isDisabled}>{t("create_company")}</Button>
                 </form>
                 <p>
                     <Link to="/login">{t("already_have_account")}</Link>

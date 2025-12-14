@@ -59,7 +59,7 @@ public class BackendApplication {
 
             Quotation quotation1 = new Quotation(LocalDateTime.parse("2025-12-10T08:00:00"), LocalDateTime.parse("2025-12-31T10:00:00"), company1);
             Quotation quotation2 = new Quotation(LocalDateTime.parse("2025-12-25T16:00:00"), LocalDateTime.parse("2025-12-25T18:00:00"), company1);
-            Quotation quotation3 = new Quotation(LocalDateTime.parse("2025-11-21T08:00:00"), LocalDateTime.parse("2025-11-21T10:00:00"), company2);
+            Quotation quotation3 = new Quotation(LocalDateTime.parse("2025-11-21T08:00:00"), LocalDateTime.parse("2025-11-21T10:00:00"), company1);
 
             quotationRepository.save(quotation1);
             quotationRepository.save(quotation2);
@@ -100,10 +100,12 @@ public class BackendApplication {
             Participation participation1 = new Participation(quotation1, suppliers.get(0), "accessToken");
             Participation participation2 = new Participation(quotation1, suppliers.get(1), "accessToken");
             Participation participation3 = new Participation(quotation2, suppliers.get(2), "accessToken");
+            Participation participation4 = new Participation(quotation3, suppliers.get(0), "accessToken");
 
             participationRepository.save(participation1);
             participationRepository.save(participation2);
             participationRepository.save(participation3);
+            participationRepository.save(participation4);
 
             Bid bid1 = new Bid(participation1, products.getFirst(), BigDecimal.valueOf(100.0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(1.0));
             Bid bid2 = new Bid(participation2, products.getFirst(), BigDecimal.valueOf(95.0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(0.0));

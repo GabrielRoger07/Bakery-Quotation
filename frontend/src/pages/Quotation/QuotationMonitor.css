@@ -28,14 +28,6 @@
     letter-spacing: 0.5px;
 }
 
-.navbar-center {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 1rem;
-}
-
 .quotation-info {
     display: flex;
     justify-content: center;

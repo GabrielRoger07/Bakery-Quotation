@@ -59,6 +59,7 @@
     "no": "No",
     "submitting_message": "Submitting...",
     "search_button": "Search",
+    "download_button": "Download",
 
     "supplier_name": "Name",
     "supplier_email": "Email",
@@ -180,6 +181,7 @@
     "winning_bids": "Winning Bids",
     "total_value": "Total Value",
     "not_winning_bids": "You are not winning any products right now.",
+    "not_won_bids": "You didn't win any bid",
 
     "required_price": "Price is required",
     "minimum_bid": "Bid per unit must be at least R$0,01",

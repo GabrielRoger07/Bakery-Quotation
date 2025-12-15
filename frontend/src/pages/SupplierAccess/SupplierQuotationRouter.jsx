@@ -40,7 +40,7 @@ const SupplierQuotationRouter = ({ quotationId, participationId }) => {
     }
 
     return (
-        <SupplierQuotation quotationId={quotation} participationId={participationId} />
+        <SupplierQuotation quotationId={quotationId} participationId={participationId} />
     )
 }
 

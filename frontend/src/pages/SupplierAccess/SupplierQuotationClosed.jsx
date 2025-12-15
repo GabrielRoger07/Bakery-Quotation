@@ -86,7 +86,8 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
     return (
         <div className="supplier-quotation-container">
-            <h2>{t("quotation_closed")}</h2>
+            <h2>{t("quotation")} #{quotation.quotationId}</h2>
+            <h3>{t("quotation_closed")}</h3>
 
             <div className="quotation-info">
                 <p>
@@ -99,29 +100,31 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                 </p>
             </div>
 
-            {winningItems.length === 0 ? (
-                <p>{t("not_winning_bids")}</p>
-            ) : (
-                <>
-                    <Table
-                        title={t("winning_bids")}
-                        columns={columns}
-                        data={formattedItems}
-                        loading={false}
-                        emptyMessage={t("not_winning_bids")}
-                    />
+            <div className="winning-content">
+                {winningItems.length === 0 ? (
+                    <p>{t("not_won_bids")}</p>
+                ) : (
+                    <>
+                        <Table
+                            title={t("winning_bids")}
+                            columns={columns}
+                            data={formattedItems}
+                            loading={false}
+                            emptyMessage={t("not_won_bids")}
+                        />
 
-                    <div className="winning-total">
-                        <strong>{t("total_value")}:</strong>{" "}
-                        R$ {totalWinningValue.toFixed(2)}
-                    </div>
-                </>
-            )}
+                        <div className="winning-total">
+                            <strong>{t("total_value")}:</strong>{" "}
+                            R$ {totalWinningValue.toFixed(2)}
+                        </div>
+                    </>
+                )}
 
-            <div style={{ marginTop: "1.5rem" }}>
-                <Button onClick={() => window.print()}>
-                    {t("print_results")}
-                </Button>
+                <div style={{ marginTop: "1.5rem" }}>
+                    <Button onClick={() => window.print()}>
+                        {t("download_button")}
+                    </Button>
+                </div>
             </div>
         </div>
     )

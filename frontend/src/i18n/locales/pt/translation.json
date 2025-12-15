@@ -59,6 +59,7 @@
     "no": "Não",
     "submitting_message": "Enviando...",
     "search_button": "Buscar",
+    "download_button": "Baixar",
 
     "supplier_name": "Nome",
     "supplier_email": "E-mail",
@@ -180,6 +181,7 @@
     "winning_bids": "Lances Vencedores",
     "total_value": "Valor Total",
     "not_winning_bids": "Você não está vencendo nenhum produto agora.",
+    "not_won_bids": "Você não venceu nenhum lance",
 
     "required_price": "Preço é obrigatório",
     "minimum_bid": "Lance unitário deve ser de pelo menos R$0,01",

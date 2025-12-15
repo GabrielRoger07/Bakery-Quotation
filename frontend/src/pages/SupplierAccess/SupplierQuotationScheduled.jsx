@@ -48,16 +48,23 @@ const SupplierQuotationScheduled = ({ quotation }) => {
     const remainingText = remainingMs <= 0 ? t("starting_now") : formatRemaining(remainingMs)
     
     return (
-        <div className="supplier-waiting">
-            <h2>{t("quotation_not_started")}</h2>
+        <div className="supplier-quotation-container">
+            <h2>{t("quotation")} #{quotation.quotationId}</h2>
+            <h3>{t("quotation_scheduled")}</h3>
+
+            <div className="quotation-info">
+                <p>
+                    <strong>{t("start_uppercase")}:</strong>{" "}
+                    {new Date(quotation.quotationStart).toLocaleString()}
+                </p>
+                <p>
+                    <strong>{t("end_uppercase")}:</strong>{" "}
+                    {new Date(quotation.quotationEnd).toLocaleString()}
+                </p>
+            </div>
 
             <p>
-                {t("starts_at")}:{" "}
-                {new Date(quotation.quotationStart).toLocaleString()}
-            </p>
-
-            <p>
-                {t("time_remaining")}: <strong>{remainingText}</strong>
+                {t("time_remaining_to_start")}: <strong>{remainingText}</strong>
             </p>
         </div>
     )

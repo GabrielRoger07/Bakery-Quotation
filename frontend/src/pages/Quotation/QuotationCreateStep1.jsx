@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
+import './QuotationCreate.css'
 
 const QuotationCreateStep1 = ({ start, end, onChange, onNext, loading }) => {
     
@@ -46,23 +47,19 @@ const QuotationCreateStep1 = ({ start, end, onChange, onNext, loading }) => {
     }
     
     return (
-        <div className="step-dates-container">
-            <h2 className="step-title">{t("quotation_step_1")}</h2>
+        <div className="step-products">
+            <h2>{t("quotation_step_1")}</h2>
 
-            <p className="step-subtitle">
-                {t("quotation_step_1_subtitle_1")} <br />
-                {t("quotation_step_1_subtitle_2")}
-            </p>
-
-            <div className="date-inputs">
-                <div className="date-input-item">
-                    <label htmlFor="quotation-start">{t("quotation_start_date")}</label>
+            <div className="results-card">
+                <h4>{t("quotation_start_date")}</h4>
+                <div className="quantity-bonus-group">
                     <Input id="quotation-start" type="datetime-local" value={localStart} onChange={e => setLocalStart(e.target.value)} className={localError && !localStart ? "input-error" : ""} />
                 </div>
             </div>
-            <div className="date-inputs">
-                <div className="date-input-item">
-                    <label htmlFor="quotation-end">{t("quotation_end_date")}</label>
+
+            <div className="results-card">
+                <h4>{t("quotation_end_date")}</h4>
+                <div className="quantity-bonus-group">
                     <Input id="quotation-end" type="datetime-local" value={localEnd} onChange={e => setLocalEnd(e.target.value)} className={localError && !localEnd ? "input-error" : ""} />
                 </div>
             </div>

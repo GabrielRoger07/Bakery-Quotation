@@ -287,12 +287,6 @@
     box-shadow: 0 0 0 1px #dc2626;
 }
 
-.step-navigation {
-    display: flex;
-    justify-content: center;
-    margin-top: 1.5rem;
-}
-
 @media (max-width: 600px) {
     .step-dates-container {
         width: 90%;

@@ -140,6 +140,9 @@
     "quotation_step_3_no_selected_supplier": "Select at least one supplier",
     "quotation_step_3": "Step 3: Select Suppliers",
     "suppliers_added": "Suppliers Added",
+    "no_products_added": "No products added",
+    "no_suppliers_added": "No suppliers added",
+    "supplier_name_label": "Supplier Name",
 
     "created": "created",
     "updated": "updated",
@@ -205,6 +208,5 @@
     "no_suppliers_available": "No suppliers available",
     "time_remaining_to_start": "Starts in",
     "field_filter": "Field",
-    "selected_product": "Selected product",
-    "no_products_added": "No products added"
+    "selected_product": "Selected product"
 }

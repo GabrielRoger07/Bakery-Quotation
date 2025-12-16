@@ -119,6 +119,24 @@
     color: #6b7280;
 }
 
+.secondary-line {
+    font-size: 0.85rem;
+    color: #4b5563;
+}
+
+.supplier-meta {
+    margin-top: 0.15rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.supplier-meta span {
+    white-space: nowrap;
+}
+
 .selected-product-summary {
     background: #f0f6ff;
     border: 1px solid #dbeafe;

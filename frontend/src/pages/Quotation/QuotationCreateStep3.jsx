@@ -3,11 +3,12 @@ import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
+import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import Pagination from '../../components/Pagination'
 import { ENV } from '../../config/env'
-import Input from '../../components/Input'
+import './QuotationCreate.css'
 
 const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, loading }) => {
     
@@ -55,6 +56,10 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
         fetchSuppliers(0)
     }, [])
 
+    useEffect(() => {
+        fetchSuppliers(currentPage)
+    }, [localSelected])
+
     const handleSearchSuppliers = () => {
         setCurrentPage(0)
         fetchSuppliers(0)
@@ -67,13 +72,11 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
         }
         setLocalSelected([...localSelected, supplier])
         setError("")
-        fetchSuppliers(currentPage)
     }
 
     const handleRemoveSupplier = (supplierId) => {
         const updatedList = localSelected.filter(s => s.supplierId !== supplierId)
         setLocalSelected(updatedList)
-        fetchSuppliers(currentPage)
     }
 
     const handleFinishClick = () => {
@@ -87,68 +90,91 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
     }
 
     return (
-        <div className="step-suppliers">
+        <div className="step-products">
             <h2>{t("quotation_step_3")}</h2>
 
-            <div className="select-wrapper">
-                <select id="searchField" name="searchField" value={searchField} onChange={(e) => setSearchField(e.target.value)} className="custom-select" required >
-                    <option value="" disabled>{t("select_field")}</option>
-                    <option value="productBarCodeNumber">{t("barcode_number")}</option>
-                    <option value="productName">{t("product_name")}</option>
-                </select>
-                <span className="select-arrow"></span>
+            <div className="search-card">
+                <div className="search-row">
+                    <div className="search-select-wrapper">
+                        <select id="searchField" name="searchField" value={searchField} onChange={(e) => setSearchField(e.target.value)} className="custom-select" required >
+                            <option value="" disabled>{t("select_field")}</option>
+                            <option value="employerCnpj">{t("company_cnpj")}</option>
+                            <option value="employerName">{t("company_name")}</option>
+                            <option value="supplierWhatsappNumber">{t("supplier_whatsapp")}</option>
+                            <option value="supplierEmail">{t("supplier_email")}</option>
+                            <option value="supplierName">{t("supplier_name_label")}</option>
+                        </select>
+                        <span className="select-arrow"></span>
+                    </div>
+
+                    <div className="search-input-wrapper">
+                        <Input 
+                            type="text"
+                            value={searchWord}
+                            onChange={e => setSearchWord(e.target.value)}
+                            placeholder={t("enter_search")}
+                        />
+                    </div>
+
+                    <Button onClick={handleSearchSuppliers} disabled={loading}>{t("search_button")}</Button>
+                </div>
             </div>
 
-            <Input 
-                label={t("quantity")}
-                type="text"
-                value={searchWord}
-                onChange={e => setSearchWord(e.target.value)}
-                placeholder={t("enter_search")}
-            />
+            <div className="results-card">
+                {availableSuppliers.length === 0 ? (
+                    <p className="empty-state">{t("no_suppliers_available")}</p>
+                ) : (
+                    <div className="products-results-list">
+                        {availableSuppliers.map(s => (
+                            <div key={s.supplierId} className="product-result-item">
+                                <div className="product-result-main">
+                                    <strong>{s.supplierName}</strong>
+                                    <span className="secondary-line">{s.employerName}</span>
 
-            <Button onClick={handleSearchSuppliers} disabled={loading}>{t("search_button")}</Button>
+                                    <div className="supplier-meta">
+                                        {s.employerCnpj && <span>CNPJ: {s.employerCnpj}</span>}
+                                        {s.supplierWhatsappNumber && <span>• {s.supplierWhatsappNumber}</span>}
+                                        {s.supplierEmail && <span>• {s.supplierEmail}</span>}
+                                    </div>
+                                </div>
 
-            <div className="available-suppliers">
-                <ul>
+                                <Button 
+                                    className="add-inline-btn"
+                                    onClick={() => handleAddSupplier(s)}
+                                    disabled={loading} 
+                                >{t("table_add")}</Button>
+                            </div>
+                        ))}
+                    </div>
+                )}
 
-                    {availableSuppliers.length === 0 && (
-                        <li className="empty-message">
-                            {t("no_suppliers_available")}
-                        </li>
-                    )}
-
-                    {availableSuppliers.map(s => (
-                        <li key={s.supplierId} className="available-supplier-item">
-                            {s.supplierName} ({s.employerName})
-                            <Button 
-                                className="add-supplier-btn"
-                                onClick={() => handleAddSupplier(s)}
-                                disabled={loading} 
-                            >{t("table_add")}</Button>
-                        </li>
-                    ))}
-                </ul>
+                <Pagination 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => fetchSuppliers(page)}
+                />
             </div>
-
-            <Pagination 
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={(page) => fetchSuppliers(page)}
-            />
 
             {error && <Alert message={error} />}
 
-            <div className="selected-suppliers">
-                <h3>{t("suppliers_added")} ({localSelected.length})</h3>
-                <ul>
-                    {localSelected.map(s => (
-                        <li key={s.supplierId} className="selected-supplier-item">
-                            {s.supplierName} ({s.employerName}){" "}
-                            <Button className="remove-supplier-btn" onClick={() => handleRemoveSupplier(s.supplierId)} disabled={loading}>{t("remove_button")}</Button>
-                        </li>
-                    ))}
-                </ul>
+            <div className="selected-products-card">
+                <h4>{t("suppliers_added")} ({localSelected.length})</h4>
+                
+                {localSelected.length === 0 ? (
+                    <p className="empty-state">{t("no_suppliers_added")}</p>
+                ) : (
+                    <ul>
+                        {localSelected.map(s => (
+                            <li key={s.supplierId} className="selected-product-item">
+                                <div>
+                                    <strong>{s.supplierName}</strong>
+                                    <span>{s.employerName}</span>
+                                </div>
+                                <Button className="remove-product-btn" onClick={() => handleRemoveSupplier(s.supplierId)} disabled={loading}>{t("remove_button")}</Button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
 
             <div className="step-navigation">

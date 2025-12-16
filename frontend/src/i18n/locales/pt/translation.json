@@ -140,6 +140,9 @@
     "quotation_step_3_no_selected_supplier": "Selecione ao menos 1 fornecedor",
     "quotation_step_3": "Etapa 3: Fornecedores",
     "suppliers_added": "Fornecedores Adicionados",
+    "no_products_added": "Nenhum produto adicionado",
+    "no_suppliers_added": "Nenhum fornecedor adicionado",
+    "supplier_name_label": "Nome do Fornecedor",
 
     "created": "criada",
     "updated": "atualizada",
@@ -205,6 +208,5 @@
     "no_suppliers_available": "Nenhum fornecedor disponível",
     "time_remaining_to_start": "Começa em",
     "field_filter": "Campo",
-    "selected_product": "Produto selecionado",
-    "no_products_added": "Nenhum produto adicionado"
+    "selected_product": "Produto selecionado"
 }

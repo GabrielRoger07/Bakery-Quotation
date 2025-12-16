@@ -60,6 +60,10 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         fetchProducts(0)
     }, [])
 
+    useEffect(() => {
+        fetchProducts(currentPage)
+    }, [localSelected])
+
     const handleSearchProducts = () => {
         setCurrentPage(0)
         fetchProducts(0)
@@ -100,19 +104,16 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         setQuantity(1)
         setBonus(0)
         setError("")
-
-        fetchProducts(currentPage)
     }
 
     const handleRemoveProduct = (productId) => {
         const updatedList = localSelected.filter(p => p.productId !== productId)
         setLocalSelected(updatedList)
-        fetchProducts(currentPage)
     }
 
     const handleNextClick = () => {
         if(localSelected.length === 0) {
-            setError("quotation_step_2_no_selected_product")
+            setError(t("quotation_step_2_no_selected_product"))
             return
         }
 

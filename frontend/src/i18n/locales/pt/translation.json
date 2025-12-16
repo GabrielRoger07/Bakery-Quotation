@@ -204,5 +204,7 @@
     "no_products_available": "Nenhum produto disponível",
     "no_suppliers_available": "Nenhum fornecedor disponível",
     "time_remaining_to_start": "Começa em",
-    "field_filter": "Campo"
+    "field_filter": "Campo",
+    "selected_product": "Produto selecionado",
+    "no_products_added": "Nenhum produto adicionado"
 }

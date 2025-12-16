@@ -18,6 +18,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const [availableProducts, setAvailableProducts] = useState([])
     const [localSelected, setLocalSelected] = useState(selectedProducts)
     const [selectedProductId, setSelectedProductId] = useState("")
+    const [selectedProduct, setSelectedProduct] = useState(null)
     const [quantity, setQuantity] = useState(1)
     const [bonus, setBonus] = useState(0)
     const [error, setError] = useState("")
@@ -64,9 +65,14 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         fetchProducts(0)
     }
 
+    const handleSelectProduct = (product) => {
+        setSelectedProductId(product.productId)
+        setSelectedProduct(product)
+    }
+
     const handleAddProduct = () => {
 
-        if(!selectedProductId){
+        if(!selectedProduct){
             setError(t("quotation_step_2_no_product_selected"))
             return
         }
@@ -87,9 +93,10 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
             return
         }
         
-        const updatedList = [...localSelected, { ...product, quantity: Number(quantity), bonusLimit: Number(bonus)}]
+        const updatedList = [...localSelected, { ...selectedProduct, quantity: Number(quantity), bonusLimit: Number(bonus)}]
         setLocalSelected(updatedList)
         setSelectedProductId("")
+        setSelectedProduct(null)
         setQuantity(1)
         setBonus(0)
         setError("")
@@ -114,8 +121,6 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         onNext()
     }
 
-    const selectedProduct = availableProducts.find(p => p.productId === selectedProductId)
-
     return (
         <div className="step-products">
             <h2>{t("quotation_step_2")}</h2>
@@ -133,7 +138,6 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
 
                     <div className="search-input-wrapper">
                         <Input 
-                            label={t("field_filter")}
                             type="text"
                             value={searchWord}
                             onChange={e => setSearchWord(e.target.value)}
@@ -156,7 +160,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                 className={`product-result-item ${
                                     selectedProductId === p.productId ? "selected" : ""
                                 }`}
-                                onClick={() => setSelectedProductId(p.productId)}
+                                onClick={() => handleSelectProduct(p)}
                             >
                                 <div className="product-result-main">
                                     <strong>{p.productBarCodeNumber}</strong>
@@ -164,7 +168,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                 </div>
 
                                 {selectedProductId === p.productId && (
-                                    <span className="selected-indicator">{t("selected")}</span>
+                                    <span className="selected-indicator"></span>
                                 )}
 
                             </div>
@@ -179,12 +183,12 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 />
             </div>
 
-            {selectedProductId && (
+            {selectedProduct && (
                 <div className="add-config-card">
 
                     <div className="selected-product-summary">
                         <span className="summary-label">
-                            {t("configuring_product")}
+                            {t("selected_product")}
                         </span>
                         <strong>
                             {selectedProduct.productBarCodeNumber} - {selectedProduct.productName}

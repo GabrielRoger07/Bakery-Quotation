@@ -1,3 +1,7 @@
+/* =========================
+   Container geral da etapa
+   ========================= */
+
 .step-products {
     max-width: 900px;
     margin: 0 auto;
@@ -8,67 +12,113 @@
     margin-bottom: 1.25rem;
 }
 
-/* Cards */
+/* =========================
+   Cards
+   ========================= */
+
 .search-card,
 .results-card,
 .add-config-card,
 .selected-products-card {
     background: #ffffff;
     border-radius: 8px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 0.75rem;
+    padding: 0rem 1.25rem 1rem 1.25rem;
+    margin-bottom: 0.5rem; /* ↓ menos espaço vertical */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* Busca */
+/* =========================
+   BUSCA (select + input + botão)
+   ========================= */
+
 .search-row {
     display: flex;
     gap: 0.75rem;
-    align-items: flex-end;
+    align-items: flex-end; /* alinha label do Input com select */
 }
 
+/* Wrapper do select */
 .search-select-wrapper {
     flex: 0 0 220px;
     position: relative;
 }
 
+/* Centraliza a seta verticalmente (override local) */
 .step-products .select-arrow {
     top: 50%;
     transform: translateY(-50%);
 }
 
+/* Wrapper do Input */
 .search-input-wrapper {
     flex: 1;
+    min-width: 200px;
 }
 
+/* remove margem extra do Input apenas aqui */
 .search-input-wrapper .input-container {
     margin-bottom: 0;
 }
 
-/* Resultados */
+/* botão Buscar */
+.search-row button {
+    white-space: nowrap;
+}
+
+/* =========================
+   Resultados da busca
+   ========================= */
+
 .products-results-list {
     border: 1px solid #e5e7eb;
     border-radius: 6px;
     overflow: hidden;
+    background: #fff;
+    margin-bottom: 0.5rem;
 }
 
+/* Item individual */
 .product-result-item {
     display: flex;
     justify-content: space-between;
-    padding: 0.55rem 0.75rem;
+    align-items: center;
+    padding: 0.55rem 0.75rem; /* ↓ mais compacto */
     cursor: pointer;
+    background: #fff;
+    transition: background 0.15s ease;
     border-bottom: 1px solid #eee;
 }
 
+.product-result-item:last-child {
+    border-bottom: none;
+}
+
+/* Hover */
 .product-result-item:hover {
     background: #f3f4f6;
 }
 
+/* Selecionado */
 .product-result-item.selected {
     background: #e0edff;
 }
 
-/* Resumo do produto selecionado */
+/* Conteúdo */
+.product-result-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-result-main strong {
+    font-size: 0.95rem;
+    color: #111827;
+}
+
+.product-result-main span {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
 .selected-product-summary {
     background: #f0f6ff;
     border: 1px solid #dbeafe;
@@ -85,7 +135,27 @@
     margin-bottom: 0.1rem;
 }
 
-/* Quantidade / bônus */
+/* Indicador de seleção */
+.selected-indicator {
+    font-size: 0.85rem;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+/* =========================
+   Paginação
+   ========================= */
+
+.results-card .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+/* =========================
+   Configuração do produto
+   ========================= */
+
 .quantity-bonus-group {
     display: flex;
     gap: 1rem;
@@ -96,30 +166,73 @@
     flex: 1;
 }
 
-/* Produtos adicionados */
+/* =========================
+   Produtos adicionados
+   ========================= */
+
+.selected-products-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
 .selected-product-item {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 0.5rem 0;
     border-bottom: 1px solid #eee;
 }
 
-.empty-state {
-    font-style: italic;
+.selected-product-item:last-child {
+    border-bottom: none;
+}
+
+.selected-product-item strong {
+    font-size: 0.95rem;
+    display: block;
+}
+
+.selected-product-item span {
+    font-size: 0.85rem;
     color: #6b7280;
 }
 
-/* Navegação */
-.step-navigation {
-    display: flex;
-    justify-content: center;
-    margin-top: 1.5rem;
+/* =========================
+   Estados vazios
+   ========================= */
+
+.empty-state {
+    font-size: 0.9rem;
+    color: #6b7280;
+    font-style: italic;
+    margin-top: 0.25rem;
 }
 
-/* Responsivo */
+/* =========================
+   Navegação entre etapas
+   ========================= */
+
+.step-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.75rem;
+}
+
+/* =========================
+   Responsividade
+   ========================= */
+
 @media (max-width: 768px) {
+
     .search-row {
         flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-select-wrapper {
+        flex: unset;
+        width: 100%;
     }
 
     .quantity-bonus-group {

@@ -1,0 +1,133 @@
+.step-products {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.step-products h2 {
+    text-align: center;
+    margin-bottom: 1.25rem;
+}
+
+/* Cards */
+.search-card,
+.results-card,
+.add-config-card,
+.selected-products-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Busca */
+.search-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-end;
+}
+
+.search-select-wrapper {
+    flex: 0 0 220px;
+    position: relative;
+}
+
+.step-products .select-arrow {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.search-input-wrapper {
+    flex: 1;
+}
+
+.search-input-wrapper .input-container {
+    margin-bottom: 0;
+}
+
+/* Resultados */
+.products-results-list {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.product-result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.55rem 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.product-result-item:hover {
+    background: #f3f4f6;
+}
+
+.product-result-item.selected {
+    background: #e0edff;
+}
+
+/* Resumo do produto selecionado */
+.selected-product-summary {
+    background: #f0f6ff;
+    border: 1px solid #dbeafe;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.selected-product-summary .summary-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #2563eb;
+    margin-bottom: 0.1rem;
+}
+
+/* Quantidade / bônus */
+.quantity-bonus-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.quantity-bonus-group > div {
+    flex: 1;
+}
+
+/* Produtos adicionados */
+.selected-product-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.empty-state {
+    font-style: italic;
+    color: #6b7280;
+}
+
+/* Navegação */
+.step-navigation {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .search-row {
+        flex-direction: column;
+    }
+
+    .quantity-bonus-group {
+        flex-direction: column;
+    }
+
+    .step-navigation {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}

@@ -8,6 +8,7 @@ import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import Pagination from '../../components/Pagination'
 import { ENV } from '../../config/env'
+import './QuotationCreate.css'
 
 const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, loading }) => {
 
@@ -113,87 +114,130 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         onNext()
     }
 
+    const selectedProduct = availableProducts.find(p => p.productId === selectedProductId)
+
     return (
         <div className="step-products">
             <h2>{t("quotation_step_2")}</h2>
 
-            <div className="select-wrapper">
-                <select id="searchField" name="searchField" value={searchField} onChange={(e) => setSearchField(e.target.value)} className="custom-select" required >
-                    <option value="" disabled>{t("select_field")}</option>
-                    <option value="productBarCodeNumber">{t("barcode_number")}</option>
-                    <option value="productName">{t("product_name")}</option>
-                </select>
-                <span className="select-arrow"></span>
+            <div className="search-card">
+                <div className="search-row">
+                    <div className="search-select-wrapper">
+                        <select id="searchField" name="searchField" value={searchField} onChange={(e) => setSearchField(e.target.value)} className="custom-select" required >
+                            <option value="" disabled>{t("select_field")}</option>
+                            <option value="productBarCodeNumber">{t("barcode_number")}</option>
+                            <option value="productName">{t("product_name")}</option>
+                        </select>
+                        <span className="select-arrow"></span>
+                    </div>
+
+                    <div className="search-input-wrapper">
+                        <Input 
+                            label={t("field_filter")}
+                            type="text"
+                            value={searchWord}
+                            onChange={e => setSearchWord(e.target.value)}
+                            placeholder={t("enter_search")}
+                        />
+                    </div>
+                    <Button onClick={handleSearchProducts} disabled={loading}>{t("search_button")}</Button>
+                </div>
             </div>
-
-            <Input 
-                label={t("quantity")}
-                type="text"
-                value={searchWord}
-                onChange={e => setSearchWord(e.target.value)}
-                placeholder={t("enter_search")}
-            />
-
-            <Button onClick={handleSearchProducts} disabled={loading}>{t("search_button")}</Button>
             
-            <div className="product-add-form">
-                <select value={selectedProductId} onChange={e => setSelectedProductId(Number(e.target.value))} className="custom-select">
-                    
-                    <option value="" disabled>
-                        {availableProducts.length === 0 ? t("no_products_available") : t("select_field")}
-                    </option>
+            <div className="results-card">
 
-                    {availableProducts.map(p => (
-                        <option key={p.productId} value={p.productId}>
-                            {p.productBarCodeNumber} - {p.productName}
-                        </option>
-                    ))}
-                </select>
+                {availableProducts.length === 0 ? (
+                    <p className="empty-state">{t("no_products_available")}</p>
+                ) : (
+                    <div className="products-results-list">
+                        {availableProducts.map(p => (
+                            <div
+                                key={p.productId}
+                                className={`product-result-item ${
+                                    selectedProductId === p.productId ? "selected" : ""
+                                }`}
+                                onClick={() => setSelectedProductId(p.productId)}
+                            >
+                                <div className="product-result-main">
+                                    <strong>{p.productBarCodeNumber}</strong>
+                                    <span>{p.productName}</span>
+                                </div>
+
+                                {selectedProductId === p.productId && (
+                                    <span className="selected-indicator">{t("selected")}</span>
+                                )}
+
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <Pagination 
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={(page) => fetchProducts(page)}
                 />
-
-                <div className="quantity-bonus-group">
-                    <Input 
-                        label={t("quantity")}
-                        type="number"
-                        value={quantity}
-                        onChange={e => setQuantity(e.target.value)}
-                        min="1"
-                        onKeyDown={e => {
-                            if(['-', 'e', 'E'].includes(e.key)) e.preventDefault()
-                        }}
-                    />
-                    <Input 
-                        label={t("bonus_limit")}
-                        type="number"
-                        value={bonus}
-                        onChange={e => setBonus(e.target.value)}
-                        min="0"
-                        onKeyDown={e => {
-                            if(['-', 'e', 'E'].includes(e.key)) e.preventDefault()
-                        }}
-                    />
-                </div>
-
-                <Button onClick={handleAddProduct} disabled={loading}>{t("table_add")}</Button>
             </div>
+
+            {selectedProductId && (
+                <div className="add-config-card">
+
+                    <div className="selected-product-summary">
+                        <span className="summary-label">
+                            {t("configuring_product")}
+                        </span>
+                        <strong>
+                            {selectedProduct.productBarCodeNumber} - {selectedProduct.productName}
+                        </strong>
+                    </div>
+
+                    <div className="quantity-bonus-group">
+                        <Input 
+                            label={t("quantity")}
+                            type="number"
+                            value={quantity}
+                            onChange={e => setQuantity(e.target.value)}
+                            min="1"
+                            onKeyDown={e => {
+                                if(['-', 'e', 'E'].includes(e.key)) e.preventDefault()
+                            }}
+                        />
+                        <Input 
+                            label={t("bonus_limit")}
+                            type="number"
+                            value={bonus}
+                            onChange={e => setBonus(e.target.value)}
+                            min="0"
+                            onKeyDown={e => {
+                                if(['-', 'e', 'E'].includes(e.key)) e.preventDefault()
+                            }}
+                        />
+                    </div>
+                
+                    <Button onClick={handleAddProduct} disabled={loading}>{t("table_add")}</Button>
+                </div>
+            )}
 
             {error && <Alert message={error} />}
 
-            <div className="selected-products">
-                <h3>{t("products_added")} ({localSelected.length})</h3>
-                <ul>
-                    {localSelected.map(p => (
-                        <li key={p.productId} className="selected-product-item">
-                            {p.productName} - Qtd: {p.quantity} | Bonus: {p.bonusLimit}
-                            <Button className="remove-product-btn" onClick={() => handleRemoveProduct(p.productId)}>{t("remove_button")}</Button>
-                        </li>
-                    ))}
-                </ul>
+            <div className="selected-products-card">
+                <h4>{t("products_added")} ({localSelected.length})</h4>
+                
+                {localSelected.length === 0 ? (
+                    <p className="empty-state">{t("no_products_added")}</p>
+                ) : (
+                    <ul>
+                        {localSelected.map(p => (
+                            <li key={p.productId} className="selected-product-item">
+                                <div>
+                                    <strong>{p.productName}</strong>
+                                    <span>Qtd: {p.quantity} • Bonus: {p.bonusLimit}</span>
+                                </div>
+                                <Button className="remove-product-btn" onClick={() => handleRemoveProduct(p.productId)}>{t("remove_button")}</Button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
 
             <div className="step-navigation">

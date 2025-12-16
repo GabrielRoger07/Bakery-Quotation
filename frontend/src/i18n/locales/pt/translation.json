@@ -203,5 +203,6 @@
     "enter_search": "Digite o campo",
     "no_products_available": "Nenhum produto disponível",
     "no_suppliers_available": "Nenhum fornecedor disponível",
-    "time_remaining_to_start": "Começa em"
+    "time_remaining_to_start": "Começa em",
+    "field_filter": "Campo"
 }

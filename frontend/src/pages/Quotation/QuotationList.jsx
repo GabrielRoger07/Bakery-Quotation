@@ -45,15 +45,15 @@ const QuotationList = () => {
 
     const columns = [
         { key: "quotationId", label: t("quotation_id") },
-        { key: "quotationStart", label: t("quotation_start_date") },
-        { key: "quotationEnd", label: t("quotation_end_date") },
+        { key: "quotationStartFormatted", label: t("quotation_start_date") },
+        { key: "quotationEndFormatted", label: t("quotation_end_date") },
         { key: "status", label: t("quotation_status") }
     ]
 
     const sortMap = {
         quotationId: "id",
-        quotationStart: "quotationStart",
-        quotationEnd: "quotationEnd",
+        quotationStartFormatted: "quotationStart",
+        quotationEndFormatted: "quotationEnd",
         status: null
     }
 
@@ -141,24 +141,16 @@ const QuotationList = () => {
 
                 return {
                     ...q,
-                    quotationStart: start ? (
-                        <div className="date-cell">
-                            <span>{start.date} - {start.time}</span>
-                        </div>
-                    ) : "-",
-                    quotationEnd: end ? (
-                        <div className="date-cell">
-                            <span>{end.date} - {end.time}</span>
-                        </div>
-                    ) : "-",
+                    quotationStartFormatted: start ? `${start.date} • ${start.time}` : "-",
+                    quotationEndFormatted: end ? `${end.date} • ${end.time}` : "-",
                     status:
                     new Date(q.quotationStart) > new Date() ? t("quotation_scheduled") : new Date(q.quotationEnd) < new Date() ? t("quotation_closed") : t("quotation_active")
                 }
             })
 
             setQuotations(mapped);
-            setTotalPages(res.data.totalPages)
             setCurrentPage(res.data.number)
+            setTotalPages(res.data.totalPages)
             setError("")
         }else{
             setError(res.data?.message)

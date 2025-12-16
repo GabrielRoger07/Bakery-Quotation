@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Alert from '../../components/Alert'
 import { ENV } from '../../config/env'
+import { formatDateTime } from '../../utils/formatDateTime'
 
 const QuotationDetails = ({ quotation }) => {
     
@@ -45,17 +46,20 @@ const QuotationDetails = ({ quotation }) => {
 
         fetchProducts()
         fetchSuppliers()
-    }, [quotation, request])
+    }, [quotation, request, t])
 
     if(!quotation) return null
+
+    const start = formatDateTime(quotation.quotationStart)
+    const end = formatDateTime(quotation.quotationEnd)
 
     return (
         <div className="quotation-details-container">
             {error && <Alert message={error}/>}
 
             <h3>{t("quotation")} {quotation.quotationId}</h3>
-            <p><strong>{t("quotation_start")}: </strong> {quotation.quotationStart}</p>
-            <p><strong>{t("quotation_end")}: </strong> {quotation.quotationEnd}</p>
+            <p><strong>{t("quotation_start")}: </strong>{" "} {start ? `${start.date} • ${start.time}` : "-"}</p>
+            <p><strong>{t("quotation_end")}: </strong>{" "} {end ? `${end.date} • ${end.time}` : "-"}</p>
 
             <div className="details-section">
                 <h4>{t("products_title_list")}</h4>

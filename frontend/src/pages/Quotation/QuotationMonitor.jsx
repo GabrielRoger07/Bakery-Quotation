@@ -221,7 +221,7 @@ const QuotationMonitor = () => {
             price: `R$ ${b.price.toFixed(2)}`, 
             pricePerUnit: `R$ ${((b.price) / (b.quantity + b.bonus)).toFixed(2)}`,
             createdAt: new Date(b.createdAt).toLocaleString(),
-            status: isLowest ? <span>{t("lowest")}</span> : <span>{t("outbid")}</span>
+            status: isLowest ? <span style={{color: "green"}}>{t("lowest")}</span> : <span style={{color: "red"}}>{t("outbid")}</span>
         }
     })
 

@@ -21,7 +21,7 @@ public class Bid {
 
     @ManyToOne()
     @JoinColumn(name = "productId", referencedColumnName = "productId", foreignKey = @ForeignKey(name = "bid_PRODUCT_FK"))
-    @MapsId("quotationId")
+    @MapsId("productId")
     private Product product;
 
     @Column(name = "price", nullable = false, precision = 6, scale = 2)

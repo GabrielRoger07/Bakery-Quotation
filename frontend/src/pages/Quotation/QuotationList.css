@@ -322,3 +322,13 @@
     gap: 0.5rem;
     justify-content: center;
 }
+
+.date-cell {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
+.date-cell span {
+    font-size: 1rem;
+}

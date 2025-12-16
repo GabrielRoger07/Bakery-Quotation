@@ -271,7 +271,7 @@ const QuotationMonitor = () => {
                         columns={bidColumns}
                         data={formattedBids}
                         loading={false}
-                        emptyMessage={t("empty_bids_products")}
+                        emptyMessage={t("empty_bids_quotation")}
                     />
             </div>
         </div>

@@ -14,6 +14,7 @@ import QuotationEdit from './QuotationEdit'
 import QuotationDetails from './QuotationDetails'
 import './QuotationList.css'
 import { ENV } from '../../config/env'
+import { formatDateTime } from '../../utils/formatDateTime'
 
 const QuotationList = () => {
 
@@ -131,12 +132,30 @@ const QuotationList = () => {
         }
 
         const res = await request("GET", `/quotations/company/${cnpj}?page=${page}${sortQuery}`)
+        
         if(res.ok){
-            const mapped = res.data.content.map((q) => ({
-                ...q, 
-                status:
-                new Date(q.quotationStart) > new Date() ? t("quotation_scheduled") : new Date(q.quotationEnd) < new Date() ? t("quotation_closed") : t("quotation_active")
-            }))
+            const mapped = res.data.content.map((q) => {
+
+                const start = formatDateTime(q.quotationStart)
+                const end = formatDateTime(q.quotationEnd)
+
+                return {
+                    ...q,
+                    quotationStart: start ? (
+                        <div className="date-cell">
+                            <span>{start.date} - {start.time}</span>
+                        </div>
+                    ) : "-",
+                    quotationEnd: end ? (
+                        <div className="date-cell">
+                            <span>{end.date} - {end.time}</span>
+                        </div>
+                    ) : "-",
+                    status:
+                    new Date(q.quotationStart) > new Date() ? t("quotation_scheduled") : new Date(q.quotationEnd) < new Date() ? t("quotation_closed") : t("quotation_active")
+                }
+            })
+
             setQuotations(mapped);
             setTotalPages(res.data.totalPages)
             setCurrentPage(res.data.number)

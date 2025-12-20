@@ -18,7 +18,7 @@ const SupplierCreate = ({ onClose, onSave }) => {
     const { value: supplierName, onChange: handleSupplierNameChange, onBlur: handleSupplierNameBlur, warning: supplierNameWarning, isInvalid: isSupplierNameInvalid } = useCharLimit(30, "supplier_name")
     const { value: supplierEmail, onChange: handleSupplierEmailChange, onBlur: handleSupplierEmailBlur, warning: supplierEmailWarning, isInvalid: isSupplierEmailInvalid } = useCharLimit(60, "supplier_email")
     const { value: supplierWhatsappNumber, handleChange: handleSupplierWhatsappNumberChange, handleBlur: handleSupplierWhatsappNumberBlur, getNumericValue: getSupplierWhatsappNumberRaw, isInvalid: isSupplierWhatsappNumberInvalid } = usePhoneMask()
-    const { value: employerName, onChange: handleEmployerNameChange, onBlur: handleEmployerNameBlur, warning: employerNameWarning, isInvalid: isEmployerNameInvalid } = useCharLimit(45, "company_name")
+    const { value: employerName, onChange: handleEmployerNameChange, onBlur: handleEmployerNameBlur, warning: employerNameWarning, isInvalid: isEmployerNameInvalid } = useCharLimit(65, "company_name")
     const { value: employerCnpj, handleChange: handleEmployerCnpjChange, handleBlur: handleEmployerCnpjBlur, getNumericValue: getEmployerCnpjRaw, isInvalid: isEmployerCnpjInvalid } = useCnpjMask()
 
     const [error, setError] = useState("")
@@ -69,7 +69,12 @@ const SupplierCreate = ({ onClose, onSave }) => {
             setTimeout(() => onClose(), 800)
         }else{
             setSuccess("")
-            setError(t("supplier_created_error"))
+            console.log(res.data)
+            if(res.data.message = "Employer CNPJ must be valid"){
+                setError(t("invalid_cnpj"))
+            } else {
+                setError(t("supplier_created_error"))
+            }
         }
     }
 

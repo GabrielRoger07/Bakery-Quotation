@@ -35,6 +35,7 @@ public class BackendApplication {
         SpringApplication.run(BackendApplication.class, args);
     }
 
+    /*
     @Bean
     public CommandLineRunner run(CompanyRepository companyRepository,
                                  SupplierRepository supplierRepository,
@@ -150,4 +151,5 @@ public class BackendApplication {
         sb.append(digit1).append(digit2);
         return sb.toString();
     }
+    */
 }

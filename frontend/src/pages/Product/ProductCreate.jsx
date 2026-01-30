@@ -14,7 +14,7 @@ const ProductCreate = ({ onClose, onSave }) => {
     const { t } = useTranslation()
 
     const { value: productBarCodeNumber, onChange: handleBarCodeChange, onBlur: handleBarCodeBlur, warning: barCodeWarning, isInvalid: isBarCodeInvalid } = useCharLimit(13, "barcode_number")
-    const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(30, "product_name")
+    const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "product_name")
 
     const [unitOfMeasure, setUnitOfMeasure] = useState("")
     const [error, setError] = useState("")
@@ -55,13 +55,13 @@ const ProductCreate = ({ onClose, onSave }) => {
         const res = await request("POST", "/products", product)
 
         if(res.ok){
-            setSuccess("product_created_success")
+            setSuccess(t("product_created_success"))
             setError("")
             onSave && onSave(res.data)
             setTimeout(() => onClose(), 800)
         }else{
             setSuccess("")
-            setError("product_created_error")
+            setError(t("product_created_error"))
         }
     }
 

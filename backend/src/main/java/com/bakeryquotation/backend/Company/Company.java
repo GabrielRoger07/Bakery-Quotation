@@ -24,7 +24,7 @@ public class Company implements UserDetails {
     @Column(name = "companyCnpj", length = 14)
     private String companyCnpj;
 
-    @Column(name = "companyName", nullable = false, length = 45)
+    @Column(name = "companyName", nullable = false, length = 80)
     private String companyName;
 
     @Column(name = "companyWhatsappNumber", nullable = false, length = 16)

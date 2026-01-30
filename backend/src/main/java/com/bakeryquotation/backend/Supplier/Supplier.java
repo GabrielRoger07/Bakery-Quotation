@@ -31,7 +31,7 @@ public class Supplier {
     @Column(name = "supplierWhatsappNumber", nullable = false, length = 16)
     private String supplierWhatsappNumber;
 
-    @Column(name = "employerName", nullable = false, length = 45)
+    @Column(name = "employerName", nullable = false, length = 65)
     private String employerName;
 
     @Column(name = "employerCnpj", nullable = false, length = 14)

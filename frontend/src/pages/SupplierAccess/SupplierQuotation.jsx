@@ -70,7 +70,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
 
     fetchData()
 
-  }, [quotationId, participationId])
+  }, [quotationId, participationId, request, t])
 
   useEffect(() => {
     if(!quotation) return
@@ -95,7 +95,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
     updateCountdown()
     const interval = setInterval(updateCountdown, 1000)
     return () => clearInterval(interval)
-  }, [quotation])
+  }, [quotation, t])
 
   const handleNewBid = useCallback((bid) => {
 
@@ -123,7 +123,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
     { key: "pricePerUnit", label: t("price_per_unit")},
     { key: "createdAt", label: t("date_hour") },
     { key: "status", label: "Status" }
-  ], [])
+  ], [t])
 
   const formattedBids = bids.map(b => {
 

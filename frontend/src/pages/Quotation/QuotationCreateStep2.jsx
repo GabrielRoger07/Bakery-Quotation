@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
@@ -11,10 +11,9 @@ import { ENV } from '../../config/env'
 import './QuotationCreate.css'
 
 const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, loading }) => {
-
     const { t } = useTranslation()
-
     const { request } = useFetch(ENV.API_BASE_URL)
+
     const [availableProducts, setAvailableProducts] = useState([])
     const [localSelected, setLocalSelected] = useState(selectedProducts)
     const [selectedProductId, setSelectedProductId] = useState("")
@@ -29,9 +28,9 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
 
     useEffect(() => {
         onChange(localSelected)
-    }, [localSelected])
+    }, [localSelected, onChange])
 
-    const fetchProducts = async (page = 0) => {
+    const fetchProducts = useCallback(async (page = 0, field = searchField, word = searchWord) => {
 
         const token = Cookies.get("token")
         const decoded = jwtDecode(token)
@@ -40,8 +39,8 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         const excludedIds = localSelected.map(p => p.productId)
 
         let query = `?page=${page}`
-        if(searchField) query += `&field=${searchField}`
-        if(searchWord) query += `&value=${searchWord}`
+        if(field) query += `&field=${field}`
+        if(word) query += `&value=${word}`
         if(excludedIds.length > 0) query += `&excludedIds=${excludedIds.join(",")}`
 
         const res = await request("GET", `/products/company/${cnpj}${query}`)
@@ -54,15 +53,16 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         }else{
             setError(res.data?.message)
         }
-    }
+    }, [request, localSelected, searchField, searchWord])
 
     useEffect(() => {
-        fetchProducts(0)
+        fetchProducts(0, "", "")
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
-        fetchProducts(currentPage)
-    }, [localSelected])
+        fetchProducts(0)
+    }, [localSelected, fetchProducts])
 
     const handleSearchProducts = () => {
         setCurrentPage(0)

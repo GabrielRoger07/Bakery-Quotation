@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import { useTranslation, Trans } from 'react-i18next'
@@ -86,7 +86,7 @@ const SupplierList = () => {
         closeModals()
     }
 
-    const fetchSuppliers = async (page = 0) => {
+    const fetchSuppliers = useCallback(async (page = 0) => {
         const token = Cookies.get("token")
         const decoded = jwtDecode(token)
         const cnpj = decoded.companyCnpj
@@ -100,13 +100,12 @@ const SupplierList = () => {
         if(res.ok){
             setSuppliers(res.data.content);
             setTotalPages(res.data.totalPages)
-            setCurrentPage(res.data.number)
             setError("")
         }else{
             setError(res.data?.message)
         }
         setStatus(res.status)
-    }
+    }, [request, sortField, sortDirection])
 
     const handleColumnSort = (columnKey) => {
         if(sortField === columnKey){
@@ -121,7 +120,7 @@ const SupplierList = () => {
 
     useEffect(() => {
         fetchSuppliers(currentPage);
-    }, [sortField, sortDirection, currentPage])
+    }, [fetchSuppliers, currentPage])
 
     return (
     <div className="supplier-list-container">

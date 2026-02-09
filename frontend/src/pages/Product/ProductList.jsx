@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import { useTranslation, Trans } from 'react-i18next'
@@ -83,7 +83,7 @@ const ProductList = () => {
         closeModals()
     }
 
-    const fetchProducts = async (page = 0) => {
+    const fetchProducts = useCallback(async (page = 0) => {
         const token = Cookies.get("token")
         const decoded = jwtDecode(token)
         const cnpj = decoded.companyCnpj
@@ -94,16 +94,16 @@ const ProductList = () => {
         }
 
         const res = await request("GET", `/products/company/${cnpj}?page=${page}${sortQuery}`)
+
         if(res.ok){
             setProducts(res.data.content);
             setTotalPages(res.data.totalPages)
-            setCurrentPage(res.data.number)
             setError("")
         }else{
             setError(res.data?.message)
         }
         setStatus(res.status)
-    }
+    }, [request, sortField, sortDirection])
 
     const handleColumnSort = (columnKey) => {
         if(sortField === columnKey){
@@ -118,7 +118,7 @@ const ProductList = () => {
 
     useEffect(() => {
         fetchProducts(currentPage);
-    }, [sortField, sortDirection, currentPage])
+    }, [fetchProducts, currentPage])
 
     return (
     <div className="product-list-container">

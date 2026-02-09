@@ -33,7 +33,7 @@ const SupplierEdit = ({supplier, onSave, onClose}) => {
             setEmployerName(supplier.employerName || "")
             setEmployerCnpj(formatCnpj(supplier.employerCnpj || ""))
         }
-    }, [supplier])
+    }, [supplier, setEmployerCnpj, setEmployerName, setSupplierEmail, setSupplierName, setSupplierWhatsappNumber])
 
     const isDisabled = 
         supplierNameWarning ||

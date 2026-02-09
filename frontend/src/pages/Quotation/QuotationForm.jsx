@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useCallback} from 'react'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
@@ -27,7 +27,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         suppliers: []
     })
 
-    const fetchEditData = async () => {
+    const fetchEditData = useCallback(async () => {
         if(!initialData || mode !== "edit") return
 
         setLoading(true)
@@ -46,11 +46,11 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         })
         
         setLoading(false)
-    }
+    }, [initialData, mode, request])
 
     useEffect(() => {
         fetchEditData()
-    }, [initialData, mode, request])
+    }, [fetchEditData])
     
     const handleStepChange = (field, value) => {
         setQuotationData(prev => ({...prev, [field]: value}))

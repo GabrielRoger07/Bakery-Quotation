@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
@@ -11,10 +11,9 @@ import { ENV } from '../../config/env'
 import './QuotationCreate.css'
 
 const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, loading }) => {
-    
     const { t } = useTranslation()
-    
     const { request } = useFetch(ENV.API_BASE_URL)
+    
     const [availableSuppliers, setAvailableSuppliers] = useState([])
     const [localSelected, setLocalSelected] = useState(selectedSuppliers)
     const [error, setError] = useState("")
@@ -25,9 +24,9 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
 
     useEffect(() => {
         onChange(localSelected)
-    }, [localSelected])
+    }, [localSelected, onChange])
 
-    const fetchSuppliers = async (page = 0) => {
+    const fetchSuppliers = useCallback(async (page = 0, field = searchField, word = searchWord) => {
 
         const token = Cookies.get("token")
         const decoded = jwtDecode(token)
@@ -37,8 +36,8 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
 
         let query = `?page=${page}`
 
-        if(searchField) query += `&field=${searchField}`
-        if(searchWord) query += `&value=${searchWord}`
+        if(field) query += `&field=${field}`
+        if(word) query += `&value=${word}`
         if(excludedIds.length > 0) query += `&excludedIds=${excludedIds.join(",")}`
 
         const res = await request("GET", `/suppliers/company/${cnpj}${query}`)
@@ -50,15 +49,16 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
         }else{
             setError(res.data?.message)
         }
-    }
+    }, [request, localSelected, searchField, searchWord])
 
     useEffect(() => {
-        fetchSuppliers(0)
+        fetchSuppliers(0, "", "")
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
-        fetchSuppliers(currentPage)
-    }, [localSelected])
+        fetchSuppliers(0)
+    }, [localSelected, fetchSuppliers])
 
     const handleSearchSuppliers = () => {
         setCurrentPage(0)

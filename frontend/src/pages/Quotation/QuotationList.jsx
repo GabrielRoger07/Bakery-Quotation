@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
@@ -50,12 +50,12 @@ const QuotationList = () => {
         { key: "status", label: t("quotation_status") }
     ]
 
-    const sortMap = {
+    const sortMap = useMemo(() => ({
         quotationId: "id",
         quotationStartFormatted: "quotationStart",
         quotationEndFormatted: "quotationEnd",
         status: null
-    }
+    }), []);
 
     const openEditModal = (quotation) => {
         setQuotationToEdit(quotation)
@@ -119,7 +119,7 @@ const QuotationList = () => {
         navigate(`/quotations/monitor?id=${quotation.quotationId}`)
     }
 
-    const fetchQuotations = async (page = 0) => {
+    const fetchQuotations = useCallback(async (page = 0) => {
         const token = Cookies.get("token")
         const decoded = jwtDecode(token)
         const cnpj = decoded.companyCnpj
@@ -149,14 +149,13 @@ const QuotationList = () => {
             })
 
             setQuotations(mapped);
-            setCurrentPage(res.data.number)
             setTotalPages(res.data.totalPages)
             setError("")
         }else{
             setError(res.data?.message)
         }
         setStatus(res.status)
-    }
+    }, [request, sortField, sortDirection, sortMap, t])
 
     const handleColumnSort = (columnKey) => {
 
@@ -176,7 +175,7 @@ const QuotationList = () => {
 
     useEffect(() => {
         fetchQuotations(currentPage);
-    }, [sortField, sortDirection, currentPage])
+    }, [fetchQuotations, currentPage])
 
     return (
     <div className="quotation-list-container">

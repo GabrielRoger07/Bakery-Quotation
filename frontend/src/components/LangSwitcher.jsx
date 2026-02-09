@@ -7,10 +7,12 @@ const LangSwitcher = () => {
     const [open, setOpen] = useState(false)
     const dropdownRef = useRef(null)
 
+    /*
     const changeLang = (lang) => {
         i18n.changeLanguage(lang)
         setOpen(false)
     }
+    */
 
     useEffect(() => {
         const handleClickOutside = (event) => {

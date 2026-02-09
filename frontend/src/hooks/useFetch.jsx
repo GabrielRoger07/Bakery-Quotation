@@ -56,7 +56,7 @@ const useFetch = (baseUrl = "") => {
             }finally{
                 setLoading(false)
             }
-        }, [baseUrl]
+        }, [baseUrl, navigate]
     )
 
   return { request, loading, error }

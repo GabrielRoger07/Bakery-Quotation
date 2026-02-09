@@ -70,7 +70,7 @@ const SupplierCreate = ({ onClose, onSave }) => {
         }else{
             setSuccess("")
             console.log(res.data)
-            if(res.data.message = "Employer CNPJ must be valid"){
+            if(res.data.message === "Employer CNPJ must be valid"){
                 setError(t("invalid_cnpj"))
             } else {
                 setError(t("supplier_created_error"))

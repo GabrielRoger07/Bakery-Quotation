@@ -57,7 +57,7 @@ const QuotationMonitor = () => {
         }
 
         fetchQuotationData()
-    }, [quotationId])
+    }, [quotationId, request])
 
     const formatTime = (ms) => {
         const days = Math.floor(ms / 86400000)
@@ -145,7 +145,7 @@ const QuotationMonitor = () => {
                 employerCnpj: "-"
             }
         }))
-    }, [products.length, bids.length])
+    }, [products, bids])
 
     const handleNewBid = useCallback(bid => {
 
@@ -185,7 +185,7 @@ const QuotationMonitor = () => {
         {key: "supplierName", label: t("supplier")},
         {key: "employerName", label: t("company")},
         {key: "employerCnpj", label: t("company_cnpj")},
-    ], [])
+    ], [t])
 
     const bidColumns = useMemo(() => [
         {key: "supplierName", label: t("supplier")},
@@ -199,7 +199,7 @@ const QuotationMonitor = () => {
         {key: "pricePerUnit", label: t("price_per_unit")},
         {key: "status", label: "Status"},
         {key: "createdAt", label: t("date_hour")},
-    ], [])
+    ], [t])
 
     const formattedProducts = products.map(p => ({
         ...p, 

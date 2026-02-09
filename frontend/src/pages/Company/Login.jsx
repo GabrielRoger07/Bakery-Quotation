@@ -50,7 +50,7 @@ const Login = () => {
             setTimeout(() => navigate("/suppliers"), 1000)
         }else{
             setSuccess("")
-            setError(res.status == 500 ? t("login_error") : t("connection_lost"))
+            setError(res.status === 500 ? t("login_error") : t("connection_lost"))
         }
     }
 

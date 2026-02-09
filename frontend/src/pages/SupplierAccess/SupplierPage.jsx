@@ -9,6 +9,7 @@ import SupplierQuotationRouter from './SupplierQuotationRouter'
 const SupplierPage = () => {
 
     const { t } = useTranslation()
+    const { request } = useFetch(ENV.API_BASE_URL)
 
     const [searchParams] = useSearchParams()
     const quotationId = searchParams.get('quotationId')
@@ -18,7 +19,6 @@ const SupplierPage = () => {
     const [participationId, setParticipationId] = useState(null)
     const [error, setError] = useState("")
 
-    const { request } = useFetch(ENV.API_BASE_URL)
 
     useEffect(() => {
         if(quotationId && supplierId){
@@ -37,7 +37,7 @@ const SupplierPage = () => {
         }else{
             setError(t("quotation_missing_url"))
         }
-    }, [quotationId, supplierId])
+    }, [quotationId, supplierId, request, t])
 
     if(error) return <p>{error}</p>
     if(!participationId) return <p>{t("loading_message")}</p>

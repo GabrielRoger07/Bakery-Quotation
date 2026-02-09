@@ -45,7 +45,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
         }
 
         fetchFinalResults()
-    }, [quotation.quotationId])
+    }, [quotation.quotationId, request, t])
 
     const winningItems = useMemo(() => {
         return Object.entries(lowestBids)
@@ -73,7 +73,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
         { key: "bonus", label: t("bonus")},
         { key: "price", label: t("total_price")},
         { key: "pricePerUnit", label: t("price_per_unit")}
-    ], [])
+    ], [t])
 
     const formattedItems = winningItems.map(item => ({
         ...item,

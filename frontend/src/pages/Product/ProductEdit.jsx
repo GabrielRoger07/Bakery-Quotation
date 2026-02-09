@@ -25,7 +25,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
             setProductName(product.productName || "")
             setUnitOfMeasure(product.unitOfMeasure || "")
         }
-    }, [product])
+    }, [product, setProductBarCodeNumber, setProductName])
 
     const isDisabled = 
         barCodeWarning ||

@@ -27,7 +27,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         if(confirming){
             setConfirming(false)
         }
-    }, [price, addBonus, bonus])
+    }, [price, addBonus, bonus, confirming])
 
     const handleBidSubmit = async (e) => {
         e.preventDefault()

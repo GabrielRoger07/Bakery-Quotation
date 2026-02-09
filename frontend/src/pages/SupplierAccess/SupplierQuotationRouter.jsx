@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import { ENV } from '../../config/env'
@@ -14,15 +14,21 @@ const SupplierQuotationRouter = ({ quotationId, participationId }) => {
     const [quotation, setQuotation] = useState(null)
     const [loading, setLoading] = useState(true)
 
-    const fetchQuotation = async () => {
+    const fetchQuotation = useCallback(async () => {
+        setLoading(true)
         const res = await request("GET", `/quotations/${quotationId}`)
-        if(res.ok) setQuotation(res.data)
-            setLoading(false)
-    }
+        res.ok ? setQuotation(res.data) : setQuotation(null)
+        setLoading(false)
+    }, [request, quotationId])
 
     useEffect(() => {
+        if(!quotationId) {
+            setQuotation(null)
+            setLoading(false)
+            return
+        }
         fetchQuotation()
-    }, [quotationId])
+    }, [fetchQuotation, quotationId])
 
     if(loading) return <p>{t("loading_message")}</p>
     if(!quotation) return <p>{t("quotation_not_found")}</p>

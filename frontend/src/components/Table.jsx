@@ -32,7 +32,7 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                             <tr>
                                 {columns.map((col) => (
                                     <th key={col.key} onClick={() => onSort && onSort(col.key)} className="sortable-column">{col.label} {sortField === col.key && (
-                                        <span className="sort-indicator">{sortDirection == "asc" ? "▲" : "▼"}</span>
+                                        <span className="sort-indicator">{sortDirection === "asc" ? "▲" : "▼"}</span>
                                     )}</th>
                                 ))}
                                 {(onEdit || onDelete || onView || onMonitor) && <th>{t("table_actions")}</th>}

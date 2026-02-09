@@ -8,44 +8,36 @@ import { formatDateTime } from '../../utils/formatDateTime'
 const QuotationDetails = ({ quotation }) => {
     
     const { t } = useTranslation()
-
     const { request } = useFetch(ENV.API_BASE_URL)
+
     const [products, setProducts] = useState([])
     const [suppliers, setSuppliers] = useState([])
     const [error, setError] = useState("")
-    const [status, setStatus] = useState("")
-
-    const fetchProducts = async () => {
-
-        const resProducts = await request("GET", `/contains/${quotation.quotationId}`)
-
-        if(resProducts.ok){
-            setProducts(resProducts.data);
-            setError("")
-        }else{
-            setError(t("quotation_fetch_products_fail"))
-        }
-        setStatus(resProducts.status)
-    }
-
-    const fetchSuppliers = async () => {
-
-        const resSuppliers = await request("GET", `/participations/quotations/${quotation.quotationId}`)
-
-        if(resSuppliers.ok){
-            setSuppliers(resSuppliers.data);
-            setError("")
-        }else{
-            setError(t("quotation_fetch_suppliers_fail"))
-        }
-        setStatus(resSuppliers.status)
-    }
 
     useEffect(() => {
         if(!quotation) return
 
-        fetchProducts()
-        fetchSuppliers()
+        const load = async () => {
+            const resProducts = await request("GET", `/contains/${quotation.quotationId}`)
+
+            if(resProducts.ok){
+                setProducts(resProducts.data);
+                setError("")
+            }else{
+                setError(t("quotation_fetch_products_fail"))
+            }
+
+            const resSuppliers = await request("GET", `/participations/quotations/${quotation.quotationId}`)
+
+            if(resSuppliers.ok){
+                setSuppliers(resSuppliers.data);
+                setError("")
+            }else{
+                setError(t("quotation_fetch_suppliers_fail"))
+            }
+        }
+
+        load();
     }, [quotation, request, t])
 
     if(!quotation) return null

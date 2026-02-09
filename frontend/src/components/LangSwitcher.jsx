@@ -33,8 +33,8 @@ const LangSwitcher = () => {
             <button className="lang-trigger" onClick={() => setOpen(!open)}>🌐</button>
             {open && (
                 <div className='lang-menu'>
-                    <button className={i18n.language === "en" ? "active" : ""} onClick={() => i18n.changeLanguage("en")}>🇺🇸 EN</button>
-                    <button className={i18n.language === "pt" ? "active" : ""} onClick={() => i18n.changeLanguage("pt")}>🇧🇷 PT</button>
+                    <button className={i18n.language === "pt" ? "active" : ""} onClick={() => i18n.changeLanguage("pt")}><span className='fi fi-br flag' /></button>
+                    <button className={i18n.language === "en" ? "active" : ""} onClick={() => i18n.changeLanguage("en")}><span className='fi fi-us flag' /></button>
                 </div>
             )}
         </div>

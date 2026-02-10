@@ -156,10 +156,12 @@ public class SupplierService {
     public ResponseEntity<List<SupplierResponseDTO>> deleteAllSuppliers(){
         List<Supplier> suppliers = supplierRepository.findAll();
         List<SupplierResponseDTO> supplierResponseDTOS = new ArrayList<>();
-        suppliers.forEach(supplier -> {
-            supplierResponseDTOS.add(supplierMapper.toDto(supplier));
-        });
-        supplierRepository.deleteAll();
+        if(!suppliers.isEmpty()) {
+            suppliers.forEach(supplier -> {
+                supplierResponseDTOS.add(supplierMapper.toDto(supplier));
+            });
+            supplierRepository.deleteAll();
+        }
         return ResponseEntity.status(HttpStatus.OK).body(supplierResponseDTOS);
     }
 

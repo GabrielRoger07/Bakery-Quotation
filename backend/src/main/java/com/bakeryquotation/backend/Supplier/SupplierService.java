@@ -44,9 +44,11 @@ public class SupplierService {
     public ResponseEntity<List<SupplierResponseDTO>> getAllSuppliers(){
         List<Supplier> suppliers = supplierRepository.findAll();
         List<SupplierResponseDTO> supplierResponseDTOS = new ArrayList<>();
-        suppliers.forEach(supplier -> {
-            supplierResponseDTOS.add(supplierMapper.toDto(supplier));
-        });
+        if(!suppliers.isEmpty()) {
+            suppliers.forEach(supplier -> {
+                supplierResponseDTOS.add(supplierMapper.toDto(supplier));
+            });
+        }
         return ResponseEntity.status(HttpStatus.OK).body(supplierResponseDTOS);
     }
 

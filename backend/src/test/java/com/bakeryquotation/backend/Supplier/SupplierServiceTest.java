@@ -6,16 +6,17 @@ import com.bakeryquotation.backend.Supplier.DTO.SupplierRequestDTO;
 import com.bakeryquotation.backend.Supplier.DTO.SupplierResponseDTO;
 import com.bakeryquotation.backend.Supplier.mapper.SupplierMapper;
 import com.bakeryquotation.backend.exception.DuplicateResourceException;
+import com.bakeryquotation.backend.exception.ImmutableResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -209,6 +210,165 @@ class SupplierServiceTest {
             verifyNoInteractions(supplierRepository);
             verifyNoInteractions(supplierMapper);
             verifyNoMoreInteractions(companyRepository);
+        }
+    }
+
+    @Nested
+    class UpdateSupplierById {
+
+        private Long id;
+        private String companyCnpj;
+        private String email;
+        private String whatsappNumber;
+
+        @BeforeEach
+        void setUpUpdateSupplierById() {
+            id = supplier.getId();
+            companyCnpj = supplierRequestDTO.getCompanyCnpj();
+            email = supplierRequestDTO.getSupplierEmail();
+            whatsappNumber = supplierRequestDTO.getSupplierWhatsappNumber();
+        }
+
+        @Test
+        @DisplayName("should update supplier supplier and return 201 when supplier exists and values are valids")
+        void shouldUpdateSupplierSuccessfullyAndReturnCreated() {
+            when(supplierRepository.findById(id)).thenReturn(Optional.of(supplier));
+            when(supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, email)).thenReturn(Optional.empty());
+            when(supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, whatsappNumber)).thenReturn(Optional.empty());
+
+            ArgumentCaptor<Supplier> captor = ArgumentCaptor.forClass(Supplier.class);
+
+            when(supplierRepository.save(any(Supplier.class))).thenAnswer(inv -> inv.getArgument(0));
+            when(supplierMapper.toDto(any(Supplier.class))).thenReturn(supplierResponseDTO);
+
+            ResponseEntity<SupplierResponseDTO> result = supplierService.updateSupplierById(supplierRequestDTO, id);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(result.getBody()).isNotNull();
+
+            verify(supplierRepository).save(captor.capture());
+            Supplier saved = captor.getValue();
+
+            assertThat(saved.getSupplierName()).isEqualTo(supplierRequestDTO.getSupplierName());
+            assertThat(saved.getSupplierEmail()).isEqualTo(supplierRequestDTO.getSupplierEmail());
+            assertThat(saved.getSupplierWhatsappNumber()).isEqualTo(supplierRequestDTO.getSupplierWhatsappNumber());
+            assertThat(saved.getEmployerName()).isEqualTo(supplierRequestDTO.getEmployerName());
+            assertThat(saved.getEmployerCnpj()).isEqualTo(supplierRequestDTO.getEmployerCnpj());
+            assertThat(saved.getCompany().getCompanyCnpj()).isEqualTo(companyCnpj);
+
+            verify(supplierRepository, times(1)).findById(id);
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, email);
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, whatsappNumber);
+            verify(supplierMapper, times(1)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("should update supplier supplier and return 201 when duplicate email and whatsapp found but to the same supplier")
+        void shouldUpdateSupplierSuccessfullyAndReturnCreatedWhenDuplicateEmailAndWhatsappIsSameSupplier() {
+            when(supplierRepository.findById(id)).thenReturn(Optional.of(supplier));
+            when(supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, email)).thenReturn(Optional.of(supplier));
+            when(supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, whatsappNumber)).thenReturn(Optional.of(supplier));
+
+            ArgumentCaptor<Supplier> captor = ArgumentCaptor.forClass(Supplier.class);
+
+            when(supplierRepository.save(any(Supplier.class))).thenAnswer(inv -> inv.getArgument(0));
+            when(supplierMapper.toDto(any(Supplier.class))).thenReturn(supplierResponseDTO);
+
+            ResponseEntity<SupplierResponseDTO> result = supplierService.updateSupplierById(supplierRequestDTO, id);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(result.getBody()).isNotNull();
+
+            verify(supplierRepository).save(captor.capture());
+            Supplier saved = captor.getValue();
+
+            assertThat(saved.getSupplierName()).isEqualTo(supplierRequestDTO.getSupplierName());
+            assertThat(saved.getSupplierEmail()).isEqualTo(supplierRequestDTO.getSupplierEmail());
+            assertThat(saved.getSupplierWhatsappNumber()).isEqualTo(supplierRequestDTO.getSupplierWhatsappNumber());
+            assertThat(saved.getEmployerName()).isEqualTo(supplierRequestDTO.getEmployerName());
+            assertThat(saved.getEmployerCnpj()).isEqualTo(supplierRequestDTO.getEmployerCnpj());
+            assertThat(saved.getCompany().getCompanyCnpj()).isEqualTo(companyCnpj);
+
+            verify(supplierRepository, times(1)).findById(id);
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, email);
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, whatsappNumber);
+            verify(supplierMapper, times(1)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("should throw ResourceNotFoundException when supplier id doesn't exist")
+        void shouldThrowWhenSupplierIdDoesntExist() {
+            when(supplierRepository.findById(id)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> supplierService.updateSupplierById(supplierRequestDTO, id))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Supplier with id " + id + " does not exists");
+
+            verify(supplierRepository, times(1)).findById(id);
+            verify(supplierRepository, never()).findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, email);
+            verify(supplierRepository, never()).findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, whatsappNumber);
+            verifyNoInteractions(companyRepository, supplierMapper);
+            verifyNoMoreInteractions(supplierRepository);
+        }
+
+        @Test
+        @DisplayName("should throw ImmutableResourceException when companyCnpj is changed")
+        void shouldThrowWhenCompanyCnpjChanged() {
+            when(supplierRepository.findById(id)).thenReturn(Optional.of(supplier));
+            SupplierRequestDTO otherSupplierRequestDTO = new SupplierRequestDTO("Supplier A", "supplier@email.com", "11988888888", "Employer LTDA", "43210987654321", "00000000000000");
+
+            assertThatThrownBy(() -> supplierService.updateSupplierById(otherSupplierRequestDTO, id))
+                    .isInstanceOf(ImmutableResourceException.class)
+                    .hasMessage("CNPJ cannot be changed");
+
+            verify(supplierRepository, times(1)).findById(id);
+            verify(supplierRepository, never()).findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, email);
+            verify(supplierRepository, never()).findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, whatsappNumber);
+            verifyNoInteractions(companyRepository, supplierMapper);
+            verifyNoMoreInteractions(supplierRepository);
+        }
+
+        @Test
+        @DisplayName("should throw DuplicateResourceException when already exists a different supplier with the same email")
+        void shouldThrowWhenAlreadyExistsSupplierWithSameEmail() {
+            when(supplierRepository.findById(id)).thenReturn(Optional.of(supplier));
+            Long newId = 20L;
+            Supplier otherSupplier = new Supplier(newId, "Supplier A2", "supplier@email.com", "11988888887", "Employer2 LTDA", "432109876543223", LocalDateTime.of(2026, 2, 9, 10, 0, 0), company, null);
+            when(supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, email)).thenReturn(Optional.of(otherSupplier));
+
+            assertThatThrownBy(() -> supplierService.updateSupplierById(supplierRequestDTO, id))
+                    .isInstanceOf(DuplicateResourceException.class)
+                    .hasMessage("This company already has a supplier with email " + email);
+
+            verify(supplierRepository, times(1)).findById(id);
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, email);
+            verify(supplierRepository, never()).findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, whatsappNumber);
+            verifyNoInteractions(supplierMapper, companyRepository);
+            verifyNoMoreInteractions(supplierRepository);
+        }
+
+        @Test
+        @DisplayName("should throw DuplicateResourceException when already exists a different supplier with the same whatsapp number")
+        void shouldThrowWhenAlreadyExistsSupplierWithSameWhatsapp() {
+            when(supplierRepository.findById(id)).thenReturn(Optional.of(supplier));
+            Long newId = 20L;
+            Supplier otherSupplier = new Supplier(newId, "Supplier A2", "supplier2@email.com", "11988888888", "Employer2 LTDA", "432109876543223", LocalDateTime.of(2026, 2, 9, 10, 0, 0), company, null);
+            when(supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, email)).thenReturn(Optional.empty());
+            when(supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, whatsappNumber)).thenReturn(Optional.of(otherSupplier));
+
+            assertThatThrownBy(() -> supplierService.updateSupplierById(supplierRequestDTO, id))
+                    .isInstanceOf(DuplicateResourceException.class)
+                    .hasMessage("This company already has a supplier with Whatsapp number " + whatsappNumber);
+
+            verify(supplierRepository, times(1)).findById(id);
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, email);
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, whatsappNumber);
+            verifyNoInteractions(supplierMapper, companyRepository);
+            verifyNoMoreInteractions(supplierRepository);
         }
     }
 

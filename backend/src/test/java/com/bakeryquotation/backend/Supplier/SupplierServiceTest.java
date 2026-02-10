@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -154,6 +155,494 @@ class SupplierServiceTest {
             verifyNoInteractions(supplierMapper);
             verifyNoInteractions(companyRepository);
             verifyNoMoreInteractions(supplierRepository);
+        }
+    }
+
+    @Nested
+    class GetSuppliersByCompanyCnpj {
+
+        private static final String CNPJ = "12345678901234";
+        private Pageable pageable;
+
+        @BeforeEach
+        void setUpGetSuppliersByCompanyCnpj() {
+            ReflectionTestUtils.setField(supplierService, "pageSize", 5);
+            pageable = PageRequest.of(0, 999, Sort.by("supplierName").ascending());
+        }
+
+        private Page<Supplier> supplierPage() {
+            Supplier s1 = supplier;
+            Supplier s2 = new Supplier(
+                    20L,
+                    "Supplier B",
+                    "supplier2@email.com",
+                    "11977777777",
+                    "Employer SA",
+                    "09876543210987",
+                    LocalDateTime.of(2026, 2, 9, 10, 0, 0),
+                    company,
+                    null
+            );
+            return new PageImpl<>(List.of(s1, s2), PageRequest.of(0, 5, pageable.getSort()), 2);
+        }
+
+        private void stubMapperFor(Page<Supplier> suppliers) {
+            for (Supplier s : suppliers.getContent()) {
+                SupplierResponseDTO dto = new SupplierResponseDTO(
+                        s.getId(),
+                        s.getSupplierName(),
+                        s.getSupplierEmail(),
+                        s.getSupplierWhatsappNumber(),
+                        s.getEmployerName(),
+                        s.getEmployerCnpj(),
+                        s.getCompany().getCompanyCnpj(),
+                        s.getCreatedAt()
+                );
+                when(supplierMapper.toDto(s)).thenReturn(dto);
+            }
+        }
+
+        private ArgumentCaptor<Pageable> pageableArgumentCaptor() {
+            return ArgumentCaptor.forClass(Pageable.class);
+        }
+
+        @Test
+        @DisplayName("no filter + no excludedIds -> should call findByCompany_CompanyCnpj with safePageable and return mapped page")
+        void noFilter_noExcludedIds_callsFindByCompanyCnpj() {
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompany_CompanyCnpj(eq(CNPJ), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, null, null, null);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpj(eq(CNPJ), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("no filter + excludedIds -> should call findByCompanyCnpjExcludingIds with safePageable")
+        void noFilter_withExcludedIds_callsFindByCompanyCnpjExcludingIds() {
+            List<Long> excludedIds = List.of(1L, 2L);
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompanyCnpjExcludingIds(eq(CNPJ), eq(excludedIds), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, null, null, excludedIds);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompanyCnpjExcludingIds(eq(CNPJ), eq(excludedIds), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("filter employerCnpj + excludedIds -> should call findByCompanyCnpjAndEmployerCnpjExcludingIds with safePageable")
+        void filterEmployerCnpj_withExcludedIds_callsFindByCompanyCnpjAndEmployerCnpjExcludingIds() {
+            String field = "employerCnpj";
+            String value = "123";
+
+            List<Long> excludedIds = List.of(1L, 2L);
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompanyCnpjAndEmployerCnpjExcludingIds(eq(CNPJ), eq(value), eq(excludedIds), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, excludedIds);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompanyCnpjAndEmployerCnpjExcludingIds(eq(CNPJ), eq(value), eq(excludedIds), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("filter employerCnpj + no excludedIds -> should call findByCompany_CompanyCnpjAndEmployerCnpjContainsIgnoreCase with safePageable")
+        void filterEmployerCnpj_noExcludedIds_callsFindByCompany_CompanyCnpjAndEmployerCnpjContainsIgnoreCase() {
+            String field = "employerCnpj";
+            String value = "123";
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompany_CompanyCnpjAndEmployerCnpjContainsIgnoreCase(eq(CNPJ), eq(value), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, null);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpjAndEmployerCnpjContainsIgnoreCase(eq(CNPJ), eq(value), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("filter employerName + excludedIds -> should call findByCompanyCnpjAndEmployerNameExcludingIds with safePageable")
+        void filterEmployerName_withExcludedIds_callsFindByCompanyCnpjAndEmployerNameExcludingIds() {
+            String field = "employerName";
+            String value = "ltda";
+
+            List<Long> excludedIds = List.of(1L, 2L);
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompanyCnpjAndEmployerNameExcludingIds(eq(CNPJ), eq(value), eq(excludedIds), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, excludedIds);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompanyCnpjAndEmployerNameExcludingIds(eq(CNPJ), eq(value), eq(excludedIds), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("filter employerName + no excludedIds -> should call findByCompany_CompanyCnpjAndEmployerNameContainingIgnoreCase with safePageable")
+        void filterEmployerName_noExcludedIds_callsFindByCompany_CompanyCnpjAndEmployerNameContainingIgnoreCase() {
+            String field = "employerName";
+            String value = "ltda";
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompany_CompanyCnpjAndEmployerNameContainingIgnoreCase(eq(CNPJ), eq(value), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, null);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpjAndEmployerNameContainingIgnoreCase(eq(CNPJ), eq(value), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("filter supplierWhatsappNumber + excludedIds -> should call findByCompanyCnpjAndWhatsappExcludingIds with safePageable")
+        void filterSupplierWhatsappNumber_withExcludedIds_callsFindByCompanyCnpjAndWhatsappExcludingIds() {
+            String field = "supplierWhatsappNumber";
+            String value = "123";
+
+            List<Long> excludedIds = List.of(1L, 2L);
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompanyCnpjAndWhatsappExcludingIds(eq(CNPJ), eq(value), eq(excludedIds), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, excludedIds);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompanyCnpjAndWhatsappExcludingIds(eq(CNPJ), eq(value), eq(excludedIds), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("filter supplierWhatsappNumber + no excludedIds -> should call findByCompany_CompanyCnpjAndSupplierWhatsappNumberContainingIgnoreCase with safePageable")
+        void filterSupplierWhatsappNumber_noExcludedIds_callsFindByCompany_CompanyCnpjAndSupplierWhatsappNumberContainingIgnoreCase() {
+            String field = "supplierWhatsappNumber";
+            String value = "123";
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumberContainingIgnoreCase(eq(CNPJ), eq(value), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, null);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpjAndSupplierWhatsappNumberContainingIgnoreCase(eq(CNPJ), eq(value), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("filter supplierName + excludedIds -> should call findByCompanyCnpjAndSupplierNameExcludingIds with safePageable")
+        void filterSupplierName_withExcludedIds_callsFindByCompanyCnpjAndSupplierNameExcludingIds() {
+            String field = "supplierName";
+            String value = "123";
+
+            List<Long> excludedIds = List.of(1L, 2L);
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompanyCnpjAndSupplierNameExcludingIds(eq(CNPJ), eq(value), eq(excludedIds), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, excludedIds);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompanyCnpjAndSupplierNameExcludingIds(eq(CNPJ), eq(value), eq(excludedIds), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("filter supplierName + no excludedIds -> should call findByCompany_CompanyCnpjAndSupplierNameContainingIgnoreCase with safePageable")
+        void filterSupplierName_noExcludedIds_callsFindByCompany_CompanyCnpjAndSupplierNameContainingIgnoreCase() {
+            String field = "supplierName";
+            String value = "123";
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompany_CompanyCnpjAndSupplierNameContainingIgnoreCase(eq(CNPJ), eq(value), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, null);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpjAndSupplierNameContainingIgnoreCase(eq(CNPJ), eq(value), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("filter supplierEmail + excludedIds -> should call findByCompanyCnpjAndEmailExcludingIds with safePageable")
+        void filterSupplierEmail_withExcludedIds_callsFindByCompanyCnpjAndEmailExcludingIds() {
+            String field = "supplierEmail";
+            String value = "123";
+
+            List<Long> excludedIds = List.of(1L, 2L);
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompanyCnpjAndEmailExcludingIds(eq(CNPJ), eq(value), eq(excludedIds), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, excludedIds);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompanyCnpjAndEmailExcludingIds(eq(CNPJ), eq(value), eq(excludedIds), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("filter supplierEmail + no excludedIds -> should call findByCompany_CompanyCnpjAndSupplierEmailContainingIgnoreCase with safePageable")
+        void filterSupplierEmail_noExcludedIds_callsFindByCompany_CompanyCnpjAndSupplierEmailContainingIgnoreCase() {
+            String field = "supplierEmail";
+            String value = "123";
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompany_CompanyCnpjAndSupplierEmailContainingIgnoreCase(eq(CNPJ), eq(value), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, null);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpjAndSupplierEmailContainingIgnoreCase(eq(CNPJ), eq(value), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("blank value should be treated as no filter")
+        void blankValue_treatedAsNoFilter() {
+            String field = "employerName";
+            String value = "  ";
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompany_CompanyCnpj(eq(CNPJ), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, null);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpj(eq(CNPJ), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("null value should be treated as no filter")
+        void nullValue_treatedAsNoFilter() {
+            String field = "employerName";
+            String value = null;
+
+            Page<Supplier> repoPage = supplierPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(supplierRepository.findByCompany_CompanyCnpj(eq(CNPJ), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<SupplierResponseDTO>> result = supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, null);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(0);
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(supplierRepository, times(1)).findByCompany_CompanyCnpj(eq(CNPJ), any(Pageable.class));
+            verify(supplierMapper, times(2)).toDto(any(Supplier.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(supplierRepository, supplierMapper);
+        }
+
+        @Test
+        @DisplayName("invalid field -> should throw ResourceNotFoundException")
+        void invalidField_throwsResourceNotFoundException() {
+            String field = "employerNamee";
+            String value = "ltda";
+
+            assertThatThrownBy(() -> supplierService.getSuppliersByCompanyCnpj(CNPJ, pageable, field, value, null))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Invalid field");
+
+            verifyNoInteractions(companyRepository, supplierMapper, supplierRepository);
         }
     }
 

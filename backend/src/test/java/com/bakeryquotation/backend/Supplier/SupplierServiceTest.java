@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -75,12 +74,12 @@ class SupplierServiceTest {
             // assertThat(result.getBody()).isSameAs(supplierResponseDTO);
 
             assertThat(result.getBody().getSupplierId()).isEqualTo(SUPPLIER_ID);
-            assertThat(result.getBody().getSupplierName()).isEqualTo(supplier.getSupplierName());
-            assertThat(result.getBody().getSupplierEmail()).isEqualTo(supplier.getSupplierEmail());
-            assertThat(result.getBody().getSupplierWhatsappNumber()).isEqualTo(supplier.getSupplierWhatsappNumber());
-            assertThat(result.getBody().getEmployerName()).isEqualTo(supplier.getEmployerName());
-            assertThat(result.getBody().getEmployerCnpj()).isEqualTo(supplier.getEmployerCnpj());
-            assertThat(result.getBody().getCompanyCnpj()).isEqualTo(supplier.getCompany().getCompanyCnpj());
+            assertThat(result.getBody().getSupplierName()).isEqualTo(supplierResponseDTO.getSupplierName());
+            assertThat(result.getBody().getSupplierEmail()).isEqualTo(supplierResponseDTO.getSupplierEmail());
+            assertThat(result.getBody().getSupplierWhatsappNumber()).isEqualTo(supplierResponseDTO.getSupplierWhatsappNumber());
+            assertThat(result.getBody().getEmployerName()).isEqualTo(supplierResponseDTO.getEmployerName());
+            assertThat(result.getBody().getEmployerCnpj()).isEqualTo(supplierResponseDTO.getEmployerCnpj());
+            assertThat(result.getBody().getCompanyCnpj()).isEqualTo(supplierResponseDTO.getCompanyCnpj());
             assertThat(result.getBody().getCreatedAt()).isNotNull();
 
             verify(supplierRepository, times(1)).findById(SUPPLIER_ID);
@@ -102,8 +101,7 @@ class SupplierServiceTest {
                             .hasMessage("Supplier with id " + missingId + " does not exists");
 
             verify(supplierRepository, times(1)).findById(missingId);
-            verifyNoInteractions(supplierMapper);
-            verifyNoInteractions(companyRepository);
+            verifyNoInteractions(supplierMapper, companyRepository);
             verifyNoMoreInteractions(supplierRepository);
         }
     }
@@ -152,8 +150,7 @@ class SupplierServiceTest {
                     .isEmpty();
 
             verify(supplierRepository, times(1)).findAll();
-            verifyNoInteractions(supplierMapper);
-            verifyNoInteractions(companyRepository);
+            verifyNoInteractions(supplierMapper, companyRepository);
             verifyNoMoreInteractions(supplierRepository);
         }
     }
@@ -906,8 +903,7 @@ class SupplierServiceTest {
 
             verify(supplierRepository, times(1)).findById(missingId);
             verify(supplierRepository, never()).delete(supplier);
-            verifyNoInteractions(supplierMapper);
-            verifyNoInteractions(companyRepository);
+            verifyNoInteractions(supplierMapper, companyRepository);
             verifyNoMoreInteractions(supplierRepository);
         }
     }

@@ -167,11 +167,12 @@ public class ParticipationService {
         List<Participation> participations = participationRepository.findAll();
         List<ParticipationResponseDTO> participationResponseDTOS = new ArrayList<>();
 
-        participations.forEach(participation -> {
-            participationResponseDTOS.add(participationMapper.toDto(participation));
-        });
-
-        participationRepository.deleteAll();
+        if(!participations.isEmpty()) {
+            participations.forEach(participation -> {
+                participationResponseDTOS.add(participationMapper.toDto(participation));
+            });
+            participationRepository.deleteAll();
+        }
         return ResponseEntity.status(HttpStatus.OK).body(participationResponseDTOS);
     }
 

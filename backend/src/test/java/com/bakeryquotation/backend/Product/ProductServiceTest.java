@@ -449,6 +449,54 @@ public class ProductServiceTest {
     }
 
     @Nested
+    class CreateProduct {
+
+        @Test
+        @DisplayName("should create a product and return 201 created")
+        void shouldReturnCreatedWhenProductCreatedSuccessfully() {
+            String companyCnpj = company.getCompanyCnpj();
+            when(companyRepository.findById(companyCnpj)).thenReturn(Optional.of(company));
+
+            when(productMapper.toEntity(productRequestDTO)).thenReturn(product);
+            when(productMapper.toDto(product)).thenReturn(productResponseDTO);
+            when(productRepository.save(product)).thenReturn(product);
+
+            ResponseEntity<ProductResponseDTO> result = productService.createProduct(productRequestDTO);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(result.getBody()).isNotNull();
+            // assertThat(result.getBody()).isSameAs(productResponseDTO);
+
+            assertThat(result.getBody().getProductName()).isEqualTo(productResponseDTO.getProductName());
+            assertThat(result.getBody().getProductBarCodeNumber()).isEqualTo(productResponseDTO.getProductBarCodeNumber());
+            assertThat(result.getBody().getUnitOfMeasure()).isEqualTo(productResponseDTO.getUnitOfMeasure());
+            assertThat(result.getBody().getCompanyCnpj()).isEqualTo(productResponseDTO.getCompanyCnpj());
+
+            verify(companyRepository, times(1)).findById(companyCnpj);
+            verify(productMapper, times(1)).toEntity(productRequestDTO);
+            verify(productRepository, times(1)).save(product);
+            verify(productMapper, times(1)).toDto(product);
+            verifyNoMoreInteractions(productRepository, productMapper, companyRepository);
+        }
+
+        @Test
+        @DisplayName("should throw ResourceNotFoundException when company doesn't exists at CreateProduct")
+        void shouldThrowResourceNotFoundExceptionWhenCompanyDoesntExistsAtCreateProduct() {
+            String companyCnpj = company.getCompanyCnpj();
+            when(companyRepository.findById(companyCnpj)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> productService.createProduct(productRequestDTO))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Company with CNPJ " + companyCnpj + " does not exists");
+
+            verify(companyRepository, times(1)).findById(companyCnpj);
+            verifyNoInteractions(productRepository, productMapper);
+            verifyNoMoreInteractions(companyRepository);
+        }
+    }
+
+    @Nested
     class UpdateProductById {
 
         private Long id;

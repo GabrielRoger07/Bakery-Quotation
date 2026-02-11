@@ -686,8 +686,8 @@ class SupplierServiceTest {
         }
 
         @Test
-        @DisplayName("should throw ResourceNotFoundException when company doesn't exists")
-        void shouldThrowResourceNotFoundExceptionWhenCompanyDoesntExists() {
+        @DisplayName("should throw ResourceNotFoundException when company doesn't exists at CreateSupplier")
+        void shouldThrowResourceNotFoundExceptionWhenCompanyDoesntExistsAtCreateSupplier() {
             String companyCnpj = company.getCompanyCnpj();
             when(companyRepository.findById(companyCnpj)).thenReturn(Optional.empty());
 

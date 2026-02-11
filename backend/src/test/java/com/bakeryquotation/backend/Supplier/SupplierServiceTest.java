@@ -573,8 +573,8 @@ class SupplierServiceTest {
         }
 
         @Test
-        @DisplayName("blank value should be treated as no filter")
-        void blankValue_treatedAsNoFilter() {
+        @DisplayName("blank value should be treated as no filter at GetSuppliersByCompanyCnpj")
+        void blankValue_treatedAsNoFilterAtGetSuppliersByCompanyCnpj() {
             String field = "employerName";
             String value = "  ";
 
@@ -603,8 +603,8 @@ class SupplierServiceTest {
         }
 
         @Test
-        @DisplayName("null value should be treated as no filter")
-        void nullValue_treatedAsNoFilter() {
+        @DisplayName("null value should be treated as no filter at GetSuppliersByCompanyCnpj")
+        void nullValue_treatedAsNoFilterAtGetSuppliersByCompanyCnpj() {
             String field = "employerName";
             String value = null;
 
@@ -633,8 +633,8 @@ class SupplierServiceTest {
         }
 
         @Test
-        @DisplayName("invalid field -> should throw ResourceNotFoundException")
-        void invalidField_throwsResourceNotFoundException() {
+        @DisplayName("invalid field -> should throw ResourceNotFoundException at GetSuppliersByCompanyCnpj")
+        void invalidField_throwsResourceNotFoundExceptionAtGetSuppliersByCompanyCnpj() {
             String field = "employerNamee";
             String value = "ltda";
 
@@ -719,7 +719,7 @@ class SupplierServiceTest {
         }
 
         @Test
-        @DisplayName("should update supplier supplier and return 201 when supplier exists and values are valids")
+        @DisplayName("should update supplier and return 201 when supplier exists and values are valids")
         void shouldUpdateSupplierSuccessfullyAndReturnCreated() {
             when(supplierRepository.findById(id)).thenReturn(Optional.of(supplier));
             when(supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, email)).thenReturn(Optional.empty());
@@ -806,7 +806,7 @@ class SupplierServiceTest {
 
         @Test
         @DisplayName("should throw ImmutableResourceException when companyCnpj is changed")
-        void shouldThrowWhenCompanyCnpjChanged() {
+        void shouldThrowWhenCompanyCnpjChangedAtUpdateSupplierById() {
             when(supplierRepository.findById(id)).thenReturn(Optional.of(supplier));
             SupplierRequestDTO otherSupplierRequestDTO = new SupplierRequestDTO("Supplier A", "supplier@email.com", "11988888888", "Employer LTDA", "43210987654321", "00000000000000");
 

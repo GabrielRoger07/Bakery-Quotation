@@ -91,10 +91,12 @@ public class QuotationService {
         List<Quotation> quotations = quotationRepository.findAll();
         List<QuotationResponseDTO> quotationResponseDTOS = new ArrayList<>();
 
-        quotations.forEach(quotation -> {
-            quotationResponseDTOS.add(quotationMapper.toDto(quotation));
-        });
-        quotationRepository.deleteAll();
+        if(!quotations.isEmpty()) {
+            quotations.forEach(quotation -> {
+                quotationResponseDTOS.add(quotationMapper.toDto(quotation));
+            });
+            quotationRepository.deleteAll();
+        }
         return ResponseEntity.status(HttpStatus.OK).body(quotationResponseDTOS);
     }
 }

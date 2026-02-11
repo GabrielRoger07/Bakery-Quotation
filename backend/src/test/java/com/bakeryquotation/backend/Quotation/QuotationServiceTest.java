@@ -2,10 +2,6 @@ package com.bakeryquotation.backend.Quotation;
 
 import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Company.CompanyRepository;
-import com.bakeryquotation.backend.Product.DTO.ProductRequestDTO;
-import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
-import com.bakeryquotation.backend.Product.Product;
-import com.bakeryquotation.backend.Product.UnitOfMeasure;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationRequestDTO;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationResponseDTO;
 import com.bakeryquotation.backend.Quotation.mapper.QuotationMapper;
@@ -153,6 +149,105 @@ public class QuotationServiceTest {
 
             verify(quotationRepository, times(1)).findAll();
             verifyNoInteractions(quotationMapper, companyRepository);
+            verifyNoMoreInteractions(quotationRepository);
+        }
+    }
+
+    @Nested
+    class DeleteQuotationById {
+
+        @Test
+        @DisplayName("should return 200 OK with QuotationResponseDTO and exclude quotation when quotation exists")
+        void shouldReturnOkWhenDeleteQuotationSuccessfully() {
+            when(quotationRepository.findById(QUOTATION_ID)).thenReturn(Optional.of(quotation));
+            when(quotationMapper.toDto(quotation)).thenReturn(quotationResponseDTO);
+
+            ResponseEntity<QuotationResponseDTO> result = quotationService.deleteQuotationById(QUOTATION_ID);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+
+            assertThat(result.getBody().getQuotationId()).isEqualTo(QUOTATION_ID);
+            assertThat(result.getBody().getQuotationStart()).isEqualTo(quotationResponseDTO.getQuotationStart());
+            assertThat(result.getBody().getQuotationEnd()).isEqualTo(quotationResponseDTO.getQuotationEnd());
+            assertThat(result.getBody().getCreatedAt()).isEqualTo(quotationResponseDTO.getCreatedAt());
+            assertThat(result.getBody().getCompanyCnpj()).isEqualTo(quotationResponseDTO.getCompanyCnpj());
+
+            verify(quotationRepository, times(1)).findById(QUOTATION_ID);
+            verify(quotationMapper, times(1)).toDto(quotation);
+            verify(quotationRepository, times(1)).delete(quotation);
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(quotationRepository, quotationMapper);
+        }
+
+        @Test
+        @DisplayName("should throw ResourceNotFoundException and not delete quotation when quotation doesn't exists")
+        void shouldThrowResourceNotFoundExceptionAndNotDeleteQuotationWhenQuotationDoesntExists() {
+            when(quotationRepository.findById(QUOTATION_ID)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> quotationService.getQuotationById(QUOTATION_ID))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Quotation with id " + QUOTATION_ID + " does not exists");
+
+            verify(quotationRepository, times(1)).findById(QUOTATION_ID);
+            verify(quotationRepository, never()).delete(quotation);
+            verifyNoInteractions(quotationMapper, companyRepository);
+            verifyNoMoreInteractions(quotationRepository);
+        }
+    }
+
+    @Nested
+    class DeleteAllQuotations {
+
+        @Test
+        @DisplayName("should return 200 OK with a list of QuotationResponseDTO and delete quotations when it exist")
+        void shouldReturnOkWithListAndDeleteAllQuotationsWhenItExist() {
+            Quotation quotation1 = quotation;
+            LocalDateTime quotationStart2 = LocalDateTime.of(2026, 2, 1, 14, 0, 0);
+            LocalDateTime quotationEnd2 = LocalDateTime.of(2026, 2, 2, 14, 0, 0);
+            LocalDateTime createdAt2 = LocalDateTime.of(2026, 2, 1, 9, 10, 0);
+            Quotation quotation2 = new Quotation(20L, quotationStart2, quotationEnd2, createdAt2, company, null, null);
+            QuotationResponseDTO quotationResponseDTO1 = quotationResponseDTO;
+            QuotationResponseDTO quotationResponseDTO2 = new QuotationResponseDTO(20L, quotationStart2, quotationEnd2, company.getCompanyCnpj(), createdAt2);
+
+            when(quotationRepository.findAll()).thenReturn(List.of(quotation1, quotation2));
+            when(quotationMapper.toDto(quotation1)).thenReturn(quotationResponseDTO1);
+            when(quotationMapper.toDto(quotation2)).thenReturn(quotationResponseDTO2);
+
+            ResponseEntity<List<QuotationResponseDTO>> result = quotationService.deleteAllQuotations();
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody())
+                    .isNotNull()
+                    .hasSize(2)
+                    .containsExactly(quotationResponseDTO1, quotationResponseDTO2);
+
+            verify(quotationRepository, times(1)).findAll();
+            verify(quotationMapper, times(1)).toDto(quotation1);
+            verify(quotationMapper, times(1)).toDto(quotation2);
+            verify(quotationRepository, times(1)).deleteAll();
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(quotationRepository, quotationMapper);
+        }
+
+        @Test
+        @DisplayName("should return 200 OK with an empty list and try to delete quotation when it doesn't exist")
+        void shouldReturnOkWithEmptyListAndTryToDeleteQuotationWhenItDoesntExist() {
+            when(quotationRepository.findAll()).thenReturn(List.of());
+
+            ResponseEntity<List<QuotationResponseDTO>> result = quotationService.deleteAllQuotations();
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody())
+                    .isNotNull()
+                    .hasSize(0)
+                    .isEmpty();
+
+            verify(quotationRepository, times(1)).findAll();
+            verifyNoInteractions(quotationMapper);
+            verify(quotationRepository, never()).deleteAll();
+            verifyNoInteractions(companyRepository);
             verifyNoMoreInteractions(quotationRepository);
         }
     }

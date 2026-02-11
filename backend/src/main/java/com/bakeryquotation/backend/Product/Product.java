@@ -52,9 +52,10 @@ public class Product {
         this.company = company;
     }
 
-    public Product(Long id, String productName, UnitOfMeasure unitOfMeasure, Company company, List<Contain> contains, List<Bid> bids) {
+    public Product(Long id, String productName, String productBarCodeNumber, UnitOfMeasure unitOfMeasure, Company company, List<Contain> contains, List<Bid> bids) {
         this.id = id;
         this.productName = productName;
+        this.productBarCodeNumber = productBarCodeNumber;
         this.unitOfMeasure = unitOfMeasure;
         this.company = company;
         this.contains = contains;

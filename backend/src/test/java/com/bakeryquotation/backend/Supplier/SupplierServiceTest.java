@@ -74,13 +74,13 @@ class SupplierServiceTest {
             assertThat(result.getBody()).isNotNull();
             // assertThat(result.getBody()).isSameAs(supplierResponseDTO);
 
-            assertThat(SUPPLIER_ID).isEqualTo(result.getBody().getSupplierId());
-            assertThat(supplier.getSupplierName()).isEqualTo(result.getBody().getSupplierName());
-            assertThat(supplier.getSupplierEmail()).isEqualTo(result.getBody().getSupplierEmail());
-            assertThat(supplier.getSupplierWhatsappNumber()).isEqualTo(result.getBody().getSupplierWhatsappNumber());
-            assertThat(supplier.getEmployerName()).isEqualTo(result.getBody().getEmployerName());
-            assertThat(supplier.getEmployerCnpj()).isEqualTo(result.getBody().getEmployerCnpj());
-            assertThat(supplier.getCompany().getCompanyCnpj()).isEqualTo(result.getBody().getCompanyCnpj());
+            assertThat(result.getBody().getSupplierId()).isEqualTo(SUPPLIER_ID);
+            assertThat(result.getBody().getSupplierName()).isEqualTo(supplier.getSupplierName());
+            assertThat(result.getBody().getSupplierEmail()).isEqualTo(supplier.getSupplierEmail());
+            assertThat(result.getBody().getSupplierWhatsappNumber()).isEqualTo(supplier.getSupplierWhatsappNumber());
+            assertThat(result.getBody().getEmployerName()).isEqualTo(supplier.getEmployerName());
+            assertThat(result.getBody().getEmployerCnpj()).isEqualTo(supplier.getEmployerCnpj());
+            assertThat(result.getBody().getCompanyCnpj()).isEqualTo(supplier.getCompany().getCompanyCnpj());
             assertThat(result.getBody().getCreatedAt()).isNotNull();
 
             verify(supplierRepository, times(1)).findById(SUPPLIER_ID);

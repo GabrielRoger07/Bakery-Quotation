@@ -116,10 +116,12 @@ public class ProductService {
     public ResponseEntity<List<ProductResponseDTO>> deleteAllProducts(){
         List<Product> products = productRepository.findAll();
         List<ProductResponseDTO> productResponseDTOS = new ArrayList<>();
-        products.forEach(product -> {
-            productResponseDTOS.add(productMapper.toDto(product));
-        });
-        productRepository.deleteAll();
+        if(!products.isEmpty()) {
+            products.forEach(product -> {
+                productResponseDTOS.add(productMapper.toDto(product));
+            });
+            productRepository.deleteAll();
+        }
         return ResponseEntity.status(HttpStatus.OK).body(productResponseDTOS);
     }
 }

@@ -248,6 +248,54 @@ public class QuotationServiceTest {
     }
 
     @Nested
+    class CreateQuotation {
+
+        @Test
+        @DisplayName("should create a quotation and return 201 created")
+        void shouldReturnCreatedWhenQuotationCreatedSuccessfully() {
+            String companyCnpj = company.getCompanyCnpj();
+            when(companyRepository.findById(companyCnpj)).thenReturn(Optional.of(company));
+
+            when(quotationMapper.toEntity(quotationRequestDTO)).thenReturn(quotation);
+            when(quotationRepository.save(quotation)).thenReturn(quotation);
+            when(quotationMapper.toDto(quotation)).thenReturn(quotationResponseDTO);
+
+            ResponseEntity<QuotationResponseDTO> result = quotationService.createQuotation(quotationRequestDTO);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(result.getBody()).isNotNull();
+            // assertThat(result.getBody()).isSameAs(productResponseDTO);
+
+            assertThat(result.getBody().getQuotationStart()).isEqualTo(quotationResponseDTO.getQuotationStart());
+            assertThat(result.getBody().getQuotationEnd()).isEqualTo(quotationResponseDTO.getQuotationEnd());
+            assertThat(result.getBody().getCompanyCnpj()).isEqualTo(quotationResponseDTO.getCompanyCnpj());
+            assertThat(result.getBody().getCreatedAt()).isEqualTo(quotationResponseDTO.getCreatedAt());
+
+            verify(companyRepository, times(1)).findById(companyCnpj);
+            verify(quotationMapper, times(1)).toEntity(quotationRequestDTO);
+            verify(quotationRepository, times(1)).save(quotation);
+            verify(quotationMapper, times(1)).toDto(quotation);
+            verifyNoMoreInteractions(quotationRepository, quotationMapper, companyRepository);
+        }
+
+        @Test
+        @DisplayName("should throw ResourceNotFoundException when company doesn't exists at CreateQuotation")
+        void shouldThrowResourceNotFoundExceptionWhenCompanyDoesntExistsAtCreateQuotation() {
+            String companyCnpj = company.getCompanyCnpj();
+            when(companyRepository.findById(companyCnpj)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> quotationService.createQuotation(quotationRequestDTO))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Company with CNPJ " + companyCnpj + " does not exists");
+
+            verify(companyRepository, times(1)).findById(companyCnpj);
+            verifyNoInteractions(quotationRepository, quotationMapper);
+            verifyNoMoreInteractions(companyRepository);
+        }
+    }
+
+    @Nested
     class DeleteQuotationById {
 
         @Test

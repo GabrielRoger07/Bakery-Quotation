@@ -77,8 +77,8 @@ public class QuotationService {
         quotation.setQuotationStart(quotationRequestDTO.getQuotationStart());
         quotation.setQuotationEnd(quotationRequestDTO.getQuotationEnd());
 
-        QuotationResponseDTO quotationSaved = quotationMapper.toDto(quotationRepository.save(quotation));
-        return ResponseEntity.status(HttpStatus.CREATED).body(quotationSaved);
+        QuotationResponseDTO quotationUpdated = quotationMapper.toDto(quotationRepository.save(quotation));
+        return ResponseEntity.status(HttpStatus.CREATED).body(quotationUpdated);
     }
 
     public ResponseEntity<QuotationResponseDTO> deleteQuotationById(Long id){

@@ -1,6 +1,7 @@
 package com.bakeryquotation.backend.Participation;
 
 import com.bakeryquotation.backend.Company.Company;
+import com.bakeryquotation.backend.Participation.DTO.AccessTokenRequestDTO;
 import com.bakeryquotation.backend.Participation.DTO.ParticipationRequestDTO;
 import com.bakeryquotation.backend.Participation.DTO.ParticipationResponseDTO;
 import com.bakeryquotation.backend.Participation.mapper.ParticipationMapper;
@@ -8,7 +9,9 @@ import com.bakeryquotation.backend.Quotation.Quotation;
 import com.bakeryquotation.backend.Quotation.QuotationRepository;
 import com.bakeryquotation.backend.Supplier.Supplier;
 import com.bakeryquotation.backend.Supplier.SupplierRepository;
+import com.bakeryquotation.backend.exception.InvalidAccessTokenException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
+import com.bakeryquotation.backend.exception.IllegalArgumentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -271,6 +274,114 @@ public class ParticipationServiceTest {
             verify(participationRepository, never()).deleteAll();
             verifyNoInteractions(participationMapper, supplierRepository, quotationRepository);
             verifyNoMoreInteractions(participationRepository);
+        }
+    }
+
+    @Nested
+    class ValidateAccessToken {
+
+        @Test
+        @DisplayName("should return 200 OK when access token matches")
+        void shouldReturnOkWhenTokenMatches() {
+            AccessTokenRequestDTO accessTokenRequestDTO = new AccessTokenRequestDTO("accessToken");
+            when(participationRepository.findById(PARTICIPATION_ID)).thenReturn(Optional.of(participation));
+            when(participationMapper.toDto(participation)).thenReturn(participationResponseDTO);
+
+            ResponseEntity<ParticipationResponseDTO> result = participationService.validateAccessToken(PARTICIPATION_ID, accessTokenRequestDTO);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody()).isEqualTo(participationResponseDTO);
+
+            verify(participationRepository, times(1)).findById(PARTICIPATION_ID);
+            verify(participationMapper, times(1)).toDto(participation);
+            verifyNoInteractions(supplierRepository, quotationRepository);
+            verifyNoMoreInteractions(participationRepository, participationMapper);
+        }
+
+        @Test
+        @DisplayName("should throw ResourceNotFoundException when participations doesn't exist")
+        void shouldThrowResourceNotFoundExceptionWhenParticipationDoesNotExist() {
+            Long missingId = 999L;
+            AccessTokenRequestDTO accessTokenRequestDTO = new AccessTokenRequestDTO("accessToken");
+            when(participationRepository.findById(missingId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> participationService.validateAccessToken(missingId, accessTokenRequestDTO))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Participation with id " + missingId + " does not exists");
+
+            verify(participationRepository, times(1)).findById(missingId);
+            verifyNoInteractions(participationMapper, supplierRepository, quotationRepository);
+            verifyNoMoreInteractions(participationRepository);
+        }
+
+        @Test
+        @DisplayName("should throw ResourceNotFoundException when token doesn't match")
+        void shouldThrowInvalidAccessTokenExceptionWhenTokenDoesNotMatch() {
+            AccessTokenRequestDTO accessTokenRequestDTO = new AccessTokenRequestDTO("accessTokenn");
+            when(participationRepository.findById(PARTICIPATION_ID)).thenReturn(Optional.of(participation));
+
+            assertThatThrownBy(() -> participationService.validateAccessToken(PARTICIPATION_ID, accessTokenRequestDTO))
+                    .isInstanceOf(InvalidAccessTokenException.class)
+                    .hasMessage("Invalid token");
+
+            verify(participationRepository, times(1)).findById(PARTICIPATION_ID);
+            verifyNoInteractions(participationMapper, supplierRepository, quotationRepository);
+            verifyNoMoreInteractions(participationRepository);
+        }
+    }
+
+    @Nested
+    class GenerateDigitToken {
+
+        @Test
+        @DisplayName("valid digits return token with exact length and allowed characters only")
+        void validDigits_returnsTokenWithExpectedFormat() {
+            int digits = 2;
+            String token = ParticipationService.generateDigitToken(digits);
+
+            assertThat(token)
+                    .isNotNull()
+                    .hasSize(digits)
+                    .matches("^[A-Za-z0-9]+$");
+        }
+
+        @Test
+        @DisplayName("different calls with valid digits should produce different tokens")
+        void validDigits_differentCallsGeneratedifferentTokens() {
+            int digits = 8;
+            String s1 = ParticipationService.generateDigitToken(digits);
+            String s2 = ParticipationService.generateDigitToken(digits);
+
+            assertThat(s1).isNotEqualTo(s2);
+        }
+
+        @Test
+        @DisplayName("should throw IllegalArgumentException when digit is null")
+        void shouldThrowIllegalArgumentExceptionWhenDigitIsNull() {
+            assertThatThrownBy(() -> ParticipationService.generateDigitToken(null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Digits cannot be null");
+        }
+
+        @Test
+        @DisplayName("should throw IllegalArgumentException when digit is not positive")
+        void shouldThrowIllegalArgumentExceptionWhenDigitIsNotPositive() {
+            assertThatThrownBy(() -> ParticipationService.generateDigitToken(-1))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Digits must be positive");
+
+            assertThatThrownBy(() -> ParticipationService.generateDigitToken(0))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Digits must be positive");
+        }
+
+        @Test
+        @DisplayName("should throw IllegalArgumentException when digit is bigger than 8")
+        void shouldThrowIllegalArgumentExceptionWhenDigitIsBiggerThanEight() {
+            assertThatThrownBy(() -> ParticipationService.generateDigitToken(9))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Token length too large");
         }
     }
 }

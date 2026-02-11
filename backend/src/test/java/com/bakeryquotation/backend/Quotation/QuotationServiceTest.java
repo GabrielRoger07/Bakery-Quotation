@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -99,6 +100,58 @@ public class QuotationServiceTest {
                     .hasMessage("Quotation with id " + QUOTATION_ID + " does not exists");
 
             verify(quotationRepository, times(1)).findById(QUOTATION_ID);
+            verifyNoInteractions(quotationMapper, companyRepository);
+            verifyNoMoreInteractions(quotationRepository);
+        }
+    }
+
+    @Nested
+    class GetAllQuotations {
+
+        @Test
+        @DisplayName("should return 200 OK with a list of QuotationResponseDTO when quotations exist")
+        void shouldReturnOkWithListWhenQuotationsExist() {
+            Quotation quotation1 = quotation;
+            LocalDateTime quotationStart2 = LocalDateTime.of(2026, 2, 1, 14, 0, 0);
+            LocalDateTime quotationEnd2 = LocalDateTime.of(2026, 2, 2, 14, 0, 0);
+            LocalDateTime createdAt2 = LocalDateTime.of(2026, 2, 1, 9, 10, 0);
+            Quotation quotation2 = new Quotation(20L, quotationStart2, quotationEnd2, createdAt2, company, null, null);
+            QuotationResponseDTO quotationResponseDTO1 = quotationResponseDTO;
+            QuotationResponseDTO quotationResponseDTO2 = new QuotationResponseDTO(20L, quotationStart2, quotationEnd2, company.getCompanyCnpj(), createdAt2);
+
+            when(quotationRepository.findAll()).thenReturn(List.of(quotation1, quotation2));
+            when(quotationMapper.toDto(quotation1)).thenReturn(quotationResponseDTO1);
+            when(quotationMapper.toDto(quotation2)).thenReturn(quotationResponseDTO2);
+
+            ResponseEntity<List<QuotationResponseDTO>> result = quotationService.getAllQuotations();
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody())
+                    .isNotNull()
+                    .hasSize(2)
+                    .containsExactly(quotationResponseDTO1, quotationResponseDTO2);
+
+            verify(quotationRepository, times(1)).findAll();
+            verify(quotationMapper, times(1)).toDto(quotation1);
+            verify(quotationMapper, times(1)).toDto(quotation2);
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(quotationRepository, quotationMapper);
+        }
+
+        @Test
+        @DisplayName("should return 200 OK with an empty list when no quotations exist")
+        void shouldReturnOkWithEmptyListWhenNoQuotationsExist() {
+            when(quotationRepository.findAll()).thenReturn(List.of());
+
+            ResponseEntity<List<QuotationResponseDTO>> result = quotationService.getAllQuotations();
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody())
+                    .isNotNull()
+                    .hasSize(0)
+                    .isEmpty();
+
+            verify(quotationRepository, times(1)).findAll();
             verifyNoInteractions(quotationMapper, companyRepository);
             verifyNoMoreInteractions(quotationRepository);
         }

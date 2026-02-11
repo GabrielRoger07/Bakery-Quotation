@@ -9,6 +9,7 @@ import com.bakeryquotation.backend.Quotation.QuotationRepository;
 import com.bakeryquotation.backend.Supplier.Supplier;
 import com.bakeryquotation.backend.Supplier.SupplierRepository;
 import com.bakeryquotation.backend.exception.DuplicateResourceException;
+import com.bakeryquotation.backend.exception.IllegalArgumentException;
 import com.bakeryquotation.backend.exception.InvalidAccessTokenException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -186,10 +187,18 @@ public class ParticipationService {
     }
 
     public static String generateDigitToken(Integer digits) {
+        if(digits == null) throw new IllegalArgumentException("Digits cannot be null");
+        if(digits < 1) throw new IllegalArgumentException("Digits must be positive");
+        if(digits > 8) throw new IllegalArgumentException("Token length too large");
+
+        final String availableChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
         SecureRandom random = new SecureRandom();
-        int pot1 = (int) Math.pow(10, (digits - 1));
-        int pot2 = (int) Math.pow(90, (digits - 1));
-        int num = pot1 + random.nextInt(pot2); // entre 10000000 e 99999999
-        return String.valueOf(num);
+        StringBuilder token = new StringBuilder(digits);
+
+        for (int i = 0; i < digits; i++) {
+            token.append(availableChars.charAt(random.nextInt(availableChars.length())));
+        }
+
+        return token.toString();
     }
 }

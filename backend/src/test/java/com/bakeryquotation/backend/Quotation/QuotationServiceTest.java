@@ -5,6 +5,7 @@ import com.bakeryquotation.backend.Company.CompanyRepository;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationRequestDTO;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationResponseDTO;
 import com.bakeryquotation.backend.Quotation.mapper.QuotationMapper;
+import com.bakeryquotation.backend.exception.ImmutableResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -292,6 +293,79 @@ public class QuotationServiceTest {
             verify(companyRepository, times(1)).findById(companyCnpj);
             verifyNoInteractions(quotationRepository, quotationMapper);
             verifyNoMoreInteractions(companyRepository);
+        }
+    }
+
+    @Nested
+    class UpdateQuotationById {
+
+        private Long id;
+        private String companyCnpj;
+
+        @BeforeEach
+        void setUpUpdateProductById() {
+            id = quotation.getId();
+            companyCnpj = quotationRequestDTO.getCompanyCnpj();
+        }
+
+
+        @Test
+        @DisplayName("should update quotation and return 201 when quotation exists and values are valids")
+        void shouldUpdateQuotationSuccessfullyAndReturnCreated() {
+            when(quotationRepository.findById(id)).thenReturn(Optional.of(quotation));
+
+            ArgumentCaptor<Quotation> captor = ArgumentCaptor.forClass(Quotation.class);
+
+            when(quotationRepository.save(any(Quotation.class))).thenAnswer(inv -> inv.getArgument(0));
+            when(quotationMapper.toDto(any(Quotation.class))).thenReturn(quotationResponseDTO);
+
+            ResponseEntity<QuotationResponseDTO> result = quotationService.updateQuotationById(quotationRequestDTO, id);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(result.getBody()).isNotNull();
+
+            verify(quotationRepository).save(captor.capture());
+            Quotation saved = captor.getValue();
+
+            assertThat(saved.getQuotationStart()).isEqualTo(quotationRequestDTO.getQuotationStart());
+            assertThat(saved.getQuotationEnd()).isEqualTo(quotationRequestDTO.getQuotationEnd());
+            assertThat(saved.getCompany().getCompanyCnpj()).isEqualTo(companyCnpj);
+
+            verify(quotationRepository, times(1)).findById(id);
+            verify(quotationMapper, times(1)).toDto(any(Quotation.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(quotationRepository, quotationMapper);
+        }
+
+        @Test
+        @DisplayName("should throw ResourceNotFoundException when quotation id doesn't exist")
+        void shouldThrowWhenQuotationIdDoesntExist() {
+            when(quotationRepository.findById(id)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> quotationService.updateQuotationById(quotationRequestDTO, id))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessage("Quotation with id " + id + " does not exists");
+
+            verify(quotationRepository, times(1)).findById(id);
+            verifyNoInteractions(companyRepository, quotationMapper);
+            verifyNoMoreInteractions(quotationRepository);
+        }
+
+        @Test
+        @DisplayName("should throw ImmutableResourceException when companyCnpj is changed at UpdateQuotationById")
+        void shouldThrowWhenCompanyCnpjChangedAtUpdateQuotationById() {
+            when(quotationRepository.findById(id)).thenReturn(Optional.of(quotation));
+            LocalDateTime quotationStart = LocalDateTime.of(2026, 1, 1, 14, 0, 0);
+            LocalDateTime quotationEnd = LocalDateTime.of(2026, 1, 2, 14, 0, 0);
+            QuotationRequestDTO otherQuotationRequestDTO = new QuotationRequestDTO(quotationStart, quotationEnd, "00000000000000");
+
+            assertThatThrownBy(() -> quotationService.updateQuotationById(otherQuotationRequestDTO, id))
+                    .isInstanceOf(ImmutableResourceException.class)
+                    .hasMessage("CNPJ cannot be changed");
+
+            verify(quotationRepository, times(1)).findById(id);
+            verifyNoInteractions(companyRepository, quotationMapper);
+            verifyNoMoreInteractions(quotationRepository);
         }
     }
 

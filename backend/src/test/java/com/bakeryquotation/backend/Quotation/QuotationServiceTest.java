@@ -11,11 +11,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -149,6 +152,97 @@ public class QuotationServiceTest {
 
             verify(quotationRepository, times(1)).findAll();
             verifyNoInteractions(quotationMapper, companyRepository);
+            verifyNoMoreInteractions(quotationRepository);
+        }
+    }
+
+    @Nested
+    class GetQuotationsByCompanyCnpj {
+
+        private static final String CNPJ = "12345678901234";
+        private Pageable pageable;
+
+        @BeforeEach
+        void setUpGetQuotationsByCompanyCnpj() {
+            ReflectionTestUtils.setField(quotationService, "pageSize", 5);
+            pageable = PageRequest.of(0, 999, Sort.by("createdAt").descending());
+        }
+
+        private Page<Quotation> quotationPage() {
+            Quotation q1 = quotation;
+            Quotation q2 = new Quotation(
+                    20L,
+                    LocalDateTime.of(2026, 2, 1, 14, 0, 0),
+                    LocalDateTime.of(2026, 2, 2, 14, 0, 0),
+                    LocalDateTime.of(2026, 2, 1, 9, 10, 0),
+                    company,
+                    null,
+                    null
+            );
+            return new PageImpl<>(List.of(q1, q2), PageRequest.of(0, 5, pageable.getSort()), 2);
+        }
+
+        private void stubMapperFor(Page<Quotation> quotations) {
+            for (Quotation q : quotations.getContent()) {
+                QuotationResponseDTO dto = new QuotationResponseDTO(
+                        q.getId(),
+                        q.getQuotationStart(),
+                        q.getQuotationEnd(),
+                        q.getCompany().getCompanyCnpj(),
+                        q.getCreatedAt()
+                );
+                when(quotationMapper.toDto(q)).thenReturn(dto);
+            }
+        }
+
+        private ArgumentCaptor<Pageable> pageableArgumentCaptor() {
+            return ArgumentCaptor.forClass(Pageable.class);
+        }
+
+        @Test
+        @DisplayName("should call findByCompany_CompanyCnpj with safePageable and return mapped page")
+        void shouldCallFindByCompany_CompanyCnpjWithSafePageable_andReturnMappedPage() {
+            Page<Quotation> repoPage = quotationPage();
+            stubMapperFor(repoPage);
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(quotationRepository.findByCompany_CompanyCnpj(eq(CNPJ), captor.capture())).thenReturn(repoPage);
+
+            ResponseEntity<Page<QuotationResponseDTO>> result = quotationService.getQuotationsByCompanyCnpj(CNPJ, pageable);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(2);
+            assertThat(result.getBody().getContent()).hasSize(2);
+
+            Pageable used = captor.getValue();
+            assertThat(used.getPageNumber()).isEqualTo(pageable.getPageNumber());
+            assertThat(used.getPageSize()).isEqualTo(5);
+            assertThat(used.getSort()).isEqualTo(pageable.getSort());
+
+            verify(quotationRepository, times(1)).findByCompany_CompanyCnpj(eq(CNPJ), any(Pageable.class));
+            verify(quotationMapper, times(2)).toDto(any(Quotation.class));
+            verifyNoInteractions(companyRepository);
+            verifyNoMoreInteractions(quotationRepository, quotationMapper);
+        }
+
+        @Test
+        @DisplayName("should return empty page when repository returns empty page")
+        void shouldReturnEmptyPageWhenNoQuotations() {
+            Page<Quotation> emptyPage = Page.empty(PageRequest.of(0, 5, pageable.getSort()));
+
+            ArgumentCaptor<Pageable> captor = pageableArgumentCaptor();
+            when(quotationRepository.findByCompany_CompanyCnpj(eq(CNPJ), captor.capture())).thenReturn(emptyPage);
+
+            ResponseEntity<Page<QuotationResponseDTO>> result = quotationService.getQuotationsByCompanyCnpj(CNPJ, pageable);
+
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(result.getBody()).isNotNull();
+            assertThat(result.getBody().getTotalElements()).isEqualTo(0);
+            assertThat(result.getBody().getContent()).isEmpty();
+
+            verify(quotationRepository, times(1)).findByCompany_CompanyCnpj(eq(CNPJ), any(Pageable.class));
+            verifyNoInteractions(companyRepository, quotationMapper);
             verifyNoMoreInteractions(quotationRepository);
         }
     }

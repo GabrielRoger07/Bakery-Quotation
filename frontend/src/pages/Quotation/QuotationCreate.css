@@ -12,11 +12,11 @@
 .results-card,
 .add-config-card,
 .selected-products-card {
-    background: #ffffff;
+    background: var(--color-surface-0);
     border-radius: 8px;
     padding: 0rem 1.25rem 1rem 1.25rem;
     margin-bottom: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-xs);
 }
 
 .search-row {
@@ -49,10 +49,10 @@
 }
 
 .products-results-list {
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     overflow: hidden;
-    background: #fff;
+    background: var(--color-surface-0);
     margin-bottom: 0.5rem;
 }
 
@@ -62,9 +62,9 @@
     align-items: center;
     padding: 0.55rem 0.75rem;
     cursor: pointer;
-    background: #fff;
+    background: var(--color-surface-0);
     transition: background 0.15s ease;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-border-lighter);
 }
 
 .product-result-item:last-child {
@@ -72,11 +72,11 @@
 }
 
 .product-result-item:hover {
-    background: #f3f4f6;
+    background: var(--color-surface-2);
 }
 
 .product-result-item.selected {
-    background: #e0edff;
+    background: var(--color-highlight);
 }
 
 .product-result-main {
@@ -86,23 +86,23 @@
 
 .product-result-main strong {
     font-size: 0.95rem;
-    color: #111827;
+    color: var(--color-text-strong);
 }
 
 .product-result-main span {
     font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--color-text-muted);
 }
 
 .secondary-line {
     font-size: 0.85rem;
-    color: #4b5563;
+    color: var(--color-text-subtle);
 }
 
 .supplier-meta {
     margin-top: 0.15rem;
     font-size: 0.75rem;
-    color: #6b7280;
+    color: var(--color-text-muted);
     display: flex;
     flex-wrap: wrap;
     gap: 0.35rem;
@@ -113,8 +113,8 @@
 }
 
 .selected-product-summary {
-    background: #f0f6ff;
-    border: 1px solid #dbeafe;
+    background: var(--color-highlight-lighter);
+    border: 1px solid var(--color-highlight-border);
     border-radius: 6px;
     padding: 0.5rem 0.75rem;
     margin-bottom: 0.75rem;
@@ -124,13 +124,13 @@
 .selected-product-summary .summary-label {
     display: block;
     font-size: 0.75rem;
-    color: #2563eb;
+    color: var(--color-accent);
     margin-bottom: 0.1rem;
 }
 
 .selected-indicator {
     font-size: 0.85rem;
-    color: #2563eb;
+    color: var(--color-accent);
     font-weight: 600;
 }
 
@@ -161,7 +161,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.5rem 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-border-lighter);
 }
 
 .selected-product-item:last-child {
@@ -175,12 +175,12 @@
 
 .selected-product-item span {
     font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--color-text-muted);
 }
 
 .empty-state {
     font-size: 0.9rem;
-    color: #6b7280;
+    color: var(--color-text-muted);
     font-style: italic;
     margin-top: 0.25rem;
 }

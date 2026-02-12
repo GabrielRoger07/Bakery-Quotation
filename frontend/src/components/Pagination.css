@@ -21,25 +21,25 @@
     padding: 0.35rem 0.7rem;
     font-size: 0.85rem;
     border-radius: 0.6rem;
-    border: 1px solid #d0d7de;
-    background: white;
+    border: 1px solid var(--color-border-muted);
+    background: var(--color-surface-0);
     cursor: pointer;
     transition: 0.2s ease;
 }
 
 .page-button:hover {
-    background: #f3f4f6;
+    background: var(--color-surface-2);
 }
 
 .page-button.active {
-    background: #2563eb;
-    color: white;
-    border-color: #2563eb;
+    background: var(--color-accent);
+    color: var(--color-text-inverse);
+    border-color: var(--color-accent);
     font-weight: 600;
 }
 
 .ellipsis {
     padding: 0 0.3rem;
     font-size: 0.9rem;
-    color: #6b7280;
+    color: var(--color-text-muted);
 }

@@ -2,24 +2,24 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f3f2ef;
+    background-color: var(--color-surface-app);
     min-height: 100vh;
     padding: 2rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-family-sans);
 }
 
 .supplier-list-container h1 {
-    color: #0a66c2;
+    color: var(--color-brand);
     margin-bottom: 1.5rem;
     font-size: 1.8rem;
     font-weight: 600;
 }
 
 .table-container {
-    background-color: #ffffff;
+    background-color: var(--color-surface-0);
     padding: 1.5rem;
     border-radius: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-sm);
     width: 100%;
     max-width: 900px;
 }
@@ -33,7 +33,7 @@
 
 .table-header h1 {
     font-size: 1.5rem;
-    color: #0a66c2;
+    color: var(--color-brand);
     margin: 0;
 }
 
@@ -48,19 +48,19 @@
 }
 
 .custom-table th, .custom-table td {
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-border);
     padding: 0.75rem 1rem;
     text-align: left;
 }
 
 .custom-table th {
-    background-color: #f3f4f6;
+    background-color: var(--color-surface-2);
     font-weight: 600;
-    color: #374151;
+    color: var(--color-text-secondary);
 }
 
 .custom-table tr:nth-child(even){
-    background-color: #fafafa;
+    background-color: var(--color-surface-3);
 }
 
 .actions {
@@ -70,14 +70,14 @@
 
 .empty-message {
     text-align: center;
-    color: #6b7280;
+    color: var(--color-text-muted);
     font-size: 0.95rem;
     margin-top: 1rem;
 }
 
 .product-list-container p {
     margin: 0.5rem 0;
-    color: #374151;
+    color: var(--color-text-secondary);
 }
 
 .confirm-container {
@@ -89,7 +89,7 @@
 
 .confirm-message {
     font-size: 1rem;
-    color: #333;
+    color: var(--color-text-default);
     text-align: center;
 }
 

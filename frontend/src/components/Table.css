@@ -3,10 +3,10 @@
     max-width: 1000px;
     margin: 0 auto 2rem auto;
     padding: 1.5rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #ffffff;
+    font-family: var(--font-family-sans);
+    background-color: var(--color-surface-0);
     border-radius: 0.75rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
     transition: box-shadow 0.2s ease;
 }
 
@@ -15,7 +15,7 @@
 }
 
 .table-container:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-table-hover);
 }
 
 .table-header {
@@ -27,7 +27,7 @@
 
 .table-header h1 {
     font-size: 1.4rem;
-    color: #0a66c2;
+    color: var(--color-brand);
     font-weight: 600;
 }
 
@@ -48,8 +48,8 @@
 }
 
 .custom-table th {
-    background-color: #0a66c2;
-    color: white;
+    background-color: var(--color-brand);
+    color: var(--color-text-inverse);
     text-align: left;
     padding: 0.9rem 1rem;
     font-weight: 600;
@@ -58,17 +58,17 @@
 
 .custom-table td {
     padding: 0.9rem 1rem;
-    border-bottom: 1px solid #e5e7eb;
-    color: #374151;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
     font-size: 0.95rem;
 }
 
 .custom-table tr:hover {
-    background-color: #f9fafb;
+    background-color: var(--color-surface-1);
 }
 
 .empty-message {
-    color: #6b7280;
+    color: var(--color-text-muted);
     text-align: center;
     padding: 1.5rem;
     font-style: italic;
@@ -96,7 +96,7 @@
 }
 
 .sortable-column:hover {
-    color: #000000;
+    color: var(--color-text-black);
 }
 
 .sort-indicator {
@@ -108,8 +108,8 @@
 .loading-spinner {
     width: 1rem;
     height: 1rem;
-    border: 0.15rem solid #cccccc;
-    border-top-color: #555555;
+    border: 0.15rem solid var(--color-border-spinner);
+    border-top-color: var(--color-text-neutral-strong);
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
     margin-right: 0.5rem;

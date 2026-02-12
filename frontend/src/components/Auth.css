@@ -3,15 +3,15 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f3f3ef;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-surface-auth);
+    font-family: var(--font-family-sans);
 }
 
 .auth-box {
-    background-color: #ffffff;
+    background-color: var(--color-surface-0);
     padding: 3rem 2rem;
     border-radius: 0.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-md-strong);
     width: 100%;
     max-width: 400px;
     text-align: center;
@@ -20,7 +20,7 @@
 .auth-box h1 {
     font-size: 1.75rem;
     margin-bottom: 1.5rem;
-    color: #0a66c2;
+    color: var(--color-brand);
 }
 
 .auth-box p {
@@ -29,7 +29,7 @@
 }
 
 .auth-box a {
-    color: #0a66c2;
+    color: var(--color-brand);
     text-decoration: none;
     font-weight: 500;
 }
@@ -39,13 +39,13 @@
 }
 
 .success {
-    color: #0a8a0a;
+    color: var(--color-success);
     font-weight: 500;
     margin-bottom: 1rem;
 }
 
 .alert {
-    color: #d93025;
+    color: var(--color-danger);
     font-weight: 500;
     margin-bottom: 1rem;
 }

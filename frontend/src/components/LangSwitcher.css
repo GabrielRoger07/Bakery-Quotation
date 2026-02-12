@@ -20,10 +20,10 @@
     position: absolute;
     top: 2.2rem;
     right: 0;
-    background: white;
-    border: 1px solid #d1d5db;
+    background: var(--color-surface-0);
+    border: 1px solid var(--color-border-strong);
     border-radius: 0.4rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-popover);
     padding: 0.35rem;
     z-index: 9999;
     display: flex;
@@ -40,16 +40,16 @@
     padding: 0.5rem;
     cursor: pointer;
     font-size: 0.9rem;
-    color: #374151;
+    color: var(--color-text-secondary);
     border-radius: 0.3rem;
     transition: background 0.2s;
 }
 
 .lang-menu button:hover {
-    background: #f3f4f6;
+    background: var(--color-surface-2);
 }
 
 .lang-menu button.active {
-    background: #2563eb;
-    color: white;
+    background: var(--color-accent);
+    color: var(--color-text-inverse);
 }

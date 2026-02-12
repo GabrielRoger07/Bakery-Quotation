@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
+import Alert from '../../components/Alert'
 import useFetch from '../../hooks/useFetch'
 import { useTranslation } from 'react-i18next'
 import '../../components/Auth.css'
@@ -49,7 +50,7 @@ const SupplierAccessToken = ({ participationId, onAccessGranted }) => {
                 <h2>{t("enter_access_token")}</h2>
                 <form onSubmit={handleSubmit}>
                     <Input type="text" value={accessToken} onChange={e => setAccessToken(e.target.value)} placeholder={t("access_token")}></Input>
-                    {error && <p style={{ color: "red" }}>{error}</p>}
+                    <Alert message={error} />
                     <Button type="submit" disabled={loading}>{loading ? t("validating_message") : t("access_quotation")}</Button>
                 </form>
             </div>

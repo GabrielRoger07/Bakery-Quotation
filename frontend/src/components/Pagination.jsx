@@ -45,7 +45,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
     return (
         <div className="pagination-container">
-            <Button disabled={currentPage === 0} onClick={() => onPageChange(currentPage - 1)}>← {t("pagination_previous")}</Button>
+            <Button disabled={currentPage === 0} onClick={() => onPageChange(currentPage - 1)}>{"<"} {t("pagination_previous")}</Button>
             <div className="pagination-pages">
                 {pages.map((page, index) => {
                     if(page === "ellipsis-start" || page === "ellipsis-end"){
@@ -59,7 +59,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                     )
                 })}
             </div>
-            <Button disabled={currentPage === totalPages - 1} onClick={() => onPageChange(currentPage + 1)}>{t("pagination_next")} →</Button>
+            <Button disabled={currentPage === totalPages - 1} onClick={() => onPageChange(currentPage + 1)}>{t("pagination_next")} {">"}</Button>
         </div>
     )
 }

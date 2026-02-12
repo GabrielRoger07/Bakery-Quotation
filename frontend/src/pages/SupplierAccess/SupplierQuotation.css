@@ -2,42 +2,44 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem;
+    padding: 1.5rem 1rem 2rem;
     background-color: var(--color-surface-1);
     min-height: 100vh;
     font-family: var(--font-family-sans);
 }
 
 .supplier-quotation-container h2 {
-    color: var(--color-brand);
-    font-size: 1.8rem;
-    margin-bottom: 0.25rem;
+    color: var(--color-text-strong);
+    font-size: var(--font-size-xl);
+    margin: 0;
 }
 
-.supplier-quotation-container p {
-    font-size: 1rem;
+.supplier-quotation-container > p {
+    font-size: var(--font-size-md);
     color: var(--color-text-secondary);
-    margin-bottom: 1.25rem;
+    margin: 0.3rem 0 0.95rem;
 }
 
 .supplier-name {
-    font-size: 0.95rem;
+    font-size: var(--font-size-sm);
     color: var(--color-text-muted);
-    margin-bottom: 0.75rem;
-    font-style: italic;
+    margin-bottom: 0.7rem;
 }
 
 .quotation-info {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
-    background-color: var(--color-border);
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-    font-size: 0.95rem;
+    gap: 1.3rem;
+    background-color: var(--color-surface-0);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-xs);
+    padding: 0.68rem 0.9rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 0.9rem;
+    font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
+    width: min(100%, 1180px);
 }
 
 .quotation-summary {
@@ -45,25 +47,26 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    width: 100%;
-    max-width: 1000px;
+    width: min(100%, 1180px);
     background: var(--color-surface-0);
-    padding: 1rem 1.5rem;
-    border-radius: 0.5rem;
+    padding: 0.88rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xs);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.1rem;
 }
 
 .quotation-summary p {
     margin: 0;
-    font-size: 1.05rem;
+    font-size: var(--font-size-md);
     font-weight: 500;
+    color: var(--color-text-secondary);
 }
 
 .winning-section {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.7rem;
 }
 
 .winning-text {
@@ -73,67 +76,62 @@
 
 .supplier-products {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.25rem;
-    width: 100%;
-    max-width: 1400px;
+    grid-template-columns: repeat(auto-fill, minmax(315px, 1fr));
+    gap: 1rem;
+    width: min(100%, 1180px);
     margin: 0 auto;
 }
 
 .supplier-bids {
-    margin-top: 2.5rem;
-    width: 100%;
-    max-width: 1000px;
-}
-
-.supplier-bids .table-container {
-    max-width: 1600px;
+    margin-top: 1.5rem;
+    width: min(100%, 1180px);
 }
 
 .quotation-product-item {
     background: var(--color-surface-0);
-    padding: 1.5rem;
-    border-radius: 0.5rem;
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
     box-shadow: var(--shadow-card-soft);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .quotation-product-item:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
 .quotation-product-item h3 {
-    color: var(--color-brand);
-    margin-bottom: 0.5rem;
-    font-size: 1.5rem;
+    color: var(--color-text-strong);
+    margin: 0 0 0.35rem;
+    font-size: var(--font-size-base);
 }
 
 .quotation-product-item p {
     color: var(--color-text-secondary);
-    margin-bottom: 0.25rem;
-    font-size: 0.95rem;
+    margin: 0 0 0.25rem;
+    font-size: var(--font-size-sm);
 }
 
 .confirm-container {
-    margin-top: 10px;
-    padding: 10px;
+    margin-top: 0.55rem;
+    padding: 0.65rem;
     background-color: var(--color-surface-4);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--color-border-light);
     text-align: center;
 }
 
 .confirm-container p {
-    font-size: 0.95rem;
-    margin-bottom: 8px;
+    font-size: var(--font-size-sm);
+    margin-bottom: 0.5rem;
     color: var(--color-text-default);
 }
 
 .confirm-buttons {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 0.55rem;
 }
 
 .winning-list {
@@ -145,6 +143,8 @@
 .winning-item {
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--color-border-lighter);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
 }
 
 .winning-content {
@@ -158,43 +158,53 @@
 }
 
 .winning-total {
-    margin-top: 1rem;
-    padding: 0.75rem;
-    background-color: var(--color-surface-5);
-    border-radius: 0.5rem;
-    font-size: 1.1rem;
+    margin-top: 0.8rem;
+    padding: 0.65rem;
+    background-color: var(--color-highlight-lighter);
+    border: 1px solid var(--color-highlight-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-md);
+    color: var(--color-text-strong);
 }
 
 .bonus-radio {
-    margin: 1rem 0;
+    margin: 0.85rem 0;
     font-family: var(--font-family-sans);
 }
 
 .bonus-radio p {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.35rem;
     font-weight: 500;
+    font-size: var(--font-size-sm);
 }
 
 .bonus-radio label {
     display: inline-flex;
     align-items: center;
-    margin-right: 1rem;
+    margin-right: 0.8rem;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
 }
 
 .bonus-radio input[type="radio"] {
-    margin-right: 0.4rem;
-    accent-color: var(--color-brand);
+    margin-right: 0.35rem;
+    accent-color: var(--color-accent);
 }
 
 .input-container {
-    margin-top: 0.5rem;
+    margin-top: 0.45rem;
 }
 
 @media (max-width: 768px){
     .supplier-quotation-container {
-        padding: 1rem;
+        padding: 1rem 0.7rem 1.2rem;
+    }
+
+    .quotation-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
     }
 
     .quotation-summary {
@@ -202,8 +212,9 @@
         align-items: flex-start;
         gap: 0.75rem;
     }
-    
-    .supplier-products, .supplier-bids {
+
+    .supplier-products,
+    .supplier-bids {
         width: 100%;
     }
 }

@@ -1,19 +1,60 @@
 .btn {
+    appearance: none;
+    border: 1px solid transparent;
     background-color: var(--color-accent);
     color: var(--color-text-inverse);
     font-weight: 600;
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    border: none;
+    font-size: var(--font-size-sm);
+    letter-spacing: 0.01em;
+    padding: 0.58rem 1rem;
+    min-height: 2.4rem;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    box-shadow: 0 2px 0 rgba(2, 6, 23, 0.12);
 }
 
-.btn:hover:not(:disabled) {
+.btn-primary {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+.btn-primary:hover:not(:disabled) {
     background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background-color: var(--color-success-strong);
+    border-color: var(--color-success-strong);
+}
+
+.btn-success:hover:not(:disabled) {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background-color: var(--color-danger-strong);
+    border-color: var(--color-danger-strong);
+}
+
+.btn-danger:hover:not(:disabled) {
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+    transform: translateY(-1px);
+}
+
+.btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring-accent);
 }
 
 .btn:disabled {
-    opacity: 0.7;
+    opacity: 0.58;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }

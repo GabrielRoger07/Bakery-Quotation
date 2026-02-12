@@ -3,16 +3,14 @@ import { useEffect, useRef, useState } from 'react'
 import './LangSwitcher.css'
 
 const LangSwitcher = () => {
-    const { i18n } = useTranslation()
+    const { i18n, t } = useTranslation()
     const [open, setOpen] = useState(false)
     const dropdownRef = useRef(null)
 
-    /*
     const changeLang = (lang) => {
         i18n.changeLanguage(lang)
         setOpen(false)
     }
-    */
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -33,8 +31,14 @@ const LangSwitcher = () => {
             <button className="lang-trigger" onClick={() => setOpen(!open)}>🌐</button>
             {open && (
                 <div className='lang-menu'>
-                    <button className={i18n.language === "pt" ? "active" : ""} onClick={() => i18n.changeLanguage("pt")}><span className='fi fi-br flag' /></button>
-                    <button className={i18n.language === "en" ? "active" : ""} onClick={() => i18n.changeLanguage("en")}><span className='fi fi-us flag' /></button>
+                    <button className={i18n.language === "pt" ? "active" : ""} onClick={() => changeLang("pt")}>
+                        <span className='fi fi-br flag' />
+                        <span>{t("language_portuguese")}</span>
+                    </button>
+                    <button className={i18n.language === "en" ? "active" : ""} onClick={() => changeLang("en")}>
+                        <span className='fi fi-us flag' />
+                        <span>{t("language_english")}</span>
+                    </button>
                 </div>
             )}
         </div>

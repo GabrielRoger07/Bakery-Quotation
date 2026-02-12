@@ -4,17 +4,37 @@
   box-sizing: border-box;
 }
 
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: var(--font-family-sans);
   color: var(--color-text-primary);
-  background-color: var(--color-surface-0);
+  background: radial-gradient(circle at top, #f7fbff 0%, var(--color-surface-app) 48%, #ebf1f8 100%);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.45;
 }
 
 code {
   font-family: var(--font-family-mono);
 }
 
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(11, 79, 138, 0.18);
+}
 

@@ -11,7 +11,7 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
     return (
         <div className="table-container">
             <div className="table-header">
-                <h1>{title}</h1>
+                <h1 className="table-title">{title}</h1>
                 <div className="table-header-buttons">
                     {loading && <div className="loading-spinner"></div>}
                     {onReload && <Button onClick={onReload}>{t("table_reload")}</Button>}
@@ -35,7 +35,11 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                                         <span className="sort-indicator">{sortDirection === "asc" ? "▲" : "▼"}</span>
                                     )}</th>
                                 ))}
-                                {(onEdit || onDelete || onView || onMonitor) && <th>{t("table_actions")}</th>}
+                                {(onEdit || onDelete || onView || onMonitor) && (
+                                    <th className="actions-header">
+                                        <span className="actions-header-label">{t("table_actions")}</span>
+                                    </th>
+                                )}
                             </tr>
                         </thead>
                         <tbody>
@@ -50,7 +54,7 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                                                 <Button onClick={() => onEdit(item)}><Pencil size={18}/></Button>
                                             )}
                                             {onDelete && (
-                                                <Button onClick={() => onDelete(item[idKey])}><Trash size={18}/></Button>
+                                                <Button onClick={() => onDelete(item[idKey])} variant="danger"><Trash size={18}/></Button>
                                             )}
                                             {onView && (
                                                 <Button onClick={() => onView(item)}><Eye size={18}/></Button>

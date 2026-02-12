@@ -12,6 +12,8 @@ import Button from '../../components/Button'
 import Pagination from '../../components/Pagination'
 import './SupplierList.css'
 import { ENV } from '../../config/env'
+import { formatCnpj } from '../../utils/formatCnpj'
+import { formatPhone } from '../../utils/formatPhone'
 
 const SupplierList = () => {
 
@@ -122,6 +124,12 @@ const SupplierList = () => {
         fetchSuppliers(currentPage);
     }, [fetchSuppliers, currentPage])
 
+    const formattedSuppliers = suppliers.map((supplier) => ({
+        ...supplier,
+        supplierWhatsappNumber: supplier.supplierWhatsappNumber ? formatPhone(supplier.supplierWhatsappNumber) : "-",
+        employerCnpj: supplier.employerCnpj ? formatCnpj(supplier.employerCnpj) : "-"
+    }))
+
     return (
     <div className="supplier-list-container">
         {error && <Alert message={error}/>}
@@ -130,7 +138,7 @@ const SupplierList = () => {
         <Table 
             title={t("suppliers_title_list")}
             columns={columns}
-            data={suppliers}
+            data={formattedSuppliers}
             idKey="supplierId"
             loading={loading}
             onEdit={openEditModal}
@@ -143,7 +151,7 @@ const SupplierList = () => {
             emptyMessage={t("suppliers_empty")}
         />
 
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => fetchSuppliers(page)} />
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
         <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("suppliers_title_edit")}>
             <SupplierEdit 

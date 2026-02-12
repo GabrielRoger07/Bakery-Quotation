@@ -1,4 +1,4 @@
-{
+﻿{
     "login": "Entrar",
     "email": "E-mail",
     "password": "Senha",
@@ -208,5 +208,7 @@
     "no_suppliers_available": "Nenhum fornecedor disponível",
     "time_remaining_to_start": "Começa em",
     "field_filter": "Campo",
-    "selected_product": "Produto selecionado"
+    "selected_product": "Produto selecionado",
+    "language_portuguese":  "Português",
+    "language_english":  "Inglês"
 }

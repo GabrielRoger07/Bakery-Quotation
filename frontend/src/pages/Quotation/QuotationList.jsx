@@ -200,7 +200,7 @@ const QuotationList = () => {
             emptyMessage={t("quotations_empty")}
         />
 
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => fetchQuotations(page)} />
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
         <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("quotations_title_edit")}>
             <QuotationEdit

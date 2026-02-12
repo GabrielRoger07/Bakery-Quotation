@@ -7,6 +7,7 @@ import Button from '../../components/Button'
 import Table from '../../components/Table'
 import './QuotationMonitor.css'
 import { ENV } from '../../config/env'
+import { formatCnpj } from '../../utils/formatCnpj'
 
 const QuotationMonitor = () => {
 
@@ -105,7 +106,7 @@ const QuotationMonitor = () => {
     }, [bids])
 
     useEffect(() => {
-        if(products.length === 0 || bids.length === 0) return
+        if(bids.length === 0) return
 
         const lowestBids = {}
 
@@ -124,28 +125,32 @@ const QuotationMonitor = () => {
             }
         }
 
-        setProducts(prev => prev.map(p => {
-            const lowest = lowestBids[p.productId]
-            return lowest ? {
-                ...p, 
-                lowestBid: lowest.price, 
-                bonus: lowest.bonus, 
-                pricePerUnit: lowest.pricePerUnit,
-                supplierName: lowest.supplierName || "-",
-                employerName: lowest.employerName || "-",
-                employerCnpj: lowest.employerCnpj || "-"
-            } : 
-            {
-                ...p,
-                lowestBid: null,
-                bonus: "-",
-                pricePerUnit: "-",
-                supplierName: "-",
-                employerName: "-",
-                employerCnpj: "-"
-            }
-        }))
-    }, [products, bids])
+        setProducts(prev => {
+            if(prev.length === 0) return prev
+
+            return prev.map(p => {
+                const lowest = lowestBids[p.productId]
+                return lowest ? {
+                    ...p, 
+                    lowestBid: lowest.price, 
+                    bonus: lowest.bonus, 
+                    pricePerUnit: lowest.pricePerUnit,
+                    supplierName: lowest.supplierName || "-",
+                    employerName: lowest.employerName || "-",
+                    employerCnpj: lowest.employerCnpj || "-"
+                } : 
+                {
+                    ...p,
+                    lowestBid: null,
+                    bonus: "-",
+                    pricePerUnit: "-",
+                    supplierName: "-",
+                    employerName: "-",
+                    employerCnpj: "-"
+                }
+            })
+        })
+    }, [bids])
 
     const handleNewBid = useCallback(bid => {
 
@@ -208,7 +213,7 @@ const QuotationMonitor = () => {
         pricePerUnit: p.pricePerUnit && p.pricePerUnit !== "-" ? `R$ ${p.pricePerUnit.toFixed(2)}` : "-",
         supplierName: p.supplierName || "-",
         employerName: p.employerName || "-",
-        employerCnpj: p.employerCnpj || "-"
+        employerCnpj: p.employerCnpj && p.employerCnpj !== "-" ? formatCnpj(p.employerCnpj) : "-"
     }))
 
     const formattedBids = bids.map(b => {
@@ -220,6 +225,7 @@ const QuotationMonitor = () => {
             ...b, 
             price: `R$ ${b.price.toFixed(2)}`, 
             pricePerUnit: `R$ ${((b.price) / (b.quantity + b.bonus)).toFixed(2)}`,
+            employerCnpj: b.employerCnpj ? formatCnpj(b.employerCnpj) : "-",
             createdAt: new Date(b.createdAt).toLocaleString(),
             status: isLowest ? <span style={{color: "green"}}>{t("lowest")}</span> : <span style={{color: "red"}}>{t("outbid")}</span>
         }

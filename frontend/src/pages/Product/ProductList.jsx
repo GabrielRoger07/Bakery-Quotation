@@ -141,7 +141,7 @@ const ProductList = () => {
             emptyMessage={t("products_empty")}
         />
 
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => fetchProducts(page)}/>
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
 
         <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("products_title_edit")}>
             <ProductEdit 

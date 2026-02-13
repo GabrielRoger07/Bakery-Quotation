@@ -11,7 +11,7 @@ import { ENV } from '../../config/env'
 
 const SupplierQuotation = ({ participationId, quotationId }) => {
 
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const { request } = useFetch(ENV.API_BASE_URL)
 
@@ -24,6 +24,13 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   const [loading, setLoading] = useState(false)
   const [isWinningModalOpen, setIsWinningModalOpen] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState("")
+
+  const locale = i18n.language === "pt" ? "pt-BR" : "en-US"
+  const formatDecimal = (value) =>
+    new Intl.NumberFormat(locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(Number(value || 0))
 
   useEffect(() => {
 
@@ -132,8 +139,8 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
 
     return {
       ...b,
-      price: `R$ ${b.price.toFixed(2)}`,
-      pricePerUnit: `R$ ${(b.price / (b.quantity + b.bonus)).toFixed(2)}`,
+      price: `R$ ${formatDecimal(b.price)}`,
+      pricePerUnit: `R$ ${formatDecimal(b.price / (b.quantity + b.bonus))}`,
       createdAt: new Date(b.createdAt).toLocaleString(),
       status: isLowest ? <span style={{color: "green"}}>{t("lowest")}</span> : <span style={{color: "red"}}>{t("outbid")}</span>
     }
@@ -188,29 +195,31 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
         </div>
 
         <Modal isOpen={isWinningModalOpen} onClose={() => setIsWinningModalOpen(false)} title={t("winning_bids")}>
-          {winningCount > 0 ? (
-            <>
+          <div className="winning-modal-content">
+            {winningCount > 0 ? (
+              <>
               <ul className="winning-list">
                 {Object.entries(lowestBids)
                   .filter(([_, bid]) => bid && bid.participationId === participationId)
                   .map(([productId, bid]) => {
                     const product = products.find(p => p.productId === Number(productId))
-                    const pricePerUnit = (bid.price / (bid.quantity + bid.bonus)).toFixed(2)
+                    const pricePerUnit = formatDecimal(bid.price / (bid.quantity + bid.bonus))
                     return (
                       <li key={productId} className="winning-item">
-                        <strong>{product?.productName}</strong> - R$ {bid.price.toFixed(2)} - R$ {pricePerUnit}/{product?.unitOfMeasure}
+                        <strong>{product?.productName}</strong> - R$ {formatDecimal(bid.price)} - R$ {pricePerUnit}/{product?.unitOfMeasure}
                       </li>
                     )
                   })
                 }
               </ul>
               <div className="winning-total">
-                <strong>{t("total_value")}: </strong>R$ {totalWinningValue.toFixed(2)}
+                <strong>{t("total_value")}: </strong>R$ {formatDecimal(totalWinningValue)}
               </div>
-            </>
-          ) : (
-            <p>{t("not_winning_bids")}</p>
-          )}
+              </>
+            ) : (
+              <p>{t("not_winning_bids")}</p>
+            )}
+          </div>
         </Modal>
 
       </div>

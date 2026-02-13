@@ -21,12 +21,23 @@
 }
 
 .supplier-name {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-lg);
     color: var(--color-text-muted);
     margin-bottom: 0.7rem;
 }
 
-.quotation-info {
+.supplier-name strong {
+    font-size: var(--font-size-xl);
+    color: var(--color-text-strong);
+}
+
+.supplier-name-value {
+    font-size: var(--font-size-xl);
+    color: var(--color-text-strong);
+    font-weight: 700;
+}
+
+.supplier-quotation-container .quotation-info {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -37,9 +48,19 @@
     padding: 0.68rem 0.9rem;
     border-radius: var(--radius-md);
     margin-bottom: 0.9rem;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-md);
     color: var(--color-text-secondary);
     width: min(100%, 1180px);
+}
+
+.supplier-quotation-container .quotation-info p {
+    margin: 0;
+    font-size: var(--font-size-md);
+}
+
+.supplier-quotation-container .quotation-info p strong {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-strong);
 }
 
 .quotation-summary {
@@ -80,6 +101,7 @@
     gap: 1rem;
     width: min(100%, 1180px);
     margin: 0 auto;
+    align-items: stretch;
 }
 
 .supplier-bids {
@@ -89,11 +111,14 @@
 
 .quotation-product-item {
     background: var(--color-surface-0);
-    padding: 1rem;
+    padding: 1rem 1rem 0.7rem;
     border-radius: var(--radius-lg);
     border: 1px solid var(--color-border);
     box-shadow: var(--shadow-card-soft);
     transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .quotation-product-item:hover {
@@ -103,14 +128,54 @@
 
 .quotation-product-item h3 {
     color: var(--color-text-strong);
-    margin: 0 0 0.35rem;
+    margin: 0 0 0.7rem;
     font-size: var(--font-size-base);
+    text-align: center;
 }
 
 .quotation-product-item p {
     color: var(--color-text-secondary);
     margin: 0 0 0.25rem;
     font-size: var(--font-size-sm);
+}
+
+.quotation-product-item .product-meta-text {
+    font-size: var(--font-size-md);
+    font-weight: 500;
+}
+
+.quotation-product-item .product-meta-text:first-of-type {
+    margin-bottom: 0.42rem;
+}
+
+.quotation-product-item .product-meta-text:last-of-type {
+    margin-bottom: 0.7rem;
+}
+
+.current-lowest-bid {
+    margin-top: 0;
+    padding: 0.58rem 0.65rem;
+    border: 1px solid var(--color-highlight-border);
+    background: var(--color-highlight-lighter);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 4.5rem;
+}
+
+.current-lowest-label {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-bottom: 0.2rem;
+}
+
+.current-lowest-value {
+    color: var(--color-accent-strong);
+    font-size: var(--font-size-md);
 }
 
 .confirm-container {
@@ -143,7 +208,7 @@
 .winning-item {
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--color-border-lighter);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-md);
     color: var(--color-text-secondary);
 }
 
@@ -165,10 +230,27 @@
     border-radius: var(--radius-md);
     font-size: var(--font-size-md);
     color: var(--color-text-strong);
+    text-align: center;
+}
+
+.modal-content:has(.winning-modal-content) .modal-header {
+    position: relative;
+    justify-content: center;
+}
+
+.modal-content:has(.winning-modal-content) .modal-header h2 {
+    text-align: center;
+}
+
+.modal-content:has(.winning-modal-content) .modal-header .modal-close {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .bonus-radio {
-    margin: 0.85rem 0;
+    margin: 0 0 0.85rem 0;
     font-family: var(--font-family-sans);
 }
 
@@ -176,15 +258,25 @@
     margin-bottom: 0.35rem;
     font-weight: 500;
     font-size: var(--font-size-sm);
+    text-align: center;
+}
+
+.bonus-helper-text {
+    display: block;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    margin-bottom: 0.45rem;
 }
 
 .bonus-radio label {
     display: inline-flex;
     align-items: center;
-    margin-right: 0.8rem;
     cursor: pointer;
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
+    min-width: 4.8rem;
+    justify-content: center;
 }
 
 .bonus-radio input[type="radio"] {
@@ -192,8 +284,57 @@
     accent-color: var(--color-accent);
 }
 
+.bonus-radio-options {
+    display: flex;
+    justify-content: center;
+    gap: 0.65rem;
+}
+
+.bonus-unavailable {
+    margin: 0 0 0.85rem 0;
+    min-height: 4.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-1);
+}
+
+.bonus-unavailable p {
+    margin: 0;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+}
+
 .input-container {
     margin-top: 0.45rem;
+}
+
+.bid-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.bid-form > .btn[type="submit"] {
+    display: block;
+    margin: auto auto 0;
+}
+
+.unit-price-estimate {
+    margin-top: 0.7rem;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid var(--color-highlight-border);
+    background: var(--color-highlight-lighter);
+    border-radius: var(--radius-md);
+    text-align: center;
+    font-size: var(--font-size-sm);
+}
+
+.unit-price-estimate strong {
+    color: var(--color-accent-strong);
 }
 
 @media (max-width: 768px){
@@ -201,7 +342,7 @@
         padding: 1rem 0.7rem 1.2rem;
     }
 
-    .quotation-info {
+    .supplier-quotation-container .quotation-info {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.4rem;
@@ -217,4 +358,5 @@
     .supplier-bids {
         width: 100%;
     }
+
 }

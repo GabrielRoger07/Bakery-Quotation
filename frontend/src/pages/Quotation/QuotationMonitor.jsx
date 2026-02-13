@@ -8,10 +8,11 @@ import Table from '../../components/Table'
 import './QuotationMonitor.css'
 import { ENV } from '../../config/env'
 import { formatCnpj } from '../../utils/formatCnpj'
+import { formatMoney } from '../../utils/formatMoney'
 
 const QuotationMonitor = () => {
 
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
 
     const [searchParams] = useSearchParams()
     const quotationId = searchParams.get('id')
@@ -183,9 +184,9 @@ const QuotationMonitor = () => {
     const productColumns = useMemo(() => [
         {key: "productName", label: t("product")},
         {key: "productBarCodeNumber", label: t("barcode_number")},
-        {key: "lowestBid", label: t("lowest_bid")},
         {key: "quantity", label: t("quantity")},
         {key: "bonus", label: t("bonus")},
+        {key: "lowestBid", label: t("lowest_bid")},
         {key: "pricePerUnit", label: t("price_per_unit")},
         {key: "supplierName", label: t("supplier")},
         {key: "employerName", label: t("company")},
@@ -193,24 +194,24 @@ const QuotationMonitor = () => {
     ], [t])
 
     const bidColumns = useMemo(() => [
+        {key: "productName", label: t("product")},
+        {key: "productBarCodeNumber", label: t("barcode_number")},
+        {key: "quantity", label: t("quantity")},
+        {key: "bonus", label: t("bonus")},
         {key: "supplierName", label: t("supplier")},
         {key: "employerName", label: t("company")},
         {key: "employerCnpj", label: t("company_cnpj")},
-        {key: "productName", label: t("product")},
-        {key: "productBarCodeNumber", label: t("barcode_number")},
         {key: "price", label: t("total_price")},
-        {key: "quantity", label: t("quantity")},
-        {key: "bonus", label: t("bonus")},
         {key: "pricePerUnit", label: t("price_per_unit")},
-        {key: "status", label: "Status"},
         {key: "createdAt", label: t("date_hour")},
+        {key: "status", label: "Status"},
     ], [t])
 
     const formattedProducts = products.map(p => ({
         ...p, 
-        lowestBid: p.lowestBid ? `R$ ${p.lowestBid.toFixed(2)}` : "-",
+        lowestBid: p.lowestBid ? formatMoney(p.lowestBid, i18n.language) : "-",
         bonus: p.bonus ?? "-",
-        pricePerUnit: p.pricePerUnit && p.pricePerUnit !== "-" ? `R$ ${p.pricePerUnit.toFixed(2)}` : "-",
+        pricePerUnit: p.pricePerUnit && p.pricePerUnit !== "-" ? formatMoney(p.pricePerUnit, i18n.language) : "-",
         supplierName: p.supplierName || "-",
         employerName: p.employerName || "-",
         employerCnpj: p.employerCnpj && p.employerCnpj !== "-" ? formatCnpj(p.employerCnpj) : "-"
@@ -223,8 +224,8 @@ const QuotationMonitor = () => {
 
         return {
             ...b, 
-            price: `R$ ${b.price.toFixed(2)}`, 
-            pricePerUnit: `R$ ${((b.price) / (b.quantity + b.bonus)).toFixed(2)}`,
+            price: formatMoney(b.price, i18n.language), 
+            pricePerUnit: formatMoney((b.price) / (b.quantity + b.bonus), i18n.language),
             employerCnpj: b.employerCnpj ? formatCnpj(b.employerCnpj) : "-",
             createdAt: new Date(b.createdAt).toLocaleString(),
             status: isLowest ? <span style={{color: "green"}}>{t("lowest")}</span> : <span style={{color: "red"}}>{t("outbid")}</span>
@@ -236,7 +237,7 @@ const QuotationMonitor = () => {
         return sum + p.lowestBid
     }, 0)
 
-    const formattedTotalEstimated = `R$ ${totalEstimated.toFixed(2)}`
+    const formattedTotalEstimated = formatMoney(totalEstimated, i18n.language)
 
     if(!quotation) return <p>{t("loading_message")}</p>
 

@@ -337,6 +337,30 @@
     color: var(--color-accent-strong);
 }
 
+.quotation-product-item p.bonus-error {
+    margin-top: 0.15rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    color: var(--color-danger-strong);
+    font-size: var(--font-size-sm);
+}
+
+.bid-feedback {
+    margin-top: 0.2rem;
+    margin-bottom: 0.45rem;
+    padding: 0.5rem 0 0 0;
+    text-align: center;
+    font-size: var(--font-size-sm);
+}
+
+.quotation-product-item p.bid-feedback-error {
+    color: var(--color-danger-strong);
+}
+
+.quotation-product-item p.bid-feedback-success {
+    color: var(--color-success-strong);
+}
+
 @media (max-width: 768px){
     .supplier-quotation-container {
         padding: 1rem 0.7rem 1.2rem;

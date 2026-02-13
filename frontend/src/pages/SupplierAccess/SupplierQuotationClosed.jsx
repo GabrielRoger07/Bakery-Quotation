@@ -5,6 +5,7 @@ import { ENV } from "../../config/env"
 import Table from "../../components/Table"
 import Button from "../../components/Button"
 import "./SupplierQuotation.css"
+import { formatMoney } from "../../utils/formatMoney"
 
 const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
@@ -15,13 +16,6 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
     const [lowestBids, setLowestBids] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
-
-    const locale = i18n.language === "pt" ? "pt-BR" : "en-US"
-    const formatDecimal = (value) =>
-        new Intl.NumberFormat(locale, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(Number(value || 0))
 
     useEffect(() => {
         const fetchFinalResults = async () => {
@@ -84,8 +78,8 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
     const formattedItems = winningItems.map(item => ({
         ...item,
-        price: `R$ ${formatDecimal(item.price)}`,
-        pricePerUnit: `R$ ${formatDecimal(item.pricePerUnit)}/${item.unitOfMeasure}`
+        price: formatMoney(item.price, i18n.language),
+        pricePerUnit: `${formatMoney(item.pricePerUnit, i18n.language)}/${item.unitOfMeasure}`
     }))
 
     if (loading) return <p>{t("loading_message")}</p>
@@ -122,7 +116,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
                         <div className="winning-total">
                             <strong>{t("total_value")}:</strong>{" "}
-                            R$ {formatDecimal(totalWinningValue)}
+                            {formatMoney(totalWinningValue, i18n.language)}
                         </div>
                     </>
                 )}

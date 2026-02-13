@@ -8,6 +8,7 @@ import Button from '../../components/Button'
 import QuotationProductItem from './QuotationProductItem'
 import './SupplierQuotation.css'
 import { ENV } from '../../config/env'
+import { formatMoney } from '../../utils/formatMoney'
 
 const SupplierQuotation = ({ participationId, quotationId }) => {
 
@@ -24,13 +25,6 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   const [loading, setLoading] = useState(false)
   const [isWinningModalOpen, setIsWinningModalOpen] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState("")
-
-  const locale = i18n.language === "pt" ? "pt-BR" : "en-US"
-  const formatDecimal = (value) =>
-    new Intl.NumberFormat(locale, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(Number(value || 0))
 
   useEffect(() => {
 
@@ -123,10 +117,9 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
 
   const bidColumns = useMemo(() => [
     { key: "productName", label: t("product") },
-    { key: "productBarCodeNumber", label: t("barcode_number") },
-    { key: "price", label: t("total_price") },
     { key: "quantity", label: t("quantity") },
     { key: "bonus", label: t("bonus") },
+    { key: "price", label: t("total_price") },
     { key: "pricePerUnit", label: t("price_per_unit")},
     { key: "createdAt", label: t("date_hour") },
     { key: "status", label: "Status" }
@@ -139,8 +132,8 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
 
     return {
       ...b,
-      price: `R$ ${formatDecimal(b.price)}`,
-      pricePerUnit: `R$ ${formatDecimal(b.price / (b.quantity + b.bonus))}`,
+      price: formatMoney(b.price, i18n.language),
+      pricePerUnit: formatMoney(b.price / (b.quantity + b.bonus), i18n.language),
       createdAt: new Date(b.createdAt).toLocaleString(),
       status: isLowest ? <span style={{color: "green"}}>{t("lowest")}</span> : <span style={{color: "red"}}>{t("outbid")}</span>
     }
@@ -203,17 +196,17 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
                   .filter(([_, bid]) => bid && bid.participationId === participationId)
                   .map(([productId, bid]) => {
                     const product = products.find(p => p.productId === Number(productId))
-                    const pricePerUnit = formatDecimal(bid.price / (bid.quantity + bid.bonus))
+                    const pricePerUnit = bid.price / (bid.quantity + bid.bonus)
                     return (
                       <li key={productId} className="winning-item">
-                        <strong>{product?.productName}</strong> - R$ {formatDecimal(bid.price)} - R$ {pricePerUnit}/{product?.unitOfMeasure}
+                        <strong>{product?.productName}</strong> - {formatMoney(bid.price, i18n.language)} - {formatMoney(pricePerUnit, i18n.language)}/{product?.unitOfMeasure}
                       </li>
                     )
                   })
                 }
               </ul>
               <div className="winning-total">
-                <strong>{t("total_value")}: </strong>R$ {formatDecimal(totalWinningValue)}
+                <strong>{t("total_value")}: </strong>{formatMoney(totalWinningValue, i18n.language)}
               </div>
               </>
             ) : (

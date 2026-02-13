@@ -6,6 +6,7 @@ import Input from '../../components/Input'
 import Button from '../../components/Button'
 import './SupplierQuotation.css'
 import { ENV } from '../../config/env'
+import { formatDecimal, formatMoney } from '../../utils/formatMoney'
 
 const QuotationProductItem = ({ product, participationId, currentLowestBid }) => {
     
@@ -23,13 +24,6 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
     const [loading, setLoading] = useState(false)
     const [confirming, setConfirming] = useState(false)
     const [pendingBidValue, setPendingBidValue] = useState(null)
-
-    const locale = i18n.language === "pt" ? "pt-BR" : "en-US"
-    const formatDecimal = (value) =>
-        new Intl.NumberFormat(locale, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(Number(value || 0))
 
     const numericPrice = getNumericValue()
     const bonusUnits = addBonus ? Number(bonus || 0) : 0
@@ -162,7 +156,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
                 <div className="current-lowest-bid">
                     <span className="current-lowest-label">{t("current_lowest_bid")}: </span>
                     <strong className="current-lowest-value">
-                        {currentLowestBid ? `R$ ${formatDecimal(currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus))}/${product.unitOfMeasure}` : t("no_bids_yet")}
+                        {currentLowestBid ? `${formatMoney(currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus), i18n.language)}/${product.unitOfMeasure}` : t("no_bids_yet")}
                     </strong>
                 </div>
             </div>
@@ -220,7 +214,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
 
                 {!confirming && estimatedUnitPrice !== null && (
                     <p className="unit-price-estimate">
-                        {t("unit_price_estimate")}: <strong>R$ {formatDecimal(estimatedUnitPrice)}/{product.unitOfMeasure}</strong>
+                        {t("unit_price_estimate")}: <strong>{formatMoney(estimatedUnitPrice, i18n.language)}/{product.unitOfMeasure}</strong>
                     </p>
                 )}
 
@@ -230,7 +224,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
                     <Button type="submit" disabled={loading || Boolean(bonusError)}>{loading ? t("submitting_message") : t("submit_bid")}</Button>
                 ) : (
                     <div className="confirm-container">
-                        <p><Trans i18nKey="bid_confirm" values={{pricePerUnit: formatDecimal(pendingBidValue), unitOfMeasure: product.unitOfMeasure, productName: product.productName}} components={{strong: <strong />}}/></p>
+                        <p><Trans i18nKey="bid_confirm" values={{pricePerUnit: formatDecimal(pendingBidValue, i18n.language), unitOfMeasure: product.unitOfMeasure, productName: product.productName}} components={{strong: <strong />}}/></p>
                         <div className="confirm-buttons">
                             <Button type="button" onClick={cancelBid} variant="danger">{t("cancel_button")}</Button>
                             <Button type="button" onClick={confirmBid} variant="success">{t("confirm_button")}</Button>
@@ -238,8 +232,8 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
                     </div>
                 )}
 
-                {error && <p>{error}</p>}
-                {success && <p>{success}</p>}
+                {error && <p className="bid-feedback bid-feedback-error">{error}</p>}
+                {success && <p className="bid-feedback bid-feedback-success">{success}</p>}
             </form>
         </div>
     )

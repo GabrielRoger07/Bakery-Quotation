@@ -104,8 +104,8 @@ const ProductEdit = ({product, onSave, onClose}) => {
                         <option value="mg">mg</option> 
                         <option value="g">g</option> 
                         <option value="kg">kg</option> 
-                        <option value="ml">ml</option> 
-                        <option value="l">l</option> 
+                        <option value="mL">mL</option> 
+                        <option value="L">L</option> 
                         <option value="und">und</option> 
                     </select>
                     <span className="select-arrow"></span>

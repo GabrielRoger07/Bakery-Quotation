@@ -109,9 +109,9 @@ public class ProductServiceTest {
         @DisplayName("should return 200 OK with a list of ProductResponseDTO when products exist")
         void shouldReturnOkWithListWhenProductsExist() {
             Product product1 = product;
-            Product product2 = new Product(20L, "Product B", "20", UnitOfMeasure.l, company, null, null);
+            Product product2 = new Product(20L, "Product B", "20", UnitOfMeasure.L, company, null, null);
             ProductResponseDTO productResponseDTO1 = productResponseDTO;
-            ProductResponseDTO productResponseDTO2 = new ProductResponseDTO(20L, "Product B", "20", UnitOfMeasure.l, company.getCompanyCnpj());
+            ProductResponseDTO productResponseDTO2 = new ProductResponseDTO(20L, "Product B", "20", UnitOfMeasure.L, company.getCompanyCnpj());
 
             when(productRepository.findAll()).thenReturn(List.of(product1, product2));
             when(productMapper.toDto(product1)).thenReturn(productResponseDTO1);
@@ -169,7 +169,7 @@ public class ProductServiceTest {
                     20L,
                     "Product B",
                     "20",
-                    UnitOfMeasure.l,
+                    UnitOfMeasure.L,
                     company,
                     null,
                     null
@@ -619,9 +619,9 @@ public class ProductServiceTest {
         @DisplayName("should return 200 OK with a list of ProductResponseDTO and delete products when products exist")
         void shouldReturnOkWithListAndDeleteAllProductsWhenProductsExist() {
             Product product1 = product;
-            Product product2 = new Product(20L, "Product B", "20", UnitOfMeasure.l, company, null, null);
+            Product product2 = new Product(20L, "Product B", "20", UnitOfMeasure.L, company, null, null);
             ProductResponseDTO productResponseDTO1 = productResponseDTO;
-            ProductResponseDTO productResponseDTO2 = new ProductResponseDTO(20L, "Product B", "20", UnitOfMeasure.l, company.getCompanyCnpj());
+            ProductResponseDTO productResponseDTO2 = new ProductResponseDTO(20L, "Product B", "20", UnitOfMeasure.L, company.getCompanyCnpj());
 
             when(productRepository.findAll()).thenReturn(List.of(product1, product2));
             when(productMapper.toDto(product1)).thenReturn(productResponseDTO1);

@@ -34,7 +34,7 @@ services:
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
       SPRING_PROFILES_ACTIVE: prod
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     networks:
       - app-network
 

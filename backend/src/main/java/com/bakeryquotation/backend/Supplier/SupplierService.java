@@ -129,9 +129,13 @@ public class SupplierService {
         String supplierEmail = supplierRequestDTO.getSupplierEmail();
         String supplierWhatsappNumber = supplierRequestDTO.getSupplierWhatsappNumber();
 
-        Optional<Supplier> exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, supplierEmail);
-        if(exists.isPresent() && !exists.get().getId().equals(id)){
-            throw new DuplicateResourceException("This company already has a supplier with email " + supplierEmail);
+        Optional<Supplier> exists = Optional.empty();
+
+        if(supplierEmail != null) {
+            exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, supplierEmail);
+            if(exists.isPresent() && !exists.get().getId().equals(id)){
+                throw new DuplicateResourceException("This company already has a supplier with email " + supplierEmail);
+            }
         }
 
         exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, supplierWhatsappNumber);
@@ -172,9 +176,13 @@ public class SupplierService {
         String supplierWhatsappNumber = supplierRequestDTO.getSupplierWhatsappNumber();
         String companyCnpj = supplierRequestDTO.getCompanyCnpj();
 
-        Optional<Supplier> exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, supplierEmail);
-        if(exists.isPresent()){
-            throw new DuplicateResourceException("This company already has a supplier with email " + supplierEmail);
+        Optional<Supplier> exists = Optional.empty();
+
+        if(supplierEmail != null) {
+            exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, supplierEmail);
+            if(exists.isPresent()){
+                throw new DuplicateResourceException("This company already has a supplier with email " + supplierEmail);
+            }
         }
 
         exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, supplierWhatsappNumber);

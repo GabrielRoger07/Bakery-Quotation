@@ -247,5 +247,6 @@
     "bonus_quantity_max_placeholder":  "Digite a quantidade bônus (máx. {{max}})",
     "unit_price_estimate":  "Preço unitário estimado",
     "bonus_not_available":  "Bônus não disponível para este item.",
-    "bonus_required_valid":  "Informe uma quantidade bônus válida (maior que zero)."
+    "bonus_required_valid":  "Informe uma quantidade bônus válida (maior que zero).",
+    "in": "em"
 }

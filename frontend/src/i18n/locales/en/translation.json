@@ -247,5 +247,6 @@
     "bonus_quantity_max_placeholder":  "Enter bonus quantity (max. {{max}})",
     "unit_price_estimate":  "Estimated unit price",
     "bonus_not_available":  "Bonus is not available for this item.",
-    "bonus_required_valid":  "Enter a valid bonus quantity (greater than zero)."
+    "bonus_required_valid":  "Enter a valid bonus quantity (greater than zero).",
+    "in": "in"
 }

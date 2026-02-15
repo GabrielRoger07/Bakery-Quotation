@@ -96,7 +96,7 @@ public class BidService {
         Participation participation = participationRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + participationId + " does not exists"));
         Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
 
-        BidResponseDTO actualLowestBid = getLowestBid(participationId, productId).getBody();
+        BidResponseDTO actualLowestBid = getLowestBid(participation.getQuotation().getId(), productId).getBody();
 
         if(actualLowestBid != null){
             BigDecimal totalQuantityLowest = actualLowestBid.getQuantity().add(actualLowestBid.getBonus());

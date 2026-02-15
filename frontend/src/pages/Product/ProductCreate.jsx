@@ -106,6 +106,11 @@ const ProductCreate = ({ onClose, onSave }) => {
                         <option value="mL">mL</option>
                         <option value="L">L</option>
                         <option value="und">und</option>
+                        <option value="pct">pct</option>
+                        <option value="fardo">fardo</option>
+                        <option value="cx">cx</option>
+                        <option value="balde">balde</option>
+                        <option value="bag">bag</option>
                     </select>
                     <span className="select-arrow"></span>
                 </div>

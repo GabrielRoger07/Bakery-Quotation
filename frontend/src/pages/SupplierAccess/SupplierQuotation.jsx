@@ -106,7 +106,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
 
     setLowestBids(prev => {
       const currentLowest = prev[bid.productId]
-      if(!currentLowest || bid.price < currentLowest.price){
+      if(!currentLowest || (bid.price / (bid.quantity + bid.bonus)) < (currentLowest.price / (currentLowest.quantity + currentLowest.bonus))){
         return {...prev, [bid.productId]: bid }
       }
       return prev

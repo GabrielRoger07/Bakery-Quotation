@@ -164,8 +164,8 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                 onClick={() => handleSelectProduct(p)}
                             >
                                 <div className="product-result-main">
-                                    <strong>{p.productBarCodeNumber}</strong>
-                                    <span>{p.productName}</span>
+                                    <strong>{p.productName}</strong>
+                                    <span>{p.productBarCodeNumber}</span>
                                 </div>
 
                                 {selectedProductId === p.productId && (

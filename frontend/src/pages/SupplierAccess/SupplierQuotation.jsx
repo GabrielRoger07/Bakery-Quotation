@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import Table from '../../components/Table'
 import Modal from '../../components/Modal'
 import Button from '../../components/Button'
+import Input from '../../components/Input'
 import QuotationProductItem from './QuotationProductItem'
 import './SupplierQuotation.css'
 import { ENV } from '../../config/env'
@@ -25,6 +26,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   const [loading, setLoading] = useState(false)
   const [isWinningModalOpen, setIsWinningModalOpen] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState("")
+  const [searchWord, setSearchWord] = useState("")
 
   useEffect(() => {
 
@@ -139,6 +141,13 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
     }
   })
 
+  const filteredProducts = useMemo(() => {
+    const normalizedSearch = searchWord.trim().toLowerCase()
+    if(!normalizedSearch) return products
+
+    return products.filter(product => product.productName?.toLowerCase().includes(normalizedSearch))
+  }, [products, searchWord])
+
   const winningCount = Object.values(lowestBids).filter(
     bid => bid && bid.participationId === participationId
   ).length
@@ -177,10 +186,27 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
           </div>
         </div>
 
+        <div className="search-card">
+          <div className="search-row">
+            <div className="search-input-wrapper">
+              <Input 
+                type="text"
+                value={searchWord}
+                onChange={e => setSearchWord(e.target.value)}
+                placeholder={t("enter_search")}
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="supplier-products">
-          {products.map(product => (
-            <QuotationProductItem key={product.productId} product={product} participationId={participationId} currentLowestBid={lowestBids[product.productId] || null} />
-          ))}
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map(product => (
+              <QuotationProductItem key={product.productId} product={product} participationId={participationId} currentLowestBid={lowestBids[product.productId] || null} />
+            ))
+          ) : (
+            <p>{t("no_products_available")}</p>
+          )}
         </div>
 
         <div className="supplier-bids">

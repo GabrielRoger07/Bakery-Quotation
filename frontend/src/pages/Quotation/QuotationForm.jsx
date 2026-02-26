@@ -23,6 +23,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
     const [quotationData, setQuotationData] = useState({
         start: "",
         end: "",
+        isAuction: false,
         products: [],
         suppliers: []
     })
@@ -41,6 +42,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         setQuotationData({
             start: initialData.quotationStart,
             end: initialData.quotationEnd,
+            isAuction: initialData.isAuction ?? false,
             products: products,
             suppliers: suppliers
         })
@@ -52,9 +54,17 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         fetchEditData()
     }, [fetchEditData])
     
-    const handleStepChange = (field, value) => {
+    const handleStepChange = useCallback((field, value) => {
         setQuotationData(prev => ({...prev, [field]: value}))
-    }
+    }, [])
+
+    const handleProductsChange = useCallback((products) => {
+        handleStepChange("products", products)
+    }, [handleStepChange])
+
+    const handleSuppliersChange = useCallback((suppliers) => {
+        handleStepChange("suppliers", suppliers)
+    }, [handleStepChange])
 
     const nextStep = () => {
         if(step !== 3){
@@ -84,6 +94,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             const quotation = {
                 quotationStart: finalData.start,
                 quotationEnd: finalData.end,
+                isAuction: finalData.isAuction,
                 companyCnpj: cnpj
             }
 
@@ -101,6 +112,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             const quotation = {
                 quotationStart: finalData.start,
                 quotationEnd: finalData.end,
+                isAuction: finalData.isAuction,
                 companyCnpj: cnpj
             }
 
@@ -158,6 +170,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                 <QuotationCreateStep1 
                     start={quotationData.start} 
                     end={quotationData.end} 
+                    isAuction={quotationData.isAuction}
                     onChange={handleStepChange}
                     onNext={nextStep}
                     loading={loading}
@@ -167,7 +180,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             {step === 2 && (
                 <QuotationCreateStep2
                     selectedProducts={quotationData.products} 
-                    onChange={(products) => handleStepChange("products", products)}
+                    onChange={handleProductsChange}
                     onBack={prevStep}
                     onNext={nextStep}
                     loading={loading}
@@ -177,7 +190,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             {step === 3 && (
                 <QuotationCreateStep3
                     selectedSuppliers={quotationData.suppliers} 
-                    onChange={(suppliers) => handleStepChange("suppliers", suppliers)}
+                    onChange={handleSuppliersChange}
                     onBack={prevStep}
                     onFinish={nextStep}
                     loading={loading}

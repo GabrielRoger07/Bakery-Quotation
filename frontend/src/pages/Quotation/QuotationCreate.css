@@ -153,6 +153,44 @@
     flex: 1;
 }
 
+.quotation-mode-options {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.quotation-mode-option {
+    flex: 1 1 220px;
+}
+
+.quotation-mode-option .input-container {
+    margin-bottom: 0;
+}
+
+.quotation-mode-option .input-wrapper {
+    justify-content: flex-start;
+}
+
+.quotation-mode-option .input-wrapper input[type="radio"] {
+    width: auto;
+    min-height: auto;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+}
+
+.quotation-mode-option .input-container label {
+    cursor: pointer;
+}
+
+.quotation-mode-help {
+    margin: 0.65rem 0 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
 .selected-products-card h4 {
     margin: 0 0 0.6rem;
     color: var(--color-text-secondary);

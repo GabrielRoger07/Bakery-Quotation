@@ -5,22 +5,25 @@ import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import './QuotationCreate.css'
 
-const QuotationCreateStep1 = ({ start, end, onChange, onNext, loading }) => {
+const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading }) => {
     
     const { t } = useTranslation()
 
     const [localStart, setLocalStart] = useState(start || "")
     const [localEnd, setLocalEnd] = useState(end || "")
+    const [localIsAuction, setLocalIsAuction] = useState(typeof isAuction === "boolean" ? isAuction : false)
     const [localError, setLocalError] = useState("")
 
     useEffect(() => {
         setLocalStart(start)
         setLocalEnd(end)
-    }, [start, end])
+        setLocalIsAuction(typeof isAuction === "boolean" ? isAuction : false)
+    }, [start, end, isAuction])
 
     const handleNextClick = () => {
         onChange("start", localStart)
         onChange("end", localEnd)
+        onChange("isAuction", localIsAuction)
 
         if(!localStart || !localEnd) {
             setLocalError(t("all_fields_required"))
@@ -62,6 +65,20 @@ const QuotationCreateStep1 = ({ start, end, onChange, onNext, loading }) => {
                 <div className="quantity-bonus-group">
                     <Input id="quotation-end" type="datetime-local" value={localEnd} onChange={e => setLocalEnd(e.target.value)} className={localError && !localEnd ? "input-error" : ""} />
                 </div>
+            </div>
+
+            <div className="results-card">
+                <h4>{t("quotation_mode")}</h4>
+                <div className="quotation-mode-options">
+                    <div className="quotation-mode-option">
+                        <Input label={t("quotation_mode_auction")} type="radio" name="quotationMode" value="auction" checked={localIsAuction} onChange={() => setLocalIsAuction(true)} />
+                    </div>
+
+                    <div className="quotation-mode-option">
+                        <Input label={t("quotation_mode_single_proposal")} type="radio" name="quotationMode" value="single-proposal" checked={!localIsAuction} onChange={() => setLocalIsAuction(false)} />
+                    </div>
+                </div>
+                <p className="quotation-mode-help">{t("quotation_mode_help")}</p>
             </div>
 
             {localError && <Alert message={localError}/>}

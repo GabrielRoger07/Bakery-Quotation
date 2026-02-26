@@ -27,6 +27,9 @@ public class Quotation {
     @Column(name = "createdAt", nullable = false, columnDefinition = "DATETIME", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "isAuction", nullable = false)
+    private Boolean isAuction;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false, targetEntity = Company.class)
     @JoinColumn(name = "companyCnpj",
             referencedColumnName = "companyCnpj",
@@ -46,25 +49,28 @@ public class Quotation {
     public Quotation() {
     }
 
-    public Quotation(LocalDateTime quotationStart, LocalDateTime quotationEnd, Company company) {
+    public Quotation(LocalDateTime quotationStart, LocalDateTime quotationEnd, Boolean isAuction, Company company) {
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
+        this.isAuction = isAuction != null ? isAuction : false;
         this.createdAt = LocalDateTime.now();
         this.company = company;
     }
 
-    public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, LocalDateTime createdAt, Company company) {
+    public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, Boolean isAuction, LocalDateTime createdAt, Company company) {
         this.id = id;
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
+        this.isAuction = isAuction != null ? isAuction : false;
         this.createdAt = createdAt;
         this.company = company;
     }
 
-    public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, LocalDateTime createdAt, Company company, List<Participation> participations, List<Contain> contains) {
+    public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, Boolean isAuction, LocalDateTime createdAt, Company company, List<Participation> participations, List<Contain> contains) {
         this.id = id;
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
+        this.isAuction = isAuction != null ? isAuction : false;
         this.createdAt = createdAt;
         this.company = company;
         this.participations = participations;
@@ -101,6 +107,14 @@ public class Quotation {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Boolean getIsAuction() {
+        return isAuction;
+    }
+
+    public void setIsAuction(Boolean auction) {
+        isAuction = auction;
     }
 
     public Company getCompany() {

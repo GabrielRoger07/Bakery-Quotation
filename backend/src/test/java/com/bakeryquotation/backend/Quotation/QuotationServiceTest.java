@@ -57,9 +57,9 @@ public class QuotationServiceTest {
         LocalDateTime quotationStart = LocalDateTime.of(2026, 1, 1, 14, 0, 0);
         LocalDateTime quotationEnd = LocalDateTime.of(2026, 1, 2, 14, 0, 0);
         LocalDateTime createdAt = LocalDateTime.of(2026, 1, 1, 9, 10, 0);
-        quotation = new Quotation(QUOTATION_ID, quotationStart, quotationEnd, createdAt, company, null, null);
-        quotationRequestDTO = new QuotationRequestDTO(quotationStart, quotationEnd, company.getCompanyCnpj());
-        quotationResponseDTO = new QuotationResponseDTO(QUOTATION_ID, quotationStart, quotationEnd, company.getCompanyCnpj(), createdAt);
+        quotation = new Quotation(QUOTATION_ID, quotationStart, quotationEnd, false, createdAt, company, null, null);
+        quotationRequestDTO = new QuotationRequestDTO(quotationStart, quotationEnd, false, company.getCompanyCnpj());
+        quotationResponseDTO = new QuotationResponseDTO(QUOTATION_ID, quotationStart, quotationEnd, false, company.getCompanyCnpj(), createdAt);
     }
 
     @Nested
@@ -115,9 +115,9 @@ public class QuotationServiceTest {
             LocalDateTime quotationStart2 = LocalDateTime.of(2026, 2, 1, 14, 0, 0);
             LocalDateTime quotationEnd2 = LocalDateTime.of(2026, 2, 2, 14, 0, 0);
             LocalDateTime createdAt2 = LocalDateTime.of(2026, 2, 1, 9, 10, 0);
-            Quotation quotation2 = new Quotation(20L, quotationStart2, quotationEnd2, createdAt2, company, null, null);
+            Quotation quotation2 = new Quotation(20L, quotationStart2, quotationEnd2, true, createdAt2, company, null, null);
             QuotationResponseDTO quotationResponseDTO1 = quotationResponseDTO;
-            QuotationResponseDTO quotationResponseDTO2 = new QuotationResponseDTO(20L, quotationStart2, quotationEnd2, company.getCompanyCnpj(), createdAt2);
+            QuotationResponseDTO quotationResponseDTO2 = new QuotationResponseDTO(20L, quotationStart2, quotationEnd2, true, company.getCompanyCnpj(), createdAt2);
 
             when(quotationRepository.findAll()).thenReturn(List.of(quotation1, quotation2));
             when(quotationMapper.toDto(quotation1)).thenReturn(quotationResponseDTO1);
@@ -175,6 +175,7 @@ public class QuotationServiceTest {
                     20L,
                     LocalDateTime.of(2026, 2, 1, 14, 0, 0),
                     LocalDateTime.of(2026, 2, 2, 14, 0, 0),
+                    true,
                     LocalDateTime.of(2026, 2, 1, 9, 10, 0),
                     company,
                     null,
@@ -189,6 +190,7 @@ public class QuotationServiceTest {
                         q.getId(),
                         q.getQuotationStart(),
                         q.getQuotationEnd(),
+                        q.getAuction(),
                         q.getCompany().getCompanyCnpj(),
                         q.getCreatedAt()
                 );
@@ -357,7 +359,7 @@ public class QuotationServiceTest {
             when(quotationRepository.findById(id)).thenReturn(Optional.of(quotation));
             LocalDateTime quotationStart = LocalDateTime.of(2026, 1, 1, 14, 0, 0);
             LocalDateTime quotationEnd = LocalDateTime.of(2026, 1, 2, 14, 0, 0);
-            QuotationRequestDTO otherQuotationRequestDTO = new QuotationRequestDTO(quotationStart, quotationEnd, "00000000000000");
+            QuotationRequestDTO otherQuotationRequestDTO = new QuotationRequestDTO(quotationStart, quotationEnd, true, "00000000000000");
 
             assertThatThrownBy(() -> quotationService.updateQuotationById(otherQuotationRequestDTO, id))
                     .isInstanceOf(ImmutableResourceException.class)
@@ -423,9 +425,9 @@ public class QuotationServiceTest {
             LocalDateTime quotationStart2 = LocalDateTime.of(2026, 2, 1, 14, 0, 0);
             LocalDateTime quotationEnd2 = LocalDateTime.of(2026, 2, 2, 14, 0, 0);
             LocalDateTime createdAt2 = LocalDateTime.of(2026, 2, 1, 9, 10, 0);
-            Quotation quotation2 = new Quotation(20L, quotationStart2, quotationEnd2, createdAt2, company, null, null);
+            Quotation quotation2 = new Quotation(20L, quotationStart2, quotationEnd2, true, createdAt2, company, null, null);
             QuotationResponseDTO quotationResponseDTO1 = quotationResponseDTO;
-            QuotationResponseDTO quotationResponseDTO2 = new QuotationResponseDTO(20L, quotationStart2, quotationEnd2, company.getCompanyCnpj(), createdAt2);
+            QuotationResponseDTO quotationResponseDTO2 = new QuotationResponseDTO(20L, quotationStart2, quotationEnd2, true, company.getCompanyCnpj(), createdAt2);
 
             when(quotationRepository.findAll()).thenReturn(List.of(quotation1, quotation2));
             when(quotationMapper.toDto(quotation1)).thenReturn(quotationResponseDTO1);

@@ -7,16 +7,18 @@ public class QuotationResponseDTO {
     private Long quotationId;
     private LocalDateTime quotationStart;
     private LocalDateTime quotationEnd;
+    private Boolean isAuction;
     private String companyCnpj;
     private LocalDateTime createdAt;
 
     public QuotationResponseDTO() {
     }
 
-    public QuotationResponseDTO(Long quotationId, LocalDateTime quotationStart, LocalDateTime quotationEnd, String companyCnpj, LocalDateTime createdAt) {
+    public QuotationResponseDTO(Long quotationId, LocalDateTime quotationStart, LocalDateTime quotationEnd, Boolean isAuction, String companyCnpj, LocalDateTime createdAt) {
         this.quotationId = quotationId;
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
+        this.isAuction = isAuction;
         this.companyCnpj = companyCnpj;
         this.createdAt = createdAt;
     }
@@ -43,6 +45,14 @@ public class QuotationResponseDTO {
 
     public void setQuotationEnd(LocalDateTime quotationEnd) {
         this.quotationEnd = quotationEnd;
+    }
+
+    public Boolean getIsAuction() {
+        return isAuction;
+    }
+
+    public void setIsAuction(Boolean auction) {
+        isAuction = auction;
     }
 
     public String getCompanyCnpj() {

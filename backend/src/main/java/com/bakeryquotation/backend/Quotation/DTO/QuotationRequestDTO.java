@@ -17,6 +17,9 @@ public class QuotationRequestDTO {
     @Future(message = "Quotation end must be in the future")
     private LocalDateTime quotationEnd;
 
+    @NotNull(message = "isAuction is required")
+    private Boolean isAuction;
+
     @NotNull(message = "Company CNPJ is required")
     @NotEmpty(message = "Company CNPJ cannot be empty")
     @CNPJ(message = "Company CNPJ must be valid")
@@ -25,9 +28,10 @@ public class QuotationRequestDTO {
     public QuotationRequestDTO() {
     }
 
-    public QuotationRequestDTO(LocalDateTime quotationStart, LocalDateTime quotationEnd, String companyCnpj) {
+    public QuotationRequestDTO(LocalDateTime quotationStart, LocalDateTime quotationEnd, Boolean isAuction, String companyCnpj) {
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
+        this.isAuction = isAuction;
         this.companyCnpj = companyCnpj;
     }
 
@@ -45,6 +49,14 @@ public class QuotationRequestDTO {
 
     public void setQuotationEnd(LocalDateTime quotationEnd) {
         this.quotationEnd = quotationEnd;
+    }
+
+    public Boolean getIsAuction() {
+        return isAuction;
+    }
+
+    public void setIsAuction(Boolean auction) {
+        isAuction = auction;
     }
 
     public String getCompanyCnpj() {

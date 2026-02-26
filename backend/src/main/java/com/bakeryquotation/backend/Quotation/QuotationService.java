@@ -76,6 +76,7 @@ public class QuotationService {
 
         quotation.setQuotationStart(quotationRequestDTO.getQuotationStart());
         quotation.setQuotationEnd(quotationRequestDTO.getQuotationEnd());
+        quotation.setIsAuction(quotationRequestDTO.getIsAuction());
 
         QuotationResponseDTO quotationUpdated = quotationMapper.toDto(quotationRepository.save(quotation));
         return ResponseEntity.status(HttpStatus.CREATED).body(quotationUpdated);

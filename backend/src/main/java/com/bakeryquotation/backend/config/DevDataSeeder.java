@@ -54,9 +54,9 @@ public class DevDataSeeder {
             companyRepository.save(company1);
             companyRepository.save(company2);
 
-            Quotation quotation1 = new Quotation(LocalDateTime.parse("2025-12-10T08:00:00"), LocalDateTime.parse("2026-12-31T10:00:00"), company1);
-            Quotation quotation2 = new Quotation(LocalDateTime.parse("2025-12-25T16:00:00"), LocalDateTime.parse("2025-12-25T18:00:00"), company1);
-            Quotation quotation3 = new Quotation(LocalDateTime.parse("2025-11-21T08:00:00"), LocalDateTime.parse("2025-11-21T10:00:00"), company1);
+            Quotation quotation1 = new Quotation(LocalDateTime.parse("2025-12-10T08:00:00"), LocalDateTime.parse("2026-12-31T10:00:00"), false, company1);
+            Quotation quotation2 = new Quotation(LocalDateTime.parse("2025-12-25T16:00:00"), LocalDateTime.parse("2025-12-25T18:00:00"), true, company1);
+            Quotation quotation3 = new Quotation(LocalDateTime.parse("2025-11-21T08:00:00"), LocalDateTime.parse("2025-11-21T10:00:00"), false, company1);
 
             quotationRepository.save(quotation1);
             quotationRepository.save(quotation2);

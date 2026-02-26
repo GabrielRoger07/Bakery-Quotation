@@ -2,6 +2,8 @@ package com.bakeryquotation.backend.Contain;
 
 import jakarta.persistence.Embeddable;
 
+import java.util.Objects;
+
 @Embeddable
 public class ContainId {
 
@@ -30,5 +32,17 @@ public class ContainId {
 
     public void setProductId(Long productId) {
         this.productId = productId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ContainId containId = (ContainId) o;
+        return Objects.equals(quotationId, containId.quotationId) && Objects.equals(productId, containId.productId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(quotationId, productId);
     }
 }

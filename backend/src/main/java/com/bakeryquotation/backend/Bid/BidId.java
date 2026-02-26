@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Embeddable
 public class BidId {
@@ -50,5 +51,17 @@ public class BidId {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        BidId bidId = (BidId) o;
+        return Objects.equals(participationId, bidId.participationId) && Objects.equals(productId, bidId.productId) && Objects.equals(createdAt, bidId.createdAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(participationId, productId, createdAt);
     }
 }

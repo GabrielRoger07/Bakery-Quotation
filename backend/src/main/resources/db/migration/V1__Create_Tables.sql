@@ -1,0 +1,80 @@
+CREATE TABLE COMPANY(
+	companyCnpj VARCHAR(14) NOT NULL,
+    companyName VARCHAR(80) NOT NULL,
+    companyEmail VARCHAR(60) NOT NULL,
+    companyWhatsappNumber VARCHAR(16) NOT NULL,
+    companyPassword VARCHAR(255) NOT NULL,
+    createdAt DATETIME NOT NULL,
+    role ENUM('ADMIN', 'USER') NOT NULL,
+    CONSTRAINT COMPANY_PK PRIMARY KEY(companyCnpj),
+    CONSTRAINT COMPANY_whatsapp_UK UNIQUE KEY(companyWhatsappNumber),
+    CONSTRAINT COMPANY_email_UK UNIQUE KEY(companyEmail)
+)ENGINE = InnoDb;
+
+CREATE TABLE PRODUCT(
+	productId BIGINT NOT NULL AUTO_INCREMENT,
+    productName VARCHAR(60) NOT NULL,
+    productBarCodeNumber VARCHAR(13) NOT NULL,
+    unitOfMeasure ENUM('L', 'bag', 'balde', 'cx', 'fardo', 'g', 'kg', 'mL', 'mg', 'pct', 'und') NOT NULL,
+    companyCnpj VARCHAR(14) NOT NULL,
+    CONSTRAINT PRODUCT_PK PRIMARY KEY(productId),
+    CONSTRAINT PRODUCT_COMPANY_FK FOREIGN KEY(companyCnpj) REFERENCES COMPANY(companyCnpj)
+)ENGINE = InnoDb AUTO_INCREMENT 1;
+
+CREATE TABLE SUPPLIER(
+	supplierId BIGINT NOT NULL AUTO_INCREMENT,
+    supplierName VARCHAR(30) NOT NULL,
+    supplierEmail VARCHAR(60),
+    supplierWhatsappNumber VARCHAR(16) NOT NULL,
+    employerName VARCHAR(65) NOT NULL,
+    employerCnpj VARCHAR(14) NOT NULL,
+    createdAt DATETIME NOT NULL,
+    companyCnpj VARCHAR(14) NOT NULL,
+    CONSTRAINT SUPPLIER_PK PRIMARY KEY(supplierId),
+    CONSTRAINT SUPPLIER_companyCnpj_whatsapp_UK UNIQUE KEY(companyCnpj, supplierWhatsappNumber),
+    CONSTRAINT SUPPLIER_companyCnpj_email_UK UNIQUE KEY(companyCnpj, supplierEmail),
+    CONSTRAINT SUPPLIER_COMPANY_FK FOREIGN KEY(companyCnpj) REFERENCES COMPANY(companyCnpj)
+)ENGINE = InnoDb AUTO_INCREMENT 1;
+
+CREATE TABLE QUOTATION(
+	quotationId BIGINT NOT NULL AUTO_INCREMENT,
+    quotationStart DATETIME NOT NULL,
+	quotationEnd DATETIME NOT NULL,
+    createdAt DATETIME NOT NULL,
+    companyCnpj VARCHAR(14) NOT NULL,
+    CONSTRAINT QUOTATION_PK PRIMARY KEY(quotationId),
+    CONSTRAINT QUOTATION_COMPANY_FK FOREIGN KEY(companyCnpj) REFERENCES COMPANY(companyCnpj)
+)ENGINE = InnoDb AUTO_INCREMENT 1;
+
+CREATE TABLE PARTICIPATION(
+	participationId BIGINT NOT NULL AUTO_INCREMENT,
+    accessToken VARCHAR(255) NOT NULL,
+	supplierId BIGINT NOT NULL,
+    quotationId BIGINT NOT NULL,
+    CONSTRAINT PARTICIPATION_PK PRIMARY KEY(participationId),
+    CONSTRAINT PARTICIPATION_supplierId_quotationId_UK UNIQUE KEY(supplierId, quotationId),
+    CONSTRAINT PARTICIPATION_SUPPLIER_FK FOREIGN KEY(supplierId) REFERENCES SUPPLIER(supplierId),
+    CONSTRAINT PARTICIPATION_QUOTATION_FK FOREIGN KEY(quotationId) REFERENCES QUOTATION(quotationId)
+)ENGINE = InnoDb AUTO_INCREMENT 1;
+
+CREATE TABLE contain(
+	productId BIGINT NOT NULL,
+    quotationId BIGINT NOT NULL,
+    quantity DECIMAL(6,2) NOT NULL,
+    bonusLimit DECIMAL(6,2) NOT NULL,
+    CONSTRAINT contain_PK PRIMARY KEY(quotationId, productId),
+    CONSTRAINT contain_PRODUCT_FK FOREIGN KEY(productId) REFERENCES PRODUCT(productId),
+    CONSTRAINT contain_QUOTATION_FK FOREIGN KEY(quotationId) REFERENCES QUOTATION(quotationId)
+)ENGINE = InnoDb;
+
+CREATE TABLE BID(
+	participationId BIGINT NOT NULL,
+    productId BIGINT NOT NULL,
+    createdAt DATETIME NOT NULL,
+    price DECIMAL(6,2) NOT NULL,
+    quantity DECIMAL(6,2) NOT NULL,
+    bonus DECIMAL(6,2) NOT NULL,
+    CONSTRAINT BID_PK PRIMARY KEY(participationId, productId),
+    CONSTRAINT BID_PARTICIPATION_FK FOREIGN KEY(participationId) REFERENCES PARTICIPATION(participationId),
+    CONSTRAINT BID_PRODUCT_FK FOREIGN KEY(productId) REFERENCES PRODUCT(productId)
+)ENGINE = InnoDb;

@@ -1,0 +1,1 @@
+ALTER TABLE quotation ADD COLUMN isAuction BOOLEAN NOT NULL DEFAULT false;

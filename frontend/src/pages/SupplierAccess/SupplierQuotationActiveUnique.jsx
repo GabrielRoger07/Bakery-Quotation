@@ -128,7 +128,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
         const payloads = pendingProducts.map(product => ({
             participationId,
             productId: product.productId,
-            price: Number(pricesByProductId[product.productId]),
+            price: (Number(pricesByProductId[product.productId]) * Number(product.quantity)),
             quantity: Number(product.quantity),
             bonus: 0
         }))
@@ -187,7 +187,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                 </div>
 
                                 <Input
-                                    label={t("single_proposal_price_label")}
+                                    label={t("single_proposal_price_label") + `${product.unitOfMeasure}:`}
                                     type="number"
                                     step="0.01"
                                     min="0.01"

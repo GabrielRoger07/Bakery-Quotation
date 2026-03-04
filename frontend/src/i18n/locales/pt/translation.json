@@ -172,7 +172,7 @@
     "loading_products":  "Carregando produtos...",
     "no_products_quotation":  "Nenhum produto encontrado para essa cotação",
     "single_proposal_instruction":  "Defina o preço de todos os itens e envie sua proposta única em um único envio.",
-    "single_proposal_price_label":  "Preço total do item",
+    "single_proposal_price_label":  "Preço de ",
     "single_proposal_price_required":  "Preencha um preço válido (maior que zero) para todos os produtos.",
     "single_proposal_submit":  "Enviar proposta única",
     "single_proposal_submitting":  "Enviando proposta...",

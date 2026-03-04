@@ -172,7 +172,7 @@
     "loading_products":  "Loading products...",
     "no_products_quotation":  "No products found for this quotation",
     "single_proposal_instruction":  "Set prices for all items and submit your single proposal in one go.",
-    "single_proposal_price_label":  "Total item price",
+    "single_proposal_price_label":  "Price of ",
     "single_proposal_price_required":  "Fill in a valid price (greater than zero) for all products.",
     "single_proposal_submit":  "Submit single proposal",
     "single_proposal_submitting":  "Submitting proposal...",

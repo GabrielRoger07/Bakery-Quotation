@@ -4,7 +4,8 @@ import useFetch from '../../hooks/useFetch'
 import { ENV } from '../../config/env'
 import SupplierQuotationScheduled from './SupplierQuotationScheduled'
 import SupplierQuotationClosed from './SupplierQuotationClosed'
-import SupplierQuotation from './SupplierQuotation'
+import SupplierQuotationActiveAuction from './SupplierQuotationActiveAuction'
+import SupplierQuotationActiveUnique from './SupplierQuotationActiveUnique'
 
 const SupplierQuotationRouter = ({ quotationId, participationId }) => {
     
@@ -45,8 +46,12 @@ const SupplierQuotationRouter = ({ quotationId, participationId }) => {
         return <SupplierQuotationClosed quotation={quotation} participationId={participationId} />
     }
 
+    if(!quotation.isAuction) {
+        return <SupplierQuotationActiveUnique quotationId={quotationId} participationId={participationId} />
+    }
+
     return (
-        <SupplierQuotation quotationId={quotationId} participationId={participationId} />
+        <SupplierQuotationActiveAuction quotationId={quotationId} participationId={participationId} />
     )
 }
 

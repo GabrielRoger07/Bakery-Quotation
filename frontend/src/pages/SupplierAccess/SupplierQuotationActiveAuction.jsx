@@ -14,7 +14,6 @@ import { formatMoney } from '../../utils/formatMoney'
 const SupplierQuotation = ({ participationId, quotationId }) => {
 
   const { t, i18n } = useTranslation()
-
   const { request } = useFetch(ENV.API_BASE_URL)
 
   const [quotation, setQuotation] = useState(null)

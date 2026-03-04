@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -122,6 +123,31 @@ public class BidService {
         String destination = "/topic/quotation/" + participation.getQuotation().getId();
         messagingTemplate.convertAndSend(destination, bidResponseDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(bidResponseDTO);
+    }
+
+    @Transactional
+    public ResponseEntity<List<BidResponseDTO>> createBids(List<BidRequestDTO> bidRequestDTOList) {
+        List<BidResponseDTO> bidResponseDTOList = new ArrayList<>();
+        LocalDateTime createdAt = LocalDateTime.now();
+
+        bidRequestDTOList.forEach(bidRequestDTO -> {
+            Long participationId = bidRequestDTO.getParticipationId();
+            Participation participation = participationRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + participationId + " does not exists"));
+
+            Long productId = bidRequestDTO.getProductId();
+            Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
+
+            BidId bidId = new BidId(participationId, productId, createdAt);
+
+            Bid bid = bidMapper.toEntity(bidRequestDTO);
+            bid.setParticipation(participation);
+            bid.setProduct(product);
+            bid.setBidId(bidId);
+
+            Bid bidCreated = bidRepository.save(bid);
+            bidResponseDTOList.add(bidMapper.toDto(bidCreated));
+        });
+        return ResponseEntity.status(HttpStatus.OK).body(bidResponseDTOList);
     }
 
     public ResponseEntity<BidResponseDTO> deleteBidById(Long participationId, Long productId){

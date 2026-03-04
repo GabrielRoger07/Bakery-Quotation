@@ -48,6 +48,11 @@ public class BidController {
         return bidService.createBid(bidRequestDTO);
     }
 
+    @PostMapping("/batch")
+    public ResponseEntity<List<BidResponseDTO>> createBids(@Valid @RequestBody List<@Valid BidRequestDTO> bids) {
+        return bidService.createBids(bids);
+    }
+
     @DeleteMapping("/{participationId}/{productId}")
     public ResponseEntity<BidResponseDTO> deleteBidById(@PathVariable("participationId") Long participationId, @PathVariable("productId") Long productId){
         return bidService.deleteBidById(participationId, productId);

@@ -74,7 +74,7 @@ CREATE TABLE BID(
     price DECIMAL(6,2) NOT NULL,
     quantity DECIMAL(6,2) NOT NULL,
     bonus DECIMAL(6,2) NOT NULL,
-    CONSTRAINT BID_PK PRIMARY KEY(participationId, productId),
+    CONSTRAINT BID_PK PRIMARY KEY(participationId, productId, createdAt),
     CONSTRAINT BID_PARTICIPATION_FK FOREIGN KEY(participationId) REFERENCES PARTICIPATION(participationId),
     CONSTRAINT BID_PRODUCT_FK FOREIGN KEY(productId) REFERENCES PRODUCT(productId)
 )ENGINE = InnoDb;

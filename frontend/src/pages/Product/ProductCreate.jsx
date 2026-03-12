@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import { jwtDecode } from 'jwt-decode'
-import Cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
@@ -41,15 +39,10 @@ const ProductCreate = ({ onClose, onSave }) => {
 
         setError("")
 
-        const token = Cookies.get("token")
-        const decoded = jwtDecode(token)
-        const cnpj = decoded.companyCnpj;
-
         const product = {
             productBarCodeNumber,
             productName,
             unitOfMeasure,
-            companyCnpj: cnpj
         }
 
         const res = await request("POST", "/products", product)

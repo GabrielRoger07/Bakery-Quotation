@@ -49,8 +49,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
         const body = {
             productBarCodeNumber: productBarCodeNumber.trim(),
             productName: productName.trim(),
-            unitOfMeasure,
-            companyCnpj: product.companyCnpj
+            unitOfMeasure
         }
 
         const res = await request("PUT", `/products/${product.productId}`, body)

@@ -13,37 +13,37 @@ import java.util.Optional;
 public interface SupplierRepository extends JpaRepository<Supplier, Long> {
     boolean findBySupplierEmail(String supplierEmail);
 
-    Optional<Supplier> findByCompany_CompanyCnpjAndSupplierEmail(String companyCompanyCnpj, String supplierEmail);
+    Optional<Supplier> findByCompany_CompanyEmailAndSupplierEmail(String companyCompanyEmail, String supplierEmail);
 
-    Optional<Supplier> findByCompany_CompanyCnpjAndSupplierWhatsappNumber(String companyCompanyCnpj, String supplierWhatsappNumber);
+    Optional<Supplier> findByCompany_CompanyEmailAndSupplierWhatsappNumber(String companyCompanyEmail, String supplierWhatsappNumber);
 
-    Page<Supplier> findByCompany_CompanyCnpj(String companyCompanyCnpj, Pageable pageable);
+    Page<Supplier> findByCompany_CompanyEmail(String companyCompanyEmail, Pageable pageable);
 
-    Page<Supplier> findByCompany_CompanyCnpjAndEmployerCnpjContainsIgnoreCase(String companyCompanyCnpj, String employerCnpj, Pageable pageable);
+    Page<Supplier> findByCompany_CompanyEmailAndEmployerCnpjContainsIgnoreCase(String companyCompanyEmail, String employerCnpj, Pageable pageable);
 
-    Page<Supplier> findByCompany_CompanyCnpjAndEmployerNameContainingIgnoreCase(String companyCompanyCnpj, String employerName, Pageable pageable);
+    Page<Supplier> findByCompany_CompanyEmailAndEmployerNameContainingIgnoreCase(String companyCompanyEmail, String employerName, Pageable pageable);
 
-    Page<Supplier> findByCompany_CompanyCnpjAndSupplierWhatsappNumberContainingIgnoreCase(String companyCompanyCnpj, String supplierWhatsappNumber, Pageable pageable);
+    Page<Supplier> findByCompany_CompanyEmailAndSupplierWhatsappNumberContainingIgnoreCase(String companyCompanyEmail, String supplierWhatsappNumber, Pageable pageable);
 
-    Page<Supplier> findByCompany_CompanyCnpjAndSupplierEmailContainingIgnoreCase(String companyCompanyCnpj, String supplierEmail, Pageable pageable);
+    Page<Supplier> findByCompany_CompanyEmailAndSupplierEmailContainingIgnoreCase(String companyCompanyEmail, String supplierEmail, Pageable pageable);
 
-    Page<Supplier> findByCompany_CompanyCnpjAndSupplierNameContainingIgnoreCase(String companyCompanyCnpj, String supplierName, Pageable pageable);
+    Page<Supplier> findByCompany_CompanyEmailAndSupplierNameContainingIgnoreCase(String companyCompanyEmail, String supplierName, Pageable pageable);
 
-    @Query("SELECT s FROM Supplier s WHERE s.company.companyCnpj = :cnpj AND s.id NOT IN :excludedIds")
-    Page<Supplier> findByCompanyCnpjExcludingIds(String cnpj, List<Long> excludedIds, Pageable pageable);
+    @Query("SELECT s FROM Supplier s WHERE s.company.companyEmail = :email AND s.id NOT IN :excludedIds")
+    Page<Supplier> findByCompanyEmailExcludingIds(String email, List<Long> excludedIds, Pageable pageable);
 
-    @Query("SELECT s FROM Supplier s WHERE s.company.companyCnpj = :cnpj AND LOWER(s.employerCnpj) LIKE LOWER(CONCAT('%', :value, '%')) AND s.id NOT IN :excludedIds")
-    Page<Supplier> findByCompanyCnpjAndEmployerCnpjExcludingIds(String cnpj, String value, List<Long> excludedIds, Pageable pageable);
+    @Query("SELECT s FROM Supplier s WHERE s.company.companyEmail = :email AND LOWER(s.employerCnpj) LIKE LOWER(CONCAT('%', :value, '%')) AND s.id NOT IN :excludedIds")
+    Page<Supplier> findByCompanyEmailAndEmployerCnpjExcludingIds(String email, String value, List<Long> excludedIds, Pageable pageable);
 
-    @Query("SELECT s FROM Supplier s WHERE s.company.companyCnpj = :cnpj AND LOWER(s.employerName) LIKE LOWER(CONCAT('%', :value, '%')) AND s.id NOT IN :excludedIds")
-    Page<Supplier> findByCompanyCnpjAndEmployerNameExcludingIds(String cnpj, String value, List<Long> excludedIds, Pageable pageable);
+    @Query("SELECT s FROM Supplier s WHERE s.company.companyEmail = :email AND LOWER(s.employerName) LIKE LOWER(CONCAT('%', :value, '%')) AND s.id NOT IN :excludedIds")
+    Page<Supplier> findByCompanyEmailAndEmployerNameExcludingIds(String email, String value, List<Long> excludedIds, Pageable pageable);
 
-    @Query("SELECT s FROM Supplier s WHERE s.company.companyCnpj = :cnpj AND LOWER(s.supplierWhatsappNumber) LIKE LOWER(CONCAT('%', :value, '%')) AND s.id NOT IN :excludedIds")
-    Page<Supplier> findByCompanyCnpjAndWhatsappExcludingIds(String cnpj, String value, List<Long> excludedIds, Pageable pageable);
+    @Query("SELECT s FROM Supplier s WHERE s.company.companyEmail = :email AND LOWER(s.supplierWhatsappNumber) LIKE LOWER(CONCAT('%', :value, '%')) AND s.id NOT IN :excludedIds")
+    Page<Supplier> findByCompanyEmailAndWhatsappExcludingIds(String email, String value, List<Long> excludedIds, Pageable pageable);
 
-    @Query("SELECT s FROM Supplier s WHERE s.company.companyCnpj = :cnpj AND LOWER(s.supplierEmail) LIKE LOWER(CONCAT('%', :value, '%')) AND s.id NOT IN :excludedIds")
-    Page<Supplier> findByCompanyCnpjAndEmailExcludingIds(String cnpj, String value, List<Long> excludedIds, Pageable pageable);
+    @Query("SELECT s FROM Supplier s WHERE s.company.companyEmail = :email AND LOWER(s.supplierEmail) LIKE LOWER(CONCAT('%', :value, '%')) AND s.id NOT IN :excludedIds")
+    Page<Supplier> findByCompanyEmailAndEmailExcludingIds(String email, String value, List<Long> excludedIds, Pageable pageable);
 
-    @Query("SELECT s FROM Supplier s WHERE s.company.companyCnpj = :cnpj AND LOWER(s.supplierName) LIKE LOWER(CONCAT('%', :value, '%')) AND s.id NOT IN :excludedIds")
-    Page<Supplier> findByCompanyCnpjAndSupplierNameExcludingIds(String cnpj, String value, List<Long> excludedIds, Pageable pageable);
+    @Query("SELECT s FROM Supplier s WHERE s.company.companyEmail = :email AND LOWER(s.supplierName) LIKE LOWER(CONCAT('%', :value, '%')) AND s.id NOT IN :excludedIds")
+    Page<Supplier> findByCompanyEmailAndSupplierNameExcludingIds(String email, String value, List<Long> excludedIds, Pageable pageable);
 }

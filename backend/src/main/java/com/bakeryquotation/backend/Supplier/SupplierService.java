@@ -5,6 +5,7 @@ import com.bakeryquotation.backend.Company.CompanyRepository;
 import com.bakeryquotation.backend.Supplier.DTO.SupplierRequestDTO;
 import com.bakeryquotation.backend.Supplier.DTO.SupplierResponseDTO;
 import com.bakeryquotation.backend.Supplier.mapper.SupplierMapper;
+import com.bakeryquotation.backend.exception.AccessDeniedException;
 import com.bakeryquotation.backend.exception.DuplicateResourceException;
 import com.bakeryquotation.backend.exception.ImmutableResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,6 +40,10 @@ public class SupplierService {
 
     public ResponseEntity<SupplierResponseDTO> getSupplierById(Long id){
         Supplier supplier = supplierRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Supplier with id " + id + " does not exists"));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(!email.equals(supplier.getCompany().getCompanyEmail())) {
+            throw new AccessDeniedException("You do not have permission to perform this action. Nice try");
+        }
         return ResponseEntity.status(HttpStatus.OK).body(supplierMapper.toDto(supplier));
     }
 
@@ -52,7 +58,8 @@ public class SupplierService {
         return ResponseEntity.status(HttpStatus.OK).body(supplierResponseDTOS);
     }
 
-    public ResponseEntity<Page<SupplierResponseDTO>> getSuppliersByCompanyCnpj(String cnpj, Pageable pageable, String field, String value, List<Long> excludedIds){
+    public ResponseEntity<Page<SupplierResponseDTO>> getSuppliersByCompanyEmail(Pageable pageable, String field, String value, List<Long> excludedIds){
+        String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
         Page<Supplier> suppliersByCompany;
 
@@ -62,42 +69,42 @@ public class SupplierService {
         if(applyFilter){
             if(field.equals("employerCnpj")){
                 if(hasExcludedIds){
-                    suppliersByCompany = supplierRepository.findByCompanyCnpjAndEmployerCnpjExcludingIds(cnpj, value, excludedIds, safePageable);
+                    suppliersByCompany = supplierRepository.findByCompanyEmailAndEmployerCnpjExcludingIds(companyEmail, value, excludedIds, safePageable);
                 } else {
-                    suppliersByCompany = supplierRepository.findByCompany_CompanyCnpjAndEmployerCnpjContainsIgnoreCase(cnpj, value, safePageable);
+                    suppliersByCompany = supplierRepository.findByCompany_CompanyEmailAndEmployerCnpjContainsIgnoreCase(companyEmail, value, safePageable);
                 }
             } else if(field.equals("employerName")){
                 if(hasExcludedIds){
-                    suppliersByCompany = supplierRepository.findByCompanyCnpjAndEmployerNameExcludingIds(cnpj, value, excludedIds, safePageable);
+                    suppliersByCompany = supplierRepository.findByCompanyEmailAndEmployerNameExcludingIds(companyEmail, value, excludedIds, safePageable);
                 } else {
-                    suppliersByCompany = supplierRepository.findByCompany_CompanyCnpjAndEmployerNameContainingIgnoreCase(cnpj, value, safePageable);
+                    suppliersByCompany = supplierRepository.findByCompany_CompanyEmailAndEmployerNameContainingIgnoreCase(companyEmail, value, safePageable);
                 }
             } else if(field.equals("supplierWhatsappNumber")){
                 if(hasExcludedIds){
-                    suppliersByCompany = supplierRepository.findByCompanyCnpjAndWhatsappExcludingIds(cnpj, value, excludedIds, safePageable);
+                    suppliersByCompany = supplierRepository.findByCompanyEmailAndWhatsappExcludingIds(companyEmail, value, excludedIds, safePageable);
                 } else {
-                    suppliersByCompany = supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumberContainingIgnoreCase(cnpj, value, safePageable);
+                    suppliersByCompany = supplierRepository.findByCompany_CompanyEmailAndSupplierWhatsappNumberContainingIgnoreCase(companyEmail, value, safePageable);
                 }
             } else if(field.equals("supplierName")){
                 if(hasExcludedIds){
-                    suppliersByCompany = supplierRepository.findByCompanyCnpjAndSupplierNameExcludingIds(cnpj, value, excludedIds, safePageable);
+                    suppliersByCompany = supplierRepository.findByCompanyEmailAndSupplierNameExcludingIds(companyEmail, value, excludedIds, safePageable);
                 } else {
-                    suppliersByCompany = supplierRepository.findByCompany_CompanyCnpjAndSupplierNameContainingIgnoreCase(cnpj, value, safePageable);
+                    suppliersByCompany = supplierRepository.findByCompany_CompanyEmailAndSupplierNameContainingIgnoreCase(companyEmail, value, safePageable);
                 }
             } else if(field.equals("supplierEmail")){
                 if(hasExcludedIds){
-                    suppliersByCompany = supplierRepository.findByCompanyCnpjAndEmailExcludingIds(cnpj, value, excludedIds, safePageable);
+                    suppliersByCompany = supplierRepository.findByCompanyEmailAndEmailExcludingIds(companyEmail, value, excludedIds, safePageable);
                 } else {
-                    suppliersByCompany = supplierRepository.findByCompany_CompanyCnpjAndSupplierEmailContainingIgnoreCase(cnpj, value, safePageable);
+                    suppliersByCompany = supplierRepository.findByCompany_CompanyEmailAndSupplierEmailContainingIgnoreCase(companyEmail, value, safePageable);
                 }
             } else {
                 throw new ResourceNotFoundException("Invalid field");
             }
         } else {
             if(hasExcludedIds){
-                suppliersByCompany = supplierRepository.findByCompanyCnpjExcludingIds(cnpj, excludedIds, safePageable);
+                suppliersByCompany = supplierRepository.findByCompanyEmailExcludingIds(companyEmail, excludedIds, safePageable);
             } else {
-                suppliersByCompany = supplierRepository.findByCompany_CompanyCnpj(cnpj, safePageable);
+                suppliersByCompany = supplierRepository.findByCompany_CompanyEmail(companyEmail, safePageable);
             }
         }
 
@@ -106,8 +113,7 @@ public class SupplierService {
     }
 
     public ResponseEntity<SupplierResponseDTO> createSupplier(SupplierRequestDTO supplierRequestDTO){
-        String companyCnpj = supplierRequestDTO.getCompanyCnpj();
-        Company company = companyRepository.findById(companyCnpj).orElseThrow(() -> new ResourceNotFoundException("Company with CNPJ " + companyCnpj + " does not exists"));
+        Company company = (Company) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         validation(supplierRequestDTO);
 
@@ -119,11 +125,10 @@ public class SupplierService {
     }
 
     public ResponseEntity<SupplierResponseDTO> updateSupplierById(SupplierRequestDTO supplierRequestDTO, Long id){
+        String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Supplier supplier = supplierRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Supplier with id " + id + " does not exists"));
-
-        String companyCnpj = supplierRequestDTO.getCompanyCnpj();
-        if(!supplier.getCompany().getCompanyCnpj().equals(companyCnpj)){
-            throw new ImmutableResourceException("CNPJ cannot be changed");
+        if(!companyEmail.equals(supplier.getCompany().getCompanyEmail())) {
+            throw new AccessDeniedException("You do not have permission to perform this action. Nice try");
         }
 
         String supplierEmail = supplierRequestDTO.getSupplierEmail();
@@ -132,13 +137,13 @@ public class SupplierService {
         Optional<Supplier> exists = Optional.empty();
 
         if(supplierEmail != null) {
-            exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, supplierEmail);
+            exists = supplierRepository.findByCompany_CompanyEmailAndSupplierEmail(companyEmail, supplierEmail);
             if(exists.isPresent() && !exists.get().getId().equals(id)){
                 throw new DuplicateResourceException("This company already has a supplier with email " + supplierEmail);
             }
         }
 
-        exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, supplierWhatsappNumber);
+        exists = supplierRepository.findByCompany_CompanyEmailAndSupplierWhatsappNumber(companyEmail, supplierWhatsappNumber);
         if(exists.isPresent() && !exists.get().getId().equals(id)){
             throw new DuplicateResourceException("This company already has a supplier with Whatsapp number " + supplierWhatsappNumber);
         }
@@ -154,7 +159,11 @@ public class SupplierService {
     }
 
     public ResponseEntity<SupplierResponseDTO> deleteSupplierById(Long id){
+        String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Supplier supplier = supplierRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Supplier with id " + id + " does not exists"));
+        if(!companyEmail.equals(supplier.getCompany().getCompanyEmail())) {
+            throw new AccessDeniedException("You do not have permission to perform this action. Nice try");
+        }
         supplierRepository.delete(supplier);
         return ResponseEntity.status(HttpStatus.OK).body(supplierMapper.toDto(supplier));
     }
@@ -174,18 +183,18 @@ public class SupplierService {
     public void validation(SupplierRequestDTO supplierRequestDTO){
         String supplierEmail = supplierRequestDTO.getSupplierEmail();
         String supplierWhatsappNumber = supplierRequestDTO.getSupplierWhatsappNumber();
-        String companyCnpj = supplierRequestDTO.getCompanyCnpj();
+        String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Optional<Supplier> exists = Optional.empty();
 
         if(supplierEmail != null) {
-            exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierEmail(companyCnpj, supplierEmail);
+            exists = supplierRepository.findByCompany_CompanyEmailAndSupplierEmail(companyEmail, supplierEmail);
             if(exists.isPresent()){
                 throw new DuplicateResourceException("This company already has a supplier with email " + supplierEmail);
             }
         }
 
-        exists = supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, supplierWhatsappNumber);
+        exists = supplierRepository.findByCompany_CompanyEmailAndSupplierWhatsappNumber(companyEmail, supplierWhatsappNumber);
         if(exists.isPresent()){
             throw new DuplicateResourceException("This company already has a supplier with Whatsapp number " + supplierWhatsappNumber);
         }

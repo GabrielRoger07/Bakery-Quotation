@@ -27,21 +27,15 @@ public class SupplierRequestDTO {
     @CNPJ(message = "Employer CNPJ must be valid")
     private String employerCnpj;
 
-    @NotNull(message = "Company CNPJ is required")
-    @NotEmpty(message = "Company CNPJ cannot be empty")
-    @CNPJ(message = "Company CNPJ must be valid")
-    private String companyCnpj;
-
     public SupplierRequestDTO() {
     }
 
-    public SupplierRequestDTO(String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, String companyCnpj) {
+    public SupplierRequestDTO(String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj) {
         this.supplierName = supplierName;
         this.supplierEmail = supplierEmail;
         this.supplierWhatsappNumber = supplierWhatsappNumber;
         this.employerName = employerName;
         this.employerCnpj = employerCnpj;
-        this.companyCnpj = companyCnpj;
     }
 
     public String getSupplierName() {
@@ -82,13 +76,5 @@ public class SupplierRequestDTO {
 
     public void setEmployerCnpj(String employerCnpj) {
         this.employerCnpj = employerCnpj;
-    }
-
-    public String getCompanyCnpj() {
-        return companyCnpj;
-    }
-
-    public void setCompanyCnpj(String companyCnpj) {
-        this.companyCnpj = companyCnpj;
     }
 }

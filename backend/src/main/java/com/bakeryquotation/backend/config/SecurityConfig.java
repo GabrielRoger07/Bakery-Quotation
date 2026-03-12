@@ -47,6 +47,8 @@ public class SecurityConfig {
                         //rotas administrador
                         .requestMatchers(HttpMethod.GET, "/api/v1/suppliers").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/suppliers").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/products").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/products").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )

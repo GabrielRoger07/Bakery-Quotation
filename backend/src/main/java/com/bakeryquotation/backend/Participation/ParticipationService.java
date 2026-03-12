@@ -191,7 +191,7 @@ public class ParticipationService {
         if(digits < 1) throw new IllegalArgumentException("Digits must be positive");
         if(digits > 8) throw new IllegalArgumentException("Token length too large");
 
-        final String availableChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+        final String availableChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz1234567890";
         SecureRandom random = new SecureRandom();
         StringBuilder token = new StringBuilder(digits);
 

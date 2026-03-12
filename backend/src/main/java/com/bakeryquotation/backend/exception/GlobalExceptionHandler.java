@@ -3,6 +3,7 @@ package com.bakeryquotation.backend.exception;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -73,6 +74,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleAccessDeniedException(AccessDeniedException ex){
         ApiError error = new ApiError(ex.getMessage(), HttpStatus.FORBIDDEN.value());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiError> handleAuthenticationException(AuthenticationException ex){
+        ApiError error = new ApiError("Bad Credentials", HttpStatus.UNAUTHORIZED.value());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler(Exception.class)

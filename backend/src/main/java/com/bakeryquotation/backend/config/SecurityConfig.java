@@ -44,6 +44,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/bids/lowest").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/bids").permitAll()
 
+                        //rotas administrador
+                        .requestMatchers(HttpMethod.GET, "/api/v1/suppliers").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/suppliers").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

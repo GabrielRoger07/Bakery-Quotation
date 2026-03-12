@@ -5,6 +5,7 @@ import com.bakeryquotation.backend.Company.CompanyRepository;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationRequestDTO;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationResponseDTO;
 import com.bakeryquotation.backend.Quotation.mapper.QuotationMapper;
+import com.bakeryquotation.backend.exception.AccessDeniedException;
 import com.bakeryquotation.backend.exception.ImmutableResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,16 +50,17 @@ public class QuotationService {
         return ResponseEntity.status(HttpStatus.OK).body(quotationResponseDTOS);
     }
 
-    public ResponseEntity<Page<QuotationResponseDTO>> getQuotationsByCompanyCnpj(String cnpj, Pageable pageable){
+    public ResponseEntity<Page<QuotationResponseDTO>> getQuotationsByCompanyEmail(Pageable pageable){
+        String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
-        Page<Quotation> quotationsByCompany = quotationRepository.findByCompany_CompanyCnpj(cnpj, safePageable);
+
+        Page<Quotation> quotationsByCompany = quotationRepository.findByCompany_CompanyEmail(companyEmail, safePageable);
         Page<QuotationResponseDTO> quotationsResponseDTOByCompany = quotationsByCompany.map(quotationMapper::toDto);
         return ResponseEntity.status(HttpStatus.OK).body(quotationsResponseDTOByCompany);
     }
 
     public ResponseEntity<QuotationResponseDTO> createQuotation(QuotationRequestDTO quotationRequestDTO){
-        String companyCnpj = quotationRequestDTO.getCompanyCnpj();
-        Company company = companyRepository.findById(companyCnpj).orElseThrow(() -> new ResourceNotFoundException("Company with CNPJ " + companyCnpj + " does not exists"));
+        Company company = (Company) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Quotation quotation = quotationMapper.toEntity(quotationRequestDTO);
         quotation.setCompany(company);
@@ -67,23 +70,26 @@ public class QuotationService {
     }
 
     public ResponseEntity<QuotationResponseDTO> updateQuotationById(QuotationRequestDTO quotationRequestDTO, Long id){
+        String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Quotation quotation = quotationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Quotation with id " + id + " does not exists"));
-        String companyCnpj = quotationRequestDTO.getCompanyCnpj();
 
-        if(!quotation.getCompany().getCompanyCnpj().equals(companyCnpj)){
-            throw new ImmutableResourceException("CNPJ cannot be changed");
+        if(!companyEmail.equals(quotation.getCompany().getCompanyEmail())) {
+            throw new AccessDeniedException("You do not have permission to perform this action. Nice try");
         }
 
         quotation.setQuotationStart(quotationRequestDTO.getQuotationStart());
         quotation.setQuotationEnd(quotationRequestDTO.getQuotationEnd());
         quotation.setIsAuction(quotationRequestDTO.getIsAuction());
-
         QuotationResponseDTO quotationUpdated = quotationMapper.toDto(quotationRepository.save(quotation));
         return ResponseEntity.status(HttpStatus.CREATED).body(quotationUpdated);
     }
 
     public ResponseEntity<QuotationResponseDTO> deleteQuotationById(Long id){
-        Quotation quotation = quotationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Quotation with id " + id + "does not exists"));
+        String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Quotation quotation = quotationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Quotation with id " + id + " does not exists"));
+        if(!companyEmail.equals(quotation.getCompany().getCompanyEmail())) {
+            throw new AccessDeniedException("You do not have permission to perform this action. Nice try");
+        }
         quotationRepository.delete(quotation);
         return ResponseEntity.status(HttpStatus.OK).body(quotationMapper.toDto(quotation));
     }

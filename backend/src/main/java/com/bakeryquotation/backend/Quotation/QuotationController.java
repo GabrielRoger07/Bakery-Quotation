@@ -31,9 +31,9 @@ public class QuotationController {
         return quotationService.getAllQuotations();
     }
 
-    @GetMapping("/company/{companyCnpj}")
-    public ResponseEntity<Page<QuotationResponseDTO>> getQuotationsByCompanyCnpj(@PathVariable("companyCnpj") String cnpj, @PageableDefault(size = 10) Pageable pageable){
-        return quotationService.getQuotationsByCompanyCnpj(cnpj, pageable);
+    @GetMapping("/company")
+    public ResponseEntity<Page<QuotationResponseDTO>> getQuotationsByCompanyEmail(@PageableDefault(size = 10) Pageable pageable){
+        return quotationService.getQuotationsByCompanyEmail(pageable);
     }
 
     @PostMapping

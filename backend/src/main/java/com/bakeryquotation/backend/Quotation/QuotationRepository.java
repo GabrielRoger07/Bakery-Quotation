@@ -12,5 +12,5 @@ public interface QuotationRepository extends JpaRepository<Quotation, Long> {
 
     List<Quotation> findByCompany_CompanyCnpj(String companyCompanyCnpj);
 
-    Page<Quotation> findByCompany_CompanyCnpj(String companyCompanyCnpj, Pageable pageable);
+    Page<Quotation> findByCompany_CompanyEmail(String companyCompanyEmail, Pageable pageable);
 }

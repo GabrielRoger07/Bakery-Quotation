@@ -1,11 +1,10 @@
 package com.bakeryquotation.backend.Product;
 
 import com.bakeryquotation.backend.Company.Company;
-import com.bakeryquotation.backend.Company.CompanyRepository;
 import com.bakeryquotation.backend.Product.DTO.ProductRequestDTO;
 import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import com.bakeryquotation.backend.Product.mapper.ProductMapper;
-import com.bakeryquotation.backend.exception.ImmutableResourceException;
+import com.bakeryquotation.backend.exception.AccessDeniedException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -13,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,16 +26,18 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
-    private final CompanyRepository companyRepository;
 
-    public ProductService(ProductRepository productRepository, ProductMapper productMapper, CompanyRepository companyRepository){
+    public ProductService(ProductRepository productRepository, ProductMapper productMapper){
         this.productRepository = productRepository;
         this.productMapper = productMapper;
-        this.companyRepository = companyRepository;
     }
 
     public ResponseEntity<ProductResponseDTO> getProductById(Long id){
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " does not exists"));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(!email.equals(product.getCompany().getCompanyEmail())) {
+            throw new AccessDeniedException("You do not have permission to perform this action. Nice try");
+        }
         return ResponseEntity.status(HttpStatus.OK).body(productMapper.toDto(product));
     }
 
@@ -48,7 +50,8 @@ public class ProductService {
         return ResponseEntity.status(HttpStatus.OK).body(productResponseDTOS);
     }
 
-    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyCnpj(String cnpj, Pageable pageable, String field, String value, List<Long> excludedIds){
+    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyEmail(Pageable pageable, String field, String value, List<Long> excludedIds){
+        String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
         Page<Product> productsByCompany;
 
@@ -58,15 +61,15 @@ public class ProductService {
         if(applyFilter){
             if(field.equals("productBarCodeNumber")){
                 if(hasExcludedIds){
-                    productsByCompany = productRepository.findByCompanyCnpjAndBarcodeExcludingIds(cnpj, value, excludedIds, safePageable);
+                    productsByCompany = productRepository.findByCompanyEmailAndBarcodeExcludingIds(companyEmail, value, excludedIds, safePageable);
                 } else {
-                    productsByCompany = productRepository.findByCompany_CompanyCnpjAndProductBarCodeNumberContainsIgnoreCase(cnpj, value, safePageable);
+                    productsByCompany = productRepository.findByCompany_CompanyEmailAndProductBarCodeNumberContainsIgnoreCase(companyEmail, value, safePageable);
                 }
             } else if(field.equals("productName")){
                 if(hasExcludedIds){
-                    productsByCompany = productRepository.findByCompanyCnpjAndNameExcludingIds(cnpj, value, excludedIds, safePageable);
+                    productsByCompany = productRepository.findByCompanyEmailAndNameExcludingIds(companyEmail, value, excludedIds, safePageable);
                 } else {
-                    productsByCompany = productRepository.findByCompany_CompanyCnpjAndProductNameContainsIgnoreCase(cnpj, value, safePageable);
+                    productsByCompany = productRepository.findByCompany_CompanyEmailAndProductNameContainsIgnoreCase(companyEmail, value, safePageable);
                 }
             } else {
                 throw new ResourceNotFoundException("Invalid field");
@@ -74,9 +77,9 @@ public class ProductService {
 
         } else {
             if(hasExcludedIds) {
-                productsByCompany = productRepository.findByCompanyCnpjExcludingIds(cnpj, excludedIds, safePageable);
+                productsByCompany = productRepository.findByCompanyEmailExcludingIds(companyEmail, excludedIds, safePageable);
             } else {
-                productsByCompany = productRepository.findByCompany_CompanyCnpj(cnpj, safePageable);
+                productsByCompany = productRepository.findByCompany_CompanyEmail(companyEmail, safePageable);
             }
         }
 
@@ -85,8 +88,7 @@ public class ProductService {
     }
 
     public ResponseEntity<ProductResponseDTO> createProduct(ProductRequestDTO productRequestDTO){
-        String companyCnpj = productRequestDTO.getCompanyCnpj();
-        Company company = companyRepository.findById(companyCnpj).orElseThrow(() -> new ResourceNotFoundException("Company with CNPJ " + companyCnpj + " does not exists"));
+        Company company = (Company) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Product product = productMapper.toEntity(productRequestDTO);
         product.setCompany(company);
@@ -96,10 +98,13 @@ public class ProductService {
     }
 
     public ResponseEntity<ProductResponseDTO> updateProductById(ProductRequestDTO productRequestDTO, Long id){
+        String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " does not exists"));
-        if(!productRequestDTO.getCompanyCnpj().equals(product.getCompany().getCompanyCnpj())){
-            throw new ImmutableResourceException("Company CNPJ cannot be changed");
+
+        if(!companyEmail.equals(product.getCompany().getCompanyEmail())) {
+            throw new AccessDeniedException("You do not have permission to perform this action. Nice try");
         }
+
         product.setProductBarCodeNumber(productRequestDTO.getProductBarCodeNumber());
         product.setProductName(productRequestDTO.getProductName());
         product.setUnitOfMeasure(productRequestDTO.getUnitOfMeasure());
@@ -108,7 +113,11 @@ public class ProductService {
     }
 
     public ResponseEntity<ProductResponseDTO> deleteProductById(Long id){
+        String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " does not exists"));
+        if(!companyEmail.equals(product.getCompany().getCompanyEmail())) {
+            throw new AccessDeniedException("You do not have permission to perform this action. Nice try");
+        }
         productRepository.delete(product);
         return ResponseEntity.status(HttpStatus.OK).body(productMapper.toDto(product));
     }

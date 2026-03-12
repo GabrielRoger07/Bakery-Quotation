@@ -1,13 +1,11 @@
 package com.bakeryquotation.backend.Supplier;
 
 import com.bakeryquotation.backend.Company.Company;
-import com.bakeryquotation.backend.Company.CompanyRepository;
 import com.bakeryquotation.backend.Supplier.DTO.SupplierRequestDTO;
 import com.bakeryquotation.backend.Supplier.DTO.SupplierResponseDTO;
 import com.bakeryquotation.backend.Supplier.mapper.SupplierMapper;
 import com.bakeryquotation.backend.exception.AccessDeniedException;
 import com.bakeryquotation.backend.exception.DuplicateResourceException;
-import com.bakeryquotation.backend.exception.ImmutableResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -30,12 +28,10 @@ public class SupplierService {
 
     private final SupplierRepository supplierRepository;
     private final SupplierMapper supplierMapper;
-    private final CompanyRepository companyRepository;
 
-    public SupplierService(SupplierRepository supplierRepository, SupplierMapper supplierMapper, CompanyRepository companyRepository){
+    public SupplierService(SupplierRepository supplierRepository, SupplierMapper supplierMapper){
         this.supplierRepository = supplierRepository;
         this.supplierMapper = supplierMapper;
-        this.companyRepository = companyRepository;
     }
 
     public ResponseEntity<SupplierResponseDTO> getSupplierById(Long id){

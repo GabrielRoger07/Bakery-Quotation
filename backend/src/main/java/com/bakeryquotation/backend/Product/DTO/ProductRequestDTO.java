@@ -21,19 +21,13 @@ public class ProductRequestDTO {
     @NotNull(message = "Unit of Measure is required")
     private UnitOfMeasure unitOfMeasure;
 
-    @NotNull(message = "CNPJ is required")
-    @NotEmpty(message = "CNPJ cannot be empty")
-    @CNPJ(message = "CNPJ must be valid")
-    private String companyCnpj;
-
     public ProductRequestDTO() {
     }
 
-    public ProductRequestDTO(String productName, String productBarCodeNumber, UnitOfMeasure unitOfMeasure, String companyCnpj) {
+    public ProductRequestDTO(String productName, String productBarCodeNumber, UnitOfMeasure unitOfMeasure) {
         this.productName = productName;
         this.productBarCodeNumber = productBarCodeNumber;
         this.unitOfMeasure = unitOfMeasure;
-        this.companyCnpj = companyCnpj;
     }
 
     public String getProductName() {
@@ -58,13 +52,5 @@ public class ProductRequestDTO {
 
     public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
         this.unitOfMeasure = unitOfMeasure;
-    }
-
-    public String getCompanyCnpj() {
-        return companyCnpj;
-    }
-
-    public void setCompanyCnpj(String companyCnpj) {
-        this.companyCnpj = companyCnpj;
     }
 }

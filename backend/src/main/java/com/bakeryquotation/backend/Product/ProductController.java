@@ -31,15 +31,14 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
-    @GetMapping("/company/{companyCnpj}")
-    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyCnpj(
-            @PathVariable("companyCnpj") String cnpj,
+    @GetMapping("/company")
+    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyEmail(
             @PageableDefault(size = 10) Pageable pageable,
             @RequestParam(value = "field", required = false) String field,
             @RequestParam(value = "value", required = false) String value,
             @RequestParam(value = "excludedIds", required = false) List<Long> excludedIds
     ){
-        return productService.getProductsByCompanyCnpj(cnpj, pageable, field, value, excludedIds);
+        return productService.getProductsByCompanyEmail(pageable, field, value, excludedIds);
     }
 
     @PostMapping

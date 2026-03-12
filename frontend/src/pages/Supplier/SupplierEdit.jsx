@@ -63,7 +63,6 @@ const SupplierEdit = ({supplier, onSave, onClose}) => {
             supplierWhatsappNumber: getSupplierWhatsappNumberRaw(),
             employerName: employerName.trim(),
             employerCnpj: getEmployerCnpjRaw(),
-            companyCnpj: supplier.companyCnpj,
             createdAt: supplier.createdAt
         }
 

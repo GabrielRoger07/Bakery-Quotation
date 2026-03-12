@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import { jwtDecode } from 'jwt-decode'
-import Cookies from 'js-cookie'
 import { useTranslation, Trans } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
@@ -89,16 +87,12 @@ const SupplierList = () => {
     }
 
     const fetchSuppliers = useCallback(async (page = 0) => {
-        const token = Cookies.get("token")
-        const decoded = jwtDecode(token)
-        const cnpj = decoded.companyCnpj
-
         let sortQuery = ""
         if(sortField) {
             sortQuery = `&sort=${sortField},${sortDirection}`
         }
 
-        const res = await request("GET", `/suppliers/company/${cnpj}?page=${page}${sortQuery}`)
+        const res = await request("GET", `/suppliers/company?page=${page}${sortQuery}`)
         if(res.ok){
             setSuppliers(res.data.content);
             setTotalPages(res.data.totalPages)

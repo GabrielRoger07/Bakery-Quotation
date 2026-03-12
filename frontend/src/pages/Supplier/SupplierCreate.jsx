@@ -47,17 +47,12 @@ const SupplierCreate = ({ onClose, onSave }) => {
 
         setError("")
 
-        const token = Cookies.get("token")
-        const decoded = jwtDecode(token)
-        const cnpj = decoded.companyCnpj;
-
         const supplier = {
             supplierName,
             supplierEmail: supplierEmail || null,
             supplierWhatsappNumber: getSupplierWhatsappNumberRaw(),
             employerName,
             employerCnpj: getEmployerCnpjRaw(),
-            companyCnpj: cnpj
         }
 
         const res = await request("POST", "/suppliers", supplier)

@@ -52,6 +52,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/quotations").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/quotations").hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.GET, "/api/v1/companies").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/companies/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/companies/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/companies").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/companies/*").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

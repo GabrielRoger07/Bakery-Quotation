@@ -1,6 +1,4 @@
 import {useState, useEffect, useCallback} from 'react'
-import { jwtDecode } from 'jwt-decode'
-import Cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Alert from '../../components/Alert'
@@ -83,10 +81,6 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         setSuccess("")
         setLoading(true)
 
-        const token = Cookies.get("token")
-        const decoded = jwtDecode(token)
-        const cnpj = decoded.companyCnpj
-
         let quotationRes = null
         let updatedQuotation = null
 
@@ -94,8 +88,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             const quotation = {
                 quotationStart: finalData.start,
                 quotationEnd: finalData.end,
-                isAuction: finalData.isAuction,
-                companyCnpj: cnpj
+                isAuction: finalData.isAuction
             }
 
             quotationRes = await request("POST", "/quotations", quotation)
@@ -112,8 +105,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             const quotation = {
                 quotationStart: finalData.start,
                 quotationEnd: finalData.end,
-                isAuction: finalData.isAuction,
-                companyCnpj: cnpj
+                isAuction: finalData.isAuction
             }
 
             quotationRes = await request("PUT", `/quotations/${initialData.quotationId}`, quotation)

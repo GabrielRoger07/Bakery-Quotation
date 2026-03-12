@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { jwtDecode } from 'jwt-decode'
-import Cookies from 'js-cookie'
 import { useTranslation, Trans } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Modal from '../../components/Modal'
@@ -120,10 +118,6 @@ const QuotationList = () => {
     }
 
     const fetchQuotations = useCallback(async (page = 0) => {
-        const token = Cookies.get("token")
-        const decoded = jwtDecode(token)
-        const cnpj = decoded.companyCnpj
-
         let sortQuery = ""
         const backendSortField = sortMap[sortField]
 
@@ -131,7 +125,7 @@ const QuotationList = () => {
             sortQuery = `&sort=${backendSortField},${sortDirection}`
         }
 
-        const res = await request("GET", `/quotations/company/${cnpj}?page=${page}${sortQuery}`)
+        const res = await request("GET", `/quotations/company?page=${page}${sortQuery}`)
         
         if(res.ok){
             const mapped = res.data.content.map((q) => {

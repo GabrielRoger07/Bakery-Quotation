@@ -1,6 +1,4 @@
 import { useEffect, useState, useCallback } from 'react'
-import { jwtDecode } from 'jwt-decode'
-import Cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
@@ -27,11 +25,6 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
     }, [localSelected, onChange])
 
     const fetchSuppliers = useCallback(async (page = 0, field = searchField, word = searchWord) => {
-
-        const token = Cookies.get("token")
-        const decoded = jwtDecode(token)
-        const cnpj = decoded.companyCnpj
-
         const excludedIds = localSelected.map(s => s.supplierId)
 
         let query = `?page=${page}`
@@ -40,7 +33,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
         if(word) query += `&value=${word}`
         if(excludedIds.length > 0) query += `&excludedIds=${excludedIds.join(",")}`
 
-        const res = await request("GET", `/suppliers/company/${cnpj}${query}`)
+        const res = await request("GET", `/suppliers/company${query}`)
         if(res.ok){
             setAvailableSuppliers(res.data.content)
             setCurrentPage(res.data.number)

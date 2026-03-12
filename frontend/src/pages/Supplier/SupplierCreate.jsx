@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import { jwtDecode } from 'jwt-decode'
-import Cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'

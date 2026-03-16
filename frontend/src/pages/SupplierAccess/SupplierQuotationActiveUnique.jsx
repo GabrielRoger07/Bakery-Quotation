@@ -217,6 +217,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                 <div className="proposal-review">
                     <p className="proposal-review-intro">{t("single_proposal_review_intro")}</p>
 
+                    <div className="proposal-review-table-wrapper">
                     <table className="proposal-review-table">
                         <thead>
                             <tr>
@@ -258,6 +259,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                             </tr>
                         </tfoot>
                     </table>
+                    </div>
 
                     {skippedProducts.length > 0 && (
                         <p className="proposal-review-skipped-warning">

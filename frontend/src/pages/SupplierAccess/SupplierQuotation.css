@@ -462,6 +462,11 @@
     color: var(--color-text-secondary);
 }
 
+.proposal-review-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .proposal-review-table {
     width: 100%;
     border-collapse: collapse;
@@ -494,6 +499,11 @@
 }
 
 .proposal-review-num {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.proposal-review-table thead th.proposal-review-num {
     text-align: right;
 }
 

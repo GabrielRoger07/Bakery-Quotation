@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Table( name = "participation",
         uniqueConstraints = {
-            @UniqueConstraint(name = "PARTICIPATION_supplierId_quotationId_UK", columnNames = {"supplierId", "quotationId"})
+            @UniqueConstraint(name = "participation_supplierId_quotationId_uk", columnNames = {"supplierId", "quotationId"})
         }
 )
 public class Participation {
@@ -25,7 +25,7 @@ public class Participation {
     @JoinColumn(name = "quotationId",
                 referencedColumnName = "quotationId",
                 foreignKey = @ForeignKey(
-                        name = "PARTICIPATION_QUOTATION_FK"
+                        name = "participation_quotation_fk"
                 ),
                 nullable = false
     )
@@ -35,7 +35,7 @@ public class Participation {
     @JoinColumn(name = "supplierId",
                 referencedColumnName = "supplierId",
                 foreignKey = @ForeignKey(
-                        name = "PARTICIPATION_SUPPLIER_FK"
+                        name = "participation_supplier_fk"
                 ),
                 nullable = false
     )

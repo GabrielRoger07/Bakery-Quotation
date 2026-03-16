@@ -30,7 +30,7 @@ public class Product {
     @JoinColumn(name = "companyCnpj",
                 referencedColumnName = "companyCnpj",
                 foreignKey = @ForeignKey(
-                        name = "PRODUCT_COMPANY_FK"
+                        name = "product_company_fk"
                 ),
                 nullable = false
     )

@@ -11,8 +11,8 @@ import java.util.List;
 @Entity
 @Table(name = "supplier",
        uniqueConstraints = {
-            @UniqueConstraint(name = "SUPPLIER_companyCnpj_whatsapp_UK", columnNames = {"supplierWhatsappNumber", "companyCnpj"}),
-            @UniqueConstraint(name = "SUPPLIER_companyCnpj_email_UK", columnNames = {"supplierEmail", "companyCnpj"})
+            @UniqueConstraint(name = "supplier_companyCnpj_whatsapp_uk", columnNames = {"supplierWhatsappNumber", "companyCnpj"}),
+            @UniqueConstraint(name = "supplier_companyCnpj_email_uk", columnNames = {"supplierEmail", "companyCnpj"})
        }
 )
 public class Supplier {
@@ -44,7 +44,7 @@ public class Supplier {
     @JoinColumn(name = "companyCnpj",
                 referencedColumnName = "companyCnpj",
                 foreignKey = @ForeignKey(
-                    name = "SUPPLIER_COMPANY_FK"
+                    name = "supplier_company_fk"
                 ),
                 nullable = false
     )

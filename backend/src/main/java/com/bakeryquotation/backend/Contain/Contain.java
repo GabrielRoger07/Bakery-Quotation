@@ -14,12 +14,12 @@ public class Contain {
     private ContainId containId;
 
     @ManyToOne()
-    @JoinColumn(name = "quotationId", referencedColumnName = "quotationId", foreignKey = @ForeignKey(name = "contain_QUOTATION_FK"))
+    @JoinColumn(name = "quotationId", referencedColumnName = "quotationId", foreignKey = @ForeignKey(name = "contain_quotation_fk"))
     @MapsId("quotationId")
     private Quotation quotation;
 
     @ManyToOne()
-    @JoinColumn(name = "productId", referencedColumnName = "productId", foreignKey = @ForeignKey(name = "contain_PRODUCT_FK"))
+    @JoinColumn(name = "productId", referencedColumnName = "productId", foreignKey = @ForeignKey(name = "contain_product_fk"))
     @MapsId("productId")
     private Product product;
 

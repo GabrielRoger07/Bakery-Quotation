@@ -34,7 +34,7 @@ public class Quotation {
     @JoinColumn(name = "companyCnpj",
             referencedColumnName = "companyCnpj",
             foreignKey = @ForeignKey(
-                    name = "QUOTATION_COMPANY_FK"
+                    name = "quotation_company_fk"
             ),
             nullable = false
     )

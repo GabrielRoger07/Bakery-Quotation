@@ -15,8 +15,8 @@ import java.util.List;
 @Entity
 @Table( name = "company",
         uniqueConstraints = {
-            @UniqueConstraint(name = "COMPANY_whatsapp_UK", columnNames = {"companyWhatsappNumber"}),
-            @UniqueConstraint(name = "COMPANY_email_UK", columnNames = {"companyEmail"}),
+            @UniqueConstraint(name = "company_whatsapp_uk", columnNames = {"companyWhatsappNumber"}),
+            @UniqueConstraint(name = "company_email_uk", columnNames = {"companyEmail"}),
         }
 )
 public class Company implements UserDetails {

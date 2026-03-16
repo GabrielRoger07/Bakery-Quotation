@@ -15,12 +15,12 @@ public class Bid {
     private BidId bidId;
 
     @ManyToOne()
-    @JoinColumn(name = "participationId", referencedColumnName = "participationId", foreignKey = @ForeignKey(name = "bid_PARTICIPATION_FK"))
+    @JoinColumn(name = "participationId", referencedColumnName = "participationId", foreignKey = @ForeignKey(name = "bid_participation_fk"))
     @MapsId("participationId")
     private Participation participation;
 
     @ManyToOne()
-    @JoinColumn(name = "productId", referencedColumnName = "productId", foreignKey = @ForeignKey(name = "bid_PRODUCT_FK"))
+    @JoinColumn(name = "productId", referencedColumnName = "productId", foreignKey = @ForeignKey(name = "bid_product_fk"))
     @MapsId("productId")
     private Product product;
 

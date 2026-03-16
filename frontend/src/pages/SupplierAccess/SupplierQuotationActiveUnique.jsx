@@ -1,25 +1,30 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
-import Input from '../../components/Input'
+import { formatMoney } from '../../utils/formatMoney'
 import Button from '../../components/Button'
+import Modal from '../../components/Modal'
+import SingleProposalProductRow from './SingleProposalProductRow'
 import { ENV } from '../../config/env'
 import './SupplierQuotation.css'
 
 const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
     const { request } = useFetch(ENV.API_BASE_URL)
 
     const [quotation, setQuotation] = useState(null)
     const [participation, setParticipation] = useState(null)
     const [products, setProducts] = useState([])
     const [existingBids, setExistingBids] = useState([])
-    const [pricesByProductId, setPricesByProductId] = useState({})
+    const [numericPricesByProductId, setNumericPricesByProductId] = useState({})
     const [loading, setLoading] = useState(true)
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
     const [timeRemaining, setTimeRemaining] = useState("")
+    const [showConfirmModal, setShowConfirmModal] = useState(false)
+    const [productsToSubmit, setProductsToSubmit] = useState([])
+    const [skippedProducts, setSkippedProducts] = useState([])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,23 +42,21 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                 return
             }
 
-            const fetchedQuotation = quotationRes.data
             const fetchedProducts = productsRes.data ?? []
             const fetchedBids = bidsRes.ok ? bidsRes.data ?? [] : []
 
-            setQuotation(fetchedQuotation)
+            setQuotation(quotationRes.data)
             setParticipation(participationRes.ok ? participationRes.data : null)
             setProducts(fetchedProducts)
             setExistingBids(fetchedBids)
 
             const initialPrices = {}
-
             for(const product of fetchedProducts){
                 const existingBid = fetchedBids.find(bid => bid.productId === product.productId)
-                initialPrices[product.productId] = existingBid ? String(existingBid.price) : ""
+                initialPrices[product.productId] = existingBid ? existingBid.price : 0
             }
 
-            setPricesByProductId(initialPrices)
+            setNumericPricesByProductId(initialPrices)
             setLoading(false)
         }
 
@@ -89,51 +92,51 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
 
     const existingBidByProductId = useMemo(() => {
         return existingBids.reduce((acc, bid) => {
-            if(!acc[bid.productId]){
-                acc[bid.productId] = bid
-            }
+            if(!acc[bid.productId]) acc[bid.productId] = bid
             return acc
         }, {})
     }, [existingBids])
 
-    const isFullySubmitted = products.length > 0 && products.every(product => existingBidByProductId[product.productId])
+    const hasSubmittedBids = existingBids.length > 0
 
-    const handlePriceChange = (productId, rawValue) => {
-        const value = rawValue === "" ? "" : rawValue.replace(",", ".")
-        setPricesByProductId(prev => ({ ...prev, [productId]: value }))
-    }
+    const handleNumericPriceChange = useCallback((productId, numericValue) => {
+        setNumericPricesByProductId(prev => ({ ...prev, [productId]: numericValue }))
+    }, [])
 
-    const handleSubmit = async () => {
+    const handleReview = () => {
         setError("")
         setSuccess("")
 
-        const pendingProducts = products.filter(product => !existingBidByProductId[product.productId])
-        if(pendingProducts.length === 0){
-            setError(t("single_proposal_already_submitted"))
+        const pendingProducts = products.filter(p => !existingBidByProductId[p.productId])
+
+        const validProducts = pendingProducts.filter(
+            p => (numericPricesByProductId[p.productId] ?? 0) > 0
+        )
+
+        if(validProducts.length === 0){
+            setError(t("single_proposal_no_prices"))
             return
         }
 
-        const invalidProduct = pendingProducts.find(product => {
-            const parsedPrice = Number(pricesByProductId[product.productId])
-            return !Number.isFinite(parsedPrice) || parsedPrice <= 0
-        })
+        setProductsToSubmit(validProducts)
+        setSkippedProducts(pendingProducts.filter(p => !validProducts.includes(p)))
+        setShowConfirmModal(true)
+    }
 
-        if(invalidProduct){
-            setError(t("single_proposal_price_required"))
-            return
-        }
-
+    const handleConfirmSubmit = async () => {
         setSubmitting(true)
 
-        const payloads = pendingProducts.map(product => ({
+        const payloads = productsToSubmit.map(product => ({
             participationId,
             productId: product.productId,
-            price: (Number(pricesByProductId[product.productId]) * Number(product.quantity)),
+            price: (numericPricesByProductId[product.productId] ?? 0) * Number(product.quantity),
             quantity: Number(product.quantity),
             bonus: 0
         }))
 
         const submitRes = await request("POST", "/bids/batch", payloads)
+        setShowConfirmModal(false)
+
         if(!submitRes.ok){
             setSubmitting(false)
             setError(t("single_proposal_submit_error"))
@@ -141,13 +144,17 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
         }
 
         const bidsRes = await request("GET", `/bids/participations/${participationId}`)
-        if(bidsRes.ok){
-            setExistingBids(bidsRes.data ?? [])
-        }
+        if(bidsRes.ok) setExistingBids(bidsRes.data ?? [])
 
         setSubmitting(false)
         setSuccess(t("single_proposal_submit_success"))
     }
+
+    const grandTotal = useMemo(() => {
+        return productsToSubmit.reduce((sum, product) => {
+            return sum + ((numericPricesByProductId[product.productId] ?? 0) * Number(product.quantity))
+        }, 0)
+    }, [productsToSubmit, numericPricesByProductId])
 
     if(loading) return <p>{t("loading_products")}</p>
     if(error && !products.length) return <p>{error}</p>
@@ -177,43 +184,99 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                 <p className="single-proposal-helper">{t("single_proposal_instruction")}</p>
 
                 <div className="single-proposal-list">
-                    {products.map(product => {
-                        const hasBid = Boolean(existingBidByProductId[product.productId])
-                        return (
-                            <div key={product.productId} className="single-proposal-item">
-                                <div className="single-proposal-item-meta">
-                                    <strong>{product.productName}</strong>
-                                    <span>{t("quantity")}: {product.quantity} {product.unitOfMeasure}</span>
-                                </div>
-
-                                <Input
-                                    label={t("single_proposal_price_label") + `${product.unitOfMeasure}:`}
-                                    type="number"
-                                    step="0.01"
-                                    min="0.01"
-                                    value={pricesByProductId[product.productId] ?? ""}
-                                    onChange={(e) => handlePriceChange(product.productId, e.target.value)}
-                                    disabled={hasBid || isFullySubmitted}
-                                    placeholder="0.00"
-                                />
-                            </div>
-                        )
-                    })}
+                    {products.map(product => (
+                        <SingleProposalProductRow
+                            key={product.productId}
+                            product={product}
+                            disabled={hasSubmittedBids}
+                            initialNumericValue={numericPricesByProductId[product.productId] ?? 0}
+                            onNumericChange={handleNumericPriceChange}
+                        />
+                    ))}
                 </div>
 
                 {error && <p className="bid-feedback bid-feedback-error">{error}</p>}
                 {success && <p className="bid-feedback bid-feedback-success">{success}</p>}
 
                 <div className="single-proposal-actions">
-                    {isFullySubmitted ? (
+                    {hasSubmittedBids ? (
                         <p className="single-proposal-submitted">{t("single_proposal_already_submitted")}</p>
                     ) : (
-                        <Button onClick={handleSubmit} disabled={submitting}>
+                        <Button onClick={handleReview} disabled={submitting}>
                             {submitting ? t("single_proposal_submitting") : t("single_proposal_submit")}
                         </Button>
                     )}
                 </div>
             </div>
+
+            <Modal
+                isOpen={showConfirmModal}
+                onClose={() => setShowConfirmModal(false)}
+                title={t("single_proposal_review_title")}
+            >
+                <div className="proposal-review">
+                    <p className="proposal-review-intro">{t("single_proposal_review_intro")}</p>
+
+                    <table className="proposal-review-table">
+                        <thead>
+                            <tr>
+                                <th>{t("single_proposal_col_product")}</th>
+                                <th className="proposal-review-num">{t("single_proposal_col_qty")}</th>
+                                <th className="proposal-review-num">{t("single_proposal_col_unit_price")}</th>
+                                <th className="proposal-review-num">{t("single_proposal_col_total")}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {productsToSubmit.map(product => {
+                                const unitPrice = numericPricesByProductId[product.productId] ?? 0
+                                const total = unitPrice * Number(product.quantity)
+                                return (
+                                    <tr key={product.productId}>
+                                        <td>{product.productName}</td>
+                                        <td className="proposal-review-num">{product.quantity} {product.unitOfMeasure}</td>
+                                        <td className="proposal-review-num">{formatMoney(unitPrice, i18n.language)}</td>
+                                        <td className="proposal-review-num proposal-review-total">{formatMoney(total, i18n.language)}</td>
+                                    </tr>
+                                )
+                            })}
+                            {skippedProducts.map(product => (
+                                <tr key={product.productId} className="proposal-review-row-skipped">
+                                    <td>
+                                        <span className="proposal-review-skipped-name">{product.productName}</span>
+                                        <span className="proposal-review-no-price-badge">{t("single_proposal_no_price_badge")}</span>
+                                    </td>
+                                    <td className="proposal-review-num">{product.quantity} {product.unitOfMeasure}</td>
+                                    <td className="proposal-review-num proposal-review-dash">—</td>
+                                    <td className="proposal-review-num proposal-review-dash">—</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colSpan={3} className="proposal-review-grand-label">{t("total_value")}</td>
+                                <td className="proposal-review-num proposal-review-grand-total">{formatMoney(grandTotal, i18n.language)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    {skippedProducts.length > 0 && (
+                        <p className="proposal-review-skipped-warning">
+                            {skippedProducts.length === 1
+                                ? t("single_proposal_skipped_warning_one")
+                                : t("single_proposal_skipped_warning_other", { count: skippedProducts.length })}
+                        </p>
+                    )}
+
+                    <div className="proposal-review-actions">
+                        <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+                            {t("single_proposal_cancel")}
+                        </Button>
+                        <Button variant="success" onClick={handleConfirmSubmit} loading={submitting}>
+                            {t("single_proposal_confirm_submit")}
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     )
 }

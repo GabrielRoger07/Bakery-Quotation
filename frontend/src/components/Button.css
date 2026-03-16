@@ -47,6 +47,20 @@
     transform: translateY(-1px);
 }
 
+.btn-secondary {
+    background-color: transparent;
+    border-color: var(--color-border-strong);
+    color: var(--color-text-secondary);
+    box-shadow: none;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-surface-2);
+    border-color: var(--color-border-strong);
+    color: var(--color-text-default);
+    transform: translateY(-1px);
+}
+
 .btn:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring-accent);

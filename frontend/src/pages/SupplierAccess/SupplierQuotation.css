@@ -448,6 +448,120 @@
     font-weight: 600;
 }
 
+/* ── Proposal review modal ───────────────────────────── */
+
+.proposal-review {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.proposal-review-intro {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.proposal-review-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+}
+
+.proposal-review-table thead th {
+    text-align: left;
+    padding: 0.5rem 0.6rem;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.proposal-review-table tbody td {
+    padding: 0.55rem 0.6rem;
+    color: var(--color-text-default);
+    border-bottom: 1px solid var(--color-border-lighter);
+    vertical-align: middle;
+}
+
+.proposal-review-table tfoot td {
+    padding: 0.6rem 0.6rem 0;
+    font-weight: 600;
+    color: var(--color-text-strong);
+    border-top: 2px solid var(--color-border);
+}
+
+.proposal-review-num {
+    text-align: right;
+}
+
+.proposal-review-total {
+    color: var(--color-text-strong);
+    font-weight: 500;
+}
+
+.proposal-review-grand-label {
+    text-align: right;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.proposal-review-grand-total {
+    font-size: var(--font-size-md);
+    color: var(--color-accent-strong);
+    font-weight: 700;
+}
+
+.proposal-review-row-skipped td {
+    opacity: 0.5;
+    background: var(--color-surface-1);
+}
+
+.proposal-review-skipped-name {
+    display: inline;
+}
+
+.proposal-review-no-price-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.45rem;
+    padding: 0.1rem 0.45rem;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-warning-strong, #92400e);
+    background: var(--color-warning-lighter, #fffbeb);
+    border: 1px solid var(--color-warning-border, #fcd34d);
+    border-radius: 999px;
+    vertical-align: middle;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.proposal-review-dash {
+    color: var(--color-text-muted);
+    font-weight: 400;
+}
+
+.proposal-review-skipped-warning {
+    margin: 0;
+    padding: 0.6rem 0.8rem;
+    background: var(--color-warning-lighter, #fffbeb);
+    border: 1px solid var(--color-warning-border, #fcd34d);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-warning-strong, #92400e);
+}
+
+.proposal-review-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    padding-top: 0.25rem;
+}
+
 @media (max-width: 768px){
     .supplier-quotation-container {
         padding: 1rem 0.7rem 1.2rem;
@@ -480,6 +594,14 @@
     }
 
     .single-proposal-actions .btn {
+        width: 100%;
+    }
+
+    .proposal-review-actions {
+        flex-direction: column-reverse;
+    }
+
+    .proposal-review-actions .btn {
         width: 100%;
     }
 

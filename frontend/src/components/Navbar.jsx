@@ -14,7 +14,7 @@ const Navbar = () => {
     const menu = useMobileMenu()
 
     const logout = () => {
-        Cookies.remove("token");
+        Cookies.remove("accessToken");
         navigate("/login")
     }
 

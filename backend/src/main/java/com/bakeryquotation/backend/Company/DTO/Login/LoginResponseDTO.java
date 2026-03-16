@@ -2,20 +2,34 @@ package com.bakeryquotation.backend.Company.DTO.Login;
 
 public class LoginResponseDTO {
 
-    private String token;
+    private String accessToken;
+    private String refreshToken;
 
     public LoginResponseDTO() {
     }
 
-    public LoginResponseDTO(String token) {
-        this.token = token;
+    public LoginResponseDTO(String accessToken) {
+        this.accessToken = accessToken;
     }
 
-    public String getToken() {
-        return token;
+    public LoginResponseDTO(String accessToken, String refreshToken) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

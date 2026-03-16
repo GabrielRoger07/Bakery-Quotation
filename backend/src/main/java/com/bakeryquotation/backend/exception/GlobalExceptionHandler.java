@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiError> handleAuthenticationException(AuthenticationException ex){
-        ApiError error = new ApiError("Bad Credentials", HttpStatus.UNAUTHORIZED.value());
+        ApiError error = new ApiError(ex.getMessage(), HttpStatus.UNAUTHORIZED.value());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 

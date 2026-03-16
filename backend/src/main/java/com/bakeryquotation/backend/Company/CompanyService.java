@@ -86,8 +86,9 @@ public class CompanyService {
         Authentication authentication = authenticationManager.authenticate(userAndPassword);
 
         Company company = (Company) authentication.getPrincipal();
-        String token = tokenConfig.generateToken(company);
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(token);
+        String accessToken = tokenConfig.generateToken(company);
+        String refreshToken = tokenConfig.generateRefreshToken(company);
+        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(accessToken, refreshToken);
 
         return ResponseEntity.status(HttpStatus.OK).body(loginResponseDTO);
     }

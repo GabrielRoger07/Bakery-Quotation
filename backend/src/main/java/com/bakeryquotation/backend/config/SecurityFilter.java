@@ -28,8 +28,8 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizedHeader = request.getHeader("Authorization");
         if(authorizedHeader != null && authorizedHeader.startsWith("Bearer ")){
-            String token = authorizedHeader.replace("Bearer ", "");
-            String subject = tokenConfig.validateToken(token);
+            String accessToken = authorizedHeader.replace("Bearer ", "");
+            String subject = tokenConfig.validateToken(accessToken);
             if(subject != null){
                 UserDetails company = companyRepository.findByCompanyEmail(subject).orElseThrow(() -> new ResourceNotFoundException("Company with email " + subject + " does not exists"));
 

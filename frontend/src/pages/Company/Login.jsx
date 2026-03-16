@@ -45,12 +45,12 @@ const Login = () => {
         if(res.ok){
             setSuccess(t("login_success"))
             setError("")
-            const token = res.data.token
-            Cookies.set("token", token)
+            const accessToken = res.data.accessToken
+            Cookies.set("accessToken", accessToken)
             setTimeout(() => navigate("/suppliers"), 1000)
         }else{
             setSuccess("")
-            setError(res.status === 500 ? t("login_error") : t("connection_lost"))
+            setError(res.status === 401 ? t("login_error") : t("connection_lost"))
         }
     }
 

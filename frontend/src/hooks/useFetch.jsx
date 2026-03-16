@@ -15,14 +15,14 @@ const useFetch = (baseUrl = "") => {
             setError("")
 
             try{
-                const token = Cookies.get("token")
+                const accessToken = Cookies.get("accessToken")
 
                 const options = {
                     method: method.toUpperCase(),
                     headers: {
                         "Accept": "application/json",
                         "Content-Type": "application/json",
-                        ...(token ? {"Authorization": `Bearer ${token}`} : {}),
+                        ...(accessToken ? {"Authorization": `Bearer ${accessToken}`} : {}),
                         ...headers
                     }
                 };
@@ -44,7 +44,7 @@ const useFetch = (baseUrl = "") => {
                 }
 
                 if(response.status === 403){
-                    Cookies.remove("token")
+                    Cookies.remove("accessToken")
                     navigate("/login")
                 }
 

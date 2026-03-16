@@ -4,21 +4,21 @@ import { jwtDecode } from 'jwt-decode'
 
 const PrivateRoute = ({children}) => {
     
-    const token = Cookies.get("token")
+    const accessToken = Cookies.get("accessToken")
 
-    if(!token){
+    if(!accessToken){
         return <Navigate to="/login" />
     }
 
     try{
-        const decoded = jwtDecode(token)
+        const decoded = jwtDecode(accessToken)
         const now = Date.now() / 1000
         if(decoded.exp && decoded.exp < now){
-            Cookies.remove("token")
+            Cookies.remove("accessToken")
             return <Navigate to="/login" />
         }
     }catch(err){
-        Cookies.remove("token")
+        Cookies.remove("accessToken")
         return <Navigate to="/login" />
     }
 

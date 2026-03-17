@@ -1,0 +1,1 @@
+ALTER TABLE supplier ADD COLUMN supplierPassword VARCHAR(255) NOT NULL DEFAULT 'default';

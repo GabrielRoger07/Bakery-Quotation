@@ -1,6 +1,5 @@
 package com.bakeryquotation.backend.Participation;
 
-import com.bakeryquotation.backend.Participation.DTO.AccessTokenRequestDTO;
 import com.bakeryquotation.backend.Participation.DTO.ParticipationRequestDTO;
 import com.bakeryquotation.backend.Participation.DTO.ParticipationResponseDTO;
 import com.bakeryquotation.backend.Participation.mapper.ParticipationMapper;
@@ -9,8 +8,6 @@ import com.bakeryquotation.backend.Quotation.QuotationRepository;
 import com.bakeryquotation.backend.Supplier.Supplier;
 import com.bakeryquotation.backend.Supplier.SupplierRepository;
 import com.bakeryquotation.backend.exception.DuplicateResourceException;
-import com.bakeryquotation.backend.exception.IllegalArgumentException;
-import com.bakeryquotation.backend.exception.InvalidAccessTokenException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -89,9 +86,6 @@ public class ParticipationService {
         participation.setQuotation(quotation);
         participation.setSupplier(supplier);
 
-        String accessToken = generateDigitToken(8);
-        participation.setAccessToken(accessToken);
-
         ParticipationResponseDTO participationSaved = participationMapper.toDto(participationRepository.save(participation));
         return ResponseEntity.status(HttpStatus.CREATED).body(participationSaved);
     }
@@ -115,9 +109,6 @@ public class ParticipationService {
             Participation participation = participationMapper.toEntity(participationRequestDTO);
             participation.setQuotation(quotation);
             participation.setSupplier(supplier);
-
-            String accessToken = generateDigitToken(8);
-            participation.setAccessToken(accessToken);
 
             ParticipationResponseDTO participationSaved = participationMapper.toDto(participationRepository.save(participation));
             participationResponseDTOS.add(participationSaved);
@@ -148,8 +139,6 @@ public class ParticipationService {
             Participation newParticipation = participationMapper.toEntity(participation);
             newParticipation.setQuotation(quotation);
             newParticipation.setSupplier(supplier);
-            String accessToken = generateDigitToken(8);
-            newParticipation.setAccessToken(accessToken);
 
             Participation participationSaved = participationRepository.save(newParticipation);
             participationResponseDTOS.add(participationMapper.toDto(participationSaved));
@@ -175,30 +164,5 @@ public class ParticipationService {
             participationRepository.deleteAll();
         }
         return ResponseEntity.status(HttpStatus.OK).body(participationResponseDTOS);
-    }
-
-    public ResponseEntity<ParticipationResponseDTO> validateAccessToken(Long participationId, AccessTokenRequestDTO accessToken){
-        Participation participation = participationRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + participationId + " does not exists"));
-
-        if(!accessToken.getAccessToken().equals(participation.getAccessToken())){
-            throw new InvalidAccessTokenException("Invalid token");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(participationMapper.toDto(participation));
-    }
-
-    public static String generateDigitToken(Integer digits) {
-        if(digits == null) throw new IllegalArgumentException("Digits cannot be null");
-        if(digits < 1) throw new IllegalArgumentException("Digits must be positive");
-        if(digits > 8) throw new IllegalArgumentException("Token length too large");
-
-        final String availableChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz1234567890";
-        SecureRandom random = new SecureRandom();
-        StringBuilder token = new StringBuilder(digits);
-
-        for (int i = 0; i < digits; i++) {
-            token.append(availableChars.charAt(random.nextInt(availableChars.length())));
-        }
-
-        return token.toString();
     }
 }

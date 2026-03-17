@@ -1,6 +1,5 @@
 package com.bakeryquotation.backend.Participation;
 
-import com.bakeryquotation.backend.Participation.DTO.AccessTokenRequestDTO;
 import com.bakeryquotation.backend.Participation.DTO.ParticipationRequestDTO;
 import com.bakeryquotation.backend.Participation.DTO.ParticipationResponseDTO;
 import jakarta.validation.Valid;
@@ -47,11 +46,6 @@ public class ParticipationController {
     @PostMapping("/batch")
     public ResponseEntity<List<ParticipationResponseDTO>> createParticipations(@Valid @RequestBody List<ParticipationRequestDTO> participationRequestDTOS){
         return participationService.createParticipations(participationRequestDTOS);
-    }
-
-    @PostMapping("/validateToken/{participationId}")
-    public ResponseEntity<ParticipationResponseDTO> validateAccessToken(@PathVariable("participationId") Long participationId, @Valid @RequestBody AccessTokenRequestDTO accessToken){
-        return participationService.validateAccessToken(participationId, accessToken);
     }
 
     @PutMapping("/batch")

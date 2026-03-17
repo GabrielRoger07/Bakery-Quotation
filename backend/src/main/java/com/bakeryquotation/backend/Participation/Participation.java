@@ -41,33 +41,27 @@ public class Participation {
     )
     private Supplier supplier;
 
-    @Column(name = "accessToken", nullable = false)
-    private String accessToken;
-
     @OneToMany(mappedBy = "participation", cascade = {CascadeType.REMOVE})
     private List<Bid> bids = new ArrayList<>();
 
     public Participation() {
     }
 
-    public Participation(Quotation quotation, Supplier supplier, String accessToken) {
+    public Participation(Quotation quotation, Supplier supplier) {
         this.quotation = quotation;
         this.supplier = supplier;
-        this.accessToken = accessToken;
     }
 
-    public Participation(Long id, Quotation quotation, Supplier supplier, String accessToken) {
+    public Participation(Long id, Quotation quotation, Supplier supplier) {
         this.id = id;
         this.quotation = quotation;
         this.supplier = supplier;
-        this.accessToken = accessToken;
     }
 
-    public Participation(Long id, Quotation quotation, Supplier supplier, String accessToken, List<Bid> bids) {
+    public Participation(Long id, Quotation quotation, Supplier supplier, List<Bid> bids) {
         this.id = id;
         this.quotation = quotation;
         this.supplier = supplier;
-        this.accessToken = accessToken;
         this.bids = bids;
     }
 
@@ -93,14 +87,6 @@ public class Participation {
 
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
     }
 
     public List<Bid> getBids() {

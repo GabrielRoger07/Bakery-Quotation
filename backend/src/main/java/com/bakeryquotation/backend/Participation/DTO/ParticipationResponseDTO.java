@@ -3,7 +3,6 @@ package com.bakeryquotation.backend.Participation.DTO;
 public class ParticipationResponseDTO {
 
     private Long participationId;
-    private String accessToken;
     private Long supplierId;
     private String supplierName;
     private String employerName;
@@ -12,16 +11,14 @@ public class ParticipationResponseDTO {
     public ParticipationResponseDTO() {
     }
 
-    public ParticipationResponseDTO(Long participationId, String accessToken, Long supplierId, Long quotationId) {
+    public ParticipationResponseDTO(Long participationId, Long supplierId, Long quotationId) {
         this.participationId = participationId;
-        this.accessToken = accessToken;
         this.supplierId = supplierId;
         this.quotationId = quotationId;
     }
 
-    public ParticipationResponseDTO(Long participationId, String accessToken, Long supplierId, Long quotationId, String supplierName, String employerName) {
+    public ParticipationResponseDTO(Long participationId, Long supplierId, Long quotationId, String supplierName, String employerName) {
         this.participationId = participationId;
-        this.accessToken = accessToken;
         this.supplierId = supplierId;
         this.quotationId = quotationId;
         this.supplierName = supplierName;
@@ -34,14 +31,6 @@ public class ParticipationResponseDTO {
 
     public void setParticipationId(Long participationId) {
         this.participationId = participationId;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
     }
 
     public Long getSupplierId() {

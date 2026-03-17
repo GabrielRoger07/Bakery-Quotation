@@ -37,6 +37,9 @@ public class Supplier {
     @Column(name = "employerCnpj", nullable = false, length = 14)
     private String employerCnpj;
 
+    @Column(name = "supplierPassword", nullable = false)
+    private String supplierPassword;
+
     @Column(name = "createdAt", nullable = false, updatable = false, columnDefinition = "DATETIME")
     private LocalDateTime createdAt;
 
@@ -56,23 +59,25 @@ public class Supplier {
     public Supplier() {
     }
 
-    public Supplier(String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, Company company) {
+    public Supplier(String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, String supplierPassword, Company company) {
         this.supplierName = supplierName;
         this.supplierEmail = supplierEmail;
         this.supplierWhatsappNumber = supplierWhatsappNumber;
         this.employerName = employerName;
         this.employerCnpj = employerCnpj;
+        this.supplierPassword = supplierPassword;
         this.createdAt = LocalDateTime.now();
         this.company = company;
     }
 
-    public Supplier(Long id, String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, LocalDateTime createdAt, Company company, List<Participation> participations) {
+    public Supplier(Long id, String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, String supplierPassword, LocalDateTime createdAt, Company company, List<Participation> participations) {
         this.id = id;
         this.supplierName = supplierName;
         this.supplierEmail = supplierEmail;
         this.supplierWhatsappNumber = supplierWhatsappNumber;
         this.employerName = employerName;
         this.employerCnpj = employerCnpj;
+        this.supplierPassword = supplierPassword;
         this.createdAt = createdAt;
         this.company = company;
         this.participations = participations;
@@ -124,6 +129,14 @@ public class Supplier {
 
     public void setEmployerCnpj(String employerCnpj) {
         this.employerCnpj = employerCnpj;
+    }
+
+    public String getSupplierPassword() {
+        return supplierPassword;
+    }
+
+    public void setSupplierPassword(String supplierPassword) {
+        this.supplierPassword = supplierPassword;
     }
 
     public LocalDateTime getCreatedAt() {

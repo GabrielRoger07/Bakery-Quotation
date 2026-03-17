@@ -32,17 +32,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/v1/companies/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/companies/register").permitAll()
-                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/suppliers/login/**").permitAll()
 
                         //rotas fornecedor
-                        .requestMatchers(HttpMethod.GET, "/api/v1/participations/*/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/participations/*").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/participations/validateToken/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/quotations/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/contains/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/bids/participations/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/bids/lowest").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/bids").permitAll()
+                        .requestMatchers("/ws/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/participations/*/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/participations/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/participations/validateToken/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/quotations/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/contains/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/bids/participations/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/bids/lowest").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/bids").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/bids/batch").authenticated()
 
                         //rotas administrador
                         .requestMatchers(HttpMethod.GET, "/api/v1/suppliers").hasRole("ADMIN")
@@ -58,7 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/companies").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/companies/*").hasRole("ADMIN")
 
-                        .anyRequest().authenticated()
+                        .anyRequest().hasRole("COMPANY")
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

@@ -68,12 +68,12 @@ public class DevDataSeeder {
                 String barcode = String.format("%013d", Math.abs(rnd.nextLong()) % 10000000000000L);
 
                 if(i < 21){
-                    Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), company1);
+                    Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), passwordEncoder.encode("password"), company1);
                     Product product = new Product(faker.commerce().productName(), barcode, unit, company1);
                     supplierRepository.save(supplier);
                     productRepository.save(product);
                 }else{
-                    Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), company2);
+                    Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), passwordEncoder.encode("password"), company2);
                     Product product = new Product(faker.commerce().productName(), barcode, unit, company2);
                     supplierRepository.save(supplier);
                     productRepository.save(product);
@@ -94,10 +94,10 @@ public class DevDataSeeder {
             containRepository.save(contain5);
 
             List<Supplier> suppliers = supplierRepository.findAll();
-            Participation participation1 = new Participation(quotation1, suppliers.get(0), "accessToken");
-            Participation participation2 = new Participation(quotation1, suppliers.get(1), "accessToken");
-            Participation participation3 = new Participation(quotation2, suppliers.get(2), "accessToken");
-            Participation participation4 = new Participation(quotation3, suppliers.get(0), "accessToken");
+            Participation participation1 = new Participation(quotation1, suppliers.get(0));
+            Participation participation2 = new Participation(quotation1, suppliers.get(1));
+            Participation participation3 = new Participation(quotation2, suppliers.get(2));
+            Participation participation4 = new Participation(quotation3, suppliers.get(0));
 
             participationRepository.save(participation1);
             participationRepository.save(participation2);

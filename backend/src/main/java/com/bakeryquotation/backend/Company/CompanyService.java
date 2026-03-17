@@ -6,6 +6,7 @@ import com.bakeryquotation.backend.Company.DTO.Login.LoginRequestDTO;
 import com.bakeryquotation.backend.Company.DTO.Login.LoginResponseDTO;
 import com.bakeryquotation.backend.Company.mapper.CompanyMapper;
 import com.bakeryquotation.backend.Company.mapper.CompanyUpdate;
+import com.bakeryquotation.backend.config.AuthUserDetails;
 import com.bakeryquotation.backend.config.TokenConfig;
 import com.bakeryquotation.backend.exception.DuplicateResourceException;
 import com.bakeryquotation.backend.exception.ImmutableResourceException;
@@ -75,7 +76,7 @@ public class CompanyService {
         }
 
         Company company = companyMapper.toEntity(companyRequestDTO);
-        company.setRole(CompanyRole.USER);
+        company.setRole(CompanyRole.COMPANY);
         company.setCompanyPassword(passwordEncoder.encode(company.getCompanyPassword()));
         CompanyResponseDTO companyResponseDTO = companyMapper.toDto(companyRepository.save(company));
         return ResponseEntity.status(HttpStatus.CREATED).body(companyResponseDTO);
@@ -85,7 +86,8 @@ public class CompanyService {
         UsernamePasswordAuthenticationToken userAndPassword = new UsernamePasswordAuthenticationToken(loginRequestDTO.getCompanyEmail(), loginRequestDTO.getCompanyPassword());
         Authentication authentication = authenticationManager.authenticate(userAndPassword);
 
-        Company company = (Company) authentication.getPrincipal();
+        String companyEmail = ((AuthUserDetails) authentication.getPrincipal()).getUsername();
+        Company company = companyRepository.findByCompanyEmail(companyEmail).orElseThrow(() -> new ResourceNotFoundException("Company with email " + companyEmail + " does not exists"));;
         String accessToken = tokenConfig.generateToken(company);
         String refreshToken = tokenConfig.generateRefreshToken(company);
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO(accessToken, refreshToken);

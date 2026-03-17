@@ -1,5 +1,7 @@
 package com.bakeryquotation.backend.Supplier;
 
+import com.bakeryquotation.backend.Supplier.DTO.Login.SupplierLoginRequestDTO;
+import com.bakeryquotation.backend.Supplier.DTO.Login.SupplierLoginResponseDTO;
 import com.bakeryquotation.backend.Supplier.DTO.SupplierRequestDTO;
 import com.bakeryquotation.backend.Supplier.DTO.SupplierResponseDTO;
 import jakarta.validation.Valid;
@@ -39,6 +41,14 @@ public class SupplierController {
             @RequestParam(value = "excludedIds", required = false) List<Long> excludedIds
     ){
         return supplierService.getSuppliersByCompanyEmail(pageable, field, value, excludedIds);
+    }
+
+    @PostMapping("/login/{companyCnpj}")
+    public ResponseEntity<SupplierLoginResponseDTO> loginSupplier(
+            @Valid @RequestBody SupplierLoginRequestDTO supplierLoginRequestDTO,
+            @PathVariable("companyCnpj") String companyCnpj)
+    {
+        return supplierService.loginSupplier(supplierLoginRequestDTO, companyCnpj);
     }
 
     @PostMapping

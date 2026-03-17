@@ -17,6 +17,8 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
 
     Optional<Supplier> findByCompany_CompanyEmailAndSupplierWhatsappNumber(String companyCompanyEmail, String supplierWhatsappNumber);
 
+    Optional<Supplier> findByCompany_CompanyCnpjAndSupplierWhatsappNumber(String companyCompanyCnpj, String supplierWhatsappNumber);
+
     Page<Supplier> findByCompany_CompanyEmail(String companyCompanyEmail, Pageable pageable);
 
     Page<Supplier> findByCompany_CompanyEmailAndEmployerCnpjContainsIgnoreCase(String companyCompanyEmail, String employerCnpj, Pageable pageable);

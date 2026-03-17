@@ -1,0 +1,1 @@
+ALTER TABLE participation DROP COLUMN accessToken;

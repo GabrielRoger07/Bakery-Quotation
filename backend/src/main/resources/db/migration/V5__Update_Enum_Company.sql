@@ -1,0 +1,3 @@
+UPDATE company SET role = 'COMPANY' WHERE role = 'USER';
+
+ALTER TABLE company MODIFY role ENUM('ADMIN', 'COMPANY') NOT NULL;

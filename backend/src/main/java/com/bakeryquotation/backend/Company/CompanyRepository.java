@@ -1,7 +1,6 @@
 package com.bakeryquotation.backend.Company;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -13,5 +12,5 @@ public interface CompanyRepository extends JpaRepository<Company, String> {
 
     Boolean existsCompanyByCompanyEmail(String companyEmail);
 
-    Optional<UserDetails> findByCompanyEmail(String companyEmail);
+    Optional<Company> findByCompanyEmail(String companyEmail);
 }

@@ -572,6 +572,93 @@
     padding-top: 0.25rem;
 }
 
+/* ── Supplier quotations list ────────────────────────── */
+
+.supplier-quotations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: min(100%, 680px);
+}
+
+.supplier-quotation-card {
+    background: var(--color-surface-0);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+    padding: 1rem 1.15rem;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.supplier-quotation-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.supplier-quotation-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+}
+
+.supplier-quotation-card-id {
+    font-weight: 600;
+    font-size: var(--font-size-md);
+    color: var(--color-text-strong);
+}
+
+.supplier-quotation-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.6rem;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    border-radius: 999px;
+}
+
+.status-scheduled {
+    color: var(--color-accent-strong, #1e40af);
+    background: var(--color-highlight-lighter, #eff6ff);
+    border: 1px solid var(--color-highlight-border, #bfdbfe);
+}
+
+.status-active {
+    color: var(--color-success-strong, #166534);
+    background: var(--color-success-lighter, #f0fdf4);
+    border: 1px solid var(--color-success-border, #86efac);
+}
+
+.status-closed {
+    color: var(--color-text-muted);
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border);
+}
+
+.supplier-quotation-card-dates {
+    display: flex;
+    gap: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.supplier-quotation-card-dates p {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.supplier-quotation-card-dates p strong {
+    color: var(--color-text-strong);
+}
+
+.supplier-quotation-card-action {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-accent);
+}
+
 @media (max-width: 768px){
     .supplier-quotation-container {
         padding: 1rem 0.7rem 1.2rem;
@@ -615,4 +702,12 @@
         width: 100%;
     }
 
+    .supplier-quotation-card-dates {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .supplier-quotations-list {
+        width: 100%;
+    }
 }

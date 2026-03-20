@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/bids/lowest").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/v1/bids").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/v1/bids/batch").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/participations/supplier").authenticated()
 
                         //rotas administrador
                         .requestMatchers(HttpMethod.GET, "/api/v1/suppliers").hasRole("ADMIN")

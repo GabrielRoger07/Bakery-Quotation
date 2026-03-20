@@ -8,6 +8,7 @@ import com.bakeryquotation.backend.Quotation.Quotation;
 import com.bakeryquotation.backend.Quotation.QuotationRepository;
 import com.bakeryquotation.backend.Supplier.Supplier;
 import com.bakeryquotation.backend.Supplier.SupplierRepository;
+import com.bakeryquotation.backend.exception.AccessDeniedException;
 import com.bakeryquotation.backend.exception.DuplicateResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,10 +17,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +45,7 @@ public class ParticipationService {
     }
 
     public ResponseEntity<ParticipationResponseDTO> getParticipationById(Long id){
+        validateSupplierOwnership(id);
         Participation participation = participationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + id + " does not exists"));
         return ResponseEntity.status(HttpStatus.OK).body(participationMapper.toDto(participation));
     }
@@ -182,5 +185,21 @@ public class ParticipationService {
             participationRepository.deleteAll();
         }
         return ResponseEntity.status(HttpStatus.OK).body(participationResponseDTOS);
+    }
+
+    public void validateSupplierOwnership(Long participationId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isSupplier = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPPLIER"));
+
+        if (!isSupplier) return;
+
+        Participation participation = participationRepository.findById(participationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Participation with id " + participationId + " does not exist"));
+
+        Long authenticatedSupplierId = Long.parseLong(authentication.getName());
+
+        if (!participation.getSupplier().getId().equals(authenticatedSupplierId)) {
+            throw new AccessDeniedException("You do not have permission to perform this action. Nice try");
+        }
     }
 }

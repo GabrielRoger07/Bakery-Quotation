@@ -5,6 +5,7 @@ import com.bakeryquotation.backend.Bid.DTO.BidResponseDTO;
 import com.bakeryquotation.backend.Bid.mapper.BidMapper;
 import com.bakeryquotation.backend.Participation.Participation;
 import com.bakeryquotation.backend.Participation.ParticipationRepository;
+import com.bakeryquotation.backend.Participation.ParticipationService;
 import com.bakeryquotation.backend.Product.Product;
 import com.bakeryquotation.backend.Product.ProductRepository;
 import com.bakeryquotation.backend.Quotation.QuotationRepository;
@@ -30,6 +31,7 @@ public class BidService {
     private final BidRepository bidRepository;
     private final BidMapper bidMapper;
     private final ParticipationRepository participationRepository;
+    private final ParticipationService participationService;
     private final ProductRepository productRepository;
     private final QuotationRepository quotationRepository;
     private final SimpMessagingTemplate messagingTemplate;
@@ -37,12 +39,14 @@ public class BidService {
     public BidService(BidRepository bidRepository,
                       BidMapper bidMapper,
                       ParticipationRepository participationRepository,
+                      ParticipationService participationService,
                       ProductRepository productRepository,
                       QuotationRepository quotationRepository,
                       SimpMessagingTemplate messagingTemplate){
         this.bidRepository = bidRepository;
         this.bidMapper = bidMapper;
         this.participationRepository = participationRepository;
+        this.participationService = participationService;
         this.productRepository = productRepository;
         this.quotationRepository = quotationRepository;
         this.messagingTemplate = messagingTemplate;
@@ -85,6 +89,7 @@ public class BidService {
     }
 
     public ResponseEntity<List<BidResponseDTO>> getBidsByParticipationId(Long participationId){
+        participationService.validateSupplierOwnership(participationId);
         List<Bid> bids = bidRepository.findAllByParticipation_Id(participationId);
         List<BidResponseDTO> bidResponseDTOS = bids.stream().map(bidMapper::toDto).toList();
         return ResponseEntity.status(HttpStatus.OK).body(bidResponseDTOS);
@@ -94,6 +99,7 @@ public class BidService {
         Long participationId = bidRequestDTO.getParticipationId();
         Long productId = bidRequestDTO.getProductId();
 
+        participationService.validateSupplierOwnership(participationId);
         Participation participation = participationRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + participationId + " does not exists"));
         Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " does not exists"));
 
@@ -132,6 +138,7 @@ public class BidService {
 
         bidRequestDTOList.forEach(bidRequestDTO -> {
             Long participationId = bidRequestDTO.getParticipationId();
+            participationService.validateSupplierOwnership(participationId);
             Participation participation = participationRepository.findById(participationId).orElseThrow(() -> new ResourceNotFoundException("Participation with id " + participationId + " does not exists"));
 
             Long productId = bidRequestDTO.getProductId();

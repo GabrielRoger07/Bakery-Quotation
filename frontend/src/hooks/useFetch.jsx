@@ -1,10 +1,12 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
+import FetchAuthContext from '../contexts/FetchAuthContext'
 
 const useFetch = (baseUrl = "") => {
 
     const navigate = useNavigate()
+    const { cookieName, loginPath } = useContext(FetchAuthContext)
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
@@ -15,14 +17,14 @@ const useFetch = (baseUrl = "") => {
             setError("")
 
             try{
-                const accessToken = Cookies.get("accessToken")
+                const token = Cookies.get(cookieName)
 
                 const options = {
                     method: method.toUpperCase(),
                     headers: {
                         "Accept": "application/json",
                         "Content-Type": "application/json",
-                        ...(accessToken ? {"Authorization": `Bearer ${accessToken}`} : {}),
+                        ...(token ? {"Authorization": `Bearer ${token}`} : {}),
                         ...headers
                     }
                 };
@@ -44,8 +46,8 @@ const useFetch = (baseUrl = "") => {
                 }
 
                 if(response.status === 403){
-                    Cookies.remove("accessToken")
-                    navigate("/login")
+                    Cookies.remove(cookieName)
+                    navigate(loginPath)
                 }
 
                 return { data, status: response.status, ok: response.ok }
@@ -56,7 +58,7 @@ const useFetch = (baseUrl = "") => {
             }finally{
                 setLoading(false)
             }
-        }, [baseUrl, navigate]
+        }, [baseUrl, navigate, cookieName, loginPath]
     )
 
   return { request, loading, error }

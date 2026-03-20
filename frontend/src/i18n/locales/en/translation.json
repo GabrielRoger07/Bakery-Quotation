@@ -271,5 +271,12 @@
     "unit_price_estimate":  "Estimated unit price",
     "bonus_not_available":  "Bonus is not available for this item.",
     "bonus_required_valid":  "Enter a valid bonus quantity (greater than zero).",
-    "in": "in"
+    "in": "in",
+    "supplier_login_title": "Supplier Access",
+    "supplier_login_subtitle": "Enter your credentials to access quotations.",
+    "supplier_login_error": "Invalid Whatsapp number or password",
+    "supplier_login_invalid_url": "Invalid access URL",
+    "supplier_quotations_title": "Your Quotations",
+    "supplier_quotations_empty": "You are not participating in any quotation.",
+    "supplier_quotations_load_error": "Failed to load quotations"
 }

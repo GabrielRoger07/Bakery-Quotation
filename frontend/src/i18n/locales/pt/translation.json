@@ -271,5 +271,12 @@
     "unit_price_estimate":  "Preço unitário estimado",
     "bonus_not_available":  "Bônus não disponível para este item.",
     "bonus_required_valid":  "Informe uma quantidade bônus válida (maior que zero).",
-    "in": "em"
+    "in": "em",
+    "supplier_login_title": "Acesso do Fornecedor",
+    "supplier_login_subtitle": "Entre com suas credenciais para acessar as cotações.",
+    "supplier_login_error": "Whatsapp ou senha inválidos",
+    "supplier_login_invalid_url": "URL de acesso inválida",
+    "supplier_quotations_title": "Suas Cotações",
+    "supplier_quotations_empty": "Você não participa de nenhuma cotação.",
+    "supplier_quotations_load_error": "Erro ao carregar cotações"
 }

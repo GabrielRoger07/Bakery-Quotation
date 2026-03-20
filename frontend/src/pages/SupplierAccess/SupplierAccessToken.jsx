@@ -1,57 +1,81 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie'
+import { useTranslation } from 'react-i18next'
+import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
-import useFetch from '../../hooks/useFetch'
-import { useTranslation } from 'react-i18next'
 import '../../components/Auth.css'
 import { ENV } from '../../config/env'
 
-const SupplierAccessToken = ({ participationId, onAccessGranted }) => {
+const SupplierAccessToken = () => {
 
     const { t } = useTranslation()
 
-    const [accessToken, setAccessToken] = useState("")
+    const navigate = useNavigate()
+    const { companyCnpj } = useParams()
+
+    const [supplierWhatsappNumber, setSupplierWhatsappNumber] = useState("")
+    const [supplierPassword, setSupplierPassword] = useState("")
     const [error, setError] = useState("")
-    const [loading, setLoading] = useState(false)
+    const [success, setSuccess] = useState("")
 
-    const { request } = useFetch(ENV.API_BASE_URL)
+    const { request, loading } = useFetch(ENV.API_BASE_URL)
 
-    const handleSubmit = async (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault()
 
-        if(!accessToken.trim()){
-            setError(t("access_token_required"))
+        if (!supplierWhatsappNumber || !supplierPassword) {
+            setError(t("fill_all_fields"))
             return
         }
 
         setError("")
-        setLoading(true)
 
         const body = {
-            accessToken: accessToken.trim()
+            supplierWhatsappNumber,
+            supplierPassword
         }
 
-        const res = await request("POST", `/participations/validateToken/${participationId}`, body)
+        const res = await request("POST", `/suppliers/login/${companyCnpj}`, body)
 
-        setLoading(false)
-
-        if(res.ok){
+        if (res.ok) {
+            setSuccess(t("login_success"))
             setError("")
-            onAccessGranted()
-        }else{
-            setError(t("invalid_access_token"))
+            Cookies.set("supplierAccessToken", res.data.accessToken)
+            setTimeout(() => navigate(`/supplier/quotations/${companyCnpj}`), 1000)
+        } else {
+            setSuccess("")
+            setError(res.status === 401 ? t("supplier_login_error") : t("connection_lost"))
         }
     }
+
+    if (!companyCnpj) return <p>{t("supplier_login_invalid_url")}</p>
 
     return (
         <div className="auth-container">
             <div className="auth-box">
-                <h2>{t("enter_access_token")}</h2>
-                <form onSubmit={handleSubmit}>
-                    <Input type="text" value={accessToken} onChange={e => setAccessToken(e.target.value)} placeholder={t("access_token")}></Input>
+                <h1>{t("supplier_login_title")}</h1>
+                <p className="auth-subtitle">{t("supplier_login_subtitle")}</p>
+                <form onSubmit={handleLogin}>
+                    <Input
+                        label={t("supplier_whatsapp")}
+                        type="text"
+                        value={supplierWhatsappNumber}
+                        onChange={e => setSupplierWhatsappNumber(e.target.value)}
+                        placeholder={t("enter_supplier_whatsapp")}
+                    />
+                    <Input
+                        label={t("password")}
+                        type="password"
+                        value={supplierPassword}
+                        onChange={e => setSupplierPassword(e.target.value)}
+                        placeholder={t("enter_password")}
+                    />
                     <Alert message={error} />
-                    <Button type="submit" disabled={loading}>{loading ? t("validating_message") : t("access_quotation")}</Button>
+                    {success && <div className="success">{success}</div>}
+                    <Button type="submit" loading={loading}>{t("login")}</Button>
                 </form>
             </div>
         </div>

@@ -122,7 +122,6 @@ public class SupplierService {
     }
 
     public ResponseEntity<SupplierLoginResponseDTO> loginSupplier(SupplierLoginRequestDTO supplierLoginRequestDTO, String companyCnpj) {
-        System.out.println("entrou aqui");
         Supplier supplier = supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, supplierLoginRequestDTO.getSupplierWhatsappNumber())
                 .orElseThrow(() -> new BadCredentialsException("Bad credentials"));
 

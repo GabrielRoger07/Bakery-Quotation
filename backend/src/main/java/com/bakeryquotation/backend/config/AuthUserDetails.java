@@ -32,7 +32,7 @@ public class AuthUserDetails implements UserDetails {
 
     public static AuthUserDetails fromSupplier(Supplier supplier) {
         return new AuthUserDetails(
-                supplier.getSupplierWhatsappNumber(),
+                supplier.getId().toString(),
                 supplier.getSupplierPassword(),
                 List.of(new SimpleGrantedAuthority("ROLE_SUPPLIER"))
         );

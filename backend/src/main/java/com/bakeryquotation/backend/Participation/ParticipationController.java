@@ -2,7 +2,11 @@ package com.bakeryquotation.backend.Participation;
 
 import com.bakeryquotation.backend.Participation.DTO.ParticipationRequestDTO;
 import com.bakeryquotation.backend.Participation.DTO.ParticipationResponseDTO;
+import com.bakeryquotation.backend.Participation.DTO.SupplierParticipationResponseDTO;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +40,11 @@ public class ParticipationController {
     @GetMapping("/{quotationId}/{supplierId}")
     public ResponseEntity<ParticipationResponseDTO> getParticipationByQuotationIdAndSupplierId(@PathVariable("quotationId") Long quotationId, @PathVariable("supplierId") Long supplierId){
         return participationService.getParticipationByQuotationIdAndSupplierId(quotationId, supplierId);
+    }
+
+    @GetMapping("/supplier")
+    public ResponseEntity<Page<SupplierParticipationResponseDTO>> getParticipationsBySupplierId(@PageableDefault(size = 10) Pageable pageable){
+        return participationService.getParticipationsBySupplierId(pageable);
     }
 
     @PostMapping

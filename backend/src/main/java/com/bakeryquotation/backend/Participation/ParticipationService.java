@@ -2,6 +2,7 @@ package com.bakeryquotation.backend.Participation;
 
 import com.bakeryquotation.backend.Participation.DTO.ParticipationRequestDTO;
 import com.bakeryquotation.backend.Participation.DTO.ParticipationResponseDTO;
+import com.bakeryquotation.backend.Participation.DTO.SupplierParticipationResponseDTO;
 import com.bakeryquotation.backend.Participation.mapper.ParticipationMapper;
 import com.bakeryquotation.backend.Quotation.Quotation;
 import com.bakeryquotation.backend.Quotation.QuotationRepository;
@@ -9,8 +10,13 @@ import com.bakeryquotation.backend.Supplier.Supplier;
 import com.bakeryquotation.backend.Supplier.SupplierRepository;
 import com.bakeryquotation.backend.exception.DuplicateResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -20,6 +26,9 @@ import java.util.Optional;
 
 @Service
 public class ParticipationService {
+
+    @Value("${app.pagination-size}")
+    private int pageSize;
 
     private final ParticipationRepository participationRepository;
     private final ParticipationMapper participationMapper;
@@ -67,6 +76,15 @@ public class ParticipationService {
         Participation participation = participationRepository.findByQuotation_IdAndSupplier_Id(quotationId, supplierId).orElseThrow(() -> new ResourceNotFoundException("Participation with quotationId " + quotationId + " and supplierId " + supplierId + " does not exists"));
 
         return ResponseEntity.status(HttpStatus.OK).body(participationMapper.toDto(participation));
+    }
+
+    public ResponseEntity<Page<SupplierParticipationResponseDTO>> getParticipationsBySupplierId(Pageable pageable){
+        String supplierId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
+
+        Page<Participation> participationsBySupplierId = participationRepository.findBySupplier_Id(Long.parseLong(supplierId), safePageable);
+        Page<SupplierParticipationResponseDTO> participationsResponseDTOBySupplierId = participationsBySupplierId.map(participationMapper::toSupplierParticipationDto);
+        return ResponseEntity.status(HttpStatus.OK).body(participationsResponseDTOBySupplierId);
     }
 
     public ResponseEntity<ParticipationResponseDTO> createParticipation(ParticipationRequestDTO participationRequestDTO){

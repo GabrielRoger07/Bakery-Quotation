@@ -61,6 +61,7 @@ public class TokenConfig {
         return JWT.create()
                 .withSubject(supplier.getId().toString())
                 .withClaim("userType", "SUPPLIER")
+                .withClaim("supplierName", supplier.getSupplierName())
                 .withExpiresAt(Instant.now().plusSeconds(supplierTokenExpiration))
                 .withIssuedAt(Instant.now())
                 .sign(algorithm);
@@ -73,6 +74,7 @@ public class TokenConfig {
         return JWT.create()
                 .withSubject(supplier.getId().toString())
                 .withClaim("userType", "SUPPLIER")
+                .withClaim("supplierName", supplier.getSupplierName())
                 .withExpiresAt(Instant.now().plusSeconds(supplierRefreshTokenExpiration))
                 .withIssuedAt(Instant.now())
                 .sign(algorithm);

@@ -1,9 +1,11 @@
 package com.bakeryquotation.backend.Product;
 
 import com.bakeryquotation.backend.Company.Company;
+import com.bakeryquotation.backend.Company.CompanyRepository;
 import com.bakeryquotation.backend.Product.DTO.ProductRequestDTO;
 import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import com.bakeryquotation.backend.Product.mapper.ProductMapper;
+import com.bakeryquotation.backend.Quotation.Quotation;
 import com.bakeryquotation.backend.exception.AccessDeniedException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,10 +28,12 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final CompanyRepository companyRepository;
 
-    public ProductService(ProductRepository productRepository, ProductMapper productMapper){
+    public ProductService(ProductRepository productRepository, ProductMapper productMapper, CompanyRepository companyRepository){
         this.productRepository = productRepository;
         this.productMapper = productMapper;
+        this.companyRepository = companyRepository;
     }
 
     public ResponseEntity<ProductResponseDTO> getProductById(Long id){
@@ -88,7 +92,8 @@ public class ProductService {
     }
 
     public ResponseEntity<ProductResponseDTO> createProduct(ProductRequestDTO productRequestDTO){
-        Company company = (Company) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Company company = companyRepository.findByCompanyEmail(companyEmail).orElseThrow(() -> new ResourceNotFoundException("Company with email " + companyEmail + " does not exists"));
 
         Product product = productMapper.toEntity(productRequestDTO);
         product.setCompany(company);

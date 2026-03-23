@@ -60,8 +60,8 @@ public class QuotationService {
     }
 
     public ResponseEntity<QuotationResponseDTO> createQuotation(QuotationRequestDTO quotationRequestDTO){
-        Company company = (Company) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+        String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Company company = companyRepository.findByCompanyEmail(companyEmail).orElseThrow(() -> new ResourceNotFoundException("Company with email " + companyEmail + " does not exists"));
         Quotation quotation = quotationMapper.toEntity(quotationRequestDTO);
         quotation.setCompany(company);
 

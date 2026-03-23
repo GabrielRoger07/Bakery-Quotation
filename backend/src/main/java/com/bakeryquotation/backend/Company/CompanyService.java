@@ -87,7 +87,7 @@ public class CompanyService {
         Authentication authentication = authenticationManager.authenticate(userAndPassword);
 
         String companyEmail = ((AuthUserDetails) authentication.getPrincipal()).getUsername();
-        Company company = companyRepository.findByCompanyEmail(companyEmail).orElseThrow(() -> new ResourceNotFoundException("Company with email " + companyEmail + " does not exists"));;
+        Company company = companyRepository.findByCompanyEmail(companyEmail).orElseThrow(() -> new ResourceNotFoundException("Company with email " + companyEmail + " does not exists"));
         String accessToken = tokenConfig.generateToken(company);
         String refreshToken = tokenConfig.generateRefreshToken(company);
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO(accessToken, refreshToken);

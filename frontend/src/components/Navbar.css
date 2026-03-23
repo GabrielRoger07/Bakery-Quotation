@@ -77,8 +77,8 @@
 
 .hamburger {
     display: none;
-    width: 2rem;
-    height: 2rem;
+    width: 2.75rem;
+    height: 2.75rem;
     font-size: var(--font-size-xl);
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -141,8 +141,8 @@
 }
 
 .close-btn {
-    width: 1.875rem;
-    height: 1.875rem;
+    width: 2.75rem;
+    height: 2.75rem;
     font-size: var(--font-size-xl);
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -150,6 +150,9 @@
     cursor: pointer;
     color: rgba(255, 255, 255, 0.7);
     transition: background-color var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .close-btn:hover {

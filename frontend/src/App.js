@@ -9,6 +9,7 @@ import SupplierList from './pages/Supplier/SupplierList';
 import ProductList from './pages/Product/ProductList';
 import QuotationList from './pages/Quotation/QuotationList';
 import Navbar from './components/Navbar';
+import SupplierNavbar from './components/SupplierNavbar';
 import QuotationMonitor from './pages/Quotation/QuotationMonitor';
 import PublicHeader from './components/PublicHeader';
 
@@ -30,10 +31,11 @@ function AppContent(){
   const location = useLocation()
   const showNavbarRoutes = ["/suppliers", "/products", "/quotations", "/quotations/monitor"]
   const shouldShowNavbar = showNavbarRoutes.includes(location.pathname)
+  const shouldShowSupplierNavbar = location.pathname.startsWith('/supplier/') && !location.pathname.startsWith('/supplier/login/')
 
   return (
     <div className="App">
-      {(shouldShowNavbar ? <Navbar /> : <PublicHeader />)}
+      {shouldShowNavbar ? <Navbar /> : shouldShowSupplierNavbar ? <SupplierNavbar /> : <PublicHeader />}
         <Routes>
           <Route path="/" element={<LandingPage />}></Route>
           <Route path="/login" element={<Login />}></Route>

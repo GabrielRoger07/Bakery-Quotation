@@ -250,6 +250,10 @@
         width: 100%;
     }
 
+    .search-input-wrapper {
+        min-width: unset;
+    }
+
     .quantity-bonus-group {
         flex-direction: column;
     }
@@ -257,5 +261,9 @@
     .step-navigation {
         flex-direction: column;
         gap: 0.65rem;
+    }
+
+    .step-navigation .btn {
+        width: 100%;
     }
 }

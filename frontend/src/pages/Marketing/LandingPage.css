@@ -343,6 +343,14 @@
         margin-top: 1.8rem;
     }
 
+    .hero-mockup {
+        min-height: unset;
+    }
+
+    .mockup-side {
+        display: none;
+    }
+
     .landing-section {
         padding: 1.3rem 0.9rem;
     }

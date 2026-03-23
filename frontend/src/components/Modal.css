@@ -82,3 +82,20 @@
     opacity: 1;
   }
 }
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 0.5rem;
+    align-items: flex-end;
+  }
+
+  .modal-content {
+    padding: 1.125rem 1rem;
+    border-radius: var(--radius-xl) var(--radius-xl) var(--radius-lg) var(--radius-lg);
+    width: 100%;
+  }
+
+  .modal-body {
+    max-height: 80vh;
+  }
+}

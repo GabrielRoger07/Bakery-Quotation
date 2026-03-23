@@ -127,7 +127,7 @@
 
 .supplier-products {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(315px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(315px, 100%), 1fr));
     gap: 1rem;
     width: min(100%, 1180px);
     margin: 0 auto;

@@ -43,7 +43,8 @@ const SupplierAccessToken = () => {
         if (res.ok) {
             setSuccess(t("login_success"))
             setError("")
-            Cookies.set("supplierAccessToken", res.data.accessToken)
+            Cookies.set("supplierAccessToken", res.data.accessToken, { secure: true, sameSite: "Strict" })
+            Cookies.set("supplierCompanyCnpj", companyCnpj, { secure: true, sameSite: "Strict" })
             setTimeout(() => navigate(`/supplier/quotations/${companyCnpj}`), 1000)
         } else {
             setSuccess("")

@@ -46,7 +46,7 @@ const Login = () => {
             setSuccess(t("login_success"))
             setError("")
             const accessToken = res.data.accessToken
-            Cookies.set("accessToken", accessToken)
+            Cookies.set("accessToken", accessToken, { secure: true, sameSite: "Strict" })
             setTimeout(() => navigate("/suppliers"), 1000)
         }else{
             setSuccess("")

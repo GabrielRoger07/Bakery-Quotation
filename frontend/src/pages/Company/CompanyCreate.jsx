@@ -63,7 +63,7 @@ const CompanyCreate = () => {
         if(res.ok){
             setSuccess(t("company_created_success"))
             setError("")
-            setTimeout(() => navigate("/register"), 1000)
+            setTimeout(() => navigate("/login"), 1000)
         }else{
             setSuccess("")
             setError(t("company_created_error"))

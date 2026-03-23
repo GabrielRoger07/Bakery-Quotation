@@ -28,7 +28,6 @@ const SupplierPage = () => {
             setLoading(true)
             const res = await request("GET", `/participations/supplier`)
             if (res.ok) {
-                console.log(res.data)
                 setParticipations(res.data.content)
                 setError("")
             } else if (res.status !== 403) {

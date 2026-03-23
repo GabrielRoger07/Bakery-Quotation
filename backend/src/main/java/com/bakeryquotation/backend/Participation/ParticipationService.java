@@ -78,6 +78,8 @@ public class ParticipationService {
 
         Participation participation = participationRepository.findByQuotation_IdAndSupplier_Id(quotationId, supplierId).orElseThrow(() -> new ResourceNotFoundException("Participation with quotationId " + quotationId + " and supplierId " + supplierId + " does not exists"));
 
+        validateSupplierOwnership(participation.getId());
+
         return ResponseEntity.status(HttpStatus.OK).body(participationMapper.toDto(participation));
     }
 

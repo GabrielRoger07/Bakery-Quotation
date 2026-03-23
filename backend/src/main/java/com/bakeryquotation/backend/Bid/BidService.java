@@ -53,6 +53,7 @@ public class BidService {
     }
 
     public ResponseEntity<BidResponseDTO> getBidById(Long participationId, Long productId){
+        participationService.validateSupplierOwnership(participationId);
         BidId bidId = new BidId(participationId, productId);
         Bid bid = bidRepository.findById(bidId).orElseThrow(() -> new ResourceNotFoundException("Bid with participationId " + participationId + " and productId " + productId + " does not exists"));
 

@@ -1,18 +1,17 @@
 .input-container {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1.05rem;
+  margin-bottom: 1.125rem;
   position: relative;
 }
 
 .input-container label {
-  margin-bottom: 0.38rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-md);
-  letter-spacing: 0.01em;
+  margin-bottom: 0.375rem;
+  font-weight: 600;
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.005em;
   margin-right: auto;
-  padding-left: 0.15em;
 }
 
 .input-wrapper {
@@ -23,15 +22,19 @@
 
 .input-wrapper input {
   width: 100%;
-  min-height: 2.7rem;
-  padding: 0.62rem 2.6rem 0.62rem 0.8rem;
-  border: 1px solid var(--color-border-strong);
+  min-height: 2.625rem;
+  padding: 0.5625rem 2.5rem 0.5625rem 0.875rem;
+  border: 1.5px solid var(--color-border-strong);
   border-radius: var(--radius-md);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   outline: none;
   color: var(--color-text-primary);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
   background-color: var(--color-surface-0);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input-wrapper input:hover {
+  border-color: var(--color-accent);
 }
 
 .input-wrapper input:focus {
@@ -40,21 +43,22 @@
 }
 
 .input-wrapper input.error {
-  border: 2px solid var(--color-danger-strong);
-  outline: none;
-}
-
-.input-wrapper input::placeholder {
-  color: var(--color-text-muted);
+  border: 1.5px solid var(--color-danger-strong);
 }
 
 .input-wrapper input.error:focus {
   border-color: var(--color-danger-dark);
+  box-shadow: var(--focus-ring-danger);
+}
+
+.input-wrapper input::placeholder {
+  color: var(--color-text-disabled);
+  font-weight: 400;
 }
 
 .toggle-password {
   position: absolute;
-  right: 0.6rem;
+  right: 0.625rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -67,12 +71,12 @@
 }
 
 .toggle-password:hover {
-  color: var(--color-text-strong);
-  transform: scale(1.05);
+  color: var(--color-accent);
+  transform: scale(1.08);
 }
 
 .toggle-password:active {
-  transform: scale(0.95);
+  transform: scale(0.94);
 }
 
 .required-asterisk {
@@ -85,13 +89,14 @@
 }
 
 .required-asterisk.filled {
-  color: var(--color-text-secondary);
+  color: var(--color-text-disabled);
 }
 
 .warning {
   color: var(--color-danger-strong);
-  font-size: var(--font-size-sm);
-  margin: -0.35rem 0 0.7rem;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  margin: -0.25rem 0 0.625rem;
 }
 
 .select-wrapper {
@@ -103,12 +108,12 @@
 
 .custom-select {
   width: 100%;
-  min-height: 2.7rem;
-  padding: 0.62rem 2.5rem 0.62rem 0.8rem;
-  font-size: var(--font-size-md);
+  min-height: 2.625rem;
+  padding: 0.5625rem 2.5rem 0.5625rem 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--color-text-primary);
-  border: 1px solid var(--color-border-strong);
+  border: 1.5px solid var(--color-border-strong);
   border-radius: var(--radius-md);
   background-color: var(--color-surface-0);
   outline: none;
@@ -119,13 +124,13 @@
 
 .select-arrow {
   position: absolute;
-  right: 0.75rem;
+  right: 0.875rem;
   pointer-events: none;
   width: 0;
   height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid var(--color-text-muted);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--color-text-muted);
   transition: transform var(--transition-fast), border-top-color var(--transition-fast);
 }
 
@@ -150,7 +155,7 @@
 }
 
 .custom-select.error {
-  border: 2px solid var(--color-danger-strong);
+  border: 1.5px solid var(--color-danger-strong);
 }
 
 .custom-select.error:focus {

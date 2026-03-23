@@ -2,10 +2,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1.5rem 1rem 2rem;
-    background-color: var(--color-surface-1);
+    padding: 1.75rem 1.25rem 2.5rem;
+    background-color: var(--color-surface-app);
     min-height: 100vh;
     font-family: var(--font-family-sans);
+    color: var(--color-text-primary);
 }
 
 .supplier-quotation-container h2 {
@@ -661,7 +662,7 @@
 
 @media (max-width: 768px){
     .supplier-quotation-container {
-        padding: 1rem 0.7rem 1.2rem;
+        padding: 1.25rem 0.875rem 1.75rem;
     }
 
     .supplier-quotation-container .quotation-info {

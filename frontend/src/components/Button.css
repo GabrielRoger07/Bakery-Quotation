@@ -3,26 +3,29 @@
     border: 1px solid transparent;
     background-color: var(--color-accent);
     color: var(--color-text-inverse);
+    font-family: var(--font-family-sans);
     font-weight: 600;
     font-size: var(--font-size-sm);
     letter-spacing: 0.01em;
-    padding: 0.58rem 1rem;
-    min-height: 2.4rem;
+    padding: 0.5625rem 1.125rem;
+    min-height: 2.375rem;
     border-radius: var(--radius-md);
     cursor: pointer;
-    transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
-    box-shadow: 0 2px 0 rgba(2, 6, 23, 0.12);
+    transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    box-shadow: none;
 }
 
 .btn-primary {
     background-color: var(--color-accent);
     border-color: var(--color-accent);
+    box-shadow: var(--shadow-accent);
 }
 
 .btn-primary:hover:not(:disabled) {
     background-color: var(--color-accent-hover);
     border-color: var(--color-accent-hover);
     transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
 }
 
 .btn-success {
@@ -34,6 +37,7 @@
     background-color: var(--color-success);
     border-color: var(--color-success);
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
 }
 
 .btn-danger {
@@ -45,20 +49,22 @@
     background-color: var(--color-danger);
     border-color: var(--color-danger);
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
 }
 
 .btn-secondary {
-    background-color: transparent;
+    background-color: var(--color-surface-0);
     border-color: var(--color-border-strong);
-    color: var(--color-text-secondary);
-    box-shadow: none;
+    color: var(--color-text-neutral-strong);
+    box-shadow: var(--shadow-xs);
 }
 
 .btn-secondary:hover:not(:disabled) {
     background-color: var(--color-surface-2);
     border-color: var(--color-border-strong);
-    color: var(--color-text-default);
+    color: var(--color-text-primary);
     transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
 }
 
 .btn:focus-visible {
@@ -67,7 +73,7 @@
 }
 
 .btn:disabled {
-    opacity: 0.58;
+    opacity: 0.5;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;

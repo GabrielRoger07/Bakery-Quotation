@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 @import "./styles/tokens.css";
 
 * {
@@ -13,10 +14,10 @@ body {
   margin: 0;
   font-family: var(--font-family-sans);
   color: var(--color-text-primary);
-  background: radial-gradient(circle at top, #f7fbff 0%, var(--color-surface-app) 48%, #ebf1f8 100%);
+  background-color: var(--color-surface-app);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 code {
@@ -35,6 +36,5 @@ textarea {
 }
 
 ::selection {
-  background: rgba(11, 79, 138, 0.18);
+  background: rgba(124, 58, 237, 0.18);
 }
-

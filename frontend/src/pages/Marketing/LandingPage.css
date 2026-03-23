@@ -3,9 +3,9 @@
     padding: 1.2rem 1.1rem 3rem;
     color: var(--color-text-primary);
     background:
-        radial-gradient(circle at 0% 0%, #dfeeff 0%, rgba(223, 238, 255, 0) 45%),
-        radial-gradient(circle at 100% 0%, #eaf6ff 0%, rgba(234, 246, 255, 0) 42%),
-        #f8fbff;
+        radial-gradient(ellipse 70% 50% at 5% 0%, rgba(124, 58, 237, 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 95% 10%, rgba(124, 58, 237, 0.06) 0%, transparent 55%),
+        var(--color-surface-app);
 }
 
 .landing-topbar {
@@ -37,7 +37,7 @@
     display: grid;
     place-items: center;
     color: #fff;
-    background: linear-gradient(135deg, #0b4f8a 0%, #1268b4 100%);
+    background: linear-gradient(135deg, var(--color-accent-strong) 0%, var(--color-accent) 100%);
     font-size: var(--font-size-sm);
 }
 
@@ -82,7 +82,7 @@
     color: #fff;
     padding: 0.6rem 0.95rem;
     border: 1px solid var(--color-accent);
-    background: linear-gradient(180deg, #1868ad 0%, #0b4f8a 100%);
+    background: linear-gradient(180deg, var(--color-accent) 0%, var(--color-accent-strong) 100%);
 }
 
 .btn-ghost {
@@ -217,11 +217,11 @@
 }
 
 .section-problem {
-    background: linear-gradient(180deg, #fff 0%, #fff6f2 100%);
+    background: var(--color-surface-0);
 }
 
 .section-solution {
-    background: linear-gradient(180deg, #fff 0%, #f2f8ff 100%);
+    background: linear-gradient(180deg, var(--color-surface-0) 0%, var(--color-highlight-lighter) 100%);
 }
 
 .benefits-grid {
@@ -281,7 +281,8 @@
 
 .final-cta {
     text-align: center;
-    background: linear-gradient(180deg, #f2f8ff 0%, #ecf5ff 100%);
+    background: linear-gradient(180deg, var(--color-brand) 0%, var(--color-brand-mid) 100%);
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .final-cta p {

@@ -71,9 +71,9 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
     const columns = useMemo(() => [
         { key: "productName", label: t("product")},
         { key: "quantity", label: t("quantity")},
-        { key: "bonus", label: t("bonus")},
-        { key: "price", label: t("total_price")},
-        { key: "pricePerUnit", label: t("price_per_unit")}
+        // { key: "bonus", label: t("bonus")},
+        { key: "pricePerUnit", label: t("price_per_unit")},
+        { key: "price", label: t("total_price")}
     ], [t])
 
     const formattedItems = winningItems.map(item => ({

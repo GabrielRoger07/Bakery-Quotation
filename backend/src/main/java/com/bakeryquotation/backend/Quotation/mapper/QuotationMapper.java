@@ -12,6 +12,8 @@ public interface QuotationMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "company", ignore = true)
+    @Mapping(target = "participations", ignore = true)
+    @Mapping(target = "contains", ignore = true)
     Quotation toEntity(QuotationRequestDTO quotationRequestDTO);
 
     @Mapping(source = "id", target = "quotationId")

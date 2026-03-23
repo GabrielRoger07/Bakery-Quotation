@@ -11,6 +11,8 @@ public interface ProductMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "company", ignore = true)
+    @Mapping(target = "bids", ignore = true)
+    @Mapping(target = "contains", ignore = true)
     Product toEntity(ProductRequestDTO productRequestDTO);
 
     @Mapping(source = "id", target = "productId")

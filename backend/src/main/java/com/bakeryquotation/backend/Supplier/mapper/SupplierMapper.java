@@ -12,6 +12,8 @@ public interface SupplierMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "company", ignore = true)
+    @Mapping(target = "participations", ignore = true)
+    @Mapping(target = "supplierPassword", ignore = true)
     Supplier toEntity(SupplierRequestDTO supplierRequestDTO);
 
     @Mapping(source = "id", target = "supplierId")

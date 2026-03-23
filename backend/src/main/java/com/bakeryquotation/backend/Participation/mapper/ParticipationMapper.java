@@ -13,6 +13,7 @@ public interface ParticipationMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "supplier", ignore = true)
     @Mapping(target = "quotation", ignore = true)
+    @Mapping(target = "bids", ignore = true)
     Participation toEntity(ParticipationRequestDTO participationRequestDTO);
 
     @Mapping(source = "id", target = "participationId")

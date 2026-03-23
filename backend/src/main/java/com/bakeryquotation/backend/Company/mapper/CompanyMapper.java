@@ -11,6 +11,9 @@ public interface CompanyMapper {
 
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "role", constant = "COMPANY")
+    @Mapping(target = "products", ignore = true)
+    @Mapping(target = "quotations", ignore = true)
+    @Mapping(target = "suppliers", ignore = true)
     Company toEntity(CompanyRequestDTO companyRequestDTO);
 
     CompanyResponseDTO toDto(Company company);

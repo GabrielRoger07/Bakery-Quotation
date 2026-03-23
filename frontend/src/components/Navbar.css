@@ -59,6 +59,83 @@
     gap: 0.625rem;
 }
 
+/* ── Supplier identity badge ─────────────────────────── */
+
+.supplier-identity {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.3rem 0.75rem 0.3rem 0.3rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: supplier-identity-appear 0.4s ease both;
+}
+
+@keyframes supplier-identity-appear {
+    from {
+        opacity: 0;
+        transform: translateX(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.supplier-identity-avatar {
+    width: 1.875rem;
+    height: 1.875rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #1a1200;
+    letter-spacing: 0;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.supplier-identity-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.supplier-identity-label {
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.supplier-identity-name {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    max-width: 14rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .supplier-identity-info {
+        display: none;
+    }
+
+    .supplier-identity {
+        padding: 0.3rem;
+        background: transparent;
+        border-color: transparent;
+    }
+}
+
 /* Logout button overrides for dark navbar */
 .navbar-right .btn-secondary {
     background: rgba(255, 255, 255, 0.08);

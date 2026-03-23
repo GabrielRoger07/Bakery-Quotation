@@ -154,12 +154,12 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         <div className={`quotation-product-item ${product.bonusLimit > 0 ? "has-bonus" : "no-bonus"}`}>
             <div>
                 <h3>{product.productName}</h3>
-                <p className="product-meta-text">{t("quantity")}: {product.quantity} {product.unitOfMeasure}</p>
+                <p className="product-meta-text">{t("quantity")}: {product.quantity}</p>
                 <p className="product-meta-text">{t("bonus_limit_max_units")}: {product.bonusLimit}</p>
                 <div className="current-lowest-bid">
                     <span className="current-lowest-label">{t("current_lowest_bid")}: </span>
                     <strong className="current-lowest-value" style={{ color: currentLowestBidColor }}>
-                        {currentLowestBid ? `${formatMoney(currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus), i18n.language)}/${product.unitOfMeasure}` : t("no_bids_yet")}
+                        {currentLowestBid ? `${formatMoney(currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus), i18n.language)}/UN` : t("no_bids_yet")}
                     </strong>
                 </div>
             </div>
@@ -204,7 +204,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
 
                 {addBonus && (
                     <Input 
-                        label={t("bonus_quantity") + ` (${t("in")} ${product.unitOfMeasure})`} 
+                        label={t("bonus_quantity") + ` (${t("in")} UN`} 
                         type="number" 
                         value={bonus} 
                         onChange={handleBonusChange} 
@@ -217,7 +217,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
 
                 {!confirming && estimatedUnitPrice !== null && (
                     <p className="unit-price-estimate">
-                        {t("unit_price_estimate")}: <strong>{formatMoney(estimatedUnitPrice, i18n.language)}/{product.unitOfMeasure}</strong>
+                        {t("unit_price_estimate")}: <strong>{formatMoney(estimatedUnitPrice, i18n.language)}/UN</strong>
                     </p>
                 )}
 
@@ -227,7 +227,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
                     <Button type="submit" disabled={loading || Boolean(bonusError)}>{loading ? t("submitting_message") : t("submit_bid")}</Button>
                 ) : (
                     <div className="confirm-container">
-                        <p><Trans i18nKey="bid_confirm" values={{pricePerUnit: formatDecimal(pendingBidValue, i18n.language), unitOfMeasure: product.unitOfMeasure, productName: product.productName}} components={{strong: <strong />}}/></p>
+                        <p><Trans i18nKey="bid_confirm" values={{pricePerUnit: formatDecimal(pendingBidValue, i18n.language), unitOfMeasure: 'UN', productName: product.productName}} components={{strong: <strong />}}/></p>
                         <div className="confirm-buttons">
                             <Button type="button" onClick={cancelBid} variant="danger">{t("cancel_button")}</Button>
                             <Button type="button" onClick={confirmBid} variant="success">{t("confirm_button")}</Button>

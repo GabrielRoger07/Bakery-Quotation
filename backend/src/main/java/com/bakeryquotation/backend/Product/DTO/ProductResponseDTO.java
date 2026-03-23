@@ -1,23 +1,19 @@
 package com.bakeryquotation.backend.Product.DTO;
 
-import com.bakeryquotation.backend.Product.UnitOfMeasure;
-
 public class ProductResponseDTO {
 
     private Long productId;
     private String productName;
     private String productBarCodeNumber;
-    private UnitOfMeasure unitOfMeasure;
     private String companyCnpj;
 
     public ProductResponseDTO() {
     }
 
-    public ProductResponseDTO(Long productId, String productName, String productBarCodeNumber, UnitOfMeasure unitOfMeasure, String companyCnpj) {
+    public ProductResponseDTO(Long productId, String productName, String productBarCodeNumber, String companyCnpj) {
         this.productId = productId;
         this.productName = productName;
         this.productBarCodeNumber = productBarCodeNumber;
-        this.unitOfMeasure = unitOfMeasure;
         this.companyCnpj = companyCnpj;
     }
 
@@ -43,14 +39,6 @@ public class ProductResponseDTO {
 
     public void setProductBarCodeNumber(String productBarCodeNumber) {
         this.productBarCodeNumber = productBarCodeNumber;
-    }
-
-    public UnitOfMeasure getUnitOfMeasure() {
-        return unitOfMeasure;
-    }
-
-    public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
-        this.unitOfMeasure = unitOfMeasure;
     }
 
     public String getCompanyCnpj() {

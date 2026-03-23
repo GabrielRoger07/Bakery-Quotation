@@ -224,7 +224,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
                     const pricePerUnit = bid.price / (bid.quantity + bid.bonus)
                     return (
                       <li key={productId} className="winning-item">
-                        <strong>{product?.productName}</strong> - {formatMoney(bid.price, i18n.language)} - {formatMoney(pricePerUnit, i18n.language)}/{product?.unitOfMeasure}
+                        <strong>{product?.productName}</strong> - {formatMoney(bid.price, i18n.language)} - {formatMoney(pricePerUnit, i18n.language)}/UN
                       </li>
                     )
                   })

@@ -24,10 +24,10 @@ const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNu
         <div className="single-proposal-item">
             <div className="single-proposal-item-meta">
                 <strong>{product.productName}</strong>
-                <span>{t("quantity")}: {product.quantity} {product.unitOfMeasure}</span>
+                <span>{t("quantity")}: {product.quantity}</span>
             </div>
             <Input
-                label={t("single_proposal_price_label") + `${product.unitOfMeasure}:`}
+                label={t("single_proposal_price_without_unit_label") + `:`}
                 type="text"
                 value={value}
                 onChange={handleChange}

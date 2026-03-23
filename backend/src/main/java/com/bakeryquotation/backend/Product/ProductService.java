@@ -112,7 +112,6 @@ public class ProductService {
 
         product.setProductBarCodeNumber(productRequestDTO.getProductBarCodeNumber());
         product.setProductName(productRequestDTO.getProductName());
-        product.setUnitOfMeasure(productRequestDTO.getUnitOfMeasure());
         Product productUpdated = productRepository.save(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(productMapper.toDto(productUpdated));
     }

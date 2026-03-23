@@ -10,7 +10,6 @@ import com.bakeryquotation.backend.Participation.Participation;
 import com.bakeryquotation.backend.Participation.ParticipationRepository;
 import com.bakeryquotation.backend.Product.Product;
 import com.bakeryquotation.backend.Product.ProductRepository;
-import com.bakeryquotation.backend.Product.UnitOfMeasure;
 import com.bakeryquotation.backend.Quotation.Quotation;
 import com.bakeryquotation.backend.Quotation.QuotationRepository;
 import com.bakeryquotation.backend.Supplier.Supplier;
@@ -64,17 +63,16 @@ public class DevDataSeeder {
 
             for(int i = 0; i < 26; i++){
 
-                UnitOfMeasure unit = UnitOfMeasure.values()[rnd.nextInt(UnitOfMeasure.values().length)];
                 String barcode = String.format("%013d", Math.abs(rnd.nextLong()) % 10000000000000L);
 
                 if(i < 21){
                     Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), passwordEncoder.encode("password"), company1);
-                    Product product = new Product(faker.commerce().productName(), barcode, unit, company1);
+                    Product product = new Product(faker.commerce().productName(), barcode, company1);
                     supplierRepository.save(supplier);
                     productRepository.save(product);
                 }else{
                     Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), passwordEncoder.encode("password"), company2);
-                    Product product = new Product(faker.commerce().productName(), barcode, unit, company2);
+                    Product product = new Product(faker.commerce().productName(), barcode, company2);
                     supplierRepository.save(supplier);
                     productRepository.save(product);
                 }

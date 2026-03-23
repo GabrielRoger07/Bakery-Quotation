@@ -17,13 +17,11 @@ const ProductEdit = ({product, onSave, onClose}) => {
     const { request } = useFetch(ENV.API_BASE_URL)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
-    const [unitOfMeasure, setUnitOfMeasure] = useState("")
 
     useEffect(() => {
         if(product){
             setProductBarCodeNumber(product.productBarCodeNumber || "")
             setProductName(product.productName || "")
-            setUnitOfMeasure(product.unitOfMeasure || "")
         }
     }, [product, setProductBarCodeNumber, setProductName])
 
@@ -31,14 +29,13 @@ const ProductEdit = ({product, onSave, onClose}) => {
         barCodeWarning ||
         nameWarning ||
         !productBarCodeNumber ||
-        !productName ||
-        !unitOfMeasure
+        !productName
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         if(!product) return
 
-        if(!productBarCodeNumber.trim() || !productName.trim() || !unitOfMeasure){
+        if(!productBarCodeNumber.trim() || !productName.trim()){
             setError(t("all_fields_required"))
             setSuccess("")
             return;
@@ -48,8 +45,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
 
         const body = {
             productBarCodeNumber: productBarCodeNumber.trim(),
-            productName: productName.trim(),
-            unitOfMeasure
+            productName: productName.trim()
         }
 
         const res = await request("PUT", `/products/${product.productId}`, body)
@@ -93,28 +89,6 @@ const ProductEdit = ({product, onSave, onClose}) => {
                 </div>
             )}
 
-            <div className="input-container">
-                <label htmlFor="unitOfMeasure">
-                {t("unit_of_measure")}<span className={`required-asterisk ${!unitOfMeasure ? "empty" : "filled"}`}>*</span>
-                </label>
-                <div className="select-wrapper">
-                    <select id="unitOfMeasure" name="unitOfMeasure" value={unitOfMeasure} onChange={(e) => setUnitOfMeasure(e.target.value)} className="custom-select" required >
-                        <option value="" disabled>{t("select_field")}</option>
-                        <option value="mg">mg</option> 
-                        <option value="g">g</option> 
-                        <option value="kg">kg</option> 
-                        <option value="mL">mL</option> 
-                        <option value="L">L</option> 
-                        <option value="und">und</option>
-                        <option value="pct">pct</option>
-                        <option value="fardo">fardo</option>
-                        <option value="cx">cx</option>
-                        <option value="balde">balde</option>
-                        <option value="bag">bag</option>
-                    </select>
-                    <span className="select-arrow"></span>
-                </div>
-            </div>
             <Alert message={error} />
             {success && <div className="success">{success}</div>}
 

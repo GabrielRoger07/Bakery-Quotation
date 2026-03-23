@@ -36,8 +36,7 @@ const ProductList = () => {
 
     const columns = [
         { key: "productBarCodeNumber", label: t("barcode_number") },
-        { key: "productName", label: t("product_name") },
-        { key: "unitOfMeasure", label: t("unit_of_measure") }
+        { key: "productName", label: t("product_name") }
     ]
 
     const openEditModal = (product) => {

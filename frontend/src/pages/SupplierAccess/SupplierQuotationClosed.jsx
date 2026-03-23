@@ -57,7 +57,6 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
             return {
                 productName: product?.productName ?? "-",
-                unitOfMeasure: product?.unitOfMeasure ?? "-",
                 price: bid.price,
                 quantity: bid.quantity,
                 bonus: bid.bonus,
@@ -79,7 +78,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
     const formattedItems = winningItems.map(item => ({
         ...item,
         price: formatMoney(item.price, i18n.language),
-        pricePerUnit: `${formatMoney(item.pricePerUnit, i18n.language)}/${item.unitOfMeasure}`
+        pricePerUnit: `${formatMoney(item.pricePerUnit, i18n.language)}/UN`
     }))
 
     if (loading) return <p>{t("loading_message")}</p>

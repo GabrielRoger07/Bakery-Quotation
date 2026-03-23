@@ -14,7 +14,6 @@ const ProductCreate = ({ onClose, onSave }) => {
     const { value: productBarCodeNumber, onChange: handleBarCodeChange, onBlur: handleBarCodeBlur, warning: barCodeWarning, isInvalid: isBarCodeInvalid } = useCharLimit(13, "barcode_number")
     const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "product_name")
 
-    const [unitOfMeasure, setUnitOfMeasure] = useState("")
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
@@ -24,14 +23,12 @@ const ProductCreate = ({ onClose, onSave }) => {
         barCodeWarning ||
         nameWarning ||
         !productBarCodeNumber ||
-        !productName ||
-        !unitOfMeasure
-
+        !productName
 
     const handleProductCreate = async(e) => {
         e.preventDefault()
 
-        if(!productBarCodeNumber || !productName || !unitOfMeasure){
+        if(!productBarCodeNumber || !productName){
             setError(t("all_fields_required"))
             setSuccess("")
             return;
@@ -41,8 +38,7 @@ const ProductCreate = ({ onClose, onSave }) => {
 
         const product = {
             productBarCodeNumber,
-            productName,
-            unitOfMeasure,
+            productName
         }
 
         const res = await request("POST", "/products", product)
@@ -86,28 +82,6 @@ const ProductCreate = ({ onClose, onSave }) => {
                 </div>
             )}
             
-            <div className="input-container">
-                <label htmlFor="unitOfMeasure">
-                    {t("unit_of_measure")}<span className={`required-asterisk ${!unitOfMeasure ? "empty" : "filled"}`}>*</span>
-                </label>
-                <div className="select-wrapper">
-                    <select id="unitOfMeasure" name="unitOfMeasure" value={unitOfMeasure} onChange={(e) => setUnitOfMeasure(e.target.value)} className="custom-select" required >
-                        <option value="" disabled>{t("select_field")}</option>
-                        <option value="mg">mg</option>
-                        <option value="g">g</option>
-                        <option value="kg">kg</option>
-                        <option value="mL">mL</option>
-                        <option value="L">L</option>
-                        <option value="und">und</option>
-                        <option value="pct">pct</option>
-                        <option value="fardo">fardo</option>
-                        <option value="cx">cx</option>
-                        <option value="balde">balde</option>
-                        <option value="bag">bag</option>
-                    </select>
-                    <span className="select-arrow"></span>
-                </div>
-            </div>
             <Alert message={error} />
             {success && <div className="success">{success}</div>}
             <Button type="submit" disabled={isDisabled}>{t("create_button")}</Button>

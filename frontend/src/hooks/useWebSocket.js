@@ -11,7 +11,6 @@ export default function useWebSocket(quotationId, onMessage){
 
     const client = new Client({
       webSocketFactory: () => new SockJS(ENV.SOCKET_URL),
-      debug: (str) => console.log(str),
       reconnectDelay: 0,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000

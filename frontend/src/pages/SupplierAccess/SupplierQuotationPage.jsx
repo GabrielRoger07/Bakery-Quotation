@@ -12,7 +12,7 @@ const SupplierQuotationPage = () => {
 
     const [searchParams] = useSearchParams()
     const quotationId = searchParams.get('quotationId')
-    const participationId = searchParams.get('participationId')
+    const participationId = Number(searchParams.get('participationId'))
 
     const [validated, setValidated] = useState(false)
     const [error, setError] = useState("")

@@ -5,15 +5,17 @@ public class ProductResponseDTO {
     private Long productId;
     private String productName;
     private String productBarCodeNumber;
+    private String productDescription;
     private String companyCnpj;
 
     public ProductResponseDTO() {
     }
 
-    public ProductResponseDTO(Long productId, String productName, String productBarCodeNumber, String companyCnpj) {
+    public ProductResponseDTO(Long productId, String productName, String productBarCodeNumber, String productDescription, String companyCnpj) {
         this.productId = productId;
         this.productName = productName;
         this.productBarCodeNumber = productBarCodeNumber;
+        this.productDescription = productDescription;
         this.companyCnpj = companyCnpj;
     }
 
@@ -39,6 +41,14 @@ public class ProductResponseDTO {
 
     public void setProductBarCodeNumber(String productBarCodeNumber) {
         this.productBarCodeNumber = productBarCodeNumber;
+    }
+
+    public String getProductDescription() {
+        return productDescription;
+    }
+
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
     }
 
     public String getCompanyCnpj() {

@@ -5,7 +5,6 @@ import com.bakeryquotation.backend.Company.CompanyRepository;
 import com.bakeryquotation.backend.Product.DTO.ProductRequestDTO;
 import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import com.bakeryquotation.backend.Product.mapper.ProductMapper;
-import com.bakeryquotation.backend.Quotation.Quotation;
 import com.bakeryquotation.backend.exception.AccessDeniedException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
@@ -110,8 +109,9 @@ public class ProductService {
             throw new AccessDeniedException("You do not have permission to perform this action. Nice try");
         }
 
-        product.setProductBarCodeNumber(productRequestDTO.getProductBarCodeNumber());
         product.setProductName(productRequestDTO.getProductName());
+        product.setProductBarCodeNumber(productRequestDTO.getProductBarCodeNumber());
+        product.setProductDescription(productRequestDTO.getProductDescription());
         Product productUpdated = productRepository.save(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(productMapper.toDto(productUpdated));
     }

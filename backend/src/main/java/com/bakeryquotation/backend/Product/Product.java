@@ -22,6 +22,9 @@ public class Product {
     @Column(name = "productBarCodeNumber", nullable = false, length = 13)
     private String productBarCodeNumber;
 
+    @Column(name = "productDescription")
+    private String productDescription;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false, targetEntity = Company.class)
     @JoinColumn(name = "companyCnpj",
                 referencedColumnName = "companyCnpj",
@@ -41,16 +44,18 @@ public class Product {
     public Product() {
     }
 
-    public Product(String productName, String productBarCodeNumber, Company company) {
+    public Product(String productName, String productBarCodeNumber, String productDescription, Company company) {
         this.productName = productName;
         this.productBarCodeNumber = productBarCodeNumber;
+        this.productDescription = productDescription;
         this.company = company;
     }
 
-    public Product(Long id, String productName, String productBarCodeNumber, Company company, List<Contain> contains, List<Bid> bids) {
+    public Product(Long id, String productName, String productBarCodeNumber, String productDescription, Company company, List<Contain> contains, List<Bid> bids) {
         this.id = id;
         this.productName = productName;
         this.productBarCodeNumber = productBarCodeNumber;
+        this.productDescription = productDescription;
         this.company = company;
         this.contains = contains;
         this.bids = bids;
@@ -78,6 +83,14 @@ public class Product {
 
     public void setProductBarCodeNumber(String productBarCodeNumber) {
         this.productBarCodeNumber = productBarCodeNumber;
+    }
+
+    public String getProductDescription() {
+        return productDescription;
+    }
+
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
     }
 
     public Company getCompany() {
@@ -108,11 +121,11 @@ public class Product {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(id, product.id) && Objects.equals(productName, product.productName) && Objects.equals(productBarCodeNumber, product.productBarCodeNumber) && Objects.equals(company, product.company) && Objects.equals(contains, product.contains) && Objects.equals(bids, product.bids);
+        return Objects.equals(id, product.id) && Objects.equals(productName, product.productName) && Objects.equals(productBarCodeNumber, product.productBarCodeNumber) && Objects.equals(productDescription, product.productDescription) && Objects.equals(company, product.company) && Objects.equals(contains, product.contains) && Objects.equals(bids, product.bids);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, productName, productBarCodeNumber, company, contains, bids);
+        return Objects.hash(id, productName, productBarCodeNumber, productDescription, company, contains, bids);
     }
 }

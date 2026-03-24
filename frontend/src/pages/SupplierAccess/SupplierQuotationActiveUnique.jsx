@@ -13,7 +13,6 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
     const { request } = useFetch(ENV.API_BASE_URL)
 
     const [quotation, setQuotation] = useState(null)
-    const [participation, setParticipation] = useState(null)
     const [products, setProducts] = useState([])
     const [existingBids, setExistingBids] = useState([])
     const [numericPricesByProductId, setNumericPricesByProductId] = useState({})
@@ -32,7 +31,6 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
             setError("")
 
             const quotationRes = await request("GET", `/quotations/${quotationId}`)
-            const participationRes = await request("GET", `/participations/${participationId}`)
             const productsRes = await request("GET", `/contains/${quotationId}`)
             const bidsRes = await request("GET", `/bids/participations/${participationId}`)
 
@@ -46,7 +44,6 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
             const fetchedBids = bidsRes.ok ? bidsRes.data ?? [] : []
 
             setQuotation(quotationRes.data)
-            setParticipation(participationRes.ok ? participationRes.data : null)
             setProducts(fetchedProducts)
             setExistingBids(fetchedBids)
 
@@ -170,10 +167,6 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
         <div className="supplier-quotation-container">
             <h2>{t("quotation")} #{quotationId}</h2>
 
-            {participation?.supplierName && (
-                <p className="supplier-name">{t("supplier")}: {participation.supplierName}</p>
-            )}
-
             {quotation && (
                 <div className="quotation-info">
                     <p><strong>{t("start_uppercase")}:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
@@ -183,14 +176,13 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
 
             <div className="quotation-summary">
                 <p>{t("total_products")}: <strong>{products.length}</strong></p>
+                {hasSubmittedBids && (<span className="single-proposal-submitted">{t("single_proposal_already_submitted")}</span>)}
                 {timeRemaining && <p>{t("time_remaining")}: {timeRemaining}</p>}
             </div>
 
             <div className="single-proposal-card">
                 {hasSubmittedBids ? (
                     <>
-                        <p className="single-proposal-submitted">{t("single_proposal_already_submitted")}</p>
-
                         <div className="proposal-review-table-wrapper">
                             <table className="proposal-review-table">
                                 <thead>

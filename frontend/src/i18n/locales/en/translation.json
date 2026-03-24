@@ -132,6 +132,7 @@
     "quotation_step_2_no_selected_product":  "Select at least one product",
     "quotation_step_2":  "Step 2: Select Products",
     "quantity":  "Quantity",
+    "description": "Description",
     "bonus_limit":  "Bonus Limit",
     "products_added":  "Products Added",
     "quotation_step_3_supplier_already_added":  "Supplier already added!",

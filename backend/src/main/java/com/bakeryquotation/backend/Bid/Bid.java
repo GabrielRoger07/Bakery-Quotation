@@ -24,7 +24,7 @@ public class Bid {
     @MapsId("productId")
     private Product product;
 
-    @Column(name = "price", nullable = false, precision = 6, scale = 2)
+    @Column(name = "price", nullable = false, precision = 7, scale = 2)
     private BigDecimal price;
 
     @Column(name = "quantity", nullable = false, precision = 6, scale = 2)

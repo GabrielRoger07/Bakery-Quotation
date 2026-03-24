@@ -158,7 +158,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                             >
                                 <div className="product-result-main">
                                     <strong>{p.productName}</strong>
-                                    <span>{p.productBarCodeNumber}</span>
+                                    <span>{p.productBarCodeNumber} - {p.productDescription}</span>
                                 </div>
 
                                 {selectedProductId === p.productId && (
@@ -185,7 +185,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                             {t("selected_product")}
                         </span>
                         <strong>
-                            {selectedProduct.productBarCodeNumber} - {selectedProduct.productName}
+                            {selectedProduct.productName} - {selectedProduct.productDescription}
                         </strong>
                     </div>
 
@@ -229,6 +229,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                             <li key={p.productId} className="selected-product-item">
                                 <div>
                                     <strong>{p.productName}</strong>
+                                    <span>{p.productDescription}</span><br />
                                     <span>Qtd: {p.quantity} • Bonus: {p.bonusLimit}</span>
                                 </div>
                                 <Button className="remove-product-btn" onClick={() => handleRemoveProduct(p.productId)}>{t("remove_button")}</Button>

@@ -18,5 +18,6 @@ public interface ContainMapper {
     @Mapping(source = "quotation.id", target = "quotationId")
     @Mapping(source = "product.productBarCodeNumber", target = "productBarCodeNumber")
     @Mapping(source = "product.productName", target = "productName")
+    @Mapping(source = "product.productDescription", target = "productDescription")
     ContainResponseDTO toDto(Contain contain);
 }

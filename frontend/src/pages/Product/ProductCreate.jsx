@@ -13,6 +13,7 @@ const ProductCreate = ({ onClose, onSave }) => {
 
     const { value: productBarCodeNumber, onChange: handleBarCodeChange, onBlur: handleBarCodeBlur, warning: barCodeWarning, isInvalid: isBarCodeInvalid } = useCharLimit(13, "barcode_number")
     const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "product_name")
+    const { value: productDescription, onChange: handleDescriptionChange, onBlur: handleDescriptionBlur, warning: descriptionWarning, isInvalid: isDescriptionInvalid } = useCharLimit(255, "product_description")
 
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
@@ -38,7 +39,8 @@ const ProductCreate = ({ onClose, onSave }) => {
 
         const product = {
             productBarCodeNumber,
-            productName
+            productName,
+            productDescription: productDescription || null,
         }
 
         const res = await request("POST", "/products", product)
@@ -81,7 +83,20 @@ const ProductCreate = ({ onClose, onSave }) => {
                     }
                 </div>
             )}
-            
+
+            <Input label={t("product_description")} type="text" name="productDescription" value={productDescription} onChange={handleDescriptionChange} onBlur={handleDescriptionBlur} placeholder={t("enter_product_description")} isInvalid={isDescriptionInvalid} />
+            {productDescription && descriptionWarning && (
+                <div className="warning">
+                    {descriptionWarning.type === "too_short" &&
+                        t("char_limit_too_short", { min: descriptionWarning.min, field: t(descriptionWarning.fieldName) })
+                    }
+
+                    {descriptionWarning.type === "too_long" &&
+                        t("char_limit_too_long", { max: descriptionWarning.max, field: t(descriptionWarning.fieldName) })
+                    }
+                </div>
+            )}
+
             <Alert message={error} />
             {success && <div className="success">{success}</div>}
             <Button type="submit" disabled={isDisabled}>{t("create_button")}</Button>

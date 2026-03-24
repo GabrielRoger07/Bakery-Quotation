@@ -79,6 +79,8 @@
     "enter_barcode_number":  "Enter product code",
     "product_name":  "Product Name",
     "enter_product_name":  "Enter product name",
+    "product_description":  "Product Description",
+    "enter_product_description":  "Enter product description",
     "unit_of_measure":  "Unit of Measure",
     "select_field":  "Select",
     "delete_product_error":  "Failed to delete product. Please try again.",

@@ -13,6 +13,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
 
     const {value: productBarCodeNumber, setValue: setProductBarCodeNumber, onChange: handleBarCodeChange, onBlur: handleBarCodeBlur, warning: barCodeWarning, isInvalid: isBarCodeInvalid } = useCharLimit(13, "barcode_number")
     const {value: productName, setValue: setProductName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "product_name")
+    const {value: productDescription, setValue: setProductDescription, onChange: handleDescriptionChange, onBlur: handleDescriptionBlur, warning: descriptionWarning, isInvalid: isDescriptionInvalid } = useCharLimit(255, "product_description")
 
     const { request } = useFetch(ENV.API_BASE_URL)
     const [error, setError] = useState("")
@@ -22,8 +23,9 @@ const ProductEdit = ({product, onSave, onClose}) => {
         if(product){
             setProductBarCodeNumber(product.productBarCodeNumber || "")
             setProductName(product.productName || "")
+            setProductDescription(product.productDescription || "")
         }
-    }, [product, setProductBarCodeNumber, setProductName])
+    }, [product, setProductBarCodeNumber, setProductName, setProductDescription])
 
     const isDisabled = 
         barCodeWarning ||
@@ -45,7 +47,8 @@ const ProductEdit = ({product, onSave, onClose}) => {
 
         const body = {
             productBarCodeNumber: productBarCodeNumber.trim(),
-            productName: productName.trim()
+            productName: productName.trim(),
+            productDescription: productDescription ? productDescription.trim() : null,
         }
 
         const res = await request("PUT", `/products/${product.productId}`, body)
@@ -85,6 +88,19 @@ const ProductEdit = ({product, onSave, onClose}) => {
 
                     {nameWarning.type === "too_long" &&
                         t("char_limit_too_long", { max: nameWarning.max, field: t(nameWarning.fieldName) })
+                    }
+                </div>
+            )}
+
+            <Input label={t("product_description")} type="text" name="productDescription" value={productDescription} onChange={handleDescriptionChange} onBlur={handleDescriptionBlur} placeholder={t("enter_product_description")} isInvalid={isDescriptionInvalid} />
+            {productDescription && descriptionWarning && (
+                <div className="warning">
+                    {descriptionWarning.type === "too_short" &&
+                        t("char_limit_too_short", { min: descriptionWarning.min, field: t(descriptionWarning.fieldName) })
+                    }
+
+                    {descriptionWarning.type === "too_long" &&
+                        t("char_limit_too_long", { max: descriptionWarning.max, field: t(descriptionWarning.fieldName) })
                     }
                 </div>
             )}

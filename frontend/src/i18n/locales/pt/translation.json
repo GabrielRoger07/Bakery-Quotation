@@ -79,6 +79,8 @@
     "enter_barcode_number":  "Digite o código do produto",
     "product_name":  "Nome do Produto",
     "enter_product_name":  "Digite o nome do produto",
+    "product_description":  "Descrição do Produto",
+    "enter_product_description":  "Digite a descrição do produto",
     "unit_of_measure":  "Unidade de Medida",
     "select_field":  "Selecione",
     "delete_product_error":  "Erro ao remover produto. Por favor tente novamente.",

@@ -79,11 +79,11 @@ public class DevDataSeeder {
             }
 
             List<Product> products = productRepository.findAll();
-            Contain contain1 = new Contain(quotation1, products.get(0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(0.0));
-            Contain contain2 = new Contain(quotation1, products.get(1), BigDecimal.valueOf(5.0), BigDecimal.valueOf(3.0));
-            Contain contain3 = new Contain(quotation1, products.get(2), BigDecimal.valueOf(7.0), BigDecimal.valueOf(2.0));
-            Contain contain4 = new Contain(quotation1, products.get(3), BigDecimal.valueOf(25.0), BigDecimal.valueOf(1.0));
-            Contain contain5 = new Contain(quotation2, products.get(2), BigDecimal.valueOf(2.0), BigDecimal.valueOf(0.0));
+            Contain contain1 = new Contain(quotation1, products.get(0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(0.0), "Brand 1");
+            Contain contain2 = new Contain(quotation1, products.get(1), BigDecimal.valueOf(5.0), BigDecimal.valueOf(3.0), "Brand 2");
+            Contain contain3 = new Contain(quotation1, products.get(2), BigDecimal.valueOf(7.0), BigDecimal.valueOf(2.0), "Brand 3");
+            Contain contain4 = new Contain(quotation1, products.get(3), BigDecimal.valueOf(25.0), BigDecimal.valueOf(1.0), null);
+            Contain contain5 = new Contain(quotation2, products.get(2), BigDecimal.valueOf(2.0), BigDecimal.valueOf(0.0), null);
 
             containRepository.save(contain1);
             containRepository.save(contain2);

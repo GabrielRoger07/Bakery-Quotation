@@ -21,14 +21,17 @@ public class ContainRequestDTO {
     @PositiveOrZero(message = "Bonus limit cannot be negative")
     private BigDecimal bonusLimit;
 
+    private String brand;
+
     public ContainRequestDTO() {
     }
 
-    public ContainRequestDTO(Long productId, Long quotationId, BigDecimal quantity, BigDecimal bonusLimit) {
+    public ContainRequestDTO(Long productId, Long quotationId, BigDecimal quantity, BigDecimal bonusLimit, String brand) {
         this.productId = productId;
         this.quotationId = quotationId;
         this.quantity = quantity;
         this.bonusLimit = bonusLimit;
+        this.brand = brand;
     }
 
     public Long getProductId() {
@@ -61,5 +64,13 @@ public class ContainRequestDTO {
 
     public void setBonusLimit(BigDecimal bonusLimit) {
         this.bonusLimit = bonusLimit;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 }

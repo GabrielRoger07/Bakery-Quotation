@@ -29,26 +29,31 @@ public class Contain {
     @Column(name = "bonusLimit", nullable = false, precision = 6, scale = 2)
     private BigDecimal bonusLimit;
 
+    @Column(name = "brand", length = 40)
+    private String brand;
+
     public Contain() {
     }
 
-    public Contain(Quotation quotation, Product product, BigDecimal quantity, BigDecimal bonusLimit) {
+    public Contain(Quotation quotation, Product product, BigDecimal quantity, BigDecimal bonusLimit, String brand) {
         this.quotation = quotation;
         this.product = product;
         this.quantity = quantity;
         this.bonusLimit = bonusLimit;
+        this.brand = brand;
 
         this.containId = new ContainId();
         this.containId.setProductId(product.getId());
         this.containId.setQuotationId(quotation.getId());
     }
 
-    public Contain(ContainId containId, Quotation quotation, Product product, BigDecimal quantity, BigDecimal bonusLimit) {
+    public Contain(ContainId containId, Quotation quotation, Product product, BigDecimal quantity, BigDecimal bonusLimit, String brand) {
         this.containId = containId;
         this.quotation = quotation;
         this.product = product;
         this.quantity = quantity;
         this.bonusLimit = bonusLimit;
+        this.brand = brand;
     }
 
     public ContainId getContainId() {
@@ -89,5 +94,13 @@ public class Contain {
 
     public void setBonusLimit(BigDecimal bonusLimit) {
         this.bonusLimit = bonusLimit;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 }

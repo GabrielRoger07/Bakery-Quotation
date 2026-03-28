@@ -8,9 +8,12 @@ import SingleProposalProductRow from './SingleProposalProductRow'
 import { ENV } from '../../config/env'
 import './SupplierQuotation.css'
 
+const DRAFT_KEY_PREFIX = "draft_prices_"
+
 const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
     const { t, i18n } = useTranslation()
     const { request } = useFetch(ENV.API_BASE_URL)
+    const storageKey = `${DRAFT_KEY_PREFIX}${quotationId}_${participationId}`
 
     const [quotation, setQuotation] = useState(null)
     const [products, setProducts] = useState([])
@@ -47,10 +50,13 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
             setProducts(fetchedProducts)
             setExistingBids(fetchedBids)
 
+            const savedDraft = JSON.parse(localStorage.getItem(storageKey) || '{}')
             const initialPrices = {}
             for(const product of fetchedProducts){
                 const existingBid = fetchedBids.find(bid => bid.productId === product.productId)
-                initialPrices[product.productId] = existingBid ? existingBid.price : 0
+                initialPrices[product.productId] = existingBid
+                    ? existingBid.price
+                    : (savedDraft[product.productId] ?? 0)
             }
 
             setNumericPricesByProductId(initialPrices)
@@ -58,7 +64,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
         }
 
         fetchData()
-    }, [participationId, quotationId, request, t])
+    }, [participationId, quotationId, request, t, storageKey])
 
     useEffect(() => {
         if(!quotation) return
@@ -97,8 +103,16 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
     const hasSubmittedBids = existingBids.length > 0
 
     const handleNumericPriceChange = useCallback((productId, numericValue) => {
-        setNumericPricesByProductId(prev => ({ ...prev, [productId]: numericValue }))
-    }, [])
+        setNumericPricesByProductId(prev => {
+            const updated = { ...prev, [productId]: numericValue }
+            const draft = {}
+            for(const [id, price] of Object.entries(updated)){
+                if(price > 0 && !existingBidByProductId[id]) draft[id] = price
+            }
+            localStorage.setItem(storageKey, JSON.stringify(draft))
+            return updated
+        })
+    }, [existingBidByProductId, storageKey])
 
     const handleReview = () => {
         setError("")
@@ -143,6 +157,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
         const bidsRes = await request("GET", `/bids/participations/${participationId}`)
         if(bidsRes.ok) setExistingBids(bidsRes.data ?? [])
 
+        localStorage.removeItem(storageKey)
         setSubmitting(false)
         setSuccess(t("single_proposal_submit_success"))
     }

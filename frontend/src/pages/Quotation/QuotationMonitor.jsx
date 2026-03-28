@@ -25,8 +25,9 @@ const QuotationMonitor = () => {
     const [products, setProducts] = useState([])
     const [bids, setBids] = useState([])
 
+    const [searchField, setSearchField] = useState("")
     const [searchWord, setSearchWord] = useState("")
-    const [appliedSearch, setAppliedSearch] = useState("")
+    const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
 
     const [stats, setStats] = useState({
         totalBids: 0,
@@ -212,42 +213,65 @@ const QuotationMonitor = () => {
     ], [t])
 
     const handleSearch = useCallback(() => {
-        setAppliedSearch(searchWord)
-    }, [searchWord])
+        setAppliedSearch({ field: searchField, word: searchWord })
+    }, [searchField, searchWord])
 
     const handleClearSearch = useCallback(() => {
+        setSearchField("")
         setSearchWord("")
-        setAppliedSearch("")
+        setAppliedSearch({ field: "", word: "" })
     }, [])
 
     const filteredProducts = useMemo(() => {
-        if (!appliedSearch) return products
-        const term = appliedSearch.toLowerCase()
-        return products.filter(p => p.productName?.toLowerCase().includes(term))
-    }, [products, appliedSearch])
+        if (!appliedSearch.word) return products
+        const term = appliedSearch.word.toLowerCase()
+        if (!appliedSearch.field || appliedSearch.field === "productName") {
+            return products.filter(p => p.productName?.toLowerCase().includes(term))
+        }
+        const matchingProductIds = new Set(
+            bids
+                .filter(b => b[appliedSearch.field]?.toString().toLowerCase().includes(term))
+                .map(b => b.productId)
+        )
+        return products.filter(p => matchingProductIds.has(p.productId))
+    }, [products, bids, appliedSearch])
 
     const filteredBids = useMemo(() => {
-        if (!appliedSearch) return bids
-        const matchingProductIds = new Set(filteredProducts.map(p => p.productId))
-        return bids.filter(b => matchingProductIds.has(b.productId))
+        if (!appliedSearch.word) return bids
+        const term = appliedSearch.word.toLowerCase()
+        if (!appliedSearch.field || appliedSearch.field === "productName") {
+            const matchingProductIds = new Set(filteredProducts.map(p => p.productId))
+            return bids.filter(b => matchingProductIds.has(b.productId))
+        }
+        return bids.filter(b => b[appliedSearch.field]?.toString().toLowerCase().includes(term))
     }, [bids, appliedSearch, filteredProducts])
 
     const filterToolbar = useMemo(() => (
         <>
+            <div className="search-select-wrapper">
+                <select value={searchField} onChange={e => setSearchField(e.target.value)} className="custom-select">
+                    <option value="">{t("select_field")}</option>
+                    <option value="productName">{t("product_name")}</option>
+                    <option value="supplierName">{t("supplier_name_label")}</option>
+                    <option value="employerName">{t("employer_name")}</option>
+                    <option value="employerCnpj">{t("employer_cnpj")}</option>
+                </select>
+                <span className="select-arrow"></span>
+            </div>
             <input
                 type="text"
                 className="toolbar-input"
                 value={searchWord}
                 onChange={e => setSearchWord(e.target.value)}
-                placeholder={t("product_name")}
+                placeholder={t("enter_search")}
                 onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
             />
             <Button onClick={handleSearch}>{t("search_button")}</Button>
-            {appliedSearch && (
+            {appliedSearch.word && (
                 <Button variant="danger" onClick={handleClearSearch}><X size={16} /></Button>
             )}
         </>
-    ), [searchWord, appliedSearch, handleSearch, handleClearSearch, t])
+    ), [searchField, searchWord, appliedSearch, handleSearch, handleClearSearch, t])
 
     const formattedProducts = filteredProducts.map(p => ({
         ...p, 
@@ -314,7 +338,7 @@ const QuotationMonitor = () => {
                         loading={false}
                         emptyMessage={t("empty_products_quotation")}
                         toolbar={filterToolbar}
-                        filterActive={appliedSearch !== ""}
+                        filterActive={appliedSearch.word !== ""}
                     />
 
                     <Table

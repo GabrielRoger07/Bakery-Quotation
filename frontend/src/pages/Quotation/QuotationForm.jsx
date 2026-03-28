@@ -131,7 +131,8 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             productId: p.productId,
             quotationId,
             quantity: p.quantity,
-            bonusLimit: p.bonusLimit
+            bonusLimit: Number(0),
+            brand: p.brand
         }))
 
         const suppliersPayload = data.suppliers.map(s => ({

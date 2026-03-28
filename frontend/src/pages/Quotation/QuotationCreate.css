@@ -143,13 +143,13 @@
     margin-top: 0.5rem;
 }
 
-.quantity-bonus-group {
+.quantity-brand-group {
     display: flex;
     gap: 0.82rem;
     margin-bottom: 0.75rem;
 }
 
-.quantity-bonus-group > div {
+.quantity-brand-group > div {
     flex: 1;
 }
 
@@ -254,7 +254,7 @@
         min-width: unset;
     }
 
-    .quantity-bonus-group {
+    .quantity-brand-group {
         flex-direction: column;
     }
 

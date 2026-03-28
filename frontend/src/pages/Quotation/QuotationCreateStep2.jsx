@@ -17,7 +17,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const [selectedProductId, setSelectedProductId] = useState("")
     const [selectedProduct, setSelectedProduct] = useState(null)
     const [quantity, setQuantity] = useState(1)
-    const [bonus, setBonus] = useState(0)
+    const [brand, setBrand] = useState("")
     const [error, setError] = useState("")
     const [searchField, setSearchField] = useState("")
     const [searchWord, setSearchWord] = useState("")
@@ -90,12 +90,12 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
             return
         }
         
-        const updatedList = [...localSelected, { ...selectedProduct, quantity: Number(quantity), bonusLimit: Number(bonus)}]
+        const updatedList = [...localSelected, { ...selectedProduct, quantity: Number(quantity), brand: brand}]
         setLocalSelected(updatedList)
         setSelectedProductId("")
         setSelectedProduct(null)
         setQuantity(1)
-        setBonus(0)
+        setBrand("")
         setError("")
     }
 
@@ -189,7 +189,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                         </strong>
                     </div>
 
-                    <div className="quantity-bonus-group">
+                    <div className="quantity-brand-group">
                         <Input 
                             label={t("quantity")}
                             type="number"
@@ -201,14 +201,11 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                             }}
                         />
                         <Input 
-                            label={t("bonus_limit")}
-                            type="number"
-                            value={bonus}
-                            onChange={e => setBonus(e.target.value)}
-                            min="0"
-                            onKeyDown={e => {
-                                if(['-', 'e', 'E'].includes(e.key)) e.preventDefault()
-                            }}
+                            label={t("brand")}
+                            type="text"
+                            value={brand}
+                            onChange={e => setBrand(e.target.value)}
+                            placeholder={t("brand")}
                         />
                     </div>
                 
@@ -230,7 +227,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                 <div>
                                     <strong>{p.productName}</strong>
                                     <span>{p.productDescription}</span><br />
-                                    <span>Qtd: {p.quantity} • Bonus: {p.bonusLimit}</span>
+                                    <span>Qtd: {p.quantity} • Brand: {p.brand}</span>
                                 </div>
                                 <Button className="remove-product-btn" onClick={() => handleRemoveProduct(p.productId)}>{t("remove_button")}</Button>
                             </li>

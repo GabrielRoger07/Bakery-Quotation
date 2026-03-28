@@ -1,0 +1,1 @@
+ALTER TABLE contain ADD COLUMN brand VARCHAR(40);

@@ -77,6 +77,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
     const formattedItems = winningItems.map(item => ({
         ...item,
+        quantity: `${item.quantity} UN`,
         price: formatMoney(item.price, i18n.language),
         pricePerUnit: `${formatMoney(item.pricePerUnit, i18n.language)}/UN`
     }))

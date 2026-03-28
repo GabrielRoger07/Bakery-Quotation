@@ -302,7 +302,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                             <span className="proposal-review-skipped-name">{product.productName}</span>
                                             <span className="proposal-review-no-price-badge">{t("single_proposal_no_price_badge")}</span>
                                         </td>
-                                        <td className="proposal-review-num">{product.quantity}</td>
+                                        <td className="proposal-review-num">{product.quantity} UN</td>
                                         <td className="proposal-review-num proposal-review-dash">—</td>
                                         <td className="proposal-review-num proposal-review-dash">—</td>
                                     </tr>
@@ -312,7 +312,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                 return (
                                     <tr key={product.productId}>
                                         <td>{product.productName}</td>
-                                        <td className="proposal-review-num">{product.quantity}</td>
+                                        <td className="proposal-review-num">{product.quantity} UN</td>
                                         <td className="proposal-review-num">{formatMoney(unitPrice, i18n.language)}</td>
                                         <td className="proposal-review-num proposal-review-total">{formatMoney(total, i18n.language)}</td>
                                     </tr>

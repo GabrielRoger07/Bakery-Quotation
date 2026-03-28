@@ -292,8 +292,22 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {productsToSubmit.map(product => {
+                            {products.filter(p => !existingBidByProductId[p.productId]).map(product => {
                                 const unitPrice = numericPricesByProductId[product.productId] ?? 0
+                                const isSkipped = unitPrice <= 0
+
+                                if(isSkipped) return (
+                                    <tr key={product.productId} className="proposal-review-row-skipped">
+                                        <td>
+                                            <span className="proposal-review-skipped-name">{product.productName}</span>
+                                            <span className="proposal-review-no-price-badge">{t("single_proposal_no_price_badge")}</span>
+                                        </td>
+                                        <td className="proposal-review-num">{product.quantity}</td>
+                                        <td className="proposal-review-num proposal-review-dash">—</td>
+                                        <td className="proposal-review-num proposal-review-dash">—</td>
+                                    </tr>
+                                )
+
                                 const total = unitPrice * Number(product.quantity)
                                 return (
                                     <tr key={product.productId}>
@@ -304,17 +318,6 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                     </tr>
                                 )
                             })}
-                            {skippedProducts.map(product => (
-                                <tr key={product.productId} className="proposal-review-row-skipped">
-                                    <td>
-                                        <span className="proposal-review-skipped-name">{product.productName}</span>
-                                        <span className="proposal-review-no-price-badge">{t("single_proposal_no_price_badge")}</span>
-                                    </td>
-                                    <td className="proposal-review-num">{product.quantity}</td>
-                                    <td className="proposal-review-num proposal-review-dash">—</td>
-                                    <td className="proposal-review-num proposal-review-dash">—</td>
-                                </tr>
-                            ))}
                         </tbody>
                         <tfoot>
                             <tr>

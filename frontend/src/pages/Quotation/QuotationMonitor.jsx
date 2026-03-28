@@ -28,6 +28,7 @@ const QuotationMonitor = () => {
     const [searchField, setSearchField] = useState("")
     const [searchWord, setSearchWord] = useState("")
     const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
+    const [bidFilter, setBidFilter] = useState("all")
 
     const [stats, setStats] = useState({
         totalBids: 0,
@@ -220,31 +221,41 @@ const QuotationMonitor = () => {
         setSearchField("")
         setSearchWord("")
         setAppliedSearch({ field: "", word: "" })
+        setBidFilter("all")
     }, [])
 
     const filteredProducts = useMemo(() => {
-        if (!appliedSearch.word) return products
-        const term = appliedSearch.word.toLowerCase()
-        if (!appliedSearch.field || appliedSearch.field === "productName") {
-            return products.filter(p => p.productName?.toLowerCase().includes(term))
+        let result = products
+
+        if (appliedSearch.word) {
+            const term = appliedSearch.word.toLowerCase()
+            if (!appliedSearch.field || appliedSearch.field === "productName") {
+                result = result.filter(p => p.productName?.toLowerCase().includes(term))
+            } else {
+                const matchingProductIds = new Set(
+                    bids
+                        .filter(b => b[appliedSearch.field]?.toString().toLowerCase().includes(term))
+                        .map(b => b.productId)
+                )
+                result = result.filter(p => matchingProductIds.has(p.productId))
+            }
         }
-        const matchingProductIds = new Set(
-            bids
-                .filter(b => b[appliedSearch.field]?.toString().toLowerCase().includes(term))
-                .map(b => b.productId)
-        )
-        return products.filter(p => matchingProductIds.has(p.productId))
-    }, [products, bids, appliedSearch])
+
+        if (bidFilter === "with") {
+            const productIdsWithBids = new Set(bids.map(b => b.productId))
+            result = result.filter(p => productIdsWithBids.has(p.productId))
+        } else if (bidFilter === "without") {
+            const productIdsWithBids = new Set(bids.map(b => b.productId))
+            result = result.filter(p => !productIdsWithBids.has(p.productId))
+        }
+
+        return result
+    }, [products, bids, appliedSearch, bidFilter])
 
     const filteredBids = useMemo(() => {
-        if (!appliedSearch.word) return bids
-        const term = appliedSearch.word.toLowerCase()
-        if (!appliedSearch.field || appliedSearch.field === "productName") {
-            const matchingProductIds = new Set(filteredProducts.map(p => p.productId))
-            return bids.filter(b => matchingProductIds.has(b.productId))
-        }
-        return bids.filter(b => b[appliedSearch.field]?.toString().toLowerCase().includes(term))
-    }, [bids, appliedSearch, filteredProducts])
+        const matchingProductIds = new Set(filteredProducts.map(p => p.productId))
+        return bids.filter(b => matchingProductIds.has(b.productId))
+    }, [bids, filteredProducts])
 
     const filterToolbar = useMemo(() => (
         <>
@@ -266,12 +277,17 @@ const QuotationMonitor = () => {
                 placeholder={t("enter_search")}
                 onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
             />
+            <div className="segmented-control">
+                <button className={`segmented-btn${bidFilter === "all" ? " segmented-active" : ""}`} onClick={() => setBidFilter("all")}>{t("filter_all")}</button>
+                <button className={`segmented-btn${bidFilter === "with" ? " segmented-active" : ""}`} onClick={() => setBidFilter("with")}>{t("filter_with_bids")}</button>
+                <button className={`segmented-btn${bidFilter === "without" ? " segmented-active" : ""}`} onClick={() => setBidFilter("without")}>{t("filter_without_bids")}</button>
+            </div>
             <Button onClick={handleSearch}>{t("search_button")}</Button>
-            {appliedSearch.word && (
+            {(appliedSearch.word || bidFilter !== "all") && (
                 <Button variant="danger" onClick={handleClearSearch}><X size={16} /></Button>
             )}
         </>
-    ), [searchField, searchWord, appliedSearch, handleSearch, handleClearSearch, t])
+    ), [searchField, searchWord, appliedSearch, bidFilter, handleSearch, handleClearSearch, t])
 
     const formattedProducts = filteredProducts.map(p => ({
         ...p, 
@@ -338,7 +354,7 @@ const QuotationMonitor = () => {
                         loading={false}
                         emptyMessage={t("empty_products_quotation")}
                         toolbar={filterToolbar}
-                        filterActive={appliedSearch.word !== ""}
+                        filterActive={appliedSearch.word !== "" || bidFilter !== "all"}
                     />
 
                     <Table

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation, Trans } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
@@ -33,6 +33,9 @@ const ProductList = () => {
 
     const [sortField, setSortField] = useState(null)
     const [sortDirection, setSortDirection] = useState("asc")
+
+    const [searchWord, setSearchWord] = useState("")
+    const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
 
     const columns = [
         { key: "productBarCodeNumber", label: t("barcode_number") },
@@ -83,12 +86,12 @@ const ProductList = () => {
 
     const fetchProducts = useCallback(async (page = 0) => {
 
-        let sortQuery = ""
-        if(sortField) {
-            sortQuery = `&sort=${sortField},${sortDirection}`
-        }
+        let query = `?page=${page}`
+        if(sortField) query += `&sort=${sortField},${sortDirection}`
+        if(appliedSearch.field) query += `&field=${appliedSearch.field}`
+        if(appliedSearch.word) query += `&value=${appliedSearch.word}`
 
-        const res = await request("GET", `/products/company?page=${page}${sortQuery}`)
+        const res = await request("GET", `/products/company${query}`)
 
         if(res.ok){
             setProducts(res.data.content);
@@ -98,7 +101,12 @@ const ProductList = () => {
             setError(res.data?.message)
         }
         setStatus(res.status)
-    }, [request, sortField, sortDirection])
+    }, [request, sortField, sortDirection, appliedSearch])
+
+    const handleSearch = useCallback(() => {
+        setCurrentPage(0)
+        setAppliedSearch({ field: "productName", word: searchWord })
+    }, [searchWord])
 
     const handleColumnSort = (columnKey) => {
         if(sortField === columnKey){
@@ -115,12 +123,26 @@ const ProductList = () => {
         fetchProducts(currentPage);
     }, [fetchProducts, currentPage])
 
+    const filterToolbar = useMemo(() => (
+        <>
+            <input
+                type="text"
+                className="toolbar-input"
+                value={searchWord}
+                onChange={e => setSearchWord(e.target.value)}
+                placeholder={t("product_name")}
+                onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
+            />
+            <Button onClick={handleSearch} disabled={loading}>{t("search_button")}</Button>
+        </>
+    ), [searchWord, handleSearch, loading, t])
+
     return (
     <div className="product-list-container">
         {error && <Alert message={error}/>}
         {status === 0 && <Alert message={t("server_internal_error")} />}
 
-        <Table 
+        <Table
             title={t("products_title_list")}
             columns={columns}
             data={products}
@@ -134,6 +156,8 @@ const ProductList = () => {
             sortField={sortField}
             sortDirection={sortDirection}
             emptyMessage={t("products_empty")}
+            toolbar={filterToolbar}
+            filterActive={appliedSearch.word !== ""}
         />
 
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>

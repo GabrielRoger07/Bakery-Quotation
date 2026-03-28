@@ -200,6 +200,8 @@
     "your_bids":  "Your Bids",
     "empty_bids":  "You haven\u0027t placed any bids yet.",
     "winning_bids":  "Winning Bids",
+    "winning_banner": "Congratulations! You won {{won}} products.",
+    "export_report_button": "Export Report",
     "total_value":  "Total Value",
     "potencial_value": "Potential Value",
     "not_winning_bids":  "You are not winning any products right now.",

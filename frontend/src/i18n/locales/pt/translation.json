@@ -200,6 +200,8 @@
     "your_bids":  "Seus Lances",
     "empty_bids":  "Você ainda não tem nenhum lance.",
     "winning_bids":  "Lances Vencedores",
+    "winning_banner": "Parabéns! Você venceu {{won}} produtos.",
+    "export_report_button": "Exportar Relatório",
     "total_value":  "Valor Total",
     "potencial_value": "Valor Potencial",
     "not_winning_bids":  "Você não está vencendo nenhum produto agora.",

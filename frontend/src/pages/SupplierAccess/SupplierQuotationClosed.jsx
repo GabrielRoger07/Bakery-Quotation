@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import useFetch from "../../hooks/useFetch"
 import { ENV } from "../../config/env"
-import Table from "../../components/Table"
 import Button from "../../components/Button"
 import "./SupplierQuotation.css"
 import { formatMoney } from "../../utils/formatMoney"
@@ -57,6 +56,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
             return {
                 productName: product?.productName ?? "-",
+                brand: product?.brand || "-",
                 price: bid.price,
                 quantity: bid.quantity,
                 bonus: bid.bonus,
@@ -67,20 +67,6 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
     const totalWinningValue = winningItems.reduce((sum, item) => sum + item.price, 0)
 
-    const columns = useMemo(() => [
-        { key: "productName", label: t("product")},
-        { key: "quantity", label: t("quantity")},
-        // { key: "bonus", label: t("bonus")},
-        { key: "pricePerUnit", label: t("price_per_unit")},
-        { key: "price", label: t("total_price")}
-    ], [t])
-
-    const formattedItems = winningItems.map(item => ({
-        ...item,
-        quantity: `${item.quantity} UN`,
-        price: formatMoney(item.price, i18n.language),
-        pricePerUnit: `${formatMoney(item.pricePerUnit, i18n.language)}/UN`
-    }))
 
     if (loading) return <p>{t("loading_message")}</p>
     if (error) return <p>{error}</p>
@@ -106,24 +92,49 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                     <p>{t("not_won_bids")}</p>
                 ) : (
                     <>
-                        <Table
-                            title={t("winning_bids")}
-                            columns={columns}
-                            data={formattedItems}
-                            loading={false}
-                            emptyMessage={t("not_won_bids")}
-                        />
+                        <div className="winning-banner">
+                            <p>{t("winning_banner", { won: winningItems.length })}</p>
+                        </div>
 
-                        <div className="winning-total">
-                            <strong>{t("total_value")}:</strong>{" "}
-                            {formatMoney(totalWinningValue, i18n.language)}
+                        <div className="single-proposal-card">
+                            <h4 className="winning-bids-title">{t("winning_bids")}</h4>
+                            <div className="proposal-review-table-wrapper">
+                                <table className="proposal-review-table">
+                                    <thead>
+                                        <tr>
+                                            <th>{t("product")}</th>
+                                            <th>{t("brand")}</th>
+                                            <th className="proposal-review-num">{t("quantity")}</th>
+                                            <th className="proposal-review-num">{t("price_per_unit")}</th>
+                                            <th className="proposal-review-num">{t("total_price")}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {winningItems.map((item, index) => (
+                                            <tr key={index}>
+                                                <td>{item.productName}</td>
+                                                <td>{item.brand}</td>
+                                                <td className="proposal-review-num">{item.quantity} UN</td>
+                                                <td className="proposal-review-num">{formatMoney(item.pricePerUnit, i18n.language)}/UN</td>
+                                                <td className="proposal-review-num proposal-review-total">{formatMoney(item.price, i18n.language)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colSpan={4} className="proposal-review-grand-label">{t("total_value")}</td>
+                                            <td className="proposal-review-num proposal-review-grand-total">{formatMoney(totalWinningValue, i18n.language)}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                     </>
                 )}
 
-                <div style={{ marginTop: "1.5rem" }}>
+                <div className="winning-actions">
                     <Button onClick={() => window.print()}>
-                        {t("download_button")}
+                        {t("export_report_button")}
                     </Button>
                 </div>
             </div>

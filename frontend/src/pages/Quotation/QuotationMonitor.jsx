@@ -9,6 +9,7 @@ import './QuotationMonitor.css'
 import { ENV } from '../../config/env'
 import { formatCnpj } from '../../utils/formatCnpj'
 import { formatMoney } from '../../utils/formatMoney'
+import { X } from 'lucide-react'
 
 const QuotationMonitor = () => {
 
@@ -23,6 +24,9 @@ const QuotationMonitor = () => {
     const [quotation, setQuotation] = useState(null)
     const [products, setProducts] = useState([])
     const [bids, setBids] = useState([])
+
+    const [searchWord, setSearchWord] = useState("")
+    const [appliedSearch, setAppliedSearch] = useState("")
 
     const [stats, setStats] = useState({
         totalBids: 0,
@@ -207,7 +211,45 @@ const QuotationMonitor = () => {
         {key: "status", label: "Status"},
     ], [t])
 
-    const formattedProducts = products.map(p => ({
+    const handleSearch = useCallback(() => {
+        setAppliedSearch(searchWord)
+    }, [searchWord])
+
+    const handleClearSearch = useCallback(() => {
+        setSearchWord("")
+        setAppliedSearch("")
+    }, [])
+
+    const filteredProducts = useMemo(() => {
+        if (!appliedSearch) return products
+        const term = appliedSearch.toLowerCase()
+        return products.filter(p => p.productName?.toLowerCase().includes(term))
+    }, [products, appliedSearch])
+
+    const filteredBids = useMemo(() => {
+        if (!appliedSearch) return bids
+        const matchingProductIds = new Set(filteredProducts.map(p => p.productId))
+        return bids.filter(b => matchingProductIds.has(b.productId))
+    }, [bids, appliedSearch, filteredProducts])
+
+    const filterToolbar = useMemo(() => (
+        <>
+            <input
+                type="text"
+                className="toolbar-input"
+                value={searchWord}
+                onChange={e => setSearchWord(e.target.value)}
+                placeholder={t("product_name")}
+                onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
+            />
+            <Button onClick={handleSearch}>{t("search_button")}</Button>
+            {appliedSearch && (
+                <Button variant="danger" onClick={handleClearSearch}><X size={16} /></Button>
+            )}
+        </>
+    ), [searchWord, appliedSearch, handleSearch, handleClearSearch, t])
+
+    const formattedProducts = filteredProducts.map(p => ({
         ...p, 
         lowestBid: p.lowestBid ? formatMoney(p.lowestBid, i18n.language) : "-",
         bonus: p.bonus ?? "-",
@@ -217,7 +259,7 @@ const QuotationMonitor = () => {
         employerCnpj: p.employerCnpj && p.employerCnpj !== "-" ? formatCnpj(p.employerCnpj) : "-"
     }))
 
-    const formattedBids = bids.map(b => {
+    const formattedBids = filteredBids.map(b => {
 
         const lowest = products.find(p => p.productId === b.productId)?.lowestBid
         const isLowest = lowest && b.price === lowest
@@ -271,6 +313,8 @@ const QuotationMonitor = () => {
                         data={formattedProducts}
                         loading={false}
                         emptyMessage={t("empty_products_quotation")}
+                        toolbar={filterToolbar}
+                        filterActive={appliedSearch !== ""}
                     />
 
                     <Table

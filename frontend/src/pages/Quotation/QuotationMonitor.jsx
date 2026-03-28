@@ -30,6 +30,10 @@ const QuotationMonitor = () => {
     const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
     const [bidFilter, setBidFilter] = useState("all")
 
+    const [bidSearchField, setBidSearchField] = useState("")
+    const [bidSearchWord, setBidSearchWord] = useState("")
+    const [appliedBidSearch, setAppliedBidSearch] = useState({ field: "", word: "" })
+
     const [stats, setStats] = useState({
         totalBids: 0,
         uniqueSuppliers: 0,
@@ -252,10 +256,32 @@ const QuotationMonitor = () => {
         return result
     }, [products, bids, appliedSearch, bidFilter])
 
+    const handleBidSearch = useCallback(() => {
+        setAppliedBidSearch({ field: bidSearchField, word: bidSearchWord })
+    }, [bidSearchField, bidSearchWord])
+
+    const handleClearBidSearch = useCallback(() => {
+        setBidSearchField("")
+        setBidSearchWord("")
+        setAppliedBidSearch({ field: "", word: "" })
+    }, [])
+
     const filteredBids = useMemo(() => {
         const matchingProductIds = new Set(filteredProducts.map(p => p.productId))
-        return bids.filter(b => matchingProductIds.has(b.productId))
-    }, [bids, filteredProducts])
+        let result = bids.filter(b => matchingProductIds.has(b.productId))
+
+        if (appliedBidSearch.word) {
+            const term = appliedBidSearch.word.toLowerCase()
+            const field = appliedBidSearch.field
+            if (!field || field === "productName") {
+                result = result.filter(b => b.productName?.toLowerCase().includes(term))
+            } else {
+                result = result.filter(b => b[field]?.toString().toLowerCase().includes(term))
+            }
+        }
+
+        return result
+    }, [bids, filteredProducts, appliedBidSearch])
 
     const filterToolbar = useMemo(() => (
         <>
@@ -288,6 +314,33 @@ const QuotationMonitor = () => {
             )}
         </>
     ), [searchField, searchWord, appliedSearch, bidFilter, handleSearch, handleClearSearch, t])
+
+    const bidFilterToolbar = useMemo(() => (
+        <>
+            <div className="search-select-wrapper">
+                <select value={bidSearchField} onChange={e => setBidSearchField(e.target.value)} className="custom-select">
+                    <option value="">{t("select_field")}</option>
+                    <option value="productName">{t("product_name")}</option>
+                    <option value="supplierName">{t("supplier_name_label")}</option>
+                    <option value="employerName">{t("employer_name")}</option>
+                    <option value="employerCnpj">{t("employer_cnpj")}</option>
+                </select>
+                <span className="select-arrow"></span>
+            </div>
+            <input
+                type="text"
+                className="toolbar-input"
+                value={bidSearchWord}
+                onChange={e => setBidSearchWord(e.target.value)}
+                placeholder={t("enter_search")}
+                onKeyDown={e => { if (e.key === "Enter") handleBidSearch() }}
+            />
+            <Button onClick={handleBidSearch}>{t("search_button")}</Button>
+            {appliedBidSearch.word && (
+                <Button variant="danger" onClick={handleClearBidSearch}><X size={16} /></Button>
+            )}
+        </>
+    ), [bidSearchField, bidSearchWord, appliedBidSearch, handleBidSearch, handleClearBidSearch, t])
 
     const formattedProducts = filteredProducts.map(p => ({
         ...p, 
@@ -363,6 +416,8 @@ const QuotationMonitor = () => {
                         data={formattedBids}
                         loading={false}
                         emptyMessage={t("empty_bids_quotation")}
+                        toolbar={bidFilterToolbar}
+                        filterActive={appliedBidSearch.word !== ""}
                     />
             </div>
         </div>

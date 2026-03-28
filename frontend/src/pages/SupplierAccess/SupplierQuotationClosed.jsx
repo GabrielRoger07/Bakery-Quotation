@@ -87,7 +87,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
     return (
         <div className="supplier-quotation-container">
-            <h2>{t("quotation")} #{quotation.quotationId}</h2>
+            <h2>{t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotation.quotationId}</h2>
             <h3>{t("quotation_closed")}</h3>
 
             <div className="quotation-info">

@@ -161,7 +161,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
 
   return (
       <div className="supplier-quotation-container">
-        <h2>{t("quotation")} #{quotationId}</h2>
+        <h2>{t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotationId}</h2>
 
         {participation?.supplierName && (
           <p className="supplier-name">{t("supplier")}: {participation.supplierName}</p>

@@ -165,7 +165,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
 
     return (
         <div className="supplier-quotation-container">
-            <h2>{t("quotation")} #{quotationId}</h2>
+            <h2>{t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotationId}</h2>
 
             {quotation && (
                 <div className="quotation-info">

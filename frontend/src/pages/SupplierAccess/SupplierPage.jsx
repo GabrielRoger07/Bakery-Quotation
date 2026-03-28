@@ -80,7 +80,7 @@ const SupplierPage = () => {
                             >
                                 <div className="supplier-quotation-card-header">
                                     <span className="supplier-quotation-card-id">
-                                        {t("quotation")} #{p.quotationId}
+                                        {t("quotation")} {new Date(p.quotationStart).toLocaleDateString("pt-BR")} - #{p.quotationId}
                                     </span>
                                     <span className={`supplier-quotation-status ${status.className}`}>
                                         {status.label}

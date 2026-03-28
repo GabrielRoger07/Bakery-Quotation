@@ -25,6 +25,7 @@ const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNu
             <div className="single-proposal-item-meta">
                 <strong>{product.productName}</strong>
                 {product.productDescription && (<span>{t("description")}: {product.productDescription}</span>)}
+                {product.brand ? (<span>{t("brand")}: {product.brand}</span>) : (<span>{t("brand_not_defined")}</span>)}
                 <span>{t("quantity")}: {product.quantity}</span>
             </div>
             <Input

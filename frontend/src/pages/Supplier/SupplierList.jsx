@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation, Trans } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
@@ -35,6 +35,10 @@ const SupplierList = () => {
 
     const [sortField, setSortField] = useState(null)
     const [sortDirection, setSortDirection] = useState("asc")
+
+    const [searchField, setSearchField] = useState("")
+    const [searchWord, setSearchWord] = useState("")
+    const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
 
     const columns = [
         { key: "supplierName", label: t("supplier_name")},
@@ -87,12 +91,14 @@ const SupplierList = () => {
     }
 
     const fetchSuppliers = useCallback(async (page = 0) => {
-        let sortQuery = ""
-        if(sortField) {
-            sortQuery = `&sort=${sortField},${sortDirection}`
-        }
+        
+        let query = `?page=${page}`
+        if(sortField) query += `&sort=${sortField},${sortDirection}`
+        if(appliedSearch.field) query += `&field=${appliedSearch.field}`
+        if(appliedSearch.word) query += `&value=${appliedSearch.word}`
 
-        const res = await request("GET", `/suppliers/company?page=${page}${sortQuery}`)
+        const res = await request("GET", `/suppliers/company${query}`)
+        
         if(res.ok){
             setSuppliers(res.data.content);
             setTotalPages(res.data.totalPages)
@@ -101,7 +107,12 @@ const SupplierList = () => {
             setError(res.data?.message)
         }
         setStatus(res.status)
-    }, [request, sortField, sortDirection])
+    }, [request, sortField, sortDirection, appliedSearch])
+
+    const handleSearch = useCallback(() => {
+        setCurrentPage(0)
+        setAppliedSearch({ field: searchField, word: searchWord })
+    }, [searchField, searchWord])
 
     const handleColumnSort = (columnKey) => {
         if(sortField === columnKey){
@@ -118,6 +129,31 @@ const SupplierList = () => {
         fetchSuppliers(currentPage);
     }, [fetchSuppliers, currentPage])
 
+    const filterToolbar = useMemo(() => (
+        <>
+            <div className="search-select-wrapper">
+                <select value={searchField} onChange={(e) => setSearchField(e.target.value)} className="custom-select">
+                    <option value="">{t("select_field")}</option>
+                    <option value="supplierName">{t("supplier_name")}</option>
+                    <option value="supplierEmail">{t("supplier_email")}</option>
+                    <option value="supplierWhatsappNumber">{t("supplier_whatsapp")}</option>
+                    <option value="employerName">{t("employer_name")}</option>
+                    <option value="employerCnpj">{t("employer_cnpj")}</option>
+                </select>
+                <span className="select-arrow"></span>
+            </div>
+            <input
+                type="text"
+                className="toolbar-input"
+                value={searchWord}
+                onChange={e => setSearchWord(e.target.value)}
+                placeholder={t("enter_search")}
+                onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
+            />
+            <Button onClick={handleSearch} disabled={loading}>{t("search_button")}</Button>
+        </>
+    ), [searchField, searchWord, handleSearch, loading, t])
+
     const formattedSuppliers = suppliers.map((supplier) => ({
         ...supplier,
         supplierWhatsappNumber: supplier.supplierWhatsappNumber ? formatPhone(supplier.supplierWhatsappNumber) : "-",
@@ -129,7 +165,7 @@ const SupplierList = () => {
         {error && <Alert message={error}/>}
         {status === 0 && <Alert message={t("server_internal_error")} />}
 
-        <Table 
+        <Table
             title={t("suppliers_title_list")}
             columns={columns}
             data={formattedSuppliers}
@@ -143,6 +179,8 @@ const SupplierList = () => {
             sortField={sortField}
             sortDirection={sortDirection}
             emptyMessage={t("suppliers_empty")}
+            toolbar={filterToolbar}
+            filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
         />
 
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />

@@ -172,7 +172,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
 
             <div className="step-navigation">
                 <Button onClick={onBack} disabled={loading}>{t("back_button")}</Button>
-                <Button onClick={handleFinishClick} disabled={loading}>{loading ? t("saving_message") : t("save_button")}</Button>
+                <Button onClick={handleFinishClick} disabled={loading}>{loading ? t("loading_message") : t("next_button")}</Button>
             </div>
         </div>
     )

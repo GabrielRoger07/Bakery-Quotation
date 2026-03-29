@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
-import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import Pagination from '../../components/Pagination'
+import { X } from 'lucide-react'
 import { ENV } from '../../config/env'
 import './QuotationCreate.css'
 
@@ -13,105 +13,106 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const { request } = useFetch(ENV.API_BASE_URL)
 
     const [availableProducts, setAvailableProducts] = useState([])
-    const [localSelected, setLocalSelected] = useState(selectedProducts)
-    const [selectedProductId, setSelectedProductId] = useState("")
-    const [selectedProduct, setSelectedProduct] = useState(null)
-    const [quantity, setQuantity] = useState(1)
-    const [brand, setBrand] = useState("")
+    const [localSelected, setLocalSelected] = useState(() => {
+        const map = {}
+        selectedProducts.forEach(p => {
+            map[p.productId] = { quantity: p.quantity, brand: p.brand || "" }
+        })
+        return map
+    })
     const [error, setError] = useState("")
-    const [searchField, setSearchField] = useState("")
     const [searchWord, setSearchWord] = useState("")
+    const [appliedSearch, setAppliedSearch] = useState("")
     const [currentPage, setCurrentPage] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
 
-    useEffect(() => {
-        onChange(localSelected)
-    }, [localSelected, onChange])
-
-    const fetchProducts = useCallback(async (page = 0, field = searchField, word = searchWord) => {
-        const excludedIds = localSelected.map(p => p.productId)
-
+    const fetchProducts = useCallback(async (page = 0) => {
         let query = `?page=${page}`
-        if(field) query += `&field=${field}`
-        if(word) query += `&value=${word}`
-        if(excludedIds.length > 0) query += `&excludedIds=${excludedIds.join(",")}`
+        if (appliedSearch) query += `&field=productName&value=${appliedSearch}`
 
         const res = await request("GET", `/products/company${query}`)
-
-        if(res.ok) {
+        if (res.ok) {
             setAvailableProducts(res.data.content)
             setCurrentPage(res.data.number)
             setTotalPages(res.data.totalPages)
-            setError("")
-        }else{
-            setError(res.data?.message)
         }
-    }, [request, localSelected, searchField, searchWord])
+    }, [request, appliedSearch])
 
     useEffect(() => {
-        fetchProducts(0, "", "")
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        fetchProducts(0)
+    }, [fetchProducts])
+
+    const handleSearch = useCallback(() => {
+        setCurrentPage(0)
+        setAppliedSearch(searchWord)
+    }, [searchWord])
+
+    const handleClearSearch = useCallback(() => {
+        setSearchWord("")
+        setAppliedSearch("")
     }, [])
 
+    const handleQtyChange = useCallback((product, value) => {
+        const qty = Math.max(0, Math.floor(Number(value)) || 0)
+        setLocalSelected(prev => {
+            const next = { ...prev }
+            if (qty === 0) {
+                delete next[product.productId]
+            } else {
+                next[product.productId] = {
+                    quantity: qty,
+                    brand: prev[product.productId]?.brand || "",
+                    _product: product
+                }
+            }
+            return next
+        })
+    }, [])
+
+    const handleBrandChange = useCallback((product, value) => {
+        setLocalSelected(prev => {
+            const entry = prev[product.productId]
+            if (!entry) return prev
+            return {
+                ...prev,
+                [product.productId]: { ...entry, brand: value, _product: product }
+            }
+        })
+    }, [])
+
+    const handleRemoveProduct = useCallback((productId) => {
+        setLocalSelected(prev => {
+            const next = { ...prev }
+            delete next[productId]
+            return next
+        })
+    }, [])
+
+    const selectedList = useMemo(() => {
+        return Object.entries(localSelected).map(([id, entry]) => {
+            const product = entry._product
+                || availableProducts.find(p => p.productId === Number(id))
+                || selectedProducts.find(p => p.productId === Number(id))
+            return {
+                productId: Number(id),
+                productName: product?.productName || "",
+                productDescription: product?.productDescription || "",
+                quantity: entry.quantity,
+                brand: entry.brand
+            }
+        })
+    }, [localSelected, availableProducts, selectedProducts])
+
     useEffect(() => {
-        fetchProducts(0)
-    }, [localSelected, fetchProducts])
-
-    const handleSearchProducts = () => {
-        setCurrentPage(0)
-        fetchProducts(0)
-    }
-
-    const handleSelectProduct = (product) => {
-        setSelectedProductId(product.productId)
-        setSelectedProduct(product)
-    }
-
-    const handleAddProduct = () => {
-
-        if(!selectedProduct){
-            setError(t("quotation_step_2_no_product_selected"))
-            return
-        }
-
-        const product = availableProducts.find(p => p.productId === selectedProductId)
-        if(!product) {
-            setError(t("quotation_step_2_invalid_product"))
-            return
-        }
-
-        if(localSelected.find(p => p.productId === selectedProductId)){
-            setError(t("quotation_step_2_product_already_added"))
-            return
-        }
-
-        if(quantity <= 0) {
-            setError(t("quotation_step_2_low_quantity"))
-            return
-        }
-        
-        const updatedList = [...localSelected, { ...selectedProduct, quantity: Number(quantity), brand: brand}]
-        setLocalSelected(updatedList)
-        setSelectedProductId("")
-        setSelectedProduct(null)
-        setQuantity(1)
-        setBrand("")
-        setError("")
-    }
-
-    const handleRemoveProduct = (productId) => {
-        const updatedList = localSelected.filter(p => p.productId !== productId)
-        setLocalSelected(updatedList)
-    }
+        onChange(selectedList)
+    }, [selectedList, onChange])
 
     const handleNextClick = () => {
-        if(localSelected.length === 0) {
+        if (selectedList.length === 0) {
             setError(t("quotation_step_2_no_selected_product"))
             return
         }
-
         setError("")
-        onChange(localSelected)
         onNext()
     }
 
@@ -120,121 +121,100 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
             <h2>{t("quotation_step_2")}</h2>
 
             <div className="search-card">
-                <div className="search-row">
-                    <div className="search-select-wrapper">
-                        <select id="searchField" name="searchField" value={searchField} onChange={(e) => setSearchField(e.target.value)} className="custom-select" required >
-                            <option value="" disabled>{t("select_field")}</option>
-                            <option value="productBarCodeNumber">{t("barcode_number")}</option>
-                            <option value="productName">{t("product_name")}</option>
-                        </select>
-                        <span className="select-arrow"></span>
-                    </div>
-
-                    <div className="search-input-wrapper">
-                        <Input 
-                            type="text"
-                            value={searchWord}
-                            onChange={e => setSearchWord(e.target.value)}
-                            placeholder={t("enter_search")}
-                        />
-                    </div>
-                    <Button onClick={handleSearchProducts} disabled={loading}>{t("search_button")}</Button>
+                <div className="step2-search-row">
+                    <input
+                        type="text"
+                        className="toolbar-input"
+                        value={searchWord}
+                        onChange={e => setSearchWord(e.target.value)}
+                        placeholder={t("product_name")}
+                        onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
+                    />
+                    <Button onClick={handleSearch}>{t("search_button")}</Button>
+                    {appliedSearch && (
+                        <Button variant="danger" onClick={handleClearSearch}><X size={16} /></Button>
+                    )}
                 </div>
             </div>
-            
-            <div className="results-card">
 
+            <div className="results-card">
                 {availableProducts.length === 0 ? (
                     <p className="empty-state">{t("no_products_available")}</p>
                 ) : (
-                    <div className="products-results-list">
-                        {availableProducts.map(p => (
-                            <div
-                                key={p.productId}
-                                className={`product-result-item ${
-                                    selectedProductId === p.productId ? "selected" : ""
-                                }`}
-                                onClick={() => handleSelectProduct(p)}
-                            >
-                                <div className="product-result-main">
-                                    <strong>{p.productName}</strong>
-                                    <span>{p.productBarCodeNumber} - {p.productDescription}</span>
+                    <div className="step2-product-list">
+                        {availableProducts.map(p => {
+                            const entry = localSelected[p.productId]
+                            const hasQty = entry && entry.quantity > 0
+                            return (
+                                <div key={p.productId} className={`step2-product-row${hasQty ? " step2-row-active" : ""}`}>
+                                    <div className="step2-product-info">
+                                        <span className="step2-product-name">{p.productName}</span>
+                                        {p.productDescription && (
+                                            <span className="step2-product-desc">{p.productDescription}</span>
+                                        )}
+                                    </div>
+                                    <input
+                                        type="text"
+                                        className="step2-brand-input"
+                                        value={entry?.brand || ""}
+                                        onChange={e => handleBrandChange(p, e.target.value)}
+                                        placeholder={t("brand")}
+                                    />
+                                    <div className="step2-qty-wrap">
+                                        <input
+                                            type="number"
+                                            className={`step2-qty-input${hasQty ? " step2-qty-active" : ""}`}
+                                            value={entry?.quantity || ""}
+                                            onChange={e => handleQtyChange(p, e.target.value)}
+                                            onFocus={e => e.target.select()}
+                                            onKeyDown={e => { if (['-', 'e', 'E'].includes(e.key)) e.preventDefault() }}
+                                            placeholder={t("quantity")}
+                                            min="0"
+                                        />
+                                    </div>
                                 </div>
-
-                                {selectedProductId === p.productId && (
-                                    <span className="selected-indicator"></span>
-                                )}
-
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                 )}
 
-                <Pagination 
+                <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={(page) => fetchProducts(page)}
                 />
             </div>
 
-            {selectedProduct && (
-                <div className="add-config-card">
-
-                    <div className="selected-product-summary">
-                        <span className="summary-label">
-                            {t("selected_product")}
-                        </span>
-                        <strong>
-                            {selectedProduct.productName} - {selectedProduct.productDescription}
-                        </strong>
-                    </div>
-
-                    <div className="quantity-brand-group">
-                        <Input 
-                            label={t("quantity")}
-                            type="number"
-                            value={quantity}
-                            onChange={e => setQuantity(e.target.value)}
-                            min="1"
-                            onKeyDown={e => {
-                                if(['-', 'e', 'E'].includes(e.key)) e.preventDefault()
-                            }}
-                        />
-                        <Input 
-                            label={t("brand")}
-                            type="text"
-                            value={brand}
-                            onChange={e => setBrand(e.target.value)}
-                            placeholder={t("brand")}
-                        />
-                    </div>
-                
-                    <Button onClick={handleAddProduct} disabled={loading}>{t("table_add")}</Button>
-                </div>
-            )}
-
-            {error && <Alert message={error} />}
-
             <div className="selected-products-card">
-                <h4>{t("products_added")} ({localSelected.length})</h4>
-                
-                {localSelected.length === 0 ? (
+                <h4>{t("products_added")} ({selectedList.length})</h4>
+
+                {selectedList.length === 0 ? (
                     <p className="empty-state">{t("no_products_added")}</p>
                 ) : (
-                    <ul>
-                        {localSelected.map(p => (
-                            <li key={p.productId} className="selected-product-item">
-                                <div>
+                    <ul className="step2-selected-list">
+                        {selectedList.map(p => (
+                            <li key={p.productId} className="step2-selected-item">
+                                <div className="step2-selected-info">
                                     <strong>{p.productName}</strong>
-                                    <span>{p.productDescription}</span><br />
-                                    <span>Qtd: {p.quantity} • Brand: {p.brand}</span>
+                                    <span>
+                                        {p.quantity} un
+                                        {p.brand && ` · ${p.brand}`}
+                                    </span>
                                 </div>
-                                <Button className="remove-product-btn" onClick={() => handleRemoveProduct(p.productId)}>{t("remove_button")}</Button>
+                                <button
+                                    className="step2-remove-btn"
+                                    onClick={() => handleRemoveProduct(p.productId)}
+                                    title={t("remove_button")}
+                                >
+                                    <X size={14} />
+                                </button>
                             </li>
                         ))}
                     </ul>
                 )}
             </div>
+
+            {error && <Alert message={error} />}
 
             <div className="step-navigation">
                 <Button onClick={onBack} disabled={loading}>{t("back_button")}</Button>

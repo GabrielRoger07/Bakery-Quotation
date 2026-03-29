@@ -5,6 +5,7 @@ import Alert from '../../components/Alert'
 import QuotationCreateStep1 from './QuotationCreateStep1'
 import QuotationCreateStep2 from './QuotationCreateStep2'
 import QuotationCreateStep3 from './QuotationCreateStep3'
+import QuotationCreateStep4 from './QuotationCreateStep4'
 import { ENV } from '../../config/env'
 
 const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave }) => {
@@ -65,12 +66,8 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
     }, [handleStepChange])
 
     const nextStep = () => {
-        if(step !== 3){
-            setError("")
-            setStep(step + 1)
-        }else{
-            handleSave()
-        }
+        setError("")
+        setStep(step + 1)
     }
 
     const prevStep = () => setStep(step - 1)
@@ -182,10 +179,19 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
 
             {step === 3 && (
                 <QuotationCreateStep3
-                    selectedSuppliers={quotationData.suppliers} 
+                    selectedSuppliers={quotationData.suppliers}
                     onChange={handleSuppliersChange}
                     onBack={prevStep}
                     onFinish={nextStep}
+                    loading={loading}
+                />
+            )}
+
+            {step === 4 && (
+                <QuotationCreateStep4
+                    quotationData={quotationData}
+                    onBack={prevStep}
+                    onConfirm={handleSave}
                     loading={loading}
                 />
             )}

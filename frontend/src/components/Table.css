@@ -58,6 +58,10 @@
     box-shadow: var(--shadow-accent);
 }
 
+.btn-secondary.filter-toggle-active svg {
+    stroke: #fff;
+}
+
 .btn-secondary.filter-toggle-active:hover:not(:disabled) {
     background-color: var(--color-accent-hover);
     border-color: var(--color-accent-hover);

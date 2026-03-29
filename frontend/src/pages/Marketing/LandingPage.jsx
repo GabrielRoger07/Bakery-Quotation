@@ -35,7 +35,6 @@ const LandingPage = () => {
                     <a href="#social-proof">{t("landing_nav_results")}</a>
                 </nav>
                 <div className="landing-topbar-actions">
-                    <LangSwitcher />
                     <Link to="/login" className="btn-link">{t("login")}</Link>
                     <Link to="/register" className="btn-solid">{t("landing_cta_primary")}</Link>
                 </div>

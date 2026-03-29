@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import LangSwitcher from '../../components/LangSwitcher'
 import './LandingPage.css'
 
 const LandingPage = () => {

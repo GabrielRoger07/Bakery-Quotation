@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
+import { Gavel, FileText, Check } from 'lucide-react'
 import './QuotationCreate.css'
 
 const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading }) => {
-    
+
     const { t } = useTranslation()
 
     const [localStart, setLocalStart] = useState(start || "")
@@ -48,37 +48,71 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
         setLocalError("")
         onNext()
     }
-    
+
     return (
         <div className="step-products">
             <h2>{t("quotation_step_1")}</h2>
 
-            <div className="results-card">
-                <h4>{t("quotation_start_date")}</h4>
-                <div className="quantity-bonus-group">
-                    <Input id="quotation-start" type="datetime-local" value={localStart} onChange={e => setLocalStart(e.target.value)} className={localError && !localStart ? "input-error" : ""} />
+            <div className="step1-card">
+                <div className="step1-card-header">
+                    <span className="step1-card-title">{t("quotation_step_1_subtitle_1")}</span>
+                    <span className="step1-card-desc">{t("quotation_step_1_subtitle_2")}</span>
+                </div>
+                <div className="step1-card-content">
+                    <div className="step1-date-grid">
+                        <div className="step1-field">
+                            <label className="step1-label">{t("quotation_start_date")}</label>
+                            <input
+                                type="datetime-local"
+                                className={`step1-input${localError && !localStart ? " step1-input-error" : ""}`}
+                                value={localStart}
+                                onChange={e => setLocalStart(e.target.value)}
+                            />
+                        </div>
+                        <div className="step1-field">
+                            <label className="step1-label">{t("quotation_end_date")}</label>
+                            <input
+                                type="datetime-local"
+                                className={`step1-input${localError && !localEnd ? " step1-input-error" : ""}`}
+                                value={localEnd}
+                                onChange={e => setLocalEnd(e.target.value)}
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div className="results-card">
-                <h4>{t("quotation_end_date")}</h4>
-                <div className="quantity-bonus-group">
-                    <Input id="quotation-end" type="datetime-local" value={localEnd} onChange={e => setLocalEnd(e.target.value)} className={localError && !localEnd ? "input-error" : ""} />
+            <div className="step1-card">
+                <div className="step1-card-header">
+                    <span className="step1-card-title">{t("quotation_mode")}</span>
+                    <span className="step1-card-desc">{t("quotation_mode_help")}</span>
                 </div>
-            </div>
-
-            <div className="results-card">
-                <h4>{t("quotation_mode")}</h4>
-                <div className="quotation-mode-options">
-                    <div className="quotation-mode-option">
-                        <Input label={t("quotation_mode_auction")} type="radio" name="quotationMode" value="auction" checked={localIsAuction} onChange={() => setLocalIsAuction(true)} />
-                    </div>
-
-                    <div className="quotation-mode-option">
-                        <Input label={t("quotation_mode_single_proposal")} type="radio" name="quotationMode" value="single-proposal" checked={!localIsAuction} onChange={() => setLocalIsAuction(false)} />
+                <div className="step1-card-content">
+                    <div className="step1-mode-grid">
+                        <div
+                            className={`step1-mode-card${localIsAuction ? " step1-mode-selected" : ""}`}
+                            onClick={() => setLocalIsAuction(true)}
+                        >
+                            <div className="step1-mode-check">
+                                <Check size={11} strokeWidth={3} />
+                            </div>
+                            <Gavel size={22} className="step1-mode-icon" />
+                            <span className="step1-mode-title">{t("quotation_mode_auction")}</span>
+                            <span className="step1-mode-desc">{t("quotation_mode_auction_desc")}</span>
+                        </div>
+                        <div
+                            className={`step1-mode-card${!localIsAuction ? " step1-mode-selected" : ""}`}
+                            onClick={() => setLocalIsAuction(false)}
+                        >
+                            <div className="step1-mode-check">
+                                <Check size={11} strokeWidth={3} />
+                            </div>
+                            <FileText size={22} className="step1-mode-icon" />
+                            <span className="step1-mode-title">{t("quotation_mode_single_proposal")}</span>
+                            <span className="step1-mode-desc">{t("quotation_mode_single_proposal_desc")}</span>
+                        </div>
                     </div>
                 </div>
-                <p className="quotation-mode-help">{t("quotation_mode_help")}</p>
             </div>
 
             {localError && <Alert message={localError}/>}

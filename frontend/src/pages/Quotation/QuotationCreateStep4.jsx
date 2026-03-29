@@ -90,7 +90,7 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
 
             <div className="step-navigation">
                 <Button onClick={onBack} disabled={loading}>{t("back_button")}</Button>
-                <Button onClick={() => onConfirm()} disabled={loading}>
+                <Button onClick={onConfirm} disabled={loading}>
                     {loading ? t("saving_message") : t("save_button")}
                 </Button>
             </div>

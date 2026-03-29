@@ -1,4 +1,4 @@
-import {useState, useEffect, useCallback} from 'react'
+import {useState, useEffect, useCallback, useMemo} from 'react'
 import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Alert from '../../components/Alert'
@@ -6,10 +6,19 @@ import QuotationCreateStep1 from './QuotationCreateStep1'
 import QuotationCreateStep2 from './QuotationCreateStep2'
 import QuotationCreateStep3 from './QuotationCreateStep3'
 import QuotationCreateStep4 from './QuotationCreateStep4'
+import { Check } from 'lucide-react'
 import { ENV } from '../../config/env'
+import './QuotationCreate.css'
+
+const STEPS = [
+    { key: 1, labelKey: "stepper_dates" },
+    { key: 2, labelKey: "stepper_products" },
+    { key: 3, labelKey: "stepper_suppliers" },
+    { key: 4, labelKey: "stepper_review" }
+]
 
 const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave }) => {
-    
+
     const { t } = useTranslation()
 
     const [step, setStep] = useState(1)
@@ -45,14 +54,14 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             products: products,
             suppliers: suppliers
         })
-        
+
         setLoading(false)
     }, [initialData, mode, request])
 
     useEffect(() => {
         fetchEditData()
     }, [fetchEditData])
-    
+
     const handleStepChange = useCallback((field, value) => {
         setQuotationData(prev => ({...prev, [field]: value}))
     }, [])
@@ -71,6 +80,11 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
     }
 
     const prevStep = () => setStep(step - 1)
+
+    const badges = useMemo(() => ({
+        2: quotationData.products.length || null,
+        3: quotationData.suppliers.length || null
+    }), [quotationData.products.length, quotationData.suppliers.length])
 
     const handleSave = async (suppliers = null) => {
         const finalData = suppliers ? {...quotationData, suppliers} : quotationData
@@ -147,7 +161,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         }
 
         const suppliersRes = await request(method, "/participations/batch", suppliersPayload)
-        
+
         if(!suppliersRes.ok){
             setError(suppliersRes.data?.message)
             return
@@ -156,10 +170,27 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
 
     return (
         <div className="quotation-form-container">
+            <nav className="form-stepper">
+                {STEPS.map((s, i) => (
+                    <div key={s.key} className="form-stepper-segment">
+                        <div className={`form-step-item${step === s.key ? " form-step-active" : ""}${step > s.key ? " form-step-done" : ""}`}>
+                            <div className="form-step-circle">
+                                {step > s.key ? <Check size={14} strokeWidth={3} /> : s.key}
+                                {badges[s.key] && <span className="form-step-badge">{badges[s.key]}</span>}
+                            </div>
+                            <span className="form-step-label">{t(s.labelKey)}</span>
+                        </div>
+                        {i < STEPS.length - 1 && (
+                            <div className={`form-step-connector${step > s.key ? " form-step-connector-done" : ""}`} />
+                        )}
+                    </div>
+                ))}
+            </nav>
+
             {step === 1 && (
-                <QuotationCreateStep1 
-                    start={quotationData.start} 
-                    end={quotationData.end} 
+                <QuotationCreateStep1
+                    start={quotationData.start}
+                    end={quotationData.end}
                     isAuction={quotationData.isAuction}
                     onChange={handleStepChange}
                     onNext={nextStep}
@@ -169,7 +200,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
 
             {step === 2 && (
                 <QuotationCreateStep2
-                    selectedProducts={quotationData.products} 
+                    selectedProducts={quotationData.products}
                     onChange={handleProductsChange}
                     onBack={prevStep}
                     onNext={nextStep}
@@ -191,7 +222,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                 <QuotationCreateStep4
                     quotationData={quotationData}
                     onBack={prevStep}
-                    onConfirm={handleSave}
+                    onConfirm={() => handleSave()}
                     loading={loading}
                 />
             )}

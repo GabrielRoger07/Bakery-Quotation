@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import Cookies from "js-cookie";
 import { ENV } from "../config/env";
 
 export default function useWebSocket(quotationId, onMessage){
@@ -9,8 +10,11 @@ export default function useWebSocket(quotationId, onMessage){
   useEffect(() => {
     if(!quotationId) return
 
+    const token = Cookies.get("accessToken")
+
     const client = new Client({
       webSocketFactory: () => new SockJS(ENV.SOCKET_URL),
+      connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
       reconnectDelay: 0,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000

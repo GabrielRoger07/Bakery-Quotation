@@ -37,7 +37,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const excludedIds = useMemo(() => Object.keys(localSelected), [localSelected])
 
     const fetchProducts = useCallback(async (page = 0) => {
-        let query = `?page=${page}`
+        let query = `?page=${page}&sort=productName,asc`
         if (appliedSearch) query += `&field=productName&value=${appliedSearch}`
         if (excludedIds.length > 0) query += `&excludedIds=${excludedIds.join(",")}`
 
@@ -129,7 +129,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 quantity: entry.quantity,
                 brand: entry.brand
             }
-        })
+        }).sort((a, b) => a.productName.localeCompare(b.productName))
     }, [localSelected])
 
     const onChangeRef = useRef(onChange)

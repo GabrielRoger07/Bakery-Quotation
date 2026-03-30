@@ -16,7 +16,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const [localSelected, setLocalSelected] = useState(() => {
         const map = {}
         selectedProducts.forEach(p => {
-            map[p.productId] = { quantity: p.quantity, brand: p.brand || "" }
+            map[p.productId] = { quantity: p.quantity, brand: p.brand || "", _product: p }
         })
         return map
     })

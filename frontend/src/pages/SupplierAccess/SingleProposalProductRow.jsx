@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Tag, Package } from 'lucide-react'
+import { Tag } from 'lucide-react'
 import { useCurrencyMask } from '../../hooks/useCurrencyMask'
 import { formatMoney } from '../../utils/formatMoney'
 import Input from '../../components/Input'
@@ -31,9 +31,7 @@ const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNu
             </div>
 
             <div className="single-proposal-item-tags">
-                <span className="single-proposal-tag">
-                    {product.quantity} UN
-                </span>
+                {t("quantity")}: <span className="single-proposal-tag">{product.quantity} UN</span>
                 <span className="single-proposal-tag">
                     <Tag size={12} />
                     {product.brand || t("brand_not_defined")}

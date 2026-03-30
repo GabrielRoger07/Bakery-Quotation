@@ -200,6 +200,7 @@
     "single_proposal_confirm_submit":  "Confirm and submit",
     "single_proposal_cancel":  "Cancel",
     "single_proposal_col_product":  "Product",
+    "single_proposal_col_brand":  "Brand",
     "single_proposal_col_qty":  "Qty.",
     "single_proposal_col_unit_price":  "Unit price",
     "single_proposal_col_total":  "Total",

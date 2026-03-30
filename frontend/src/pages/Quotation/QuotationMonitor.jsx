@@ -9,7 +9,7 @@ import './QuotationMonitor.css'
 import { ENV } from '../../config/env'
 import { formatCnpj } from '../../utils/formatCnpj'
 import { formatMoney } from '../../utils/formatMoney'
-import { X } from 'lucide-react'
+import { X, FileDown } from 'lucide-react'
 import Cookies from 'js-cookie'
 
 const QuotationMonitor = () => {
@@ -398,9 +398,17 @@ const QuotationMonitor = () => {
 
     return (
         <div className="quotation-monitor-container">
-            <div className="monitor-header">
+            <div className={`monitor-header${stats.status === 'Closed' ? ' monitor-header--with-action' : ''}`}>
                 <Button onClick={() => navigate(-1)}>{t("back_button")}</Button>
                 <h2>{t("monitoring_quotation")} #{quotation.quotationId}</h2>
+                <div className="header-action-slot">
+                    {stats.status === 'Closed' && (
+                        <Button onClick={handlePrintPdf} variant="success" className="export-report-btn">
+                            <FileDown size={16} />
+                            {t("export_report_button")}
+                        </Button>
+                    )}
+                </div>
             </div>
 
             {quotation && (
@@ -418,10 +426,6 @@ const QuotationMonitor = () => {
                 <div>{t("products_with_bids")}: {stats.productsWithBids.length}/{products.length}</div>
                 <div className="total-highlight"><strong>Total:</strong> {formattedTotalEstimated}</div>
             </div>
-
-            <Button onClick={handlePrintPdf}>
-                {t("export_report_button")}
-            </Button>
 
             <div className="monitor-sections">
                     <Table

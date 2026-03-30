@@ -1,0 +1,21 @@
+CREATE TABLE quotation_snapshot (
+    snapshotId        BIGINT NOT NULL AUTO_INCREMENT,
+    quotationId       BIGINT NOT NULL,
+    productId         BIGINT NOT NULL,
+    participationId   BIGINT NOT NULL,
+    productName        VARCHAR(60)  NOT NULL,
+    productDescription VARCHAR(255),
+    quotedQuantity     DECIMAL(6,2) NOT NULL,
+    brand              VARCHAR(40),
+    supplierName  VARCHAR(30)  NOT NULL,
+    employerName  VARCHAR(65)  NOT NULL,
+    employerCnpj  VARCHAR(14)  NOT NULL,
+    bidQuantity  DECIMAL(6,2)  NOT NULL,
+    bonus        DECIMAL(6,2)  NOT NULL,
+    totalPrice   DECIMAL(10,2) NOT NULL,
+    pricePerUnit DECIMAL(10,4) NOT NULL,
+    createdAt DATETIME NOT NULL,
+    CONSTRAINT quotation_snapshot_pk PRIMARY KEY (snapshotId),
+    CONSTRAINT quotation_snapshot_quotation_product_uk UNIQUE KEY (quotationId, productId),
+    CONSTRAINT quotation_snapshot_quotation_fk FOREIGN KEY (quotationId) REFERENCES quotation (quotationId)
+) ENGINE = InnoDB AUTO_INCREMENT 1;

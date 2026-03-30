@@ -47,7 +47,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
             const fetchedBids = bidsRes.ok ? bidsRes.data ?? [] : []
 
             setQuotation(quotationRes.data)
-            setProducts(fetchedProducts)
+            setProducts([...fetchedProducts].sort((a, b) => a.productName.localeCompare(b.productName)))
             setExistingBids(fetchedBids)
 
             const savedDraft = JSON.parse(localStorage.getItem(storageKey) || '{}')

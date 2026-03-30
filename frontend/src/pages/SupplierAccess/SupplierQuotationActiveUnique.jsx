@@ -55,7 +55,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
             for(const product of fetchedProducts){
                 const existingBid = fetchedBids.find(bid => bid.productId === product.productId)
                 initialPrices[product.productId] = existingBid
-                    ? existingBid.price
+                    ? (existingBid.price / existingBid.quantity)
                     : (0)
             }
 
@@ -218,7 +218,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                             return (
                                                 <tr key={product.productId}>
                                                     <td>{product.productName}</td>
-                                                    {product.brand === null ? <td className="proposal-review-num proposal-review-dash">—</td> : <td className="proposal-review-num">{product.brand}</td>}
+                                                    {product.brand === null || product.brand === "" ? <td className="proposal-review-num proposal-review-dash">—</td> : <td className="proposal-review-num">{product.brand}</td>}
                                                     <td className="proposal-review-num">{product.quantity} UN</td>
                                                     <td className="proposal-review-num">{formatMoney(unitPrice, i18n.language)}</td>
                                                     <td className="proposal-review-num proposal-review-total">{formatMoney(total, i18n.language)}</td>
@@ -232,7 +232,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                                     <span>{product.productName}</span>
                                                     <span className="proposal-review-no-price-badge">{t("single_proposal_no_price_badge")}</span>
                                                 </td>
-                                                {product.brand === null ? <td className="proposal-review-num proposal-review-dash">—</td> : <td className="proposal-review-num">{product.brand}</td>}
+                                                {product.brand === null || product.brand === "" ? <td className="proposal-review-num proposal-review-dash">—</td> : <td className="proposal-review-num">{product.brand}</td>}
                                                 <td className="proposal-review-num">{product.quantity} UN</td>
                                                 <td className="proposal-review-num proposal-review-dash">—</td>
                                                 <td className="proposal-review-num proposal-review-dash">—</td>
@@ -306,7 +306,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                             <span className="proposal-review-skipped-name">{product.productName}</span>
                                             <span className="proposal-review-no-price-badge">{t("single_proposal_no_price_badge")}</span>
                                         </td>
-                                        {product.brand === null ? <td className="proposal-review-num proposal-review-dash">—</td> : <td className="proposal-review-num">{product.brand}</td>}
+                                        {product.brand === null || product.brand === "" ? <td className="proposal-review-num proposal-review-dash">—</td> : <td className="proposal-review-num">{product.brand}</td>}
                                         <td className="proposal-review-num">{product.quantity} UN</td>
                                         <td className="proposal-review-num proposal-review-dash">—</td>
                                         <td className="proposal-review-num proposal-review-dash">—</td>
@@ -317,7 +317,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                 return (
                                     <tr key={product.productId}>
                                         <td>{product.productName}</td>
-                                        {product.brand === null ? <td className="proposal-review-num proposal-review-dash">—</td> : <td className="proposal-review-num">{product.brand}</td>}
+                                        {product.brand === null || product.brand === "" ? <td className="proposal-review-num proposal-review-dash">—</td> : <td className="proposal-review-num">{product.brand}</td>}
                                         <td className="proposal-review-num">{product.quantity} UN</td>
                                         <td className="proposal-review-num">{formatMoney(unitPrice, i18n.language)}</td>
                                         <td className="proposal-review-num proposal-review-total">{formatMoney(total, i18n.language)}</td>
@@ -327,7 +327,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colSpan={3} className="proposal-review-grand-label">{t("potencial_value")}</td>
+                                <td colSpan={4} className="proposal-review-grand-label">{t("potencial_value")}</td>
                                 <td className="proposal-review-num proposal-review-grand-total">{formatMoney(grandTotal, i18n.language)}</td>
                             </tr>
                         </tfoot>

@@ -92,9 +92,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                     <p>{t("not_won_bids")}</p>
                 ) : (
                     <>
-                        <div className="winning-banner">
-                            <p>{t("winning_banner", { won: winningItems.length })}</p>
-                        </div>
+                        
 
                         <div className="single-proposal-card">
                             <h4 className="winning-bids-title">{t("winning_bids")}</h4>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Button from '../../components/Button'
@@ -122,8 +122,6 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const selectedList = useMemo(() => {
         return Object.entries(localSelected).map(([id, entry]) => {
             const product = entry._product
-                || availableProducts.find(p => p.productId === Number(id))
-                || selectedProducts.find(p => p.productId === Number(id))
             return {
                 productId: Number(id),
                 productName: product?.productName || "",
@@ -132,11 +130,14 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 brand: entry.brand
             }
         })
-    }, [localSelected, availableProducts, selectedProducts])
+    }, [localSelected])
+
+    const onChangeRef = useRef(onChange)
+    useEffect(() => { onChangeRef.current = onChange }, [onChange])
 
     useEffect(() => {
-        onChange(selectedList)
-    }, [selectedList, onChange])
+        onChangeRef.current(selectedList)
+    }, [selectedList])
 
     const handleNextClick = () => {
         if (selectedList.length === 0) {

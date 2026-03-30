@@ -88,8 +88,8 @@
 @media (max-width: 480px) {
     .auth-container {
         padding: 1rem 0.75rem;
-        align-items: flex-start;
-        padding-top: 2rem;
+        padding-top: max(1rem, env(safe-area-inset-top));
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
     }
 
     .auth-box {

@@ -50,13 +50,13 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
             setProducts(fetchedProducts)
             setExistingBids(fetchedBids)
 
-            const savedDraft = JSON.parse(localStorage.getItem(storageKey) || '{}')
+            // const savedDraft = JSON.parse(localStorage.getItem(storageKey) || '{}')
             const initialPrices = {}
             for(const product of fetchedProducts){
                 const existingBid = fetchedBids.find(bid => bid.productId === product.productId)
                 initialPrices[product.productId] = existingBid
                     ? existingBid.price
-                    : (savedDraft[product.productId] ?? 0)
+                    : (0)
             }
 
             setNumericPricesByProductId(initialPrices)
@@ -109,10 +109,10 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
             for(const [id, price] of Object.entries(updated)){
                 if(price > 0 && !existingBidByProductId[id]) draft[id] = price
             }
-            localStorage.setItem(storageKey, JSON.stringify(draft))
+            // localStorage.setItem(storageKey, JSON.stringify(draft))
             return updated
         })
-    }, [existingBidByProductId, storageKey])
+    }, [existingBidByProductId])
 
     const handleReview = () => {
         setError("")
@@ -157,7 +157,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
         const bidsRes = await request("GET", `/bids/participations/${participationId}`)
         if(bidsRes.ok) setExistingBids(bidsRes.data ?? [])
 
-        localStorage.removeItem(storageKey)
+        // localStorage.removeItem(storageKey)
         setSubmitting(false)
         setSuccess(t("single_proposal_submit_success"))
     }

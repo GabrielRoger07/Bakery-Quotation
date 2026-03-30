@@ -87,7 +87,7 @@ const ProductList = () => {
     const fetchProducts = useCallback(async (page = 0) => {
 
         let query = `?page=${page}`
-        if(sortField) query += `&sort=${sortField},${sortDirection}`
+        sortField ? query += `&sort=${sortField},${sortDirection}` : query += `&sort=productName,${sortDirection}`
         if(appliedSearch.field) query += `&field=${appliedSearch.field}`
         if(appliedSearch.word) query += `&value=${appliedSearch.word}`
 

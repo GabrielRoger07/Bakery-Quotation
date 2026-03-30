@@ -93,7 +93,7 @@ const SupplierList = () => {
     const fetchSuppliers = useCallback(async (page = 0) => {
         
         let query = `?page=${page}`
-        if(sortField) query += `&sort=${sortField},${sortDirection}`
+        sortField ? query += `&sort=${sortField},${sortDirection}` : query += `&sort=supplierName,${sortDirection}`
         if(appliedSearch.field) query += `&field=${appliedSearch.field}`
         if(appliedSearch.word) query += `&value=${appliedSearch.word}`
 

@@ -13,7 +13,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
     const { request } = useFetch(ENV.API_BASE_URL)
     
     const [availableSuppliers, setAvailableSuppliers] = useState([])
-    const [localSelected, setLocalSelected] = useState(selectedSuppliers)
+    const [localSelected, setLocalSelected] = useState(() => [...selectedSuppliers].sort((a, b) => a.supplierName.localeCompare(b.supplierName)))
     const [error, setError] = useState("")
     const [searchField, setSearchField] = useState("")
     const [searchWord, setSearchWord] = useState("")
@@ -27,7 +27,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
     const fetchSuppliers = useCallback(async (page = 0, field = searchField, word = searchWord) => {
         const excludedIds = localSelected.map(s => s.supplierId)
 
-        let query = `?page=${page}`
+        let query = `?page=${page}&sort=supplierName,asc`
 
         if(field) query += `&field=${field}`
         if(word) query += `&value=${word}`
@@ -63,7 +63,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
             setError(t("quotation_step_3_supplier_already_added"))
             return
         }
-        setLocalSelected([...localSelected, supplier])
+        setLocalSelected([...localSelected, supplier].sort((a, b) => a.supplierName.localeCompare(b.supplierName)))
         setError("")
     }
 

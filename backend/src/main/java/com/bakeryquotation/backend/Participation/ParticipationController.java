@@ -7,6 +7,9 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,14 +20,25 @@ import java.util.List;
 public class ParticipationController {
 
     private final ParticipationService participationService;
+    private final SupplierReportService supplierReportService;
 
-    public ParticipationController(ParticipationService participationService){
+    public ParticipationController(ParticipationService participationService, SupplierReportService supplierReportService){
         this.participationService = participationService;
+        this.supplierReportService = supplierReportService;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ParticipationResponseDTO> getParticipationById(@PathVariable("id") Long id){
         return participationService.getParticipationById(id);
+    }
+
+    @GetMapping("/{id}/report")
+    public ResponseEntity<byte[]> getSupplierReport(@PathVariable("id") Long id){
+        byte[] pdf = supplierReportService.generateReport(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "lances-" + id + ".pdf");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(pdf);
     }
 
     @GetMapping

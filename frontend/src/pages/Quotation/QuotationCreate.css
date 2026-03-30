@@ -564,8 +564,8 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    color: var(--color-accent);
-    font-weight: 500;
+    color: var(--color-text-strong);
+    font-weight: 300;
     font-size: var(--font-size-xs);
 }
 

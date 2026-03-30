@@ -4,7 +4,7 @@ import useFetch from '../../hooks/useFetch'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import Pagination from '../../components/Pagination'
-import { X, Plus, Package, Tag, ChevronDown, Pencil, Check } from 'lucide-react'
+import { X, Plus, Package, ChevronDown, Pencil, Check } from 'lucide-react'
 import { ENV } from '../../config/env'
 import './QuotationCreate.css'
 
@@ -306,10 +306,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                                     />
                                                 ) : (
                                                     p.brand ? (
-                                                        <span className="step2-table-brand">
-                                                            <Tag size={12} />
-                                                            {p.brand}
-                                                        </span>
+                                                        <span className="step2-table-brand">{p.brand}</span>
                                                     ) : (
                                                         <span className="step2-table-no-brand">—</span>
                                                     )

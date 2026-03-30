@@ -6,6 +6,9 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,14 +19,25 @@ import java.util.List;
 public class QuotationController {
 
     private final QuotationService quotationService;
+    private final QuotationReportService quotationReportService;
 
-    public QuotationController(QuotationService quotationService){
+    public QuotationController(QuotationService quotationService, QuotationReportService quotationReportService){
         this.quotationService = quotationService;
+        this.quotationReportService = quotationReportService;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<QuotationResponseDTO> getQuotationById(@PathVariable("id") Long id){
         return quotationService.getQuotationById(id);
+    }
+
+    @GetMapping("/{id}/report")
+    public ResponseEntity<byte[]> getQuotationReport(@PathVariable("id") Long id){
+        byte[] pdf = quotationReportService.generateReport(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "cotacao-" + id + ".pdf");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(pdf);
     }
 
     @GetMapping

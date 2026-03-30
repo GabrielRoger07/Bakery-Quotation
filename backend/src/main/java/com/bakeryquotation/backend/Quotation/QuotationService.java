@@ -6,7 +6,6 @@ import com.bakeryquotation.backend.Quotation.DTO.QuotationRequestDTO;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationResponseDTO;
 import com.bakeryquotation.backend.Quotation.mapper.QuotationMapper;
 import com.bakeryquotation.backend.exception.AccessDeniedException;
-import com.bakeryquotation.backend.exception.ImmutableResourceException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;

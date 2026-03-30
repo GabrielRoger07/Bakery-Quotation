@@ -17,7 +17,7 @@ const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNu
     }, [])
 
     useEffect(() => {
-        onNumericChange(product.productId, getNumericValue())
+        onNumericChange(product.productId, getNumericValue(i18n.language))
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
@@ -42,7 +42,7 @@ const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNu
                 label={t("single_proposal_price_without_unit_label") + `:`}
                 type="text"
                 value={value}
-                onChange={handleChange}
+                onChange={(e) => handleChange(e, i18n.language)}
                 disabled={disabled}
                 placeholder="R$ 0,00"
             />

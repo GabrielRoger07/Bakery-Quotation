@@ -1,5 +1,5 @@
 export const resolveLocale = (language) => {
-    return language === "pt" ? "pt-BR" : "en-US"
+    return language === "pt" ? "pt" : "en"
 }
 
 export const formatDecimal = (value, language) => {

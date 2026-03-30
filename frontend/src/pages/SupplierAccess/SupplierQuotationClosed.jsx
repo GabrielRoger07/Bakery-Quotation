@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import useFetch from "../../hooks/useFetch"
 import { ENV } from "../../config/env"
 import Button from "../../components/Button"
 import "./SupplierQuotation.css"
 import { formatMoney } from "../../utils/formatMoney"
+import Cookies from "js-cookie"
 
 const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
@@ -67,6 +68,20 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
     const totalWinningValue = winningItems.reduce((sum, item) => sum + item.price, 0)
 
+    const handleDownloadReport = useCallback(async () => {
+        const token = Cookies.get('supplierAccessToken')
+        const response = await fetch(`${ENV.API_BASE_URL}/participations/${participationId}/report`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        if (!response.ok) return
+        const blob = await response.blob()
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `lances-${participationId}.pdf`
+        a.click()
+        URL.revokeObjectURL(url)
+    }, [participationId])
 
     if (loading) return <p>{t("loading_message")}</p>
     if (error) return <p>{error}</p>
@@ -136,7 +151,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                 )}
 
                 <div className="winning-actions">
-                    <Button onClick={() => window.print()}>
+                    <Button onClick={handleDownloadReport}>
                         {t("export_report_button")}
                     </Button>
                 </div>

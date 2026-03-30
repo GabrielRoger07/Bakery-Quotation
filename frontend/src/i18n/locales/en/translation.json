@@ -299,5 +299,8 @@
     "supplier_login_invalid_url": "Invalid access URL",
     "supplier_quotations_title": "Your Quotations",
     "supplier_quotations_empty": "You are not participating in any quotation.",
-    "supplier_quotations_load_error": "Failed to load quotations"
+    "supplier_quotations_load_error": "Failed to load quotations",
+    "filter_all": "All",
+    "filter_with_bids": "With bids",
+    "filter_without_bids": "Without bids"
 }

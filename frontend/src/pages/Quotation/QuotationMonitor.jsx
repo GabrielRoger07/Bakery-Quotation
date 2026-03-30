@@ -195,6 +195,7 @@ const QuotationMonitor = () => {
         {key: "productName", label: t("product")},
         // {key: "productBarCodeNumber", label: t("barcode_number")},
         {key: "quantity", label: t("quantity")},
+        {key: "brand", label: t("brand")},
         // {key: "bonus", label: t("bonus")},
         {key: "lowestBid", label: t("lowest_bid")},
         {key: "pricePerUnit", label: t("price_per_unit")},
@@ -342,8 +343,11 @@ const QuotationMonitor = () => {
         </>
     ), [bidSearchField, bidSearchWord, appliedBidSearch, handleBidSearch, handleClearBidSearch, t])
 
-    const formattedProducts = filteredProducts.map(p => ({
-        ...p, 
+    const formattedProducts = [...filteredProducts]
+        .sort((a, b) => a.productName?.localeCompare(b.productName, i18n.language))
+        .map(p => ({
+        ...p,
+        brand: p.brand || "-",
         lowestBid: p.lowestBid ? formatMoney(p.lowestBid, i18n.language) : "-",
         bonus: p.bonus ?? "-",
         pricePerUnit: p.pricePerUnit && p.pricePerUnit !== "-" ? formatMoney(p.pricePerUnit, i18n.language) : "-",

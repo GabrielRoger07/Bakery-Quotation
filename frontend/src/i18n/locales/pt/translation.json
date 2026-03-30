@@ -299,5 +299,8 @@
     "supplier_login_invalid_url": "URL de acesso inválida",
     "supplier_quotations_title": "Suas Cotações",
     "supplier_quotations_empty": "Você não participa de nenhuma cotação.",
-    "supplier_quotations_load_error": "Erro ao carregar cotações"
+    "supplier_quotations_load_error": "Erro ao carregar cotações",
+    "filter_all": "Todos",
+    "filter_with_bids": "Com lance",
+    "filter_without_bids": "Sem lance"
 }

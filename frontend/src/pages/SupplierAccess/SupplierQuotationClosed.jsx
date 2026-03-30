@@ -56,7 +56,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
             return {
                 productName: product?.productName ?? "-",
-                brand: product?.brand || "-",
+                brand: product?.brand || null,
                 price: bid.price,
                 quantity: bid.quantity,
                 bonus: bid.bonus,
@@ -113,7 +113,12 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                                         {winningItems.map((item, index) => (
                                             <tr key={index}>
                                                 <td>{item.productName}</td>
-                                                <td>{item.brand}</td>
+                                                <td>
+                                                    {item.brand
+                                                        ? item.brand
+                                                        : <span className="proposal-review-brand--empty">-</span>
+                                                    }
+                                                </td>
                                                 <td className="proposal-review-num">{item.quantity} UN</td>
                                                 <td className="proposal-review-num">{formatMoney(item.pricePerUnit, i18n.language)}/UN</td>
                                                 <td className="proposal-review-num proposal-review-total">{formatMoney(item.price, i18n.language)}</td>

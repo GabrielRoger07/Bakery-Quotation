@@ -224,7 +224,12 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
                     const pricePerUnit = bid.price / (bid.quantity + bid.bonus)
                     return (
                       <li key={productId} className="winning-item">
-                        <strong>{product?.productName}</strong> - {formatMoney(bid.price, i18n.language)} - {formatMoney(pricePerUnit, i18n.language)}/UN
+                        <strong>{product?.productName}</strong>
+                        {product?.brand
+                          ? <span className="winning-item-brand">{product.brand}</span>
+                          : <span className="winning-item-brand proposal-review-brand--empty">{t("brand_not_defined")}</span>
+                        }
+                        {' '}- {formatMoney(bid.price, i18n.language)} - {formatMoney(pricePerUnit, i18n.language)}/UN
                       </li>
                     )
                   })

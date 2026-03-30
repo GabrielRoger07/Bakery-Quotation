@@ -11,62 +11,33 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
     const { t, i18n } = useTranslation()
     const { request } = useFetch(ENV.API_BASE_URL)
 
-    const [products, setProducts] = useState([])
-    const [lowestBids, setLowestBids] = useState([])
+    const [winningItems, setWinningItems] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
 
     useEffect(() => {
-        const fetchFinalResults = async () => {
+        const fetchSnapshot = async () => {
             setLoading(true)
 
-            const resProducts = await request("GET", `/contains/${quotation.quotationId}`)
-            if(!resProducts.ok) {
+            const res = await request("GET", `/quotation-snapshots/${quotation.quotationId}/participations/${participationId}`)
+
+            if (!res.ok) {
                 setError(t("load_products_failed"))
                 setLoading(false)
                 return
             }
 
-            const productsData = resProducts.data
-            setProducts(productsData)
-
-            const bidsMap = {}
-
-            for(const product of productsData){
-                const bidRes = await request("GET", `/bids/lowest?quotationId=${quotation.quotationId}&productId=${product.productId}`)
-            
-                if(bidRes.ok && bidRes.data){
-                    bidsMap[product.productId] = bidRes.data
-                }
-            }
-
-            setLowestBids(bidsMap)
+            setWinningItems(res.data)
             setLoading(false)
         }
 
-        fetchFinalResults()
-    }, [quotation.quotationId, request, t])
+        fetchSnapshot()
+    }, [quotation.quotationId, participationId, request, t])
 
-    const winningItems = useMemo(() => {
-        return Object.entries(lowestBids)
-        .filter(([_, bid]) => bid && bid.participationId === participationId)
-        .map(([productId, bid]) => {
-            const product = products.find(p => p.productId === Number(productId))
-            const pricePerUnit = bid.price / (bid.quantity + bid.bonus)
-
-            return {
-                productName: product?.productName ?? "-",
-                brand: product?.brand || null,
-                price: bid.price,
-                quantity: bid.quantity,
-                bonus: bid.bonus,
-                pricePerUnit
-            }
-        })
-    }, [lowestBids, products, participationId])
-
-    const totalWinningValue = winningItems.reduce((sum, item) => sum + item.price, 0)
-
+    const totalWinningValue = useMemo(
+        () => winningItems.reduce((sum, item) => sum + Number(item.totalPrice), 0),
+        [winningItems]
+    )
 
     if (loading) return <p>{t("loading_message")}</p>
     if (error) return <p>{error}</p>
@@ -91,48 +62,44 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                 {winningItems.length === 0 ? (
                     <p>{t("not_won_bids")}</p>
                 ) : (
-                    <>
-                        
-
-                        <div className="single-proposal-card">
-                            <h4 className="winning-bids-title">{t("winning_bids")}</h4>
-                            <div className="proposal-review-table-wrapper">
-                                <table className="proposal-review-table">
-                                    <thead>
-                                        <tr>
-                                            <th>{t("product")}</th>
-                                            <th>{t("brand")}</th>
-                                            <th className="proposal-review-num">{t("quantity")}</th>
-                                            <th className="proposal-review-num">{t("price_per_unit")}</th>
-                                            <th className="proposal-review-num">{t("total_price")}</th>
+                    <div className="single-proposal-card">
+                        <h4 className="winning-bids-title">{t("winning_bids")}</h4>
+                        <div className="proposal-review-table-wrapper">
+                            <table className="proposal-review-table">
+                                <thead>
+                                    <tr>
+                                        <th>{t("product")}</th>
+                                        <th>{t("brand")}</th>
+                                        <th className="proposal-review-num">{t("quantity")}</th>
+                                        <th className="proposal-review-num">{t("price_per_unit")}</th>
+                                        <th className="proposal-review-num">{t("total_price")}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {winningItems.map((item) => (
+                                        <tr key={item.snapshotId}>
+                                            <td>{item.productName}</td>
+                                            <td>
+                                                {item.brand
+                                                    ? item.brand
+                                                    : <span className="proposal-review-brand--empty">-</span>
+                                                }
+                                            </td>
+                                            <td className="proposal-review-num">{item.bidQuantity} UN</td>
+                                            <td className="proposal-review-num">{formatMoney(item.pricePerUnit, i18n.language)}/UN</td>
+                                            <td className="proposal-review-num proposal-review-total">{formatMoney(item.totalPrice, i18n.language)}</td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        {winningItems.map((item, index) => (
-                                            <tr key={index}>
-                                                <td>{item.productName}</td>
-                                                <td>
-                                                    {item.brand
-                                                        ? item.brand
-                                                        : <span className="proposal-review-brand--empty">-</span>
-                                                    }
-                                                </td>
-                                                <td className="proposal-review-num">{item.quantity} UN</td>
-                                                <td className="proposal-review-num">{formatMoney(item.pricePerUnit, i18n.language)}/UN</td>
-                                                <td className="proposal-review-num proposal-review-total">{formatMoney(item.price, i18n.language)}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colSpan={4} className="proposal-review-grand-label">{t("total_value")}</td>
-                                            <td className="proposal-review-num proposal-review-grand-total">{formatMoney(totalWinningValue, i18n.language)}</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+                                    ))}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colSpan={4} className="proposal-review-grand-label">{t("total_value")}</td>
+                                        <td className="proposal-review-num proposal-review-grand-total">{formatMoney(totalWinningValue, i18n.language)}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
-                    </>
+                    </div>
                 )}
 
                 <div className="winning-actions">

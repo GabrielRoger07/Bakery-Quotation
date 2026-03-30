@@ -10,6 +10,7 @@ import { ENV } from '../../config/env'
 import { formatCnpj } from '../../utils/formatCnpj'
 import { formatMoney } from '../../utils/formatMoney'
 import { X } from 'lucide-react'
+import Cookies from 'js-cookie'
 
 const QuotationMonitor = () => {
 
@@ -378,6 +379,21 @@ const QuotationMonitor = () => {
 
     const formattedTotalEstimated = formatMoney(totalEstimated, i18n.language)
 
+    const handlePrintPdf = useCallback(async () => {
+        const token = Cookies.get('accessToken')
+        const response = await fetch(`${ENV.API_BASE_URL}/quotations/${quotationId}/report`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        if (!response.ok) return
+        const blob = await response.blob()
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `cotacao-${quotationId}.pdf`
+        a.click()
+        URL.revokeObjectURL(url)
+    }, [quotationId])
+
     if(!quotation) return <p>{t("loading_message")}</p>
 
     return (
@@ -402,6 +418,10 @@ const QuotationMonitor = () => {
                 <div>{t("products_with_bids")}: {stats.productsWithBids.length}/{products.length}</div>
                 <div className="total-highlight"><strong>Total:</strong> {formattedTotalEstimated}</div>
             </div>
+
+            <Button onClick={handlePrintPdf}>
+                {t("export_report_button")}
+            </Button>
 
             <div className="monitor-sections">
                     <Table

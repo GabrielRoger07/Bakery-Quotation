@@ -150,7 +150,7 @@ const SupplierList = () => {
                 placeholder={t("enter_search")}
                 onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
             />
-            <Button onClick={handleSearch} disabled={loading}>{t("search_button")}</Button>
+            <Button onClick={handleSearch} disabled={loading || !searchField}>{t("search_button")}</Button>
         </>
     ), [searchField, searchWord, handleSearch, loading, t])
 

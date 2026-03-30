@@ -91,11 +91,11 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                     <div className="search-select-wrapper">
                         <select id="searchField" name="searchField" value={searchField} onChange={(e) => setSearchField(e.target.value)} className="custom-select" required >
                             <option value="" disabled>{t("select_field")}</option>
-                            <option value="employerCnpj">{t("company_cnpj")}</option>
-                            <option value="employerName">{t("company_name")}</option>
-                            <option value="supplierWhatsappNumber">{t("supplier_whatsapp")}</option>
+                            <option value="supplierName">{t("supplier_name")}</option>
                             <option value="supplierEmail">{t("supplier_email")}</option>
-                            <option value="supplierName">{t("supplier_name_label")}</option>
+                            <option value="supplierWhatsappNumber">{t("supplier_whatsapp")}</option>
+                            <option value="employerName">{t("employer_name")}</option>
+                            <option value="employerCnpj">{t("employer_cnpj")}</option>
                         </select>
                         <span className="select-arrow"></span>
                     </div>
@@ -128,7 +128,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                                 <Button 
                                     className="add-inline-btn"
                                     onClick={() => handleAddSupplier(s)}
-                                    disabled={loading} 
+                                    disabled={loading}
                                 >{t("table_add")}</Button>
                             </div>
                         ))}

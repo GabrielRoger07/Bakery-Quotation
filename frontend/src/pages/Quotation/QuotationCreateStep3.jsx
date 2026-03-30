@@ -123,12 +123,6 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                                 <div className="product-result-main">
                                     <strong>{s.supplierName}</strong>
                                     <span className="secondary-line">{s.employerName}</span>
-
-                                    <div className="supplier-meta">
-                                        {s.employerCnpj && <span>CNPJ: {s.employerCnpj}</span>}
-                                        {s.supplierWhatsappNumber && <span>• {s.supplierWhatsappNumber}</span>}
-                                        {s.supplierEmail && <span>• {s.supplierEmail}</span>}
-                                    </div>
                                 </div>
 
                                 <Button 

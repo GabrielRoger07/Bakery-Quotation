@@ -52,7 +52,6 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
                             <thead>
                                 <tr>
                                     <th>{t("product")}</th>
-                                    <th>{t("description")}</th>
                                     <th className="review-num">{t("quantity")}</th>
                                     <th>{t("brand")}</th>
                                 </tr>
@@ -61,7 +60,6 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
                                 {quotationData.products.map(p => (
                                     <tr key={p.productId}>
                                         <td>{p.productName}</td>
-                                        <td className="review-desc">{p.productDescription || "-"}</td>
                                         <td className="review-num">{p.quantity} UN</td>
                                         <td>{p.brand || "-"}</td>
                                     </tr>

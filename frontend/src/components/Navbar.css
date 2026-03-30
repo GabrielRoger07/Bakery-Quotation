@@ -124,18 +124,6 @@
     white-space: nowrap;
 }
 
-@media (max-width: 640px) {
-    .supplier-identity-info {
-        display: none;
-    }
-
-    .supplier-identity {
-        padding: 0.3rem;
-        background: transparent;
-        border-color: transparent;
-    }
-}
-
 /* Logout button overrides for dark navbar */
 .navbar-right .btn-secondary {
     background: rgba(255, 255, 255, 0.08);

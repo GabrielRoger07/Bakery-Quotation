@@ -1,12 +1,120 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
+import useCharLimit from '../../hooks/useCharLimit'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
+import Input from '../../components/Input'
+import Modal from '../../components/Modal'
 import Pagination from '../../components/Pagination'
 import { X, Plus, Package, ChevronDown, Pencil, Check } from 'lucide-react'
 import { ENV } from '../../config/env'
 import './QuotationCreate.css'
+
+const CreateProductModalForm = ({ onSuccess, onClose, request }) => {
+    const { t } = useTranslation()
+
+    const { value: barcode, onChange: handleBarcodeChange, onBlur: handleBarcodeBlur, warning: barcodeWarning, isInvalid: isBarcodeInvalid } = useCharLimit(13, "barcode_number")
+    const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "product_name")
+    const { value: productDescription, onChange: handleDescChange, onBlur: handleDescBlur, warning: descWarning, isInvalid: isDescInvalid } = useCharLimit(255, "product_description")
+
+    const [error, setError] = useState("")
+    const [success, setSuccess] = useState("")
+    const [submitting, setSubmitting] = useState(false)
+
+    const isDisabled = barcodeWarning || nameWarning || !barcode || !productName || submitting
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        if (!barcode || !productName) {
+            setError(t("all_fields_required"))
+            return
+        }
+        setError("")
+        setSubmitting(true)
+        const res = await request("POST", "/products", {
+            productBarCodeNumber: barcode,
+            productName,
+            productDescription: productDescription || null,
+        })
+        setSubmitting(false)
+        if (res.ok) {
+            setSuccess(t("product_created_added"))
+            setTimeout(() => onSuccess(res.data), 800)
+        } else {
+            setError(t("product_created_error"))
+        }
+    }
+
+    return (
+        <form className="step2-modal-form" onSubmit={handleSubmit}>
+            <Input
+                label={t("barcode_number")}
+                type="text"
+                name="productBarCodeNumber"
+                value={barcode}
+                onChange={handleBarcodeChange}
+                onBlur={handleBarcodeBlur}
+                placeholder={t("enter_barcode_number")}
+                isInvalid={isBarcodeInvalid}
+                required
+            />
+            {barcodeWarning && (
+                <div className="step2-modal-warning">
+                    {barcodeWarning.type === "too_short" && t("char_limit_too_short", { min: barcodeWarning.min, field: t(barcodeWarning.fieldName) })}
+                    {barcodeWarning.type === "too_long" && t("char_limit_too_long", { max: barcodeWarning.max, field: t(barcodeWarning.fieldName) })}
+                </div>
+            )}
+
+            <Input
+                label={t("product_name")}
+                type="text"
+                name="productName"
+                value={productName}
+                onChange={handleNameChange}
+                onBlur={handleNameBlur}
+                placeholder={t("enter_product_name")}
+                isInvalid={isNameInvalid}
+                required
+            />
+            {nameWarning && (
+                <div className="step2-modal-warning">
+                    {nameWarning.type === "too_short" && t("char_limit_too_short", { min: nameWarning.min, field: t(nameWarning.fieldName) })}
+                    {nameWarning.type === "too_long" && t("char_limit_too_long", { max: nameWarning.max, field: t(nameWarning.fieldName) })}
+                </div>
+            )}
+
+            <Input
+                label={t("product_description")}
+                type="text"
+                name="productDescription"
+                value={productDescription}
+                onChange={handleDescChange}
+                onBlur={handleDescBlur}
+                placeholder={t("enter_product_description")}
+                isInvalid={isDescInvalid}
+            />
+            {productDescription && descWarning && (
+                <div className="step2-modal-warning">
+                    {descWarning.type === "too_short" && t("char_limit_too_short", { min: descWarning.min, field: t(descWarning.fieldName) })}
+                    {descWarning.type === "too_long" && t("char_limit_too_long", { max: descWarning.max, field: t(descWarning.fieldName) })}
+                </div>
+            )}
+
+            <Alert message={error} />
+            {success && <div className="step2-modal-success">{success}</div>}
+
+            <div className="step2-modal-actions">
+                <Button type="button" variant="secondary" onClick={onClose} disabled={submitting}>
+                    {t("cancel_button")}
+                </Button>
+                <Button type="submit" disabled={isDisabled}>
+                    {submitting ? t("loading_message") : t("create_button")}
+                </Button>
+            </div>
+        </form>
+    )
+}
 
 const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, loading }) => {
     const { t } = useTranslation()
@@ -33,6 +141,8 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const [editingId, setEditingId] = useState(null)
     const [editQty, setEditQty] = useState("")
     const [editBrand, setEditBrand] = useState("")
+
+    const [showCreateModal, setShowCreateModal] = useState(false)
 
     const excludedIds = useMemo(() => Object.keys(localSelected), [localSelected])
 
@@ -119,6 +229,16 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         })
     }, [])
 
+    const handleNewProductCreated = useCallback((newProduct) => {
+        setShowCreateModal(false)
+        setSearchWord(newProduct.productName)
+        setAppliedSearch(newProduct.productName)
+        setCurrentPage(0)
+        setExpandedId(newProduct.productId)
+        setPendingQty("")
+        setPendingBrand("")
+    }, [])
+
     const selectedList = useMemo(() => {
         return Object.entries(localSelected).map(([id, entry]) => {
             const product = entry._product
@@ -166,12 +286,35 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                     {appliedSearch && (
                         <Button variant="danger" onClick={handleClearSearch}><X size={16} /></Button>
                     )}
+                    <div className="step2-search-divider" />
+                    <Button
+                        variant="secondary"
+                        onClick={() => setShowCreateModal(true)}
+                        className="step2-new-product-btn"
+                    >
+                        <Plus size={15} />
+                        {t("create_new_product")}
+                    </Button>
                 </div>
             </div>
 
             <div className="results-card">
                 {availableProducts.length === 0 ? (
-                    <p className="empty-state">{t("no_products_available")}</p>
+                    <p className="empty-state">
+                        {appliedSearch ? (
+                            <>
+                                {t("product_not_found_prompt")}{' '}
+                                <button
+                                    className="step2-create-product-link"
+                                    onClick={() => setShowCreateModal(true)}
+                                >
+                                    {t("create_product_inline_link")}
+                                </button>
+                            </>
+                        ) : (
+                            t("no_products_available")
+                        )}
+                    </p>
                 ) : (
                     <div className="step2-product-list">
                         {availableProducts.map(p => {
@@ -364,6 +507,18 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 <Button onClick={onBack} disabled={loading}>{t("back_button")}</Button>
                 <Button onClick={handleNextClick} disabled={loading}>{loading ? t("loading_message") : t("next_button")}</Button>
             </div>
+
+            <Modal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                title={t("create_product_modal_title")}
+            >
+                <CreateProductModalForm
+                    onSuccess={handleNewProductCreated}
+                    onClose={() => setShowCreateModal(false)}
+                    request={request}
+                />
+            </Modal>
         </div>
     )
 }

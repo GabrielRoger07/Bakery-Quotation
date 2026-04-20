@@ -284,6 +284,12 @@
     "landing_social_logos_aria":  "Reserved spaces for customer logos",
     "landing_final_title":  "Bring your procurement team to a high-performance SaaS standard",
     "landing_final_text":  "Reduce operational effort and increase control over each quotation through a professional, digital, and centralized workflow.",
+    "landing_trust_badge":  "Trusted by 50+ companies",
+    "landing_mockup_status_3":  "Closed",
+    "landing_social_quote":  "We used to spend days exchanging emails with suppliers. Now, in one afternoon, we open, track and close a quotation with full visibility of who offered what.",
+    "landing_social_quote_author":  "João Silva",
+    "landing_social_quote_role":  "Procurement Manager · Padaria Modelo",
+    "landing_footer_rights":  "© 2025 Bakery Quotation. All rights reserved.",
     "bonus_limit_max_units":  "Maximum allowed bonus (units)",
     "add_bonus_quantity_label":  "Do you want to offer extra units (bonus)?",
     "bonus_limit_helper":  "You can add up to {{max}} bonus units for this item.",
@@ -302,5 +308,10 @@
     "supplier_quotations_load_error": "Failed to load quotations",
     "filter_all": "All",
     "filter_with_bids": "With bids",
-    "filter_without_bids": "Without bids"
+    "filter_without_bids": "Without bids",
+    "create_new_product": "New Product",
+    "create_product_modal_title": "Create New Product",
+    "product_not_found_prompt": "Product not found.",
+    "create_product_inline_link": "Create it",
+    "product_created_added": "Product created! Now set the quantity."
 }

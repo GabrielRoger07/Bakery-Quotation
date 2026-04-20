@@ -43,7 +43,7 @@
     "confirm_button":  "Confirmar",
     "edit_button":  "Editar",
     "save_button":  "Salvar",
-    "all_fields_required":  "All fields are required",
+    "all_fields_required":  "Todos os campos são obrigatórios",
     "create_button":  "Criar",
     "confirm_removal":  "Confirmar Remoção",
     "loading_message":  "Carregando...",
@@ -284,6 +284,12 @@
     "landing_social_logos_aria":  "Espaços reservados para logos de clientes",
     "landing_final_title":  "Leve sua área de compras para um padrão SaaS de alta performance",
     "landing_final_text":  "Reduza o esforço operacional e aumente o controle sobre cada cotação com um fluxo profissional, digital e centralizado.",
+    "landing_trust_badge":  "Confiado por mais de 50 empresas",
+    "landing_mockup_status_3":  "Fechado",
+    "landing_social_quote":  "Antes levávamos dias trocando e-mails com fornecedores. Hoje, em uma tarde, abrimos, acompanhamos e encerramos a cotação com total controle de quem ofertou o quê.",
+    "landing_social_quote_author":  "João Silva",
+    "landing_social_quote_role":  "Gerente de Compras · Padaria Modelo",
+    "landing_footer_rights":  "© 2025 Bakery Quotation. Todos os direitos reservados.",
     "bonus_limit_max_units":  "Bônus máximo permitido (unidades)",
     "add_bonus_quantity_label":  "Deseja oferecer unidades extras (bônus)?",
     "bonus_limit_helper":  "Você pode adicionar até {{max}} unidades de bônus neste item.",
@@ -302,5 +308,10 @@
     "supplier_quotations_load_error": "Erro ao carregar cotações",
     "filter_all": "Todos",
     "filter_with_bids": "Com lance",
-    "filter_without_bids": "Sem lance"
+    "filter_without_bids": "Sem lance",
+    "create_new_product": "Novo Produto",
+    "create_product_modal_title": "Criar Novo Produto",
+    "product_not_found_prompt": "Produto não encontrado.",
+    "create_product_inline_link": "Criar agora",
+    "product_created_added": "Produto criado! Agora defina a quantidade."
 }

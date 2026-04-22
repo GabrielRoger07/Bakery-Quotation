@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import './App.css';
+import './App.css'
+import { BrowserRouter, Route, Routes, useLocation, Navigate } from 'react-router-dom'
 import PrivateRoute from './components/PrivateRoute';
 
 import LandingPage from './pages/Marketing/LandingPage';
@@ -24,14 +24,14 @@ function App() {
     <BrowserRouter>
       <AppContent />
     </BrowserRouter>
-  );
+  )
 }
 
-function AppContent(){
+function AppContent() {
   const location = useLocation()
   const showNavbarRoutes = ["/suppliers", "/products", "/quotations", "/quotations/monitor"]
   const shouldShowNavbar = showNavbarRoutes.includes(location.pathname)
-  const shouldShowSupplierNavbar = location.pathname.startsWith('/supplier/') && !location.pathname.startsWith('/supplier/login/')
+  const shouldShowSupplierNavbar = location.pathname.startsWith("/supplier") && !location.pathname.startsWith("/supplier/login/")
 
   return (
     <div className="App">
@@ -52,7 +52,7 @@ function AppContent(){
           <Route path="*" element={<Navigate to="/login" />}></Route>
         </Routes>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

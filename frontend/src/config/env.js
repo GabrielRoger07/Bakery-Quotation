@@ -1,5 +1,5 @@
 export const ENV = {
-    MODE: process.env.REACT_APP_ENV,
-    API_BASE_URL: process.env.REACT_APP_API_BASE_URL,
-    SOCKET_URL: process.env.REACT_APP_SOCKET_URL
+    MODE: import.meta.env.VITE_ENV,
+    API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+    SOCKET_URL: import.meta.env.VITE_SOCKET_URL
 }

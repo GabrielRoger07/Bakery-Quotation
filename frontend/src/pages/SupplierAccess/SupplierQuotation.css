@@ -1,11 +1,4 @@
 .supplier-quotation-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1.75rem 1.25rem 2.5rem;
-    background-color: var(--color-surface-app);
-    min-height: 100vh;
-    font-family: var(--font-family-sans);
     color: var(--color-text-primary);
 }
 
@@ -256,8 +249,8 @@
     width: min(100%, 1180px);
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
-    background: var(--color-success-lighter, #f0fdf4);
-    border: 1px solid var(--color-success-border, #86efac);
+    background: var(--color-success-lighter);
+    border: 1px solid var(--color-success-border);
     border-radius: var(--radius-lg);
     text-align: center;
 }
@@ -266,7 +259,7 @@
     margin: 0;
     font-size: var(--font-size-md);
     font-weight: 600;
-    color: var(--color-success-strong, #166534);
+    color: var(--color-success-strong);
 }
 
 .winning-bids-title {
@@ -589,9 +582,9 @@
     font-size: var(--font-size-xs);
     font-weight: 600;
     letter-spacing: 0.02em;
-    color: var(--color-warning-strong, #92400e);
-    background: var(--color-warning-lighter, #fffbeb);
-    border: 1px solid var(--color-warning-border, #fcd34d);
+    color: var(--color-warning-strong);
+    background: var(--color-warning-lighter);
+    border: 1px solid var(--color-warning-border);
     border-radius: 999px;
     vertical-align: middle;
     white-space: nowrap;
@@ -606,11 +599,11 @@
 .proposal-review-skipped-warning {
     margin: 0;
     padding: 0.6rem 0.8rem;
-    background: var(--color-warning-lighter, #fffbeb);
-    border: 1px solid var(--color-warning-border, #fcd34d);
+    background: var(--color-warning-lighter);
+    border: 1px solid var(--color-warning-border);
     border-radius: var(--radius-md);
     font-size: var(--font-size-sm);
-    color: var(--color-warning-strong, #92400e);
+    color: var(--color-warning-strong);
 }
 
 .proposal-review-actions {
@@ -668,15 +661,15 @@
 }
 
 .status-scheduled {
-    color: var(--color-accent-strong, #1e40af);
-    background: var(--color-highlight-lighter, #eff6ff);
-    border: 1px solid var(--color-highlight-border, #bfdbfe);
+    color: var(--color-accent-strong);
+    background: var(--color-highlight-lighter);
+    border: 1px solid var(--color-highlight-border);
 }
 
 .status-active {
-    color: var(--color-success-strong, #166534);
-    background: var(--color-success-lighter, #f0fdf4);
-    border: 1px solid var(--color-success-border, #86efac);
+    color: var(--color-success-strong);
+    background: var(--color-success-lighter);
+    border: 1px solid var(--color-success-border);
 }
 
 .status-closed {
@@ -708,10 +701,6 @@
 }
 
 @media (max-width: 768px){
-    .supplier-quotation-container {
-        padding: 1.25rem 0.875rem 1.75rem;
-    }
-
     .supplier-quotation-container .quotation-info {
         flex-direction: column;
         align-items: flex-start;

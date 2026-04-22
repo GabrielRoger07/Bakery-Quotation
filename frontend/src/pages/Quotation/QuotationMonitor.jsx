@@ -368,7 +368,7 @@ const QuotationMonitor = () => {
             pricePerUnit: formatMoney((b.price) / (b.quantity + b.bonus), i18n.language),
             employerCnpj: b.employerCnpj ? formatCnpj(b.employerCnpj) : "-",
             createdAt: new Date(b.createdAt).toLocaleString(),
-            status: isLowest ? <span style={{color: "green"}}>{t("lowest")}</span> : <span style={{color: "red"}}>{t("outbid")}</span>
+            status: isLowest ? <span className="text-success">{t("lowest")}</span> : <span className="text-danger">{t("outbid")}</span>
         }
     })
 
@@ -397,7 +397,7 @@ const QuotationMonitor = () => {
     if(!quotation) return <p>{t("loading_message")}</p>
 
     return (
-        <div className="quotation-monitor-container">
+        <div className="page-container quotation-monitor-container">
             <div className={`monitor-header${stats.status === 'Closed' ? ' monitor-header--with-action' : ''}`}>
                 <Button onClick={() => navigate(-1)}>{t("back_button")}</Button>
                 <h2>{t("monitoring_quotation")} #{quotation.quotationId}</h2>

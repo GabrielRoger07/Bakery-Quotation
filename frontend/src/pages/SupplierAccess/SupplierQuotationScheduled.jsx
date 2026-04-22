@@ -48,7 +48,7 @@ const SupplierQuotationScheduled = ({ quotation }) => {
     const remainingText = remainingMs <= 0 ? t("starting_now") : formatRemaining(remainingMs)
     
     return (
-        <div className="supplier-quotation-container">
+        <div className="page-container supplier-quotation-container">
             <h2>{t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotation.quotationId}</h2>
             <h3>{t("quotation_scheduled")}</h3>
 

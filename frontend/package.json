@@ -10,9 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
     "@stomp/stompjs": "^7.2.1",
+    "@tailwindcss/vite": "^4.2.4",
     "axios": "^1.12.2",
     "flag-icons": "^7.5.0",
     "i18next": "^22.5.1",
@@ -20,9 +19,12 @@
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.553.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "react-i18next": "^12.3.1",
     "react-router-dom": "^7.9.3",
-    "sockjs-client": "^1.6.1"
+    "sockjs-client": "^1.6.1",
+    "tailwindcss": "^4.2.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

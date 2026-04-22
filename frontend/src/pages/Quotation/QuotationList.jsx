@@ -172,7 +172,7 @@ const QuotationList = () => {
     }, [fetchQuotations, currentPage])
 
     return (
-    <div className="quotation-list-container">
+    <div className="page-container">
         {error && <Alert message={error} />}
         {status === 0 && <Alert message={t("server_internal_error")} />}
 

@@ -161,7 +161,7 @@ const SupplierList = () => {
     }))
 
     return (
-    <div className="supplier-list-container">
+    <div className="page-container">
         {error && <Alert message={error}/>}
         {status === 0 && <Alert message={t("server_internal_error")} />}
 

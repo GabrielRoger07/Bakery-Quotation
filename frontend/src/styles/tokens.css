@@ -60,12 +60,17 @@
   --color-border-spinner: #a78bfa;
 
   /* ── Semantic ───────────────────────────────────────── */
-  --color-success:        #059669;
-  --color-success-strong: #047857;
-  --color-danger:         #dc2626;
-  --color-danger-strong:  #b91c1c;
-  --color-danger-dark:    #7f1d1d;
-  --color-danger-border:  #ef4444;
+  --color-success:         #059669;
+  --color-success-strong:  #047857;
+  --color-success-lighter: #f0fdf4;
+  --color-success-border:  #86efac;
+  --color-danger:          #dc2626;
+  --color-danger-strong:   #b91c1c;
+  --color-danger-dark:     #7f1d1d;
+  --color-danger-border:   #ef4444;
+  --color-warning-strong:  #92400e;
+  --color-warning-lighter: #fffbeb;
+  --color-warning-border:  #fcd34d;
 
   /* ── Overlays ───────────────────────────────────────── */
   --overlay-soft:   rgba(15, 13, 35, 0.4);

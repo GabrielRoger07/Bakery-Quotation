@@ -1,4 +1,3 @@
-import './App.css'
 import { BrowserRouter, Route, Routes, useLocation, Navigate } from 'react-router-dom'
 import PrivateRoute from './components/PrivateRoute';
 
@@ -34,7 +33,7 @@ function AppContent() {
   const shouldShowSupplierNavbar = location.pathname.startsWith("/supplier") && !location.pathname.startsWith("/supplier/login/")
 
   return (
-    <div className="App">
+    <>
       {shouldShowNavbar ? <Navbar /> : shouldShowSupplierNavbar ? <SupplierNavbar /> : <PublicHeader />}
         <Routes>
           <Route path="/" element={<LandingPage />}></Route>
@@ -51,7 +50,7 @@ function AppContent() {
 
           <Route path="*" element={<Navigate to="/login" />}></Route>
         </Routes>
-    </div>
+    </>
   )
 }
 

@@ -179,7 +179,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
     if(!products.length) return <p>{t("no_products_quotation")}</p>
 
     return (
-        <div className="supplier-quotation-container">
+        <div className="page-container supplier-quotation-container">
             <h2>{t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotationId}</h2>
 
             {quotation && (

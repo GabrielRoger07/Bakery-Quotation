@@ -30,7 +30,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
     const totalUnits = Number(product.quantity) + bonusUnits
     const estimatedUnitPrice = numericPrice > 0 && totalUnits > 0 ? numericPrice / totalUnits : null
     const isSupplierLowestBid = currentLowestBid?.participationId === participationId
-    const currentLowestBidColor = currentLowestBid ? (isSupplierLowestBid ? "green" : "red") : undefined
+    const currentLowestBidColorClass = currentLowestBid ? (isSupplierLowestBid ? "text-success" : "text-danger") : undefined
 
     const validateBonus = (bonusRawValue, isBonusEnabled) => {
         if(!isBonusEnabled){
@@ -158,7 +158,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
                 <p className="product-meta-text">{t("bonus_limit_max_units")}: {product.bonusLimit}</p>
                 <div className="current-lowest-bid">
                     <span className="current-lowest-label">{t("current_lowest_bid")}: </span>
-                    <strong className="current-lowest-value" style={{ color: currentLowestBidColor }}>
+                    <strong className={`current-lowest-value${currentLowestBidColorClass ? ` ${currentLowestBidColorClass}` : ''}`}>
                         {currentLowestBid ? `${formatMoney(currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus), i18n.language)}/UN` : t("no_bids_yet")}
                     </strong>
                 </div>

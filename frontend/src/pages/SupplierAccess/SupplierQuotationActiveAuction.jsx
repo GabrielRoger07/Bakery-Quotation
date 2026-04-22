@@ -136,7 +136,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
       price: formatMoney(b.price, i18n.language),
       pricePerUnit: formatMoney(b.price / (b.quantity + b.bonus), i18n.language),
       createdAt: new Date(b.createdAt).toLocaleString(),
-      status: isLowest ? <span style={{color: "green"}}>{t("lowest")}</span> : <span style={{color: "red"}}>{t("outbid")}</span>
+      status: isLowest ? <span className="text-success">{t("lowest")}</span> : <span className="text-danger">{t("outbid")}</span>
     }
   })
 
@@ -160,7 +160,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   if(!products.length) return <p>{t("no_products_quotation")}</p>
 
   return (
-      <div className="supplier-quotation-container">
+      <div className="page-container supplier-quotation-container">
         <h2>{t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotationId}</h2>
 
         {participation?.supplierName && (

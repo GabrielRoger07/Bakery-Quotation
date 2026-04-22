@@ -138,7 +138,7 @@ const ProductList = () => {
     ), [searchWord, handleSearch, loading, t])
 
     return (
-    <div className="product-list-container">
+    <div className="page-container">
         {error && <Alert message={error}/>}
         {status === 0 && <Alert message={t("server_internal_error")} />}
 

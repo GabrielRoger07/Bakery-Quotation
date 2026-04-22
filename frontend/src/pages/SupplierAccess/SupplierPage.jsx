@@ -51,19 +51,19 @@ const SupplierPage = () => {
     }
 
     if (loading) return (
-        <div className="supplier-quotation-container">
+        <div className="page-container supplier-quotation-container">
             <p>{t("loading_message")}</p>
         </div>
     )
 
     if (error) return (
-        <div className="supplier-quotation-container">
+        <div className="page-container supplier-quotation-container">
             <p>{error}</p>
         </div>
     )
 
     return (
-        <div className="supplier-quotation-container">
+        <div className="page-container supplier-quotation-container">
             <h2>{t("supplier_quotations_title")}</h2>
 
             {participations.length === 0 ? (

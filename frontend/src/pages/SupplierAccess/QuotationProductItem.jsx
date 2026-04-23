@@ -4,12 +4,11 @@ import useFetch from '../../hooks/useFetch'
 import { useTranslation, Trans } from 'react-i18next'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
-import './SupplierQuotation.css'
 import { ENV } from '../../config/env'
 import { formatDecimal, formatMoney } from '../../utils/formatMoney'
 
 const QuotationProductItem = ({ product, participationId, currentLowestBid }) => {
-    
+
     const { t, i18n } = useTranslation()
 
     const {request} = useFetch(ENV.API_BASE_URL)
@@ -30,31 +29,20 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
     const totalUnits = Number(product.quantity) + bonusUnits
     const estimatedUnitPrice = numericPrice > 0 && totalUnits > 0 ? numericPrice / totalUnits : null
     const isSupplierLowestBid = currentLowestBid?.participationId === participationId
-    const currentLowestBidColorClass = currentLowestBid ? (isSupplierLowestBid ? "text-success" : "text-danger") : undefined
+    const lowestBidColor = currentLowestBid
+        ? (isSupplierLowestBid ? 'text-[var(--color-success)]' : 'text-[var(--color-danger)]')
+        : ''
 
     const validateBonus = (bonusRawValue, isBonusEnabled) => {
-        if(!isBonusEnabled){
-            return ""
-        }
-
+        if(!isBonusEnabled) return ""
         const bonusValue = Number(bonusRawValue || 0)
-
-        if(bonusValue <= 0){
-            return t("bonus_required_valid")
-        }
-
-        if(bonusValue > Number(product.bonusLimit)){
-            return t("bonus_greater")
-        }
-
+        if(bonusValue <= 0) return t("bonus_required_valid")
+        if(bonusValue > Number(product.bonusLimit)) return t("bonus_greater")
         return ""
     }
 
     const handlePriceInputChange = (e) => {
-        if(confirming){
-            setConfirming(false)
-        }
-
+        if(confirming) setConfirming(false)
         handlePriceChange(e)
     }
 
@@ -101,10 +89,8 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
     }
 
     const handleBonusChange = (e) => {
-        if(confirming){
-            setConfirming(false)
-        }
-        
+        if(confirming) setConfirming(false)
+
         const value = e.target.value
 
         if(value === ""){
@@ -114,7 +100,6 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
         }
 
         const numericValue = value.replace(/\D/g, "")
-
         setBonus(numericValue)
         setBonusError(validateBonus(numericValue, addBonus))
     }
@@ -151,42 +136,39 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
     }
 
     return (
-        <div className={`quotation-product-item ${product.bonusLimit > 0 ? "has-bonus" : "no-bonus"}`}>
+        <div className="bg-[var(--color-surface-0)] px-4 pt-4 pb-[0.7rem] rounded-[var(--radius-lg)] border border-[var(--color-border)] [box-shadow:var(--shadow-card-soft)] transition-[transform,box-shadow] duration-[160ms] h-full flex flex-col hover:-translate-y-[2px] hover:[box-shadow:var(--shadow-sm)]">
             <div>
-                <h3>{product.productName}</h3>
-                <p className="product-meta-text">{t("quantity")}: {product.quantity}</p>
-                <p className="product-meta-text">{t("bonus_limit_max_units")}: {product.bonusLimit}</p>
-                <div className="current-lowest-bid">
-                    <span className="current-lowest-label">{t("current_lowest_bid")}: </span>
-                    <strong className={`current-lowest-value${currentLowestBidColorClass ? ` ${currentLowestBidColorClass}` : ''}`}>
+                <h3 className="text-[var(--color-text-strong)] m-0 mb-[0.7rem] text-base text-center">{product.productName}</h3>
+                <p className="text-[var(--color-text-secondary)] m-0 mb-[0.25rem] text-[0.875rem] font-medium">{t("quantity")}: {product.quantity}</p>
+                <p className="text-[var(--color-text-secondary)] m-0 mb-[0.7rem] text-[0.875rem] font-medium">{t("bonus_limit_max_units")}: {product.bonusLimit}</p>
+                <div className="mt-0 px-[0.65rem] py-[0.58rem] border border-[var(--color-highlight-border)] bg-[var(--color-highlight-lighter)] rounded-[var(--radius-md)] flex flex-col justify-center items-center text-center min-h-[4.5rem]">
+                    <span className="block text-[0.75rem] text-[var(--color-text-muted)] mb-[0.2rem]">{t("current_lowest_bid")}: </span>
+                    <strong className={`text-[1rem] ${lowestBidColor || 'text-[var(--color-accent-strong)]'}`}>
                         {currentLowestBid ? `${formatMoney(currentLowestBid.price / (currentLowestBid.quantity + currentLowestBid.bonus), i18n.language)}/UN` : t("no_bids_yet")}
                     </strong>
                 </div>
             </div>
-            <form className="bid-form" onSubmit={handleBidSubmit}>
+
+            <form className="flex flex-col h-full" onSubmit={handleBidSubmit}>
                 <Input label={t("price")} type="text" value={price} onChange={handlePriceInputChange} placeholder="R$0,00" />
 
                 {product.bonusLimit > 0 && (
-                    <div className="bonus-radio">
-                        <p>{t("add_bonus_quantity_label")}</p>
-                        <span className="bonus-helper-text">{t("bonus_limit_helper", { max: product.bonusLimit })}</span>
-                        <div className="bonus-radio-options">
-                            <label>
-                                <input type="radio" name={`addBonus-${product.productId}`} value="no" checked={!addBonus} onChange={() => {
-                                    if(confirming){
-                                    setConfirming(false)
-                                }
-                                setAddBonus(false)
-                                setBonus("")
-                                setBonusError("")
+                    <div className="m-0 mb-[0.85rem] font-sans">
+                        <p className="mb-[0.35rem] font-medium text-[0.875rem] text-center">{t("add_bonus_quantity_label")}</p>
+                        <span className="block text-center text-[var(--color-text-muted)] text-[0.75rem] mb-[0.45rem]">{t("bonus_limit_helper", { max: product.bonusLimit })}</span>
+                        <div className="flex justify-center gap-[0.65rem]">
+                            <label className="inline-flex items-center cursor-pointer text-[0.875rem] text-[var(--color-text-secondary)] min-w-[4.8rem] justify-center">
+                                <input type="radio" name={`addBonus-${product.productId}`} value="no" checked={!addBonus} className="mr-[0.35rem] accent-[var(--color-accent)]" onChange={() => {
+                                    if(confirming) setConfirming(false)
+                                    setAddBonus(false)
+                                    setBonus("")
+                                    setBonusError("")
                                 }} />
                                 {t("no")}
                             </label>
-                            <label>
-                                <input type="radio" name={`addBonus-${product.productId}`} value="yes" checked={addBonus} onChange={() => {
-                                    if(confirming){
-                                        setConfirming(false)
-                                    }
+                            <label className="inline-flex items-center cursor-pointer text-[0.875rem] text-[var(--color-text-secondary)] min-w-[4.8rem] justify-center">
+                                <input type="radio" name={`addBonus-${product.productId}`} value="yes" checked={addBonus} className="mr-[0.35rem] accent-[var(--color-accent)]" onChange={() => {
+                                    if(confirming) setConfirming(false)
                                     setAddBonus(true)
                                     setBonusError(validateBonus(bonus, true))
                                 }} />
@@ -197,46 +179,48 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
                 )}
 
                 {product.bonusLimit <= 0 && (
-                    <div className="bonus-unavailable">
-                        <p>{t("bonus_not_available")}</p>
+                    <div className="m-0 mb-[0.85rem] min-h-[4.1rem] flex items-center justify-center border border-dashed border-[var(--color-border-strong)] rounded-[var(--radius-md)] bg-[var(--color-surface-1)]">
+                        <p className="m-0 text-center text-[var(--color-text-muted)] text-[0.75rem]">{t("bonus_not_available")}</p>
                     </div>
                 )}
 
                 {addBonus && (
-                    <Input 
-                        label={t("bonus_quantity") + ` (${t("in")} UN`} 
-                        type="number" 
-                        value={bonus} 
-                        onChange={handleBonusChange} 
-                        placeholder={t("bonus_quantity_max_placeholder", { max: product.bonusLimit })} 
+                    <Input
+                        label={t("bonus_quantity") + ` (${t("in")} UN`}
+                        type="number"
+                        value={bonus}
+                        onChange={handleBonusChange}
+                        placeholder={t("bonus_quantity_max_placeholder", { max: product.bonusLimit })}
                         onKeyDown={e => {
                             if(e.key === '-' || e.key === 'e' || e.key === 'E') e.preventDefault()
-                        }} 
+                        }}
                     />
                 )}
 
                 {!confirming && estimatedUnitPrice !== null && (
-                    <p className="unit-price-estimate">
-                        {t("unit_price_estimate")}: <strong>{formatMoney(estimatedUnitPrice, i18n.language)}/UN</strong>
+                    <p className="mt-[0.7rem] px-[0.65rem] py-[0.55rem] border border-[var(--color-highlight-border)] bg-[var(--color-highlight-lighter)] rounded-[var(--radius-md)] text-center text-[0.875rem]">
+                        {t("unit_price_estimate")}: <strong className="text-[var(--color-accent-strong)]">{formatMoney(estimatedUnitPrice, i18n.language)}/UN</strong>
                     </p>
                 )}
 
-                {bonusError && <p className="bonus-error">{bonusError}</p>}
+                {bonusError && <p className="mt-[0.15rem] mb-2 text-center text-[var(--color-danger-strong)] text-[0.875rem]">{bonusError}</p>}
 
                 {!confirming ? (
-                    <Button type="submit" disabled={loading || Boolean(bonusError)}>{loading ? t("submitting_message") : t("submit_bid")}</Button>
+                    <Button type="submit" disabled={loading || Boolean(bonusError)} className="block mt-auto mb-0">{loading ? t("submitting_message") : t("submit_bid")}</Button>
                 ) : (
-                    <div className="confirm-container">
-                        <p><Trans i18nKey="bid_confirm" values={{pricePerUnit: formatDecimal(pendingBidValue, i18n.language), unitOfMeasure: 'UN', productName: product.productName}} components={{strong: <strong />}}/></p>
-                        <div className="confirm-buttons">
+                    <div className="mt-[0.55rem] p-[0.65rem] bg-[var(--color-surface-4)] rounded-[var(--radius-md)] border border-[var(--color-border-light)] text-center">
+                        <p className="text-[0.875rem] mb-2 text-[var(--color-text-default)]">
+                            <Trans i18nKey="bid_confirm" values={{pricePerUnit: formatDecimal(pendingBidValue, i18n.language), unitOfMeasure: 'UN', productName: product.productName}} components={{strong: <strong />}}/>
+                        </p>
+                        <div className="flex justify-center gap-[0.55rem]">
                             <Button type="button" onClick={cancelBid} variant="danger">{t("cancel_button")}</Button>
                             <Button type="button" onClick={confirmBid} variant="success">{t("confirm_button")}</Button>
                         </div>
                     </div>
                 )}
 
-                {error && <p className="bid-feedback bid-feedback-error">{error}</p>}
-                {success && <p className="bid-feedback bid-feedback-success">{success}</p>}
+                {error && <p className="mt-[0.2rem] mb-[0.45rem] pt-2 text-center text-[0.875rem] text-[var(--color-danger-strong)]">{error}</p>}
+                {success && <p className="mt-[0.2rem] mb-[0.45rem] pt-2 text-center text-[0.875rem] text-[var(--color-success-strong)]">{success}</p>}
             </form>
         </div>
     )

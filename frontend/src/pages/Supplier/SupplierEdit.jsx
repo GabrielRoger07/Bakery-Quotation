@@ -45,6 +45,8 @@ const SupplierEdit = ({supplier, onSave, onClose}) => {
         isSupplierWhatsappNumberInvalid ||
         isEmployerCnpjInvalid
 
+    const warningCls = "text-[var(--color-danger-strong)] text-[0.8125rem] font-medium [margin:-0.25rem_0_0.625rem]"
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         if(!supplier) return
@@ -83,7 +85,7 @@ const SupplierEdit = ({supplier, onSave, onClose}) => {
         <form onSubmit={handleSubmit}>
             <Input label={t("supplier_name")} type="text" value={supplierName} onChange={handleSupplierNameChange} onBlur={handleSupplierNameBlur} placeholder={t("enter_supplier_name")} isInvalid={isSupplierNameInvalid} required />
             {supplierNameWarning && (
-                <div className="warning">
+                <div className={warningCls}>
                     {supplierNameWarning.type === "too_short" &&
                         t("char_limit_too_short", { min: supplierNameWarning.min, field: t(supplierNameWarning.fieldName) })
                     }
@@ -96,7 +98,7 @@ const SupplierEdit = ({supplier, onSave, onClose}) => {
             
             <Input label={t("supplier_email")} type="email" value={supplierEmail} onChange={handleSupplierEmailChange} onBlur={handleSupplierEmailBlur} placeholder={t("enter_supplier_email")} isInvalid={isSupplierEmailInvalid} />
             {supplierEmail && supplierEmailWarning && (
-                <div className="warning">
+                <div className={warningCls}>
                     {supplierEmailWarning.type === "too_short" &&
                         t("char_limit_too_short", { min: supplierEmailWarning.min, field: t(supplierEmailWarning.fieldName) })
                     }
@@ -108,11 +110,11 @@ const SupplierEdit = ({supplier, onSave, onClose}) => {
             )}
 
             <Input label={t("supplier_whatsapp")} type="text" value={supplierWhatsappNumber} onChange={handleSupplierWhatsappNumberChange} onBlur={handleSupplierWhatsappNumberBlur} placeholder={t("enter_supplier_whatsapp")} isInvalid={isSupplierWhatsappNumberInvalid} required />
-            {isSupplierWhatsappNumberInvalid && <div className="warning">{t("invalid_whatsapp")}</div>}
+            {isSupplierWhatsappNumberInvalid && <div className={warningCls}>{t("invalid_whatsapp")}</div>}
 
             <Input label={t("employer_name")} type="text" value={employerName} onChange={handleEmployerNameChange} onBlur={handleEmployerNameBlur} placeholder={t("enter_employer_name")} isInvalid={isEmployerNameInvalid} required />
             {employerNameWarning && (
-                <div className="warning">
+                <div className={warningCls}>
                     {employerNameWarning.type === "too_short" &&
                         t("char_limit_too_short", { min: employerNameWarning.min, field: t(employerNameWarning.fieldName) })
                     }
@@ -124,10 +126,10 @@ const SupplierEdit = ({supplier, onSave, onClose}) => {
             )}
 
             <Input label={t("employer_cnpj")} type="text" value={employerCnpj} onChange={handleEmployerCnpjChange} onBlur={handleEmployerCnpjBlur} placeholder={t("enter_employer_cnpj")} isInvalid={isEmployerCnpjInvalid} required />
-            {isEmployerCnpjInvalid && <div className="warning">{t("invalid_cnpj")}</div>}
+            {isEmployerCnpjInvalid && <div className={warningCls}>{t("invalid_cnpj")}</div>}
             
             <Alert message={error} />
-            {success && <div className="success">{success}</div>}
+            {success && <div className="text-[var(--color-success)] font-medium mb-[0.875rem] text-[0.875rem]">{success}</div>}
 
             <Button type="submit" disabled={isDisabled}>{t("save_button")}</Button>
         </form>

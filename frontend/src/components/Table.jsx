@@ -1,30 +1,38 @@
 import { useState } from 'react'
-import './Table.css'
 import { useTranslation } from 'react-i18next'
 import Button from './Button'
 import { Pencil, Trash, Eye, Activity, SlidersHorizontal } from 'lucide-react'
 
-const Table = ({title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload, onMonitor, onSort, sortField, sortDirection, toolbar, filterActive = false }) => {
+const filterActiveBtnClass = [
+    '!bg-[var(--color-accent)] !border-[var(--color-accent)] !text-white ![box-shadow:var(--shadow-accent)]',
+    'hover:!bg-[var(--color-accent-hover)] hover:!border-[var(--color-accent-hover)]',
+].join(' ')
 
+const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload, onMonitor, onSort, sortField, sortDirection, toolbar, filterActive = false }) => {
     const { t } = useTranslation()
     const [toolbarOpen, setToolbarOpen] = useState(false)
 
     return (
-        <div className="table-container">
-            <div className="table-header">
-                <h1 className="table-title">{title}</h1>
-                <div className="table-header-buttons">
-                    {loading && <div className="loading-spinner"></div>}
+        <div className="w-full max-w-[1200px] mx-auto mb-5 px-[1.625rem] py-6 bg-[var(--color-surface-0)] rounded-[var(--radius-xl)] border border-[var(--color-border)] [box-shadow:var(--shadow-card-soft)] hover:[box-shadow:var(--shadow-card-md)] transition-[box-shadow] duration-[160ms] max-sm:px-[0.75rem] max-sm:py-[0.875rem] max-sm:rounded-[var(--radius-md)] max-[768px]:px-[1.125rem] max-[768px]:rounded-[var(--radius-lg)]">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-5 max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-[0.875rem]">
+                <h1 className="m-0 text-[1.125rem] text-[var(--color-text-strong)] font-bold tracking-[-0.02em]">{title}</h1>
+                <div className="flex items-center gap-2 max-[768px]:w-full max-[768px]:justify-start max-[768px]:flex-wrap">
+                    {loading && (
+                        <div className="w-[0.9375rem] h-[0.9375rem] border-2 border-[rgba(255,255,255,0.3)] border-t-white rounded-full [animation:spin_0.65s_linear_infinite] mr-1" />
+                    )}
                     {toolbar && (
-                        <div className="filter-toggle-wrapper">
+                        <div className="relative inline-flex">
                             <Button
                                 variant="secondary"
-                                className={`filter-toggle-btn${toolbarOpen ? " filter-toggle-active" : ""}`}
+                                className={`!p-[0.4375rem] !min-w-[2.375rem] !min-h-[2.375rem] flex items-center justify-center text-[var(--color-accent)] ${toolbarOpen ? filterActiveBtnClass : ''}`}
                                 onClick={() => setToolbarOpen(prev => !prev)}
                             >
                                 <SlidersHorizontal size={16} />
                             </Button>
-                            {filterActive && !toolbarOpen && <span className="filter-active-dot" />}
+                            {filterActive && !toolbarOpen && (
+                                <span className="absolute top-[2px] right-[2px] w-[7px] h-[7px] rounded-full bg-[var(--color-accent)] border-[1.5px] border-[var(--color-surface-0)] pointer-events-none" />
+                            )}
                         </div>
                     )}
                     {onReload && <Button onClick={onReload}>{t("table_reload")}</Button>}
@@ -32,61 +40,78 @@ const Table = ({title, columns = [], data = [], idKey = "id", loading = false, e
                 </div>
             </div>
 
+            {/* Toolbar (animated) */}
             {toolbar && (
-                <div className={`table-toolbar-wrapper${toolbarOpen ? " open" : ""}`}>
-                    <div className="table-toolbar-inner">
-                        <div className="table-toolbar">
+                <div className={`grid transition-[grid-template-rows] duration-[260ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${toolbarOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+                    <div className="overflow-hidden">
+                        <div className="flex gap-[0.625rem] items-center py-[0.875rem] pb-[calc(0.875rem+1.125rem)] border-t border-b border-[var(--color-border-lighter)] max-[600px]:flex-wrap">
                             {toolbar}
                         </div>
                     </div>
                 </div>
             )}
 
-            {loading && <p>Loading...</p>}
-
-            {!loading && data.length === 0 &&(
-                <p className="empty-message">{emptyMessage}</p>
+            {!loading && data.length === 0 && (
+                <p className="text-[var(--color-text-muted)] text-center py-10 px-6 text-[0.875rem]">{emptyMessage}</p>
             )}
 
-            {!loading && data.length > 0 &&(
-                <div className="table-wrapper">
-                    <table className="custom-table">
+            {!loading && data.length > 0 && (
+                <div className="overflow-x-auto overflow-y-visible [-webkit-overflow-scrolling:touch] rounded-[var(--radius-lg)] border border-[var(--color-border-light)]">
+                    <table className="w-full border-collapse min-w-[600px]">
                         <thead>
                             <tr>
                                 {columns.map((col) => (
-                                    <th key={col.key} onClick={() => onSort && onSort(col.key)} className="sortable-column">{col.label} {sortField === col.key && (
-                                        <span className="sort-indicator">{sortDirection === "asc" ? "▲" : "▼"}</span>
-                                    )}</th>
+                                    <th
+                                        key={col.key}
+                                        onClick={() => onSort && onSort(col.key)}
+                                        className="sticky top-0 z-[1] bg-[var(--color-accent)] text-[rgba(255,255,255,0.92)] text-left px-4 py-3 font-semibold text-[0.8125rem] uppercase tracking-[0.07em] border-r border-[rgba(255,255,255,0.15)] whitespace-nowrap cursor-pointer select-none transition-[background-color,color] duration-[160ms] hover:bg-[var(--color-accent-hover)] hover:text-[rgba(255,255,255,0.95)] last:border-r-0 max-[768px]:px-3 max-[768px]:py-[0.625rem] max-[768px]:text-[0.8125rem]"
+                                    >
+                                        {col.label}
+                                        {sortField === col.key && (
+                                            <span className="ml-[5px] text-[0.6875rem] opacity-70">{sortDirection === "asc" ? "▲" : "▼"}</span>
+                                        )}
+                                    </th>
                                 ))}
                                 {(onEdit || onDelete || onView || onMonitor) && (
-                                    <th className="actions-header">
-                                        <span className="actions-header-label">{t("table_actions")}</span>
+                                    <th className="sticky top-0 z-[1] bg-[var(--color-accent)] text-[rgba(255,255,255,0.92)] text-left px-4 py-3 font-semibold text-[0.8125rem] uppercase tracking-[0.07em]">
+                                        <span className="block text-center">{t("table_actions")}</span>
                                     </th>
                                 )}
                             </tr>
                         </thead>
                         <tbody>
                             {data.map((item, index) => (
-                                <tr key={item[idKey] || index}>
+                                <tr key={item[idKey] || index} className="even:[&>td]:bg-[var(--color-surface-1)] hover:[&>td]:bg-[var(--color-highlight-lighter)] hover:[&>td]:transition-[background-color] hover:[&>td]:duration-[160ms]">
                                     {columns.map((col) => (
-                                        <td key={col.key}>{item[col.key]}</td>
+                                        <td key={col.key} className="px-4 py-[0.875rem] border-b border-r border-[var(--color-border-lighter)] text-[var(--color-text-neutral-strong)] text-[0.875rem] leading-[1.4] bg-[var(--color-surface-0)] last:border-r-0 max-[768px]:px-3 max-[768px]:py-[0.625rem] max-[768px]:text-[0.8125rem]">
+                                            {item[col.key]}
+                                        </td>
                                     ))}
                                     {(onEdit || onDelete || onView || onMonitor) && (
-                                        <td className="actions">
-                                            {onEdit && (
-                                                <Button onClick={() => onEdit(item)}><Pencil size={18}/></Button>
-                                            )}
-                                            {onDelete && (
-                                                <Button onClick={() => onDelete(item[idKey])} variant="danger"><Trash size={18}/></Button>
-                                            )}
-                                            {onView && (
-                                                <Button onClick={() => onView(item)}><Eye size={18}/></Button>
-                                            )}
-                                            {onMonitor && (
-                                                <Button onClick={() => onMonitor(item)}><Activity size={18}/></Button>
-                                            )}
+                                        <td className="px-4 py-[0.875rem] border-b border-[var(--color-border-lighter)] bg-[var(--color-surface-0)] max-[768px]:px-3 max-[768px]:py-[0.625rem]">
+                                            <div className="flex flex-row justify-center items-center gap-[0.375rem] whitespace-nowrap flex-nowrap">
+                                                {onEdit && (
+                                                    <Button onClick={() => onEdit(item)} className="!min-w-[2.125rem] !p-[0.375rem] text-[0.875rem] flex-shrink-0 max-[768px]:!min-w-[2.75rem] max-[768px]:!min-h-[2.75rem] max-[768px]:!p-2">
+                                                        <Pencil size={18} />
+                                                    </Button>
+                                                )}
+                                                {onDelete && (
+                                                    <Button onClick={() => onDelete(item[idKey])} variant="danger" className="!min-w-[2.125rem] !p-[0.375rem] text-[0.875rem] flex-shrink-0 max-[768px]:!min-w-[2.75rem] max-[768px]:!min-h-[2.75rem] max-[768px]:!p-2">
+                                                        <Trash size={18} />
+                                                    </Button>
+                                                )}
+                                                {onView && (
+                                                    <Button onClick={() => onView(item)} className="!min-w-[2.125rem] !p-[0.375rem] text-[0.875rem] flex-shrink-0 max-[768px]:!min-w-[2.75rem] max-[768px]:!min-h-[2.75rem] max-[768px]:!p-2">
+                                                        <Eye size={18} />
+                                                    </Button>
+                                                )}
+                                                {onMonitor && (
+                                                    <Button onClick={() => onMonitor(item)} className="!min-w-[2.125rem] !p-[0.375rem] text-[0.875rem] flex-shrink-0 max-[768px]:!min-w-[2.75rem] max-[768px]:!min-h-[2.75rem] max-[768px]:!p-2">
+                                                        <Activity size={18} />
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </td>
-
                                     )}
                                 </tr>
                             ))}

@@ -11,11 +11,11 @@ const formatRemaining = (ms) => {
     const mins = Math.floor((totalSeconds % 3600) / 60)
     const secs = totalSeconds % 60
 
-    return days > 0 ? `${days}d ${pad2(hours)}h ${pad2(mins)}m ${pad2(secs)}s` : `${pad2(hours)}h ${pad2(mins)}m ${pad2(secs)}s` 
+    return days > 0 ? `${days}d ${pad2(hours)}h ${pad2(mins)}m ${pad2(secs)}s` : `${pad2(hours)}h ${pad2(mins)}m ${pad2(secs)}s`
 }
 
 const SupplierQuotationScheduled = ({ quotation }) => {
-    
+
     const { t } = useTranslation()
     const startTimeMs = useMemo(
         () => new Date(quotation.quotationStart).getTime(), [quotation.quotationStart]
@@ -46,25 +46,27 @@ const SupplierQuotationScheduled = ({ quotation }) => {
     }, [startTimeMs])
 
     const remainingText = remainingMs <= 0 ? t("starting_now") : formatRemaining(remainingMs)
-    
-    return (
-        <div className="page-container supplier-quotation-container">
-            <h2>{t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotation.quotationId}</h2>
-            <h3>{t("quotation_scheduled")}</h3>
 
-            <div className="quotation-info">
-                <p>
-                    <strong>{t("start_uppercase")}:</strong>{" "}
+    return (
+        <div className="page-wrapper text-[var(--color-text-primary)]">
+            <h2 className="text-[var(--color-text-strong)] text-[1.25rem] m-0">
+                {t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotation.quotationId}
+            </h2>
+            <h3 className="text-[var(--color-text-secondary)] mt-1 mb-4">{t("quotation_scheduled")}</h3>
+
+            <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-[0.4rem]">
+                <p className="m-0 text-[1rem]">
+                    <strong className="text-[1.125rem] text-[var(--color-text-strong)]">{t("start_uppercase")}:</strong>{" "}
                     {new Date(quotation.quotationStart).toLocaleString()}
                 </p>
-                <p>
-                    <strong>{t("end_uppercase")}:</strong>{" "}
+                <p className="m-0 text-[1rem]">
+                    <strong className="text-[1.125rem] text-[var(--color-text-strong)]">{t("end_uppercase")}:</strong>{" "}
                     {new Date(quotation.quotationEnd).toLocaleString()}
                 </p>
             </div>
 
-            <p>
-                {t("time_remaining_to_start")}: <strong>{remainingText}</strong>
+            <p className="text-[var(--color-text-secondary)] mt-2">
+                {t("time_remaining_to_start")}: <strong className="text-[var(--color-text-strong)]">{remainingText}</strong>
             </p>
         </div>
     )

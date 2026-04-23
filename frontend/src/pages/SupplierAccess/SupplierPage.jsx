@@ -4,7 +4,12 @@ import { useTranslation } from 'react-i18next'
 import Cookies from 'js-cookie'
 import useFetch from '../../hooks/useFetch'
 import { ENV } from '../../config/env'
-import './SupplierQuotation.css'
+
+const statusCls = {
+    scheduled: 'inline-flex items-center px-[0.6rem] py-[0.15rem] text-[0.75rem] font-semibold tracking-[0.03em] rounded-full text-[var(--color-accent-strong)] bg-[var(--color-highlight-lighter)] border border-[var(--color-highlight-border)]',
+    active: 'inline-flex items-center px-[0.6rem] py-[0.15rem] text-[0.75rem] font-semibold tracking-[0.03em] rounded-full text-[var(--color-success-strong)] bg-[var(--color-success-lighter)] border border-[var(--color-success-border)]',
+    closed: 'inline-flex items-center px-[0.6rem] py-[0.15rem] text-[0.75rem] font-semibold tracking-[0.03em] rounded-full text-[var(--color-text-muted)] bg-[var(--color-surface-1)] border border-[var(--color-border)]',
+}
 
 const SupplierPage = () => {
 
@@ -41,64 +46,64 @@ const SupplierPage = () => {
 
     const getStatus = (start, end) => {
         const now = new Date()
-        if (now < new Date(start)) return { label: t("quotation_scheduled"), className: "status-scheduled" }
-        if (now > new Date(end)) return { label: t("quotation_closed"), className: "status-closed" }
-        return { label: t("quotation_active"), className: "status-active" }
+        if (now < new Date(start)) return { label: t("quotation_scheduled"), cls: statusCls.scheduled }
+        if (now > new Date(end)) return { label: t("quotation_closed"), cls: statusCls.closed }
+        return { label: t("quotation_active"), cls: statusCls.active }
     }
 
     const handleSelect = (participation) => {
         navigate(`/supplier/quotation?quotationId=${participation.quotationId}&participationId=${participation.participationId}`)
     }
 
+    const containerCls = "page-wrapper text-[var(--color-text-primary)]"
+
     if (loading) return (
-        <div className="page-container supplier-quotation-container">
+        <div className={containerCls}>
             <p>{t("loading_message")}</p>
         </div>
     )
 
     if (error) return (
-        <div className="page-container supplier-quotation-container">
+        <div className={containerCls}>
             <p>{error}</p>
         </div>
     )
 
     return (
-        <div className="page-container supplier-quotation-container">
-            <h2>{t("supplier_quotations_title")}</h2>
+        <div className={containerCls}>
+            <h2 className="text-[var(--color-text-strong)] text-[1.25rem] m-0 mb-4">{t("supplier_quotations_title")}</h2>
 
             {participations.length === 0 ? (
-                <p>{t("supplier_quotations_empty")}</p>
+                <p className="text-[var(--color-text-secondary)]">{t("supplier_quotations_empty")}</p>
             ) : (
-                <div className="supplier-quotations-list">
+                <div className="flex flex-col gap-3 w-full max-w-[680px]">
                     {participations.map((p) => {
                         const status = getStatus(p.quotationStart, p.quotationEnd)
                         return (
                             <div
                                 key={p.quotationId}
-                                className="supplier-quotation-card"
+                                className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] px-[1.15rem] py-4 cursor-pointer transition-[transform,box-shadow] duration-[160ms] hover:-translate-y-[2px] hover:[box-shadow:var(--shadow-sm)]"
                                 onClick={() => handleSelect(p)}
                             >
-                                <div className="supplier-quotation-card-header">
-                                    <span className="supplier-quotation-card-id">
+                                <div className="flex justify-between items-center mb-[0.6rem]">
+                                    <span className="font-semibold text-[1rem] text-[var(--color-text-strong)]">
                                         {t("quotation")} {new Date(p.quotationStart).toLocaleDateString("pt-BR")} - #{p.quotationId}
                                     </span>
-                                    <span className={`supplier-quotation-status ${status.className}`}>
-                                        {status.label}
-                                    </span>
+                                    <span className={status.cls}>{status.label}</span>
                                 </div>
 
-                                <div className="supplier-quotation-card-dates">
-                                    <p>
-                                        <strong>{t("start_uppercase")}:</strong>{" "}
+                                <div className="flex gap-[1.2rem] mb-2 max-[768px]:flex-col max-[768px]:gap-1">
+                                    <p className="m-0 text-[0.875rem] text-[var(--color-text-secondary)]">
+                                        <strong className="text-[var(--color-text-strong)]">{t("start_uppercase")}:</strong>{" "}
                                         {new Date(p.quotationStart).toLocaleString()}
                                     </p>
-                                    <p>
-                                        <strong>{t("end_uppercase")}:</strong>{" "}
+                                    <p className="m-0 text-[0.875rem] text-[var(--color-text-secondary)]">
+                                        <strong className="text-[var(--color-text-strong)]">{t("end_uppercase")}:</strong>{" "}
                                         {new Date(p.quotationEnd).toLocaleString()}
                                     </p>
                                 </div>
 
-                                <span className="supplier-quotation-card-action">
+                                <span className="text-[0.875rem] font-medium text-[var(--color-accent)]">
                                     {t("view")} →
                                 </span>
                             </div>

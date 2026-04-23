@@ -8,11 +8,11 @@ import ProductCreate from './ProductCreate'
 import ProductEdit from './ProductEdit'
 import Button from '../../components/Button'
 import Pagination from '../../components/Pagination'
-import './ProductList.css'
 import { ENV } from '../../config/env'
 
+
 const ProductList = () => {
-    
+
     const { t } = useTranslation()
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
@@ -138,57 +138,58 @@ const ProductList = () => {
     ), [searchWord, handleSearch, loading, t])
 
     return (
-    <div className="page-container">
-        {error && <Alert message={error}/>}
-        {status === 0 && <Alert message={t("server_internal_error")} />}
+        <div className="page-wrapper">
+            {error && <Alert message={error}/>}
+            {status === 0 && <Alert message={t("server_internal_error")} />}
 
-        <Table
-            title={t("products_title_list")}
-            columns={columns}
-            data={products}
-            idKey="productId"
-            loading={loading}
-            onEdit={openEditModal}
-            onDelete={requestRemove}
-            onAdd={() => setIsCreateModalOpen(true)}
-            onReload={() => fetchProducts(currentPage)}
-            onSort={handleColumnSort}
-            sortField={sortField}
-            sortDirection={sortDirection}
-            emptyMessage={t("products_empty")}
-            toolbar={filterToolbar}
-            filterActive={appliedSearch.word !== ""}
-        />
-
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
-
-        <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("products_title_edit")}>
-            <ProductEdit 
-                product={productToEdit} 
-                onSave={handleSaveEdit} 
-                onClose={closeModals} 
+            <Table
+                title={t("products_title_list")}
+                columns={columns}
+                data={products}
+                idKey="productId"
+                loading={loading}
+                onEdit={openEditModal}
+                onDelete={requestRemove}
+                onAdd={() => setIsCreateModalOpen(true)}
+                onReload={() => fetchProducts(currentPage)}
+                onSort={handleColumnSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                emptyMessage={t("products_empty")}
+                toolbar={filterToolbar}
+                filterActive={appliedSearch.word !== ""}
             />
-        </Modal>
 
-        <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={t("products_title_create")}>
-            <ProductCreate
-                onSave={handleSaveCreate} 
-                onClose={closeModals} 
-            />
-        </Modal>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
 
-        <Modal isOpen={confirmOpen} onClose={closeModals} title={t("confirm_removal")}>
-            <div className="confirm-container">
-                <p className="confirm-message"><Trans i18nKey="product_remove_confirm" values={{product: productToRemove?.productName}} components={{strong: <strong />}}/></p>
-                <div className="confirm-buttons">
-                    <Button onClick={closeModals}>{t("cancel_button")}</Button>
-                    <Button onClick={confirmRemove} disabled={loading}>{t("confirm_button")}</Button>
+            <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("products_title_edit")}>
+                <ProductEdit
+                    product={productToEdit}
+                    onSave={handleSaveEdit}
+                    onClose={closeModals}
+                />
+            </Modal>
+
+            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={t("products_title_create")}>
+                <ProductCreate
+                    onSave={handleSaveCreate}
+                    onClose={closeModals}
+                />
+            </Modal>
+
+            <Modal isOpen={confirmOpen} onClose={closeModals} title={t("confirm_removal")}>
+                <div>
+                    <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
+                        <Trans i18nKey="product_remove_confirm" values={{product: productToRemove?.productName}} components={{strong: <strong />}}/>
+                    </p>
+                    <div className="flex justify-end gap-3">
+                        <Button onClick={closeModals}>{t("cancel_button")}</Button>
+                        <Button onClick={confirmRemove} disabled={loading}>{t("confirm_button")}</Button>
+                    </div>
                 </div>
-            </div>
-
-        </Modal>
-    </div>
-  )
+            </Modal>
+        </div>
+    )
 }
 
 export default ProductList

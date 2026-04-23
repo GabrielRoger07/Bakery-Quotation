@@ -10,7 +10,6 @@ import Pagination from '../../components/Pagination'
 import QuotationCreate from './QuotationCreate'
 import QuotationEdit from './QuotationEdit'
 import QuotationDetails from './QuotationDetails'
-import './QuotationList.css'
 import { ENV } from '../../config/env'
 import { formatDateTime } from '../../utils/formatDateTime'
 
@@ -82,7 +81,7 @@ const QuotationList = () => {
 
     const handleSaveEdit = (updatedQuotation) => {
         const status = new Date(updatedQuotation.quotationStart) > new Date() ? t("quotation_scheduled") : new Date(updatedQuotation.quotationEnd) < new Date() ? t("quotation_closed") : t("quotation_active")
-        setQuotations((prev) => 
+        setQuotations((prev) =>
             prev.map((q) => q.quotationId === updatedQuotation.quotationId ? {...updatedQuotation, status} : q)
         )
     }
@@ -126,7 +125,7 @@ const QuotationList = () => {
         }
 
         const res = await request("GET", `/quotations/company?page=${page}${sortQuery}`)
-        
+
         if(res.ok){
             const mapped = res.data.content.map((q) => {
 
@@ -172,66 +171,68 @@ const QuotationList = () => {
     }, [fetchQuotations, currentPage])
 
     return (
-    <div className="page-container">
-        {error && <Alert message={error} />}
-        {status === 0 && <Alert message={t("server_internal_error")} />}
+        <div className="page-wrapper">
+            {error && <Alert message={error} />}
+            {status === 0 && <Alert message={t("server_internal_error")} />}
 
-        <Table 
-            title={t("quotations_title_list")}
-            columns={columns}
-            data={quotations}
-            idKey="quotationId"
-            loading={loading}
-            onEdit={openEditModal}
-            onDelete={requestRemove}
-            onAdd={() => setIsCreateModalOpen(true)}
-            onReload={() => fetchQuotations(currentPage)}
-            onSort={handleColumnSort}
-            sortField={sortField}
-            sortDirection={sortDirection}
-            onView={openDetailsModal}
-            onMonitor={handleMonitor}
-            emptyMessage={t("quotations_empty")}
-        />
-
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-
-        <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("quotations_title_edit")}>
-            <QuotationEdit
-                quotation={quotationToEdit}
-                onSave={handleSaveEdit}
-                onClose={closeModals}
+            <Table
+                title={t("quotations_title_list")}
+                columns={columns}
+                data={quotations}
+                idKey="quotationId"
+                loading={loading}
+                onEdit={openEditModal}
+                onDelete={requestRemove}
+                onAdd={() => setIsCreateModalOpen(true)}
+                onReload={() => fetchQuotations(currentPage)}
+                onSort={handleColumnSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onView={openDetailsModal}
+                onMonitor={handleMonitor}
+                emptyMessage={t("quotations_empty")}
             />
-        </Modal>
 
-        <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={t("quotations_title_create")}>
-            <QuotationCreate
-                onSave={handleSaveCreate}
-                onClose={closeModals}
-            />
-        </Modal>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
-        <Modal isOpen={isDetailsModalOpen} onClose={closeModals} title={t("quotations_title_details")}>
-            <QuotationDetails
-                quotation={quotationToView}
-            />
-        </Modal>
+            <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("quotations_title_edit")}>
+                <QuotationEdit
+                    quotation={quotationToEdit}
+                    onSave={handleSaveEdit}
+                    onClose={closeModals}
+                />
+            </Modal>
 
-        <Modal isOpen={confirmOpen} onClose={closeModals} title={t("confirm_removal")}>
-            {cannotDelete ? (
-                <p className="confirm-message">{t("quotation_cannot_delete")}</p>
-            ) : (
-                <div className="confirm-container">
-                    <p className="confirm-message"><Trans i18nKey="quotation_remove_confirm" values={{quotation: quotationToRemove?.quotationId}} components={{strong: <strong />}}/></p>
-                    <div className="confirm-buttons">
-                        <Button onClick={closeModals}>{t("cancel_button")}</Button>
-                        <Button onClick={confirmRemove} disabled={loading}>{t("confirm_button")}</Button>
+            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={t("quotations_title_create")}>
+                <QuotationCreate
+                    onSave={handleSaveCreate}
+                    onClose={closeModals}
+                />
+            </Modal>
+
+            <Modal isOpen={isDetailsModalOpen} onClose={closeModals} title={t("quotations_title_details")}>
+                <QuotationDetails
+                    quotation={quotationToView}
+                />
+            </Modal>
+
+            <Modal isOpen={confirmOpen} onClose={closeModals} title={t("confirm_removal")}>
+                {cannotDelete ? (
+                    <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-4">{t("quotation_cannot_delete")}</p>
+                ) : (
+                    <div>
+                        <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
+                            <Trans i18nKey="quotation_remove_confirm" values={{quotation: quotationToRemove?.quotationId}} components={{strong: <strong />}}/>
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <Button onClick={closeModals}>{t("cancel_button")}</Button>
+                            <Button onClick={confirmRemove} disabled={loading}>{t("confirm_button")}</Button>
+                        </div>
                     </div>
-                </div>
-            )}
-        </Modal>
-    </div>
-  )
+                )}
+            </Modal>
+        </div>
+    )
 }
 
 export default QuotationList

@@ -33,6 +33,8 @@ const ProductEdit = ({product, onSave, onClose}) => {
         !productBarCodeNumber ||
         !productName
 
+    const warningCls = "text-[var(--color-danger-strong)] text-[0.8125rem] font-medium [margin:-0.25rem_0_0.625rem]"
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         if(!product) return
@@ -68,7 +70,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
         <form onSubmit={handleSubmit}>
             <Input label={t("barcode_number")} type="text" name="productBarCodeNumber" value={productBarCodeNumber} onChange={handleBarCodeChange} onBlur={handleBarCodeBlur} placeholder={t("enter_barcode_number")} isInvalid={isBarCodeInvalid} required />
             {barCodeWarning && (
-                <div className="warning">
+                <div className={warningCls}>
                     {barCodeWarning.type === "too_short" &&
                         t("char_limit_too_short", { min: barCodeWarning.min, field: t(barCodeWarning.fieldName) })
                     }
@@ -81,7 +83,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
             
             <Input label={t("product_name")} type="text" name="productName" value={productName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder={t("enter_product_name")} isInvalid={isNameInvalid} required />
             {nameWarning && (
-                <div className="warning">
+                <div className={warningCls}>
                     {nameWarning.type === "too_short" &&
                         t("char_limit_too_short", { min: nameWarning.min, field: t(nameWarning.fieldName) })
                     }
@@ -94,7 +96,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
 
             <Input label={t("product_description")} type="text" name="productDescription" value={productDescription} onChange={handleDescriptionChange} onBlur={handleDescriptionBlur} placeholder={t("enter_product_description")} isInvalid={isDescriptionInvalid} />
             {productDescription && descriptionWarning && (
-                <div className="warning">
+                <div className={warningCls}>
                     {descriptionWarning.type === "too_short" &&
                         t("char_limit_too_short", { min: descriptionWarning.min, field: t(descriptionWarning.fieldName) })
                     }
@@ -106,7 +108,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
             )}
 
             <Alert message={error} />
-            {success && <div className="success">{success}</div>}
+            {success && <div className="text-[var(--color-success)] font-medium mb-[0.875rem] text-[0.875rem]">{success}</div>}
 
             <Button type="submit" disabled={isDisabled}>{t("save_button")}</Button>
         </form>

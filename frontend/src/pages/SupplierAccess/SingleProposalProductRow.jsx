@@ -22,17 +22,18 @@ const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNu
     }, [value])
 
     return (
-        <div className="single-proposal-item">
-            <div className="single-proposal-item-header">
-                <strong className="single-proposal-item-name">{product.productName}</strong>
+        <div className="border border-[var(--color-border-light)] rounded-[var(--radius-md)] p-3 bg-[var(--color-surface-1)]">
+            <div className="flex flex-col gap-[0.15rem] mb-[0.45rem]">
+                <strong className="text-[var(--color-text-strong)] text-[1rem] leading-[1.3]">{product.productName}</strong>
                 {product.productDescription && (
-                    <span className="single-proposal-item-desc">{product.productDescription}</span>
+                    <span className="text-[var(--color-text-muted)] text-[0.875rem] leading-[1.35]">{product.productDescription}</span>
                 )}
             </div>
 
-            <div className="single-proposal-item-tags">
-                {t("quantity")}: <span className="single-proposal-tag">{product.quantity} UN</span>
-                <span className="single-proposal-tag">
+            <div className="flex flex-wrap gap-[0.4rem] mb-[0.55rem]">
+                <span className="text-[var(--color-text-secondary)]">{t("quantity")}:</span>
+                <span className="inline-flex items-center gap-[0.3rem] px-[0.55rem] py-[0.18rem] text-[0.75rem] font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-3)] rounded-full whitespace-nowrap">{product.quantity} UN</span>
+                <span className="inline-flex items-center gap-[0.3rem] px-[0.55rem] py-[0.18rem] text-[0.75rem] font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-3)] rounded-full whitespace-nowrap">
                     <Tag size={12} />
                     {product.brand || t("brand_not_defined")}
                 </span>

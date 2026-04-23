@@ -8,7 +8,6 @@ import SupplierCreate from './SupplierCreate'
 import SupplierEdit from './SupplierEdit'
 import Button from '../../components/Button'
 import Pagination from '../../components/Pagination'
-import './SupplierList.css'
 import { ENV } from '../../config/env'
 import { formatCnpj } from '../../utils/formatCnpj'
 import { formatPhone } from '../../utils/formatPhone'
@@ -18,7 +17,7 @@ const SupplierList = () => {
     const { t } = useTranslation()
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
-    
+
     const [suppliers, setSuppliers] = useState([])
     const [error, setError] = useState("")
     const [status, setStatus] = useState(null)
@@ -98,7 +97,7 @@ const SupplierList = () => {
         if(appliedSearch.word) query += `&value=${appliedSearch.word}`
 
         const res = await request("GET", `/suppliers/company${query}`)
-        
+
         if(res.ok){
             setSuppliers(res.data.content);
             setTotalPages(res.data.totalPages)
@@ -131,8 +130,8 @@ const SupplierList = () => {
 
     const filterToolbar = useMemo(() => (
         <>
-            <div className="search-select-wrapper">
-                <select value={searchField} onChange={(e) => setSearchField(e.target.value)} className="custom-select">
+            <div className="relative">
+                <select value={searchField} onChange={(e) => setSearchField(e.target.value)} className="toolbar-select">
                     <option value="">{t("select_field")}</option>
                     <option value="supplierName">{t("supplier_name")}</option>
                     <option value="supplierEmail">{t("supplier_email")}</option>
@@ -140,7 +139,9 @@ const SupplierList = () => {
                     <option value="employerName">{t("employer_name")}</option>
                     <option value="employerCnpj">{t("employer_cnpj")}</option>
                 </select>
-                <span className="select-arrow"></span>
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </span>
             </div>
             <input
                 type="text"
@@ -161,56 +162,58 @@ const SupplierList = () => {
     }))
 
     return (
-    <div className="page-container">
-        {error && <Alert message={error}/>}
-        {status === 0 && <Alert message={t("server_internal_error")} />}
+        <div className="page-wrapper">
+            {error && <Alert message={error}/>}
+            {status === 0 && <Alert message={t("server_internal_error")} />}
 
-        <Table
-            title={t("suppliers_title_list")}
-            columns={columns}
-            data={formattedSuppliers}
-            idKey="supplierId"
-            loading={loading}
-            onEdit={openEditModal}
-            onDelete={requestRemove}
-            onAdd={() => setIsCreateModalOpen(true)}
-            onReload={() => fetchSuppliers(currentPage)}
-            onSort={handleColumnSort}
-            sortField={sortField}
-            sortDirection={sortDirection}
-            emptyMessage={t("suppliers_empty")}
-            toolbar={filterToolbar}
-            filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
-        />
-
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-
-        <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("suppliers_title_edit")}>
-            <SupplierEdit 
-                supplier={supplierToEdit} 
-                onSave={handleSaveEdit}
-                onClose={closeModals} 
+            <Table
+                title={t("suppliers_title_list")}
+                columns={columns}
+                data={formattedSuppliers}
+                idKey="supplierId"
+                loading={loading}
+                onEdit={openEditModal}
+                onDelete={requestRemove}
+                onAdd={() => setIsCreateModalOpen(true)}
+                onReload={() => fetchSuppliers(currentPage)}
+                onSort={handleColumnSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                emptyMessage={t("suppliers_empty")}
+                toolbar={filterToolbar}
+                filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
             />
-        </Modal>
 
-        <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={t("suppliers_title_create")}>
-            <SupplierCreate
-                onSave={handleSaveCreate}
-                onClose={closeModals} 
-            />
-        </Modal>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
-        <Modal isOpen={confirmOpen} onClose={closeModals} title={t("confirm_removal")}>
-            <div className="confirm-container">
-                <p className="confirm-message"><Trans i18nKey="supplier_remove_confirm" values={{supplier: supplierToRemove?.supplierName, employer: supplierToRemove?.employerName}} components={{strong: <strong />}}/></p>
-                <div className="confirm-buttons">
-                    <Button onClick={closeModals}>{t("cancel_button")}</Button>
-                    <Button onClick={confirmRemove} disabled={loading}>{t("confirm_button")}</Button>
+            <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("suppliers_title_edit")}>
+                <SupplierEdit
+                    supplier={supplierToEdit}
+                    onSave={handleSaveEdit}
+                    onClose={closeModals}
+                />
+            </Modal>
+
+            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={t("suppliers_title_create")}>
+                <SupplierCreate
+                    onSave={handleSaveCreate}
+                    onClose={closeModals}
+                />
+            </Modal>
+
+            <Modal isOpen={confirmOpen} onClose={closeModals} title={t("confirm_removal")}>
+                <div>
+                    <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
+                        <Trans i18nKey="supplier_remove_confirm" values={{supplier: supplierToRemove?.supplierName, employer: supplierToRemove?.employerName}} components={{strong: <strong />}}/>
+                    </p>
+                    <div className="flex justify-end gap-3">
+                        <Button onClick={closeModals}>{t("cancel_button")}</Button>
+                        <Button onClick={confirmRemove} disabled={loading}>{t("confirm_button")}</Button>
+                    </div>
                 </div>
-            </div>
-        </Modal>
-    </div>
-  )
+            </Modal>
+        </div>
+    )
 }
 
 export default SupplierList

@@ -6,9 +6,13 @@ import Button from '../../components/Button'
 import Modal from '../../components/Modal'
 import SingleProposalProductRow from './SingleProposalProductRow'
 import { ENV } from '../../config/env'
-import './SupplierQuotation.css'
 
 const DRAFT_KEY_PREFIX = "draft_prices_"
+
+const thCls = "text-left px-[0.6rem] py-2 text-[0.75rem] font-semibold uppercase tracking-[0.04em] text-[var(--color-text-muted)] border-b-2 border-[var(--color-border)]"
+const thNumCls = `${thCls} text-right`
+const tdCls = "px-[0.6rem] py-[0.55rem] text-[var(--color-text-default)] border-b border-[var(--color-border-lighter)] align-middle"
+const tdNumCls = `${tdCls} text-right whitespace-nowrap`
 
 const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
     const { t, i18n } = useTranslation()
@@ -179,81 +183,81 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
     if(!products.length) return <p>{t("no_products_quotation")}</p>
 
     return (
-        <div className="page-container supplier-quotation-container">
-            <h2>{t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotationId}</h2>
+        <div className="page-wrapper text-[var(--color-text-primary)]">
+            <h2 className="text-[var(--color-text-strong)] text-[1.25rem] m-0">
+                {t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotationId}
+            </h2>
 
             {quotation && (
-                <div className="quotation-info">
-                    <p><strong>{t("start_uppercase")}:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
-                    <p><strong>{t("end_uppercase")}:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
+                <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] mt-[0.3rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-[0.4rem]">
+                    <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">{t("start_uppercase")}:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
+                    <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">{t("end_uppercase")}:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
                 </div>
             )}
 
-            <div className="quotation-summary">
-                <p>{t("total_products")}: <strong>{products.length}</strong></p>
-                {hasSubmittedBids && (<span className="single-proposal-submitted">{t("single_proposal_already_submitted")}</span>)}
-                {timeRemaining && <p>{t("time_remaining")}: {timeRemaining}</p>}
+            <div className="flex items-center justify-between gap-4 w-full bg-[var(--color-surface-0)] px-4 py-[0.88rem] border border-[var(--color-border)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] mb-[1.1rem] max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-3">
+                <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">{t("total_products")}: <strong>{products.length}</strong></p>
+                {hasSubmittedBids && <span className="text-[0.875rem] font-semibold text-[var(--color-success-strong)]">{t("single_proposal_already_submitted")}</span>}
+                {timeRemaining && <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">{t("time_remaining")}: {timeRemaining}</p>}
             </div>
 
-            <div className="single-proposal-card">
+            <div className="w-full bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] p-4">
                 {hasSubmittedBids ? (
-                    <>
-                        <div className="proposal-review-table-wrapper">
-                            <table className="proposal-review-table">
-                                <thead>
-                                    <tr>
-                                        <th>{t("single_proposal_col_product")}</th>
-                                        <th className="proposal-review-num">{t("single_proposal_col_brand")}</th>
-                                        <th className="proposal-review-num">{t("single_proposal_col_qty")}</th>
-                                        <th className="proposal-review-num">{t("single_proposal_col_unit_price")}</th>
-                                        <th className="proposal-review-num">{t("single_proposal_col_total")}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {products.map(product => {
-                                        const unitPrice = numericPricesByProductId[product.productId] ?? 0
-                                        const total = unitPrice * Number(product.quantity)
+                    <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+                        <table className="w-full border-collapse text-[0.875rem]">
+                            <thead>
+                                <tr>
+                                    <th className={thCls}>{t("single_proposal_col_product")}</th>
+                                    <th className={thNumCls}>{t("single_proposal_col_brand")}</th>
+                                    <th className={thNumCls}>{t("single_proposal_col_qty")}</th>
+                                    <th className={thNumCls}>{t("single_proposal_col_unit_price")}</th>
+                                    <th className={thNumCls}>{t("single_proposal_col_total")}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {products.map(product => {
+                                    const unitPrice = numericPricesByProductId[product.productId] ?? 0
+                                    const total = unitPrice * Number(product.quantity)
 
-                                        if(unitPrice > 0) {
-                                            return (
-                                                <tr key={product.productId}>
-                                                    <td>{product.productName}</td>
-                                                    {product.brand === null || product.brand === "" ? <td className="proposal-review-num proposal-review-dash">—</td> : <td className="proposal-review-num">{product.brand}</td>}
-                                                    <td className="proposal-review-num">{product.quantity} UN</td>
-                                                    <td className="proposal-review-num">{formatMoney(unitPrice, i18n.language)}</td>
-                                                    <td className="proposal-review-num proposal-review-total">{formatMoney(total, i18n.language)}</td>
-                                                </tr>
-                                            )
-                                        }
-
+                                    if(unitPrice > 0) {
                                         return (
-                                            <tr key={product.productId} className="proposal-review-row-skipped">
-                                                <td>
-                                                    <span>{product.productName}</span>
-                                                    <span className="proposal-review-no-price-badge">{t("single_proposal_no_price_badge")}</span>
-                                                </td>
-                                                {product.brand === null || product.brand === "" ? <td className="proposal-review-num proposal-review-dash">—</td> : <td className="proposal-review-num">{product.brand}</td>}
-                                                <td className="proposal-review-num">{product.quantity} UN</td>
-                                                <td className="proposal-review-num proposal-review-dash">—</td>
-                                                <td className="proposal-review-num proposal-review-dash">—</td>
+                                            <tr key={product.productId}>
+                                                <td className={tdCls}>{product.productName}</td>
+                                                {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
+                                                <td className={tdNumCls}>{product.quantity} UN</td>
+                                                <td className={tdNumCls}>{formatMoney(unitPrice, i18n.language)}</td>
+                                                <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(total, i18n.language)}</td>
                                             </tr>
                                         )
-                                    })}
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colSpan={4} className="proposal-review-grand-label">{t("potencial_value")}</td>
-                                        <td className="proposal-review-num proposal-review-grand-total">{formatMoney(submittedGrandTotal, i18n.language)}</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </>
+                                    }
+
+                                    return (
+                                        <tr key={product.productId} className="opacity-50 [&>td]:bg-[var(--color-surface-1)]">
+                                            <td className={tdCls}>
+                                                <span>{product.productName}</span>
+                                                <span className="inline-flex items-center ml-[0.45rem] px-[0.45rem] py-[0.1rem] text-[0.75rem] font-semibold tracking-[0.02em] text-[var(--color-warning-strong)] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] rounded-full align-middle whitespace-nowrap leading-[1.4]">{t("single_proposal_no_price_badge")}</span>
+                                            </td>
+                                            {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
+                                            <td className={tdNumCls}>{product.quantity} UN</td>
+                                            <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td>
+                                            <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border)]">{t("potencial_value")}</td>
+                                    <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border)]">{formatMoney(submittedGrandTotal, i18n.language)}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 ) : (
                     <>
-                        <p className="single-proposal-helper">{t("single_proposal_instruction")}</p>
+                        <p className="m-0 mb-[0.85rem] text-[0.875rem] text-[var(--color-text-secondary)]">{t("single_proposal_instruction")}</p>
 
-                        <div className="single-proposal-list">
+                        <div className="flex flex-col gap-3">
                             {products.map(product => (
                                 <SingleProposalProductRow
                                     key={product.productId}
@@ -264,11 +268,11 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                             ))}
                         </div>
 
-                        {error && <p className="bid-feedback bid-feedback-error">{error}</p>}
-                        {success && <p className="bid-feedback bid-feedback-success">{success}</p>}
+                        {error && <p className="mt-2 mb-[0.45rem] pt-2 text-center text-[0.875rem] text-[var(--color-danger-strong)]">{error}</p>}
+                        {success && <p className="mt-2 mb-[0.45rem] pt-2 text-center text-[0.875rem] text-[var(--color-success-strong)]">{success}</p>}
 
-                        <div className="single-proposal-actions">
-                            <Button onClick={handleReview} disabled={submitting}>
+                        <div className="mt-[0.8rem] flex justify-end max-[768px]:justify-stretch">
+                            <Button onClick={handleReview} disabled={submitting} className="max-[768px]:w-full">
                                 {submitting ? t("single_proposal_submitting") : t("single_proposal_submit")}
                             </Button>
                         </div>
@@ -281,68 +285,68 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                 onClose={() => setShowConfirmModal(false)}
                 title={t("single_proposal_review_title")}
             >
-                <div className="proposal-review">
-                    <p className="proposal-review-intro">{t("single_proposal_review_intro")}</p>
+                <div className="flex flex-col gap-4">
+                    <p className="m-0 text-[0.875rem] text-[var(--color-text-secondary)]">{t("single_proposal_review_intro")}</p>
 
-                    <div className="proposal-review-table-wrapper">
-                    <table className="proposal-review-table">
-                        <thead>
-                            <tr>
-                                <th>{t("single_proposal_col_product")}</th>
-                                <th className="proposal-review-num">{t("single_proposal_col_brand")}</th>
-                                <th className="proposal-review-num">{t("single_proposal_col_qty")}</th>
-                                <th className="proposal-review-num">{t("single_proposal_col_unit_price")}</th>
-                                <th className="proposal-review-num">{t("single_proposal_col_total")}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {products.filter(p => !existingBidByProductId[p.productId]).map(product => {
-                                const unitPrice = numericPricesByProductId[product.productId] ?? 0
-                                const isSkipped = unitPrice <= 0
+                    <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+                        <table className="w-full border-collapse text-[0.875rem]">
+                            <thead>
+                                <tr>
+                                    <th className={thCls}>{t("single_proposal_col_product")}</th>
+                                    <th className={thNumCls}>{t("single_proposal_col_brand")}</th>
+                                    <th className={thNumCls}>{t("single_proposal_col_qty")}</th>
+                                    <th className={thNumCls}>{t("single_proposal_col_unit_price")}</th>
+                                    <th className={thNumCls}>{t("single_proposal_col_total")}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {products.filter(p => !existingBidByProductId[p.productId]).map(product => {
+                                    const unitPrice = numericPricesByProductId[product.productId] ?? 0
+                                    const isSkipped = unitPrice <= 0
 
-                                if(isSkipped) return (
-                                    <tr key={product.productId} className="proposal-review-row-skipped">
-                                        <td>
-                                            <span className="proposal-review-skipped-name">{product.productName}</span>
-                                            <span className="proposal-review-no-price-badge">{t("single_proposal_no_price_badge")}</span>
-                                        </td>
-                                        {product.brand === null || product.brand === "" ? <td className="proposal-review-num proposal-review-dash">—</td> : <td className="proposal-review-num">{product.brand}</td>}
-                                        <td className="proposal-review-num">{product.quantity} UN</td>
-                                        <td className="proposal-review-num proposal-review-dash">—</td>
-                                        <td className="proposal-review-num proposal-review-dash">—</td>
-                                    </tr>
-                                )
+                                    if(isSkipped) return (
+                                        <tr key={product.productId} className="opacity-50 [&>td]:bg-[var(--color-surface-1)]">
+                                            <td className={tdCls}>
+                                                <span>{product.productName}</span>
+                                                <span className="inline-flex items-center ml-[0.45rem] px-[0.45rem] py-[0.1rem] text-[0.75rem] font-semibold tracking-[0.02em] text-[var(--color-warning-strong)] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] rounded-full align-middle whitespace-nowrap leading-[1.4]">{t("single_proposal_no_price_badge")}</span>
+                                            </td>
+                                            {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
+                                            <td className={tdNumCls}>{product.quantity} UN</td>
+                                            <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td>
+                                            <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td>
+                                        </tr>
+                                    )
 
-                                const total = unitPrice * Number(product.quantity)
-                                return (
-                                    <tr key={product.productId}>
-                                        <td>{product.productName}</td>
-                                        {product.brand === null || product.brand === "" ? <td className="proposal-review-num proposal-review-dash">—</td> : <td className="proposal-review-num">{product.brand}</td>}
-                                        <td className="proposal-review-num">{product.quantity} UN</td>
-                                        <td className="proposal-review-num">{formatMoney(unitPrice, i18n.language)}</td>
-                                        <td className="proposal-review-num proposal-review-total">{formatMoney(total, i18n.language)}</td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colSpan={4} className="proposal-review-grand-label">{t("potencial_value")}</td>
-                                <td className="proposal-review-num proposal-review-grand-total">{formatMoney(grandTotal, i18n.language)}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                                    const total = unitPrice * Number(product.quantity)
+                                    return (
+                                        <tr key={product.productId}>
+                                            <td className={tdCls}>{product.productName}</td>
+                                            {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
+                                            <td className={tdNumCls}>{product.quantity} UN</td>
+                                            <td className={tdNumCls}>{formatMoney(unitPrice, i18n.language)}</td>
+                                            <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(total, i18n.language)}</td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border)]">{t("potencial_value")}</td>
+                                    <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border)]">{formatMoney(grandTotal, i18n.language)}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
 
                     {skippedProducts.length > 0 && (
-                        <p className="proposal-review-skipped-warning">
+                        <p className="m-0 px-[0.8rem] py-[0.6rem] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] rounded-[var(--radius-md)] text-[0.875rem] text-[var(--color-warning-strong)]">
                             {skippedProducts.length === 1
                                 ? t("single_proposal_skipped_warning_one")
                                 : t("single_proposal_skipped_warning_other", { count: skippedProducts.length })}
                         </p>
                     )}
 
-                    <div className="proposal-review-actions">
+                    <div className="flex justify-end gap-[0.6rem] pt-1 max-[768px]:flex-col-reverse max-[768px]:[&>button]:w-full">
                         <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
                             {t("single_proposal_cancel")}
                         </Button>

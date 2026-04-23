@@ -6,7 +6,6 @@ import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
-import '../../components/Auth.css'
 import { ENV } from '../../config/env'
 
 const SupplierAccessToken = () => {
@@ -55,10 +54,10 @@ const SupplierAccessToken = () => {
     if (!companyCnpj) return <p>{t("supplier_login_invalid_url")}</p>
 
     return (
-        <div className="auth-container">
-            <div className="auth-box">
-                <h1>{t("supplier_login_title")}</h1>
-                <p className="auth-subtitle">{t("supplier_login_subtitle")}</p>
+        <div className="auth-bg">
+            <div className="auth-card">
+                <h1 className="text-[1.5rem] mb-1 text-[var(--color-text-strong)] font-extrabold tracking-[-0.03em] leading-[1.15]">{t("supplier_login_title")}</h1>
+                <p className="text-[var(--color-text-muted)] text-[0.875rem] mb-4 mt-1">{t("supplier_login_subtitle")}</p>
                 <form onSubmit={handleLogin}>
                     <Input
                         label={t("supplier_whatsapp")}
@@ -75,7 +74,7 @@ const SupplierAccessToken = () => {
                         placeholder={t("enter_password")}
                     />
                     <Alert message={error} />
-                    {success && <div className="success">{success}</div>}
+                    {success && <div className="text-[var(--color-success)] font-medium mb-[0.875rem] text-[0.875rem]">{success}</div>}
                     <Button type="submit" loading={loading}>{t("login")}</Button>
                 </form>
             </div>

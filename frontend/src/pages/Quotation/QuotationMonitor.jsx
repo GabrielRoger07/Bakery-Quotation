@@ -5,12 +5,12 @@ import useWebSocket from '../../hooks/useWebSocket'
 import { useTranslation } from 'react-i18next'
 import Button from '../../components/Button'
 import Table from '../../components/Table'
-import './QuotationMonitor.css'
 import { ENV } from '../../config/env'
 import { formatCnpj } from '../../utils/formatCnpj'
 import { formatMoney } from '../../utils/formatMoney'
 import { X, FileDown } from 'lucide-react'
 import Cookies from 'js-cookie'
+
 
 const QuotationMonitor = () => {
 
@@ -99,11 +99,11 @@ const QuotationMonitor = () => {
             }
         }
 
-        updateCountdown() 
+        updateCountdown()
 
         const interval = setInterval(updateCountdown, 1000)
         return () => clearInterval(interval)
-        
+
     }, [quotation])
 
     useEffect(() => {
@@ -125,14 +125,14 @@ const QuotationMonitor = () => {
         for(const bid of bids){
             const pricePerUnit = bid.price / (bid.quantity + bid.bonus)
             if(!lowestBids[bid.productId] || pricePerUnit < lowestBids[bid.productId].pricePerUnit){
-                lowestBids[bid.productId] = { 
-                    price: bid.price, 
-                    quantity: bid.quantity, 
-                    bonus: bid.bonus, 
+                lowestBids[bid.productId] = {
+                    price: bid.price,
+                    quantity: bid.quantity,
+                    bonus: bid.bonus,
                     supplierName: bid.supplierName,
                     employerName: bid.employerName,
                     employerCnpj: bid.employerCnpj,
-                    pricePerUnit 
+                    pricePerUnit
                 }
             }
         }
@@ -143,14 +143,14 @@ const QuotationMonitor = () => {
             return prev.map(p => {
                 const lowest = lowestBids[p.productId]
                 return lowest ? {
-                    ...p, 
-                    lowestBid: lowest.price, 
-                    bonus: lowest.bonus, 
+                    ...p,
+                    lowestBid: lowest.price,
+                    bonus: lowest.bonus,
                     pricePerUnit: lowest.pricePerUnit,
                     supplierName: lowest.supplierName || "-",
                     employerName: lowest.employerName || "-",
                     employerCnpj: lowest.employerCnpj || "-"
-                } : 
+                } :
                 {
                     ...p,
                     lowestBid: null,
@@ -169,11 +169,11 @@ const QuotationMonitor = () => {
         const pricePerUnit = bid.price / (bid.quantity + bid.bonus)
 
         setBids(prev => [bid, ...prev])
-        setProducts(prev => 
-            prev.map(p => 
-                p.productId === bid.productId 
+        setProducts(prev =>
+            prev.map(p =>
+                p.productId === bid.productId
                     ? {
-                        ...p, 
+                        ...p,
                         ...( !p.pricePerUnit || pricePerUnit < p.pricePerUnit
                             ? {
                                 lowestBid: bid.price,
@@ -184,7 +184,7 @@ const QuotationMonitor = () => {
                                 employerCnpj: bid.employerCnpj
                             } : {}
                         )
-                    } 
+                    }
                     : p
                 )
             )
@@ -194,10 +194,8 @@ const QuotationMonitor = () => {
 
     const productColumns = useMemo(() => [
         {key: "productName", label: t("product")},
-        // {key: "productBarCodeNumber", label: t("barcode_number")},
         {key: "quantity", label: t("quantity")},
         {key: "brand", label: t("brand")},
-        // {key: "bonus", label: t("bonus")},
         {key: "lowestBid", label: t("lowest_bid")},
         {key: "pricePerUnit", label: t("price_per_unit")},
         {key: "supplierName", label: t("supplier")},
@@ -207,9 +205,7 @@ const QuotationMonitor = () => {
 
     const bidColumns = useMemo(() => [
         {key: "productName", label: t("product")},
-        // {key: "productBarCodeNumber", label: t("barcode_number")},
         {key: "quantity", label: t("quantity")},
-        // {key: "bonus", label: t("bonus")},
         {key: "supplierName", label: t("supplier")},
         {key: "employerName", label: t("company")},
         {key: "employerCnpj", label: t("company_cnpj")},
@@ -285,17 +281,26 @@ const QuotationMonitor = () => {
         return result
     }, [bids, filteredProducts, appliedBidSearch])
 
+    const segBtnCls = (active) => [
+        'px-3 py-[0.4rem] text-[0.875rem] font-medium font-sans border-none cursor-pointer whitespace-nowrap transition-[background-color,color] duration-[160ms] not-last:border-r not-last:border-[var(--color-border)]',
+        active
+            ? 'bg-[var(--color-accent)] text-white'
+            : 'bg-[var(--color-surface-0)] text-[var(--color-text-neutral)] hover:bg-[var(--color-surface-1)]',
+    ].join(' ')
+
     const filterToolbar = useMemo(() => (
         <>
-            <div className="search-select-wrapper">
-                <select value={searchField} onChange={e => setSearchField(e.target.value)} className="custom-select">
+            <div className="relative">
+                <select value={searchField} onChange={e => setSearchField(e.target.value)} className="toolbar-select">
                     <option value="">{t("select_field")}</option>
                     <option value="productName">{t("product_name")}</option>
                     <option value="supplierName">{t("supplier_name_label")}</option>
                     <option value="employerName">{t("employer_name")}</option>
                     <option value="employerCnpj">{t("employer_cnpj")}</option>
                 </select>
-                <span className="select-arrow"></span>
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </span>
             </div>
             <input
                 type="text"
@@ -305,10 +310,10 @@ const QuotationMonitor = () => {
                 placeholder={t("enter_search")}
                 onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
             />
-            <div className="segmented-control">
-                <button className={`segmented-btn${bidFilter === "all" ? " segmented-active" : ""}`} onClick={() => setBidFilter("all")}>{t("filter_all")}</button>
-                <button className={`segmented-btn${bidFilter === "with" ? " segmented-active" : ""}`} onClick={() => setBidFilter("with")}>{t("filter_with_bids")}</button>
-                <button className={`segmented-btn${bidFilter === "without" ? " segmented-active" : ""}`} onClick={() => setBidFilter("without")}>{t("filter_without_bids")}</button>
+            <div className="flex border border-[var(--color-border)] rounded-[var(--radius-md)] overflow-hidden">
+                <button className={segBtnCls(bidFilter === "all")} onClick={() => setBidFilter("all")}>{t("filter_all")}</button>
+                <button className={segBtnCls(bidFilter === "with")} onClick={() => setBidFilter("with")}>{t("filter_with_bids")}</button>
+                <button className={segBtnCls(bidFilter === "without")} onClick={() => setBidFilter("without")}>{t("filter_without_bids")}</button>
             </div>
             <Button onClick={handleSearch}>{t("search_button")}</Button>
             {(appliedSearch.word || bidFilter !== "all") && (
@@ -319,15 +324,17 @@ const QuotationMonitor = () => {
 
     const bidFilterToolbar = useMemo(() => (
         <>
-            <div className="search-select-wrapper">
-                <select value={bidSearchField} onChange={e => setBidSearchField(e.target.value)} className="custom-select">
+            <div className="relative">
+                <select value={bidSearchField} onChange={e => setBidSearchField(e.target.value)} className="toolbar-select">
                     <option value="">{t("select_field")}</option>
                     <option value="productName">{t("product_name")}</option>
                     <option value="supplierName">{t("supplier_name_label")}</option>
                     <option value="employerName">{t("employer_name")}</option>
                     <option value="employerCnpj">{t("employer_cnpj")}</option>
                 </select>
-                <span className="select-arrow"></span>
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </span>
             </div>
             <input
                 type="text"
@@ -363,12 +370,14 @@ const QuotationMonitor = () => {
         const isLowest = lowest && b.price === lowest
 
         return {
-            ...b, 
-            price: formatMoney(b.price, i18n.language), 
+            ...b,
+            price: formatMoney(b.price, i18n.language),
             pricePerUnit: formatMoney((b.price) / (b.quantity + b.bonus), i18n.language),
             employerCnpj: b.employerCnpj ? formatCnpj(b.employerCnpj) : "-",
             createdAt: new Date(b.createdAt).toLocaleString(),
-            status: isLowest ? <span className="text-success">{t("lowest")}</span> : <span className="text-danger">{t("outbid")}</span>
+            status: isLowest
+                ? <span className="text-[var(--color-success)] font-semibold">{t("lowest")}</span>
+                : <span className="text-[var(--color-danger)] font-semibold">{t("outbid")}</span>
         }
     })
 
@@ -397,13 +406,20 @@ const QuotationMonitor = () => {
     if(!quotation) return <p>{t("loading_message")}</p>
 
     return (
-        <div className="page-container quotation-monitor-container">
-            <div className={`monitor-header${stats.status === 'Closed' ? ' monitor-header--with-action' : ''}`}>
+        <div className="page-wrapper text-[var(--color-text-primary)]">
+            {/* Header */}
+            <div className={`grid items-center w-full mb-[1.125rem] ${stats.status === 'Closed' ? 'grid-cols-[auto_1fr_auto] max-[768px]:grid-cols-[auto_1fr_auto] max-[768px]:grid-rows-[auto_auto] max-[768px]:gap-x-2 max-[768px]:gap-y-4' : 'grid-cols-[auto_1fr_auto]'}`}>
                 <Button onClick={() => navigate(-1)}>{t("back_button")}</Button>
-                <h2>{t("monitoring_quotation")} #{quotation.quotationId}</h2>
-                <div className="header-action-slot">
+                <h2 className={`m-0 text-center text-[1.25rem] font-bold text-[var(--color-text-strong)] tracking-[-0.02em] max-[768px]:text-[1.125rem] ${stats.status === 'Closed' ? 'max-[768px]:col-span-full max-[768px]:row-start-2' : ''}`}>
+                    {t("monitoring_quotation")} #{quotation.quotationId}
+                </h2>
+                <div className="flex justify-end min-w-0">
                     {stats.status === 'Closed' && (
-                        <Button onClick={handlePrintPdf} variant="success" className="export-report-btn">
+                        <Button
+                            onClick={handlePrintPdf}
+                            variant="success"
+                            className="flex items-center gap-[0.375rem] whitespace-nowrap [animation:exportAppear_0.3s_ease]"
+                        >
                             <FileDown size={16} />
                             {t("export_report_button")}
                         </Button>
@@ -411,43 +427,51 @@ const QuotationMonitor = () => {
                 </div>
             </div>
 
-            {quotation && (
-            <div className="quotation-info">
-                <p><strong>{t("start_uppercase")}:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
-                <p><strong>{t("end_uppercase")}:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
-            </div>
-            )}
-            
-            <div className="monitor-stats">
-                <div>Status: {stats.status === 'Active' ? t("quotation_active") : stats.status === 'Scheduled' ? t("quotation_scheduled") : t("quotation_closed")}</div>
-                {(stats.status === 'Active' || stats.status === 'Scheduled') && <div>{t("time_remaining")}: {stats.timeRemaining}</div>}
-                <div>{t("total_bids")}: {stats.totalBids}</div>
-                <div>{t("navbar_suppliers")}: {stats.uniqueSuppliers}</div>
-                <div>{t("products_with_bids")}: {stats.productsWithBids.length}/{products.length}</div>
-                <div className="total-highlight"><strong>Total:</strong> {formattedTotalEstimated}</div>
+            {/* Quotation info */}
+            <div className="flex justify-center items-center gap-6 bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[1.125rem] py-3 rounded-[var(--radius-lg)] mb-4 text-[0.875rem] text-[var(--color-text-neutral)] w-full max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-[0.375rem]">
+                <p className="m-0"><strong>{t("start_uppercase")}:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
+                <p className="m-0"><strong>{t("end_uppercase")}:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
             </div>
 
-            <div className="monitor-sections">
-                    <Table
-                        title={t("products_title_list")}
-                        columns={productColumns}
-                        data={formattedProducts}
-                        loading={false}
-                        emptyMessage={t("empty_products_quotation")}
-                        toolbar={filterToolbar}
-                        filterActive={appliedSearch.word !== "" || bidFilter !== "all"}
-                    />
-
-                    <Table
-                        title={t("bids_title_list")}
-                        columns={bidColumns}
-                        data={formattedBids}
-                        loading={false}
-                        emptyMessage={t("empty_bids_quotation")}
-                        toolbar={bidFilterToolbar}
-                        filterActive={appliedBidSearch.word !== ""}
-                    />
+            {/* Stats grid */}
+            <div className="grid grid-cols-6 gap-3 bg-[var(--color-surface-0)] w-full px-[1.125rem] py-[1.125rem] rounded-[var(--radius-xl)] border border-[var(--color-border)] [box-shadow:var(--shadow-card-soft)] mb-[1.375rem] text-center max-[1080px]:grid-cols-3 max-[768px]:grid-cols-2 max-[520px]:grid-cols-1">
+                {[
+                    { label: `Status: ${stats.status === 'Active' ? t("quotation_active") : stats.status === 'Scheduled' ? t("quotation_scheduled") : t("quotation_closed")}` },
+                    ...(stats.status === 'Active' || stats.status === 'Scheduled' ? [{ label: `${t("time_remaining")}: ${stats.timeRemaining}` }] : []),
+                    { label: `${t("total_bids")}: ${stats.totalBids}` },
+                    { label: `${t("navbar_suppliers")}: ${stats.uniqueSuppliers}` },
+                    { label: `${t("products_with_bids")}: ${stats.productsWithBids.length}/${products.length}` },
+                    { label: `Total: ${formattedTotalEstimated}`, highlight: true },
+                ].map((item, i) => (
+                    <div key={i} className={`rounded-[var(--radius-lg)] border px-2 py-[0.875rem] text-[1rem] font-semibold flex items-center justify-center text-center min-h-[4.5rem] transition-[transform,box-shadow] duration-[160ms] hover:-translate-y-[2px] hover:[box-shadow:var(--shadow-sm)] ${item.highlight ? 'bg-[var(--color-highlight-lighter)] border-[var(--color-highlight-border)] text-[var(--color-accent)] font-bold text-[1.125rem]' : 'bg-[var(--color-surface-1)] border-[var(--color-border-lighter)] text-[var(--color-text-neutral-strong)]'}`}>
+                        {item.label}
+                    </div>
+                ))}
             </div>
+
+            {/* Tables */}
+            <div className="flex flex-col items-center w-full gap-1">
+                <Table
+                    title={t("products_title_list")}
+                    columns={productColumns}
+                    data={formattedProducts}
+                    loading={false}
+                    emptyMessage={t("empty_products_quotation")}
+                    toolbar={filterToolbar}
+                    filterActive={appliedSearch.word !== "" || bidFilter !== "all"}
+                />
+
+                <Table
+                    title={t("bids_title_list")}
+                    columns={bidColumns}
+                    data={formattedBids}
+                    loading={false}
+                    emptyMessage={t("empty_bids_quotation")}
+                    toolbar={bidFilterToolbar}
+                    filterActive={appliedBidSearch.word !== ""}
+                />
+            </div>
+
         </div>
     )
 }

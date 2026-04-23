@@ -5,7 +5,6 @@ import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
-import '../../components/Auth.css'
 import useCharLimit from '../../hooks/useCharLimit'
 import usePhoneMask from '../../hooks/usePhoneMask'
 import useCnpjMask from '../../hooks/useCnpjMask'
@@ -71,61 +70,46 @@ const CompanyCreate = () => {
     }
 
     return (
-        <div className="auth-container">
-            <div className="auth-box">
-                <h1>{t("create_company")}</h1>
+        <div className="auth-bg">
+            <div className="auth-card">
+                <h1 className="text-[1.5rem] mb-1 text-[var(--color-text-strong)] font-extrabold tracking-[-0.03em] leading-[1.15]">{t("create_company")}</h1>
                 <form onSubmit={handleCreateCompany}>
                     <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} onBlur={handleCnpjBlur} placeholder={t("enter_cnpj")} isInvalid={isCnpjInvalid} required />
-                    {isCnpjInvalid && <div className="warning">{t("invalid_cnpj")}</div>}
+                    {isCnpjInvalid && <div className="text-[var(--color-danger-strong)] text-[0.8125rem] font-medium -mt-1 mb-[0.625rem]">{t("invalid_cnpj")}</div>}
 
                     <Input label={t("company_name")} type="text" value={companyName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder={t("enter_company_name")} isInvalid={isNameInvalid} required />
                     {nameWarning && (
-                        <div className="warning">
-                            {nameWarning.type === "too_short" &&
-                                t("char_limit_too_short", { min: nameWarning.min, field: t(nameWarning.fieldName) })
-                            }
-
-                            {nameWarning.type === "too_long" &&
-                                t("char_limit_too_long", { max: nameWarning.max, field: t(nameWarning.fieldName) })
-                            }
+                        <div className="text-[var(--color-danger-strong)] text-[0.8125rem] font-medium -mt-1 mb-[0.625rem]">
+                            {nameWarning.type === "too_short" && t("char_limit_too_short", { min: nameWarning.min, field: t(nameWarning.fieldName) })}
+                            {nameWarning.type === "too_long" && t("char_limit_too_long", { max: nameWarning.max, field: t(nameWarning.fieldName) })}
                         </div>
                     )}
 
                     <Input label={t("company_email")} type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder={t("enter_company_email")} isInvalid={isEmailInvalid} required />
                     {emailWarning && (
-                        <div className="warning">
-                            {emailWarning.type === "too_short" &&
-                                t("char_limit_too_short", { min: emailWarning.min, field: t(emailWarning.fieldName) })
-                            }
-
-                            {emailWarning.type === "too_long" &&
-                                t("char_limit_too_long", { max: emailWarning.max, field: t(emailWarning.fieldName) })
-                            }
+                        <div className="text-[var(--color-danger-strong)] text-[0.8125rem] font-medium -mt-1 mb-[0.625rem]">
+                            {emailWarning.type === "too_short" && t("char_limit_too_short", { min: emailWarning.min, field: t(emailWarning.fieldName) })}
+                            {emailWarning.type === "too_long" && t("char_limit_too_long", { max: emailWarning.max, field: t(emailWarning.fieldName) })}
                         </div>
                     )}
 
                     <Input label={t("company_whatsapp")} type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder={t("enter_company_whatsapp")} isInvalid={isWhatsappInvalid} required />
-                    {isWhatsappInvalid && <div className="warning">{t("invalid_whatsapp")}</div>}
+                    {isWhatsappInvalid && <div className="text-[var(--color-danger-strong)] text-[0.8125rem] font-medium -mt-1 mb-[0.625rem]">{t("invalid_whatsapp")}</div>}
 
                     <Input label={t("company_password")} type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder={t("enter_company_password")} isInvalid={isPasswordInvalid} required />
                     {passwordWarning && (
-                        <div className="warning">
-                            {passwordWarning.type === "too_short" &&
-                                t("char_limit_too_short", { min: passwordWarning.min, field: t(passwordWarning.fieldName) })
-                            }
-
-                            {passwordWarning.type === "too_long" &&
-                                t("char_limit_too_long", { max: passwordWarning.max, field: t(passwordWarning.fieldName) })
-                            }
+                        <div className="text-[var(--color-danger-strong)] text-[0.8125rem] font-medium -mt-1 mb-[0.625rem]">
+                            {passwordWarning.type === "too_short" && t("char_limit_too_short", { min: passwordWarning.min, field: t(passwordWarning.fieldName) })}
+                            {passwordWarning.type === "too_long" && t("char_limit_too_long", { max: passwordWarning.max, field: t(passwordWarning.fieldName) })}
                         </div>
                     )}
 
                     <Alert message={error} />
-                    {success && <div className="success">{success}</div>}
+                    {success && <div className="text-[var(--color-success)] font-medium mb-[0.875rem] text-[0.875rem]">{success}</div>}
                     <Button type="submit" disabled={isDisabled}>{t("create_company")}</Button>
                 </form>
-                <p>
-                    <Link to="/login">{t("already_have_account")}</Link>
+                <p className="mt-5 mb-0 text-[0.875rem] text-[var(--color-text-muted)]">
+                    <Link to="/login" className="text-[var(--color-accent)] no-underline font-semibold hover:underline">{t("already_have_account")}</Link>
                 </p>
             </div>
         </div>

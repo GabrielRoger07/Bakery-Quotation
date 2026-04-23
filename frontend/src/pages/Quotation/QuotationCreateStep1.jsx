@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
@@ -13,13 +13,7 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
     const [localIsAuction, setLocalIsAuction] = useState(typeof isAuction === "boolean" ? isAuction : false)
     const [localError, setLocalError] = useState("")
 
-    useEffect(() => {
-        setLocalStart(start)
-        setLocalEnd(end)
-        setLocalIsAuction(typeof isAuction === "boolean" ? isAuction : false)
-    }, [start, end, isAuction])
-
-    const handleNextClick = () => {
+const handleNextClick = () => {
         onChange("start", localStart)
         onChange("end", localEnd)
         onChange("isAuction", localIsAuction)
@@ -55,7 +49,7 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
 
     const modeCardCls = (selected) => [
         'border-[1.5px] rounded-[var(--radius-md)] p-4 cursor-pointer relative transition-[background-color,border-color,box-shadow] duration-[160ms]',
-        selected ? 'border-[var(--color-accent)] bg-[rgba(109,40,217,0.04)] [box-shadow:0_0_0_1px_var(--color-accent)]' : 'border-[var(--color-border)] hover:bg-[var(--color-surface-1)]',
+        selected ? 'border-[var(--color-accent)] bg-[var(--color-selected-card-bg)] [box-shadow:0_0_0_1px_var(--color-accent)]' : 'border-[var(--color-border)] hover:bg-[var(--color-surface-1)]',
     ].join(' ')
 
     const modeCheckCls = (selected) => [

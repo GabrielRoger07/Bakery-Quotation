@@ -31,6 +31,8 @@
     "navbar_products":  "Produtos",
     "navbar_quotations":  "Cotações",
     "navbar_logout":  "Sair",
+    "navbar_config":  "Config",
+    "language_label":  "Idioma",
     "pagination_previous":  "Anterior",
     "pagination_next":  "Próximo",
     "table_reload":  "Atualizar",

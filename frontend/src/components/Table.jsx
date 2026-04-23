@@ -3,10 +3,6 @@ import { useTranslation } from 'react-i18next'
 import Button from './Button'
 import { Pencil, Trash, Eye, Activity, SlidersHorizontal } from 'lucide-react'
 
-const filterActiveBtnClass = [
-    '!bg-[var(--color-accent)] !border-[var(--color-accent)] !text-white ![box-shadow:var(--shadow-accent)]',
-    'hover:!bg-[var(--color-accent-hover)] hover:!border-[var(--color-accent-hover)]',
-].join(' ')
 
 const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload, onMonitor, onSort, sortField, sortDirection, toolbar, filterActive = false }) => {
     const { t } = useTranslation()
@@ -19,13 +15,13 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                 <h1 className="m-0 text-[1.125rem] text-[var(--color-text-strong)] font-bold tracking-[-0.02em]">{title}</h1>
                 <div className="flex items-center gap-2 max-[768px]:w-full max-[768px]:justify-start max-[768px]:flex-wrap">
                     {loading && (
-                        <div className="w-[0.9375rem] h-[0.9375rem] border-2 border-[rgba(255,255,255,0.3)] border-t-white rounded-full [animation:spin_0.65s_linear_infinite] mr-1" />
+                        <div className="w-[0.9375rem] h-[0.9375rem] border-2 border-[var(--color-border-spinner)] border-t-[var(--color-accent)] rounded-full [animation:spin_0.65s_linear_infinite] mr-1" />
                     )}
                     {toolbar && (
                         <div className="relative inline-flex">
                             <Button
-                                variant="secondary"
-                                className={`!p-[0.4375rem] !min-w-[2.375rem] !min-h-[2.375rem] flex items-center justify-center text-[var(--color-accent)] ${toolbarOpen ? filterActiveBtnClass : ''}`}
+                                variant={toolbarOpen ? 'primary' : 'secondary'}
+                                className="!p-[0.4375rem] !min-w-[2.375rem] !min-h-[2.375rem] flex items-center justify-center"
                                 onClick={() => setToolbarOpen(prev => !prev)}
                             >
                                 <SlidersHorizontal size={16} />
@@ -64,7 +60,7 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                                     <th
                                         key={col.key}
                                         onClick={() => onSort && onSort(col.key)}
-                                        className="sticky top-0 z-[1] bg-[var(--color-accent)] text-[rgba(255,255,255,0.92)] text-left px-4 py-3 font-semibold text-[0.8125rem] uppercase tracking-[0.07em] border-r border-[rgba(255,255,255,0.15)] whitespace-nowrap cursor-pointer select-none transition-[background-color,color] duration-[160ms] hover:bg-[var(--color-accent-hover)] hover:text-[rgba(255,255,255,0.95)] last:border-r-0 max-[768px]:px-3 max-[768px]:py-[0.625rem] max-[768px]:text-[0.8125rem]"
+                                        className="sticky top-0 z-[1] bg-[var(--color-accent)] text-[var(--color-on-dark-text)] text-left px-4 py-3 font-semibold text-[0.8125rem] uppercase tracking-[0.07em] border-r border-[var(--color-on-dark-border-light)] whitespace-nowrap cursor-pointer select-none transition-[background-color,color] duration-[160ms] hover:bg-[var(--color-accent-hover)] hover:text-[var(--color-on-dark-text-hover)] last:border-r-0 max-[768px]:px-3 max-[768px]:py-[0.625rem] max-[768px]:text-[0.8125rem]"
                                     >
                                         {col.label}
                                         {sortField === col.key && (
@@ -73,7 +69,7 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                                     </th>
                                 ))}
                                 {(onEdit || onDelete || onView || onMonitor) && (
-                                    <th className="sticky top-0 z-[1] bg-[var(--color-accent)] text-[rgba(255,255,255,0.92)] text-left px-4 py-3 font-semibold text-[0.8125rem] uppercase tracking-[0.07em]">
+                                    <th className="sticky top-0 z-[1] bg-[var(--color-accent)] text-[var(--color-on-dark-text)] text-left px-4 py-3 font-semibold text-[0.8125rem] uppercase tracking-[0.07em]">
                                         <span className="block text-center">{t("table_actions")}</span>
                                     </th>
                                 )}

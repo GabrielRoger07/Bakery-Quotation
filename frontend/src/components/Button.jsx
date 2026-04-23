@@ -3,19 +3,19 @@ const variantClasses = {
     'bg-[var(--color-accent)] border-[var(--color-accent)] text-white',
     '[box-shadow:var(--shadow-accent)]',
     'hover:[&:not(:disabled)]:bg-[var(--color-accent-hover)] hover:[&:not(:disabled)]:border-[var(--color-accent-hover)]',
-    'hover:[&:not(:disabled)]:-translate-y-px hover:[&:not(:disabled)]:[box-shadow:0_6px_20px_rgba(124,58,237,0.4)]',
+    'hover:[&:not(:disabled)]:-translate-y-px hover:[&:not(:disabled)]:[box-shadow:var(--shadow-hover-accent)]',
   ].join(' '),
 
   success: [
     'bg-[var(--color-success-strong)] border-[var(--color-success-strong)] text-white',
     'hover:[&:not(:disabled)]:bg-[var(--color-success)] hover:[&:not(:disabled)]:border-[var(--color-success)]',
-    'hover:[&:not(:disabled)]:-translate-y-px hover:[&:not(:disabled)]:[box-shadow:0_4px_12px_rgba(5,150,105,0.35)]',
+    'hover:[&:not(:disabled)]:-translate-y-px hover:[&:not(:disabled)]:[box-shadow:var(--shadow-hover-success)]',
   ].join(' '),
 
   danger: [
     'bg-[var(--color-danger-strong)] border-[var(--color-danger-strong)] text-white',
     'hover:[&:not(:disabled)]:bg-[var(--color-danger)] hover:[&:not(:disabled)]:border-[var(--color-danger)]',
-    'hover:[&:not(:disabled)]:-translate-y-px hover:[&:not(:disabled)]:[box-shadow:0_4px_12px_rgba(220,38,38,0.35)]',
+    'hover:[&:not(:disabled)]:-translate-y-px hover:[&:not(:disabled)]:[box-shadow:var(--shadow-hover-danger)]',
   ].join(' '),
 
   secondary: [
@@ -23,6 +23,13 @@ const variantClasses = {
     '[box-shadow:var(--shadow-xs)]',
     'hover:[&:not(:disabled)]:bg-[var(--color-surface-2)] hover:[&:not(:disabled)]:text-[var(--color-text-primary)]',
     'hover:[&:not(:disabled)]:-translate-y-px hover:[&:not(:disabled)]:[box-shadow:var(--shadow-sm)]',
+  ].join(' '),
+
+  ghost: [
+    'bg-[var(--color-on-dark-bg-soft)] border-[var(--color-on-dark-border-light)] text-[var(--color-on-dark-text-mid)]',
+    '[box-shadow:none]',
+    'hover:[&:not(:disabled)]:bg-[var(--color-on-dark-bg-hover)] hover:[&:not(:disabled)]:border-[var(--color-on-dark-border-strong)] hover:[&:not(:disabled)]:text-white',
+    'hover:[&:not(:disabled)]:[translate:none] hover:[&:not(:disabled)]:[box-shadow:none]',
   ].join(' '),
 }
 

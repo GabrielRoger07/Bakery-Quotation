@@ -31,6 +31,8 @@
     "navbar_products":  "Products",
     "navbar_quotations":  "Quotations",
     "navbar_logout":  "Logout",
+    "navbar_config":  "Config",
+    "language_label":  "Language",
     "pagination_previous":  "Previous",
     "pagination_next":  "Next",
     "table_reload":  "Reload",

@@ -45,7 +45,7 @@ const CreateProductModalForm = ({ onSuccess, onClose, request }) => {
         }
     }
 
-    const warnCls = "text-[#b45309] text-[0.8125rem] -mt-2 mb-1 px-[0.125rem]"
+    const warnCls = "text-[var(--color-warning-text)] text-[0.8125rem] -mt-2 mb-1 px-[0.125rem]"
 
     return (
         <form className="flex flex-col" onSubmit={handleSubmit}>
@@ -59,7 +59,7 @@ const CreateProductModalForm = ({ onSuccess, onClose, request }) => {
             {productDescription && descWarning && <div className={warnCls}>{descWarning.type === "too_short" ? t("char_limit_too_short", { min: descWarning.min, field: t(descWarning.fieldName) }) : t("char_limit_too_long", { max: descWarning.max, field: t(descWarning.fieldName) })}</div>}
 
             <Alert message={error} />
-            {success && <div className="text-[var(--color-success)] font-medium py-2 px-3 bg-[rgba(5,150,105,0.08)] rounded-[var(--radius-md)] border border-[rgba(5,150,105,0.2)] text-center mt-1 text-[0.875rem]">{success}</div>}
+            {success && <div className="text-[var(--color-success)] font-medium py-2 px-3 bg-[var(--color-success-soft-bg)] rounded-[var(--radius-md)] border border-[var(--color-success-soft-border)] text-center mt-1 text-[0.875rem]">{success}</div>}
 
             <div className="flex justify-end gap-[0.625rem] mt-5 pt-4 border-t border-[var(--color-border)]">
                 <Button type="button" variant="secondary" onClick={onClose} disabled={submitting}>{t("cancel_button")}</Button>
@@ -221,8 +221,11 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         onNext()
     }
 
-    const smallInputCls = 'w-full h-[2.125rem] border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] font-sans px-2 text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] focus:border-[var(--color-accent)] focus:[box-shadow:0_0_0_2px_rgba(109,40,217,0.12)] placeholder:text-[var(--color-text-disabled)]'
-    const iconBtnCls = (color) => `flex-shrink-0 w-[26px] h-[26px] border-none bg-transparent text-[var(--color-text-muted)] cursor-pointer rounded-[var(--radius-sm)] inline-grid place-items-center transition-[background-color,color] duration-[160ms] hover:bg-[${color}] hover:text-[var(--color-${color === 'rgba(220,38,38,0.08)' ? 'danger' : color === 'rgba(91,33,182,0.08)' ? 'accent' : 'success'})]`
+    const smallInputCls = 'w-full h-[2.125rem] border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] font-sans px-2 text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] focus:border-[var(--color-accent)] focus:[box-shadow:0_0_0_2px_var(--color-accent-soft-bg-focus)] placeholder:text-[var(--color-text-disabled)]'
+    const iconBtnBase = 'flex-shrink-0 w-[26px] h-[26px] border-none bg-transparent text-[var(--color-text-muted)] cursor-pointer rounded-[var(--radius-sm)] inline-grid place-items-center transition-[background-color,color] duration-[160ms]'
+    const iconBtnAccent  = `${iconBtnBase} hover:bg-[var(--color-accent-soft-bg)] hover:text-[var(--color-accent)]`
+    const iconBtnDanger  = `${iconBtnBase} hover:bg-[var(--color-danger-soft-bg)] hover:text-[var(--color-danger)]`
+    const iconBtnSuccess = `${iconBtnBase} text-[var(--color-success)] hover:bg-[var(--color-success-soft-bg-2)] hover:text-[var(--color-success-strong)]`
 
     return (
         <div className="max-w-[1000px] mx-auto">
@@ -318,13 +321,13 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                             <td className="w-9 px-3 py-2 border-b border-[var(--color-border-lighter)] text-center align-middle">
                                                 {isEditing ? (
                                                     <div className="flex items-center gap-[0.2rem]">
-                                                        <button onClick={() => handleConfirmEdit(p.productId)} title={t("confirm_button")} className="flex-shrink-0 w-[26px] h-[26px] border-none bg-transparent text-[var(--color-success)] cursor-pointer rounded-[var(--radius-sm)] inline-grid place-items-center transition-[background-color,color] duration-[160ms] hover:bg-[rgba(5,150,105,0.1)] hover:text-[var(--color-success-strong)]"><Check size={14} /></button>
-                                                        <button onClick={handleCancelEdit} title={t("cancel_button")} className="flex-shrink-0 w-[26px] h-[26px] border-none bg-transparent text-[var(--color-text-muted)] cursor-pointer rounded-[var(--radius-sm)] inline-grid place-items-center transition-[background-color,color] duration-[160ms] hover:bg-[rgba(220,38,38,0.08)] hover:text-[var(--color-danger)]"><X size={14} /></button>
+                                                        <button onClick={() => handleConfirmEdit(p.productId)} title={t("confirm_button")} className={iconBtnSuccess}><Check size={14} /></button>
+                                                        <button onClick={handleCancelEdit} title={t("cancel_button")} className={iconBtnDanger}><X size={14} /></button>
                                                     </div>
                                                 ) : (
                                                     <div className="flex items-center gap-[0.2rem]">
-                                                        <button onClick={() => handleStartEdit(p)} title={t("edit_button")} className="flex-shrink-0 w-[26px] h-[26px] border-none bg-transparent text-[var(--color-text-muted)] cursor-pointer rounded-[var(--radius-sm)] inline-grid place-items-center transition-[background-color,color] duration-[160ms] hover:bg-[rgba(91,33,182,0.08)] hover:text-[var(--color-accent)]"><Pencil size={13} /></button>
-                                                        <button onClick={() => handleRemoveProduct(p.productId)} title={t("remove_button")} className="flex-shrink-0 w-[26px] h-[26px] border-none bg-transparent text-[var(--color-text-muted)] cursor-pointer rounded-[var(--radius-sm)] inline-grid place-items-center transition-[background-color,color] duration-[160ms] hover:bg-[rgba(220,38,38,0.08)] hover:text-[var(--color-danger)]"><X size={14} /></button>
+                                                        <button onClick={() => handleStartEdit(p)} title={t("edit_button")} className={iconBtnAccent}><Pencil size={13} /></button>
+                                                        <button onClick={() => handleRemoveProduct(p.productId)} title={t("remove_button")} className={iconBtnDanger}><X size={14} /></button>
                                                     </div>
                                                 )}
                                             </td>

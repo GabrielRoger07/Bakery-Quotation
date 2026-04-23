@@ -2,7 +2,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null
 
     return (
-        <div className="fixed inset-0 bg-[rgba(15,13,35,0.55)] flex justify-center items-center z-[2000] [backdrop-filter:blur(6px)] p-4 max-sm:items-end max-sm:p-2">
+        <div className="fixed inset-0 bg-[var(--color-overlay-dark)] flex justify-center items-center z-[2000] [backdrop-filter:blur(6px)] p-4 max-sm:items-end max-sm:p-2">
             <div
                 className="bg-[var(--color-surface-0)] border border-[var(--color-border)] p-[1.625rem] rounded-[var(--radius-2xl)] w-[min(680px,100%)] [box-shadow:var(--shadow-lg)] [animation:modalIn_0.2s_cubic-bezier(0.16,1,0.3,1)] max-sm:p-[1.125rem_1rem] max-sm:rounded-[var(--radius-xl)_var(--radius-xl)_var(--radius-lg)_var(--radius-lg)] max-sm:w-full"
                 onClick={(e) => e.stopPropagation()}

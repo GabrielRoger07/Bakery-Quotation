@@ -177,7 +177,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                     return (
                         <div key={s.key} className="flex items-center">
                             <div className={`flex items-center gap-[0.4rem] px-2 py-[0.3rem] rounded-[var(--radius-md)] select-none whitespace-nowrap`}>
-                                <div className={`relative w-7 h-7 rounded-full grid place-items-center text-[0.8125rem] font-bold flex-shrink-0 transition-[background-color,color,box-shadow] duration-200 ${isDone ? 'bg-[#16a34a] text-white' : isActive ? 'bg-[var(--color-accent)] text-white [box-shadow:0_0_0_3px_rgba(109,40,217,0.18)]' : 'bg-[var(--color-surface-1)] text-[var(--color-text-muted)]'}`}>
+                                <div className={`relative w-7 h-7 rounded-full grid place-items-center text-[0.8125rem] font-bold flex-shrink-0 transition-[background-color,color,box-shadow] duration-200 ${isDone ? 'bg-[var(--color-success)] text-white' : isActive ? 'bg-[var(--color-accent)] text-white [box-shadow:var(--shadow-step-active)]' : 'bg-[var(--color-surface-1)] text-[var(--color-text-muted)]'}`}>
                                     {isDone ? <Check size={14} strokeWidth={3} /> : s.key}
                                     {badges[s.key] && (
                                         <span className="absolute -top-[5px] -right-[7px] bg-[var(--color-accent)] text-white text-[0.6rem] min-w-4 h-4 rounded-full grid place-items-center font-bold px-[3px] leading-none border-[1.5px] border-[var(--color-surface-0)]">
@@ -190,7 +190,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                                 </span>
                             </div>
                             {i < STEPS.length - 1 && (
-                                <div className={`w-8 h-0.5 mx-[0.15rem] flex-shrink-0 rounded-px transition-[background-color] duration-200 max-[768px]:w-6 ${isDone ? 'bg-[#16a34a]' : 'bg-[var(--color-border)]'}`} />
+                                <div className={`w-8 h-0.5 mx-[0.15rem] flex-shrink-0 rounded-px transition-[background-color] duration-200 max-[768px]:w-6 ${isDone ? 'bg-[var(--color-success)]' : 'bg-[var(--color-border)]'}`} />
                             )}
                         </div>
                     )

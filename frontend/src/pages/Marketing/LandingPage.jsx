@@ -16,10 +16,10 @@ const LandingPage = () => {
     const steps = [t("landing_step_1"), t("landing_step_2"), t("landing_step_3"), t("landing_step_4")]
 
     return (
-        <main className="min-h-screen py-5 px-[1.1rem] pb-12 text-[var(--color-text-primary)] bg-[radial-gradient(ellipse_70%_50%_at_5%_0%,rgba(124,58,237,0.08)_0%,transparent_55%),radial-gradient(ellipse_50%_40%_at_95%_10%,rgba(124,58,237,0.06)_0%,transparent_55%),var(--color-surface-app)] max-sm:px-[0.7rem] max-sm:py-[0.8rem] max-sm:pb-10">
+        <main className="landing-bg min-h-screen py-5 px-[1.1rem] pb-12 text-[var(--color-text-primary)] max-sm:px-[0.7rem] max-sm:py-[0.8rem] max-sm:pb-10">
 
             {/* Topbar */}
-            <header className="max-w-[1180px] mx-auto h-16 border border-[var(--color-border)] rounded-[var(--radius-xl)] bg-[rgba(255,255,255,0.85)] [backdrop-filter:blur(8px)] [box-shadow:var(--shadow-xs)] flex items-center justify-between px-4 max-sm:h-auto max-sm:py-3 max-sm:gap-[0.6rem] max-sm:flex-wrap">
+            <header className="landing-topbar max-w-[1180px] mx-auto h-16 border border-[var(--color-border)] rounded-[var(--radius-xl)] [box-shadow:var(--shadow-xs)] flex items-center justify-between px-4 max-sm:h-auto max-sm:py-3 max-sm:gap-[0.6rem] max-sm:flex-wrap">
                 <div className="inline-flex items-center gap-2 font-bold">
                     <span className="w-[1.9rem] h-[1.9rem] rounded-[0.55rem] grid place-items-center text-white bg-gradient-to-br from-[var(--color-accent-strong)] to-[var(--color-accent)] text-[0.875rem]">BQ</span>
                     <span>{t("landing_brand")}</span>
@@ -111,9 +111,9 @@ const LandingPage = () => {
                 </div>
             </section>
 
-            <section className="landing-section text-center bg-gradient-to-b from-[var(--color-brand)] to-[var(--color-brand-mid)] text-[rgba(255,255,255,0.9)]">
-                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[rgba(255,255,255,0.9)]">{t("landing_final_title")}</h2>
-                <p className="mt-[0.9rem] mb-0 text-[rgba(255,255,255,0.9)] text-base max-w-[72ch] mx-auto">{t("landing_final_text")}</p>
+            <section className="landing-section text-center bg-gradient-to-b from-[var(--color-brand)] to-[var(--color-brand-mid)] text-[var(--color-on-dark-text)]">
+                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-on-dark-text)]">{t("landing_final_title")}</h2>
+                <p className="mt-[0.9rem] mb-0 text-[var(--color-on-dark-text)] text-base max-w-[72ch] mx-auto">{t("landing_final_text")}</p>
                 <div className="mt-[1.3rem] flex items-center flex-wrap gap-[0.65rem] justify-center">
                     <Link to="/register" className="btn-landing-solid">{t("landing_cta_primary")}</Link>
                     <Link to="/login" className="btn-landing-ghost">{t("landing_cta_secondary")}</Link>

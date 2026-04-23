@@ -22,7 +22,7 @@ const LangSwitcher = () => {
     }, [])
 
     const menuBtnBase = 'bg-transparent border-none text-left px-[0.45rem] py-[0.45rem] cursor-pointer text-[0.875rem] text-[var(--color-text-secondary)] rounded-[0.35rem] transition-[background-color,color] duration-[160ms] flex items-center gap-[0.45rem] w-full hover:bg-[var(--color-surface-2)]'
-    const menuBtnActive = '!bg-[var(--color-accent)] !text-white'
+    const menuBtnActive = 'bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)]'
 
     return (
         <div className="relative inline-block" ref={dropdownRef}>

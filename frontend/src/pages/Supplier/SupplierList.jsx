@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useTranslation, Trans } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
 import Modal from '../../components/Modal'
@@ -13,8 +12,6 @@ import { formatCnpj } from '../../utils/formatCnpj'
 import { formatPhone } from '../../utils/formatPhone'
 
 const SupplierList = () => {
-
-    const { t } = useTranslation()
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
 
@@ -40,11 +37,11 @@ const SupplierList = () => {
     const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
 
     const columns = [
-        { key: "supplierName", label: t("supplier_name")},
-        { key: "supplierEmail", label: t("supplier_email")},
-        { key: "supplierWhatsappNumber", label: t("supplier_whatsapp")},
-        { key: "employerName", label: t("employer_name")},
-        { key: "employerCnpj", label: t("employer_cnpj")}
+        { key: "supplierName", label: "Nome"},
+        { key: "supplierEmail", label: "E-mail"},
+        { key: "supplierWhatsappNumber", label: "Whatsapp"},
+        { key: "employerName", label: "Nome da Empresa"},
+        { key: "employerCnpj", label: "CNPJ da Empresa"}
     ]
 
     const openEditModal = (supplier) => {
@@ -84,7 +81,7 @@ const SupplierList = () => {
             fetchSuppliers();
             setError("")
         }else{
-            setError(t("delete_supplier_error"))
+            setError("Erro ao remover fornecedor. Por favor tente novamente.")
         }
         closeModals()
     }
@@ -132,12 +129,12 @@ const SupplierList = () => {
         <>
             <div className="relative">
                 <select value={searchField} onChange={(e) => setSearchField(e.target.value)} className="toolbar-select">
-                    <option value="">{t("select_field")}</option>
-                    <option value="supplierName">{t("supplier_name")}</option>
-                    <option value="supplierEmail">{t("supplier_email")}</option>
-                    <option value="supplierWhatsappNumber">{t("supplier_whatsapp")}</option>
-                    <option value="employerName">{t("employer_name")}</option>
-                    <option value="employerCnpj">{t("employer_cnpj")}</option>
+                    <option value="">Selecione</option>
+                    <option value="supplierName">Nome</option>
+                    <option value="supplierEmail">E-mail</option>
+                    <option value="supplierWhatsappNumber">Whatsapp</option>
+                    <option value="employerName">Nome da Empresa</option>
+                    <option value="employerCnpj">CNPJ da Empresa</option>
                 </select>
                 <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -148,12 +145,12 @@ const SupplierList = () => {
                 className="toolbar-input"
                 value={searchWord}
                 onChange={e => setSearchWord(e.target.value)}
-                placeholder={t("enter_search")}
+                placeholder={"Digite o campo"}
                 onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
             />
-            <Button onClick={handleSearch} disabled={loading || !searchField}>{t("search_button")}</Button>
+            <Button onClick={handleSearch} disabled={loading || !searchField}>Buscar</Button>
         </>
-    ), [searchField, searchWord, handleSearch, loading, t])
+    ), [searchField, searchWord, handleSearch, loading])
 
     const formattedSuppliers = suppliers.map((supplier) => ({
         ...supplier,
@@ -164,10 +161,10 @@ const SupplierList = () => {
     return (
         <div className="page-wrapper">
             {error && <Alert message={error}/>}
-            {status === 0 && <Alert message={t("server_internal_error")} />}
+            {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
             <Table
-                title={t("suppliers_title_list")}
+                title={"Fornecedores"}
                 columns={columns}
                 data={formattedSuppliers}
                 idKey="supplierId"
@@ -179,14 +176,14 @@ const SupplierList = () => {
                 onSort={handleColumnSort}
                 sortField={sortField}
                 sortDirection={sortDirection}
-                emptyMessage={t("suppliers_empty")}
+                emptyMessage={"Nenhum fornecedor encontrado."}
                 toolbar={filterToolbar}
                 filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
             />
 
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
-            <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("suppliers_title_edit")}>
+            <Modal isOpen={isEditModalOpen} onClose={closeModals} title={"Editar Fornecedor"}>
                 <SupplierEdit
                     supplier={supplierToEdit}
                     onSave={handleSaveEdit}
@@ -194,21 +191,21 @@ const SupplierList = () => {
                 />
             </Modal>
 
-            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={t("suppliers_title_create")}>
+            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={"Criar Fornecedor"}>
                 <SupplierCreate
                     onSave={handleSaveCreate}
                     onClose={closeModals}
                 />
             </Modal>
 
-            <Modal isOpen={confirmOpen} onClose={closeModals} title={t("confirm_removal")}>
+            <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>
                 <div>
                     <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
-                        <Trans i18nKey="supplier_remove_confirm" values={{supplier: supplierToRemove?.supplierName, employer: supplierToRemove?.employerName}} components={{strong: <strong />}}/>
+                        Tem certeza de que você deseja remover o fornecedor <strong>${supplierToRemove?.supplierName}</strong> da empresa <strong>${supplierToRemove?.employerName}</strong>?",
                     </p>
                     <div className="flex justify-end gap-3">
-                        <Button onClick={closeModals}>{t("cancel_button")}</Button>
-                        <Button onClick={confirmRemove} disabled={loading}>{t("confirm_button")}</Button>
+                        <Button onClick={closeModals}>Cancelar</Button>
+                        <Button onClick={confirmRemove} disabled={loading}>Confirmar</Button>
                     </div>
                 </div>
             </Modal>

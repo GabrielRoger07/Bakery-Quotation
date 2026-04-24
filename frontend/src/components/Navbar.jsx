@@ -1,9 +1,9 @@
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { useTranslation } from "react-i18next";
 import Button from "./Button";
-import LangSwitcher from "./LangSwitcher";
 import MobileMenu from "./MobileMenu";
+import LogoutConfirmModal from "./LogoutConfirmModal";
 
 const navLinkClass = ({ isActive }) =>
     [
@@ -16,10 +16,10 @@ const navLinkClass = ({ isActive }) =>
     ].join(' ')
 
 const Navbar = () => {
-    const { t } = useTranslation()
     const navigate = useNavigate()
+    const [confirmOpen, setConfirmOpen] = useState(false)
 
-    const logout = () => {
+    const doLogout = () => {
         Cookies.remove("accessToken")
         navigate("/login")
     }
@@ -28,18 +28,23 @@ const Navbar = () => {
         <>
             <nav className="flex justify-between items-center gap-4 px-6 h-[3.375rem] bg-[var(--color-brand)] border-b border-[var(--color-on-dark-border)] sticky top-0 z-[1000] [box-shadow:var(--shadow-md-strong)] max-[640px]:px-4">
                 <div className="absolute left-1/2 -translate-x-1/2 flex justify-center gap-1 whitespace-nowrap max-[640px]:hidden max-[860px]:gap-0.5">
-                    <NavLink to="/suppliers" className={navLinkClass}>{t("navbar_suppliers")}</NavLink>
-                    <NavLink to="/products" className={navLinkClass}>{t("navbar_products")}</NavLink>
-                    <NavLink to="/quotations" className={navLinkClass}>{t("navbar_quotations")}</NavLink>
+                    <NavLink to="/suppliers" className={navLinkClass}>Fornecedores</NavLink>
+                    <NavLink to="/products" className={navLinkClass}>Produtos</NavLink>
+                    <NavLink to="/quotations" className={navLinkClass}>Cotações</NavLink>
                 </div>
 
                 <div className="flex items-center justify-end gap-[0.625rem] ml-auto max-[640px]:hidden">
-                    <LangSwitcher />
-                    <Button onClick={logout}>{t("navbar_logout")}</Button>
+                    <Button onClick={() => setConfirmOpen(true)}>Sair</Button>
                 </div>
             </nav>
 
-            <MobileMenu onLogout={logout} />
+            <MobileMenu onLogout={() => setConfirmOpen(true)} />
+
+            <LogoutConfirmModal
+                open={confirmOpen}
+                onConfirm={doLogout}
+                onCancel={() => setConfirmOpen(false)}
+            />
         </>
     )
 }

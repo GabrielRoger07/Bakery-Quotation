@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import useCharLimit from '../../hooks/useCharLimit'
 import Button from '../../components/Button'
@@ -11,11 +10,10 @@ import { X, Plus, Package, ChevronDown, Pencil, Check } from 'lucide-react'
 import { ENV } from '../../config/env'
 
 const CreateProductModalForm = ({ onSuccess, onClose, request }) => {
-    const { t } = useTranslation()
 
-    const { value: barcode, onChange: handleBarcodeChange, onBlur: handleBarcodeBlur, warning: barcodeWarning, isInvalid: isBarcodeInvalid } = useCharLimit(13, "barcode_number")
-    const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "product_name")
-    const { value: productDescription, onChange: handleDescChange, onBlur: handleDescBlur, warning: descWarning, isInvalid: isDescInvalid } = useCharLimit(255, "product_description")
+    const { value: barcode, onChange: handleBarcodeChange, onBlur: handleBarcodeBlur, warning: barcodeWarning, isInvalid: isBarcodeInvalid } = useCharLimit(13, "Código do Produto")
+    const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "Nome do Produto")
+    const { value: productDescription, onChange: handleDescChange, onBlur: handleDescBlur, warning: descWarning, isInvalid: isDescInvalid } = useCharLimit(255, "Descrição do Produto")
 
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
@@ -26,7 +24,7 @@ const CreateProductModalForm = ({ onSuccess, onClose, request }) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         if (!barcode || !productName) {
-            setError(t("all_fields_required"))
+            setError("Todos os campos são obrigatórios")
             return
         }
         setError("")
@@ -38,10 +36,10 @@ const CreateProductModalForm = ({ onSuccess, onClose, request }) => {
         })
         setSubmitting(false)
         if (res.ok) {
-            setSuccess(t("product_created_added"))
+            setSuccess("Produto criado! Agora defina a quantidade.")
             setTimeout(() => onSuccess(res.data), 800)
         } else {
-            setError(t("product_created_error"))
+            setError("Não foi possível criar o produto. Por favor tente novamente.")
         }
     }
 
@@ -49,28 +47,27 @@ const CreateProductModalForm = ({ onSuccess, onClose, request }) => {
 
     return (
         <form className="flex flex-col" onSubmit={handleSubmit}>
-            <Input label={t("barcode_number")} type="text" name="productBarCodeNumber" value={barcode} onChange={handleBarcodeChange} onBlur={handleBarcodeBlur} placeholder={t("enter_barcode_number")} isInvalid={isBarcodeInvalid} required />
-            {barcodeWarning && <div className={warnCls}>{barcodeWarning.type === "too_short" ? t("char_limit_too_short", { min: barcodeWarning.min, field: t(barcodeWarning.fieldName) }) : t("char_limit_too_long", { max: barcodeWarning.max, field: t(barcodeWarning.fieldName) })}</div>}
+            <Input label={"Código do Produto"} type="text" name="productBarCodeNumber" value={barcode} onChange={handleBarcodeChange} onBlur={handleBarcodeBlur} placeholder={"Digite o código do produto"} isInvalid={isBarcodeInvalid} required />
+            {barcodeWarning && <div className={warnCls}>{barcodeWarning.type === "too_short" ? `É permitido ter no mínimo ${barcodeWarning.min} caracteres para ${barcodeWarning.fieldName}.` : `É permitido ter no máximo ${barcodeWarning.max} caracteres para ${barcodeWarning.fieldName}.`}</div>}
 
-            <Input label={t("product_name")} type="text" name="productName" value={productName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder={t("enter_product_name")} isInvalid={isNameInvalid} required />
-            {nameWarning && <div className={warnCls}>{nameWarning.type === "too_short" ? t("char_limit_too_short", { min: nameWarning.min, field: t(nameWarning.fieldName) }) : t("char_limit_too_long", { max: nameWarning.max, field: t(nameWarning.fieldName) })}</div>}
+            <Input label={"Nome do Produto"} type="text" name="productName" value={productName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder={"Digite o nome do produto"} isInvalid={isNameInvalid} required />
+            {nameWarning && <div className={warnCls}>{nameWarning.type === "too_short" ? `É permitido ter no mínimo ${nameWarning.min} caracteres para ${nameWarning.fieldName}.` : `É permitido ter no máximo ${nameWarning.max} caracteres para ${nameWarning.fieldName}.`}</div>}
 
-            <Input label={t("product_description")} type="text" name="productDescription" value={productDescription} onChange={handleDescChange} onBlur={handleDescBlur} placeholder={t("enter_product_description")} isInvalid={isDescInvalid} />
-            {productDescription && descWarning && <div className={warnCls}>{descWarning.type === "too_short" ? t("char_limit_too_short", { min: descWarning.min, field: t(descWarning.fieldName) }) : t("char_limit_too_long", { max: descWarning.max, field: t(descWarning.fieldName) })}</div>}
+            <Input label={"Descrição do Produto"} type="text" name="productDescription" value={productDescription} onChange={handleDescChange} onBlur={handleDescBlur} placeholder={"Digite a descrição do produto"} isInvalid={isDescInvalid} />
+            {productDescription && descWarning && <div className={warnCls}>{descWarning.type === "too_short" ? `É permitido ter no mínimo ${descWarning.min} caracteres para ${descWarning.fieldName}.` : `É permitido ter no máximo ${descWarning.max} caracteres para ${descWarning.fieldName}.`}</div>}
 
             <Alert message={error} />
             {success && <div className="text-[var(--color-success)] font-medium py-2 px-3 bg-[var(--color-success-soft-bg)] rounded-[var(--radius-md)] border border-[var(--color-success-soft-border)] text-center mt-1 text-[0.875rem]">{success}</div>}
 
             <div className="flex justify-end gap-[0.625rem] mt-5 pt-4 border-t border-[var(--color-border)]">
-                <Button type="button" variant="secondary" onClick={onClose} disabled={submitting}>{t("cancel_button")}</Button>
-                <Button type="submit" disabled={isDisabled}>{submitting ? t("loading_message") : t("create_button")}</Button>
+                <Button type="button" variant="secondary" onClick={onClose} disabled={submitting}>Cancelar</Button>
+                <Button type="submit" disabled={isDisabled}>{submitting ? "Carregando..." : "Criar"}</Button>
             </div>
         </form>
     )
 }
 
 const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, loading }) => {
-    const { t } = useTranslation()
     const { request } = useFetch(ENV.API_BASE_URL)
 
     const [availableProducts, setAvailableProducts] = useState([])
@@ -113,7 +110,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     }, [request, appliedSearch, excludedIds])
 
     useEffect(() => {
-        fetchProducts(0)
+        fetchProducts(0) // eslint-disable-line react-hooks/set-state-in-effect
     }, [fetchProducts])
 
     const handleSearch = useCallback(() => {
@@ -214,7 +211,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
 
     const handleNextClick = () => {
         if (selectedList.length === 0) {
-            setError(t("quotation_step_2_no_selected_product"))
+            setError("Selecione ao menos 1 produto")
             return
         }
         setError("")
@@ -229,19 +226,19 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
 
     return (
         <div className="max-w-[1000px] mx-auto">
-            <h2 className="text-center mt-0 mb-4 text-[var(--color-text-strong)] text-[1.125rem]">{t("quotation_step_2")}</h2>
+            <h2 className="text-center mt-0 mb-4 text-[var(--color-text-strong)] text-[1.125rem]">Etapa 2: Produtos</h2>
 
             {/* Search card */}
             <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
                 <div className="flex gap-2 items-center">
-                    <input type="text" value={searchWord} onChange={e => setSearchWord(e.target.value)} placeholder={t("product_name")} onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
+                    <input type="text" value={searchWord} onChange={e => setSearchWord(e.target.value)} placeholder={"Nome do Produto"} onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
                         className="flex-1 min-w-0 min-h-[2.375rem] px-[0.875rem] py-[0.4375rem] border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] font-sans text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)] placeholder:text-[var(--color-text-disabled)]"
                     />
-                    <Button onClick={handleSearch}>{t("search_button")}</Button>
+                    <Button onClick={handleSearch}>Buscar</Button>
                     {appliedSearch && <Button variant="danger" onClick={handleClearSearch}><X size={16} /></Button>}
                     <div className="w-px h-6 bg-[var(--color-border)] flex-shrink-0 mx-[0.125rem]" />
                     <Button variant="secondary" onClick={() => setShowCreateModal(true)} className="whitespace-nowrap !inline-flex items-center gap-[0.3rem] flex-shrink-0">
-                        <Plus size={15} />{t("create_new_product")}
+                        <Plus size={15} />Novo Produto
                     </Button>
                 </div>
             </div>
@@ -250,7 +247,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
             <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
                 {availableProducts.length === 0 ? (
                     <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">
-                        {appliedSearch ? (<>{t("product_not_found_prompt")}{' '}<button className="bg-none border-none p-0 text-[0.875rem] font-sans font-medium text-[var(--color-accent)] cursor-pointer underline underline-offset-[2px] transition-opacity duration-[160ms] hover:opacity-75" onClick={() => setShowCreateModal(true)}>{t("create_product_inline_link")}</button></>) : t("no_products_available")}
+                        {appliedSearch ? (<>{"Produto não encontrado."}{' '}<button className="bg-none border-none p-0 text-[0.875rem] font-sans font-medium text-[var(--color-accent)] cursor-pointer underline underline-offset-[2px] transition-opacity duration-[160ms] hover:opacity-75" onClick={() => setShowCreateModal(true)}>Criar agora</button></>) : "Nenhum produto disponível"}
                     </p>
                 ) : (
                     <div className="border border-[var(--color-border-light)] rounded-[var(--radius-md)] overflow-hidden mb-1">
@@ -269,16 +266,16 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                         <div className="px-3 py-2 pb-3 bg-[var(--color-highlight-lighter)] border-t border-[var(--color-border-lighter)] flex items-end gap-[0.625rem] [animation:step2ExpandIn_0.15s_ease] max-[768px]:flex-col max-[768px]:items-stretch">
                                             <div className="flex gap-2 flex-1">
                                                 <div className="flex flex-col gap-[0.2rem] flex-1">
-                                                    <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">{t("quantity")} *</label>
+                                                    <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Quantidade *</label>
                                                     <input type="number" className={`${smallInputCls} text-center [font-variant-numeric:tabular-nums] appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`} value={pendingQty} onChange={e => setPendingQty(e.target.value)} onKeyDown={e => { if (['-','e','E'].includes(e.key)) e.preventDefault(); if (e.key === "Enter") handleAddProduct(p) }} onFocus={e => e.target.select()} placeholder="0" min="0" autoFocus />
                                                 </div>
                                                 <div className="flex flex-col gap-[0.2rem] flex-1">
-                                                    <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">{t("brand")}</label>
-                                                    <input type="text" className={smallInputCls} value={pendingBrand} onChange={e => setPendingBrand(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleAddProduct(p) }} placeholder={t("brand")} />
+                                                    <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Marca</label>
+                                                    <input type="text" className={smallInputCls} value={pendingBrand} onChange={e => setPendingBrand(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleAddProduct(p) }} placeholder={"Marca"} />
                                                 </div>
                                             </div>
                                             <Button onClick={() => handleAddProduct(p)} disabled={!pendingQty || Number(pendingQty) <= 0} className="flex-shrink-0 flex items-center gap-[0.3rem] whitespace-nowrap">
-                                                <Plus size={15} />{t("add_button")}
+                                                <Plus size={15} />Adicionar
                                             </Button>
                                         </div>
                                     )}
@@ -292,16 +289,16 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
             {/* Selected products */}
             <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
                 <h4 className="m-0 mb-[0.6rem] text-[var(--color-text-secondary)] text-[0.9375rem] flex items-center gap-[0.4rem]">
-                    <Package size={16} />{t("products_added")} ({selectedList.length})
+                    <Package size={16} />Produtos Adicionados ({selectedList.length})
                 </h4>
                 {selectedList.length === 0 ? (
-                    <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">{t("no_products_added")}</p>
+                    <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">Nenhum produto adicionado</p>
                 ) : (
                     <div className="overflow-x-auto border border-[var(--color-border-light)] rounded-[var(--radius-md)]">
                         <table className="w-full border-collapse">
                             <thead>
                                 <tr>
-                                    {[t("product_name"), t("quantity"), t("brand"), ""].map((h, i) => (
+                                    {["Nome do Produto", "Quantidade", "Marca", ""].map((h, i) => (
                                         <th key={i} className={`bg-[var(--color-surface-2)] text-left px-3 py-2 text-[0.6875rem] font-bold text-[var(--color-text-muted)] uppercase tracking-[0.06em] border-b border-[var(--color-border-light)] ${i === 1 ? 'text-center' : ''}`}>{h}</th>
                                     ))}
                                 </tr>
@@ -316,18 +313,18 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                                 {isEditing ? <input type="number" className={`w-[70px] ${smallInputCls} text-center [font-variant-numeric:tabular-nums] appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none`} value={editQty} onChange={e => setEditQty(e.target.value)} onKeyDown={e => { if (['-','e','E'].includes(e.key)) e.preventDefault(); if (e.key === "Enter") handleConfirmEdit(p.productId); if (e.key === "Escape") handleCancelEdit() }} onFocus={e => e.target.select()} min="1" autoFocus /> : <span className="font-bold [font-variant-numeric:tabular-nums] text-[var(--color-text-primary)]">{p.quantity} UN</span>}
                                             </td>
                                             <td className="px-3 py-2 border-b border-[var(--color-border-lighter)] text-[0.875rem] align-middle">
-                                                {isEditing ? <input type="text" className={smallInputCls} value={editBrand} onChange={e => setEditBrand(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleConfirmEdit(p.productId); if (e.key === "Escape") handleCancelEdit() }} placeholder={t("brand")} /> : p.brand ? <span className="inline-flex items-center gap-1 text-[var(--color-text-strong)] font-light text-[0.8125rem]">{p.brand}</span> : <span className="text-[var(--color-text-disabled)]">—</span>}
+                                                {isEditing ? <input type="text" className={smallInputCls} value={editBrand} onChange={e => setEditBrand(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleConfirmEdit(p.productId); if (e.key === "Escape") handleCancelEdit() }} placeholder={"Marca"} /> : p.brand ? <span className="inline-flex items-center gap-1 text-[var(--color-text-strong)] font-light text-[0.8125rem]">{p.brand}</span> : <span className="text-[var(--color-text-disabled)]">—</span>}
                                             </td>
                                             <td className="w-9 px-3 py-2 border-b border-[var(--color-border-lighter)] text-center align-middle">
                                                 {isEditing ? (
                                                     <div className="flex items-center gap-[0.2rem]">
-                                                        <button onClick={() => handleConfirmEdit(p.productId)} title={t("confirm_button")} className={iconBtnSuccess}><Check size={14} /></button>
-                                                        <button onClick={handleCancelEdit} title={t("cancel_button")} className={iconBtnDanger}><X size={14} /></button>
+                                                        <button onClick={() => handleConfirmEdit(p.productId)} title={"Confirmar"} className={iconBtnSuccess}><Check size={14} /></button>
+                                                        <button onClick={handleCancelEdit} title={"Cancelar"} className={iconBtnDanger}><X size={14} /></button>
                                                     </div>
                                                 ) : (
                                                     <div className="flex items-center gap-[0.2rem]">
-                                                        <button onClick={() => handleStartEdit(p)} title={t("edit_button")} className={iconBtnAccent}><Pencil size={13} /></button>
-                                                        <button onClick={() => handleRemoveProduct(p.productId)} title={t("remove_button")} className={iconBtnDanger}><X size={14} /></button>
+                                                        <button onClick={() => handleStartEdit(p)} title={"Editar"} className={iconBtnAccent}><Pencil size={13} /></button>
+                                                        <button onClick={() => handleRemoveProduct(p.productId)} title={"Remover"} className={iconBtnDanger}><X size={14} /></button>
                                                     </div>
                                                 )}
                                             </td>
@@ -343,11 +340,11 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
             {error && <Alert message={error} />}
 
             <div className="flex justify-center gap-3 mt-5 max-[768px]:flex-col max-[768px]:gap-[0.65rem]">
-                <Button onClick={onBack} disabled={loading} className="max-[768px]:w-full">{t("back_button")}</Button>
-                <Button onClick={handleNextClick} disabled={loading} className="max-[768px]:w-full">{loading ? t("loading_message") : t("next_button")}</Button>
+                <Button onClick={onBack} disabled={loading} className="max-[768px]:w-full">Voltar</Button>
+                <Button onClick={handleNextClick} disabled={loading} className="max-[768px]:w-full">{loading ? "Carregando..." : "Próximo"}</Button>
             </div>
 
-            <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title={t("create_product_modal_title")}>
+            <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title={"Criar Novo Produto"}>
                 <CreateProductModalForm onSuccess={handleNewProductCreated} onClose={() => setShowCreateModal(false)} request={request} />
             </Modal>
         </div>

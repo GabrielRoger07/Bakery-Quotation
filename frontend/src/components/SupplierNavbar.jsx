@@ -1,15 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
-import { useTranslation } from 'react-i18next'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Button from './Button'
-import LangSwitcher from './LangSwitcher'
 import { decodeJwt } from '../utils/decodeJwt'
 import SupplierMobileMenu from './SupplierMobileMenu'
+import LogoutConfirmModal from './LogoutConfirmModal'
 
 const SupplierNavbar = () => {
-    const { t } = useTranslation()
     const navigate = useNavigate()
+    const [confirmOpen, setConfirmOpen] = useState(false)
 
     const supplierName = useMemo(() => {
         const token = Cookies.get("supplierAccessToken")
@@ -20,7 +19,7 @@ const SupplierNavbar = () => {
 
     const initial = supplierName ? supplierName.trim().charAt(0).toUpperCase() : '?'
 
-    const logout = () => {
+    const doLogout = () => {
         const cnpj = Cookies.get("supplierCompanyCnpj")
         Cookies.remove("supplierAccessToken")
         Cookies.remove("supplierCompanyCnpj")
@@ -37,7 +36,7 @@ const SupplierNavbar = () => {
                                 {initial}
                             </div>
                             <div className="flex flex-col leading-[1.2]">
-                                <span className="text-[0.625rem] font-medium tracking-[0.06em] uppercase text-[var(--color-on-dark-text-faint)]">{t("supplier_logged_in_as")}</span>
+                                <span className="text-[0.625rem] font-medium tracking-[0.06em] uppercase text-[var(--color-on-dark-text-faint)]">Conectado como</span>
                                 <span className="text-[0.8125rem] font-semibold text-[var(--color-on-dark-text)] max-w-[14rem] overflow-hidden text-ellipsis whitespace-nowrap">{supplierName}</span>
                             </div>
                         </div>
@@ -45,15 +44,20 @@ const SupplierNavbar = () => {
                 </div>
 
                 <div className="flex items-center justify-end gap-[0.625rem] ml-auto max-[640px]:hidden">
-                    <LangSwitcher />
-                    <Button onClick={logout}>{t("navbar_logout")}</Button>
+                    <Button onClick={() => setConfirmOpen(true)}>Sair</Button>
                 </div>
             </nav>
 
             <SupplierMobileMenu
-                onLogout={logout}
+                onLogout={() => setConfirmOpen(true)}
                 supplierName={supplierName}
                 initial={initial}
+            />
+
+            <LogoutConfirmModal
+                open={confirmOpen}
+                onConfirm={doLogout}
+                onCancel={() => setConfirmOpen(false)}
             />
         </>
     )

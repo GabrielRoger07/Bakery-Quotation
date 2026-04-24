@@ -1,17 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 
 const LogoutIcon = () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
         <polyline points="16 17 21 12 16 7" />
         <line x1="21" y1="12" x2="9" y2="12" />
-    </svg>
-)
-
-const CheckIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="20 6 9 17 4 12" />
     </svg>
 )
 
@@ -22,21 +15,9 @@ const ConfigIcon = ({ active }) => (
     </svg>
 )
 
-const SupplierConfigDrawer = ({ open, onClose, onLogout, supplierName, initial }) => {
-    const { i18n, t } = useTranslation()
-    const drawerRef = useRef(null)
-    const [visible, setVisible] = useState(false)
+const SupplierConfigDrawerContent = ({ open, onClose, onLogout, supplierName, initial }) => {
     const [dragY, setDragY] = useState(0)
     const dragStart = useRef(null)
-
-    useEffect(() => {
-        if (open) {
-            setDragY(0)
-            requestAnimationFrame(() => setVisible(true))
-        } else {
-            setVisible(false)
-        }
-    }, [open])
 
     useEffect(() => {
         if (!open) return
@@ -56,11 +37,6 @@ const SupplierConfigDrawer = ({ open, onClose, onLogout, supplierName, initial }
         dragStart.current = null
     }
 
-    if (!open && !visible) return null
-
-    const changeLang = (lang) => { i18n.changeLanguage(lang) }
-    const currentLang = i18n.language?.startsWith('pt') ? 'pt' : 'en'
-
     return (
         <>
             <div
@@ -68,19 +44,19 @@ const SupplierConfigDrawer = ({ open, onClose, onLogout, supplierName, initial }
                 style={{
                     background: 'rgba(15,13,35,0.45)',
                     backdropFilter: 'blur(3px)',
-                    opacity: visible ? 1 : 0,
+                    opacity: open ? 1 : 0,
                     transition: 'opacity 280ms ease',
+                    pointerEvents: open ? 'auto' : 'none',
                 }}
                 onClick={onClose}
             />
             <div
-                ref={drawerRef}
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
                 className="fixed bottom-0 left-0 right-0 z-[1003] bg-[var(--color-brand)] rounded-t-[1.5rem] pb-[calc(4.5rem+env(safe-area-inset-bottom))]"
                 style={{
-                    transform: `translateY(${visible ? dragY + 'px' : '100%'})`,
+                    transform: `translateY(${open ? dragY + 'px' : '100%'})`,
                     transition: dragY > 0 ? 'none' : 'transform 320ms cubic-bezier(0.32,0.72,0,1)',
                     boxShadow: '0 -8px 40px rgba(15,13,35,0.45)',
                     borderTop: '1px solid rgba(255,255,255,0.08)',
@@ -109,7 +85,7 @@ const SupplierConfigDrawer = ({ open, onClose, onLogout, supplierName, initial }
                             </div>
                             <div className="flex flex-col leading-[1.25] overflow-hidden">
                                 <span className="text-[0.625rem] font-medium tracking-[0.07em] uppercase text-[var(--color-on-dark-text-faint)]">
-                                    {t('supplier_logged_in_as')}
+                                    Conectado como
                                 </span>
                                 <span className="text-[0.9rem] font-semibold text-[var(--color-on-dark-text)] truncate">
                                     {supplierName}
@@ -118,54 +94,13 @@ const SupplierConfigDrawer = ({ open, onClose, onLogout, supplierName, initial }
                         </div>
                     )}
 
-                    <p className="text-[0.6875rem] font-semibold tracking-[0.1em] uppercase text-[var(--color-on-dark-text-muted)] px-1 mb-2">
-                        {t('language_label') || 'Idioma'}
-                    </p>
-
-                    <div className="flex flex-col gap-1 mb-5">
-                        <button
-                            onClick={() => changeLang('pt')}
-                            className="flex items-center gap-3 px-3 py-3 rounded-[var(--radius-md)] transition-[background-color] duration-[160ms] text-left w-full"
-                            style={{
-                                background: currentLang === 'pt' ? 'rgba(91,33,182,0.25)' : 'transparent',
-                                border: currentLang === 'pt' ? '1px solid rgba(139,92,246,0.4)' : '1px solid transparent',
-                            }}
-                        >
-                            <span className="fi fi-br text-lg" />
-                            <span className="flex-1 text-[0.9375rem] font-medium text-[var(--color-on-dark-text)]">
-                                {t('language_portuguese')}
-                            </span>
-                            {currentLang === 'pt' && (
-                                <span className="text-[var(--color-accent-light)]"><CheckIcon /></span>
-                            )}
-                        </button>
-                        <button
-                            onClick={() => changeLang('en')}
-                            className="flex items-center gap-3 px-3 py-3 rounded-[var(--radius-md)] transition-[background-color] duration-[160ms] text-left w-full"
-                            style={{
-                                background: currentLang === 'en' ? 'rgba(91,33,182,0.25)' : 'transparent',
-                                border: currentLang === 'en' ? '1px solid rgba(139,92,246,0.4)' : '1px solid transparent',
-                            }}
-                        >
-                            <span className="fi fi-us text-lg" />
-                            <span className="flex-1 text-[0.9375rem] font-medium text-[var(--color-on-dark-text)]">
-                                {t('language_english')}
-                            </span>
-                            {currentLang === 'en' && (
-                                <span className="text-[var(--color-accent-light)]"><CheckIcon /></span>
-                            )}
-                        </button>
-                    </div>
-
-                    <div className="h-px bg-[var(--color-on-dark-border-soft)] mb-4" />
-
                     <button
                         onClick={onLogout}
                         className="flex items-center gap-3 px-3 py-3 rounded-[var(--radius-md)] w-full text-left transition-[background-color] duration-[160ms] hover:bg-[rgba(220,38,38,0.12)]"
                         style={{ color: '#f87171' }}
                     >
                         <LogoutIcon />
-                        <span className="text-[0.9375rem] font-medium">{t('navbar_logout')}</span>
+                        <span className="text-[0.9375rem] font-medium">Sair</span>
                     </button>
                 </div>
             </div>
@@ -173,8 +108,16 @@ const SupplierConfigDrawer = ({ open, onClose, onLogout, supplierName, initial }
     )
 }
 
+const SupplierConfigDrawer = ({ open, onClose, onLogout, supplierName, initial }) => {
+    const [everOpened, setEverOpened] = useState(open)
+
+    if (open && !everOpened) setEverOpened(true)
+
+    if (!everOpened) return null
+    return <SupplierConfigDrawerContent open={open} onClose={onClose} onLogout={onLogout} supplierName={supplierName} initial={initial} />
+}
+
 const SupplierMobileMenu = ({ onLogout, supplierName, initial }) => {
-    const { t } = useTranslation()
     const [configOpen, setConfigOpen] = useState(false)
 
     return (
@@ -225,7 +168,7 @@ const SupplierMobileMenu = ({ onLogout, supplierName, initial }) => {
                         )}
                         <ConfigIcon active={configOpen} />
                         <span className="text-[0.65rem] font-medium tracking-[0.02em] leading-none" style={{ fontWeight: configOpen ? 600 : 400 }}>
-                            {t('navbar_config') || 'Config'}
+                            Config
                         </span>
                     </button>
                 </div>

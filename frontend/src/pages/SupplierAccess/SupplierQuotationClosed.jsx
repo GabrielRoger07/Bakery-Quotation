@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { useTranslation } from "react-i18next"
 import useFetch from "../../hooks/useFetch"
 import { ENV } from "../../config/env"
 import Button from "../../components/Button"
@@ -13,7 +12,6 @@ const tdNumCls = `${tdCls} text-right whitespace-nowrap`
 
 const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
-    const { t, i18n } = useTranslation()
     const { request } = useFetch(ENV.API_BASE_URL)
 
     const [products, setProducts] = useState([])
@@ -27,7 +25,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
             const resProducts = await request("GET", `/contains/${quotation.quotationId}`)
             if(!resProducts.ok) {
-                setError(t("load_products_failed"))
+                setError("Falha em carregar produtos")
                 setLoading(false)
                 return
             }
@@ -50,11 +48,11 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
         }
 
         fetchFinalResults()
-    }, [quotation.quotationId, request, t])
+    }, [quotation.quotationId, request])
 
     const winningItems = useMemo(() => {
         return Object.entries(lowestBids)
-        .filter(([_, bid]) => bid && bid.participationId === participationId)
+        .filter(([, bid]) => bid && bid.participationId === participationId)
         .map(([productId, bid]) => {
             const product = products.find(p => p.productId === Number(productId))
             const pricePerUnit = bid.price / (bid.quantity + bid.bonus)
@@ -87,42 +85,42 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
         URL.revokeObjectURL(url)
     }, [participationId])
 
-    if (loading) return <p>{t("loading_message")}</p>
+    if (loading) return <p>Carregando...</p>
     if (error) return <p>{error}</p>
 
     return (
         <div className="page-wrapper text-[var(--color-text-primary)]">
             <h2 className="text-[var(--color-text-strong)] text-[1.25rem] m-0">
-                {t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotation.quotationId}
+                Cotação {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotation.quotationId}
             </h2>
-            <h3 className="text-[var(--color-text-secondary)] mt-1 mb-4">{t("quotation_closed")}</h3>
+            <h3 className="text-[var(--color-text-secondary)] mt-1 mb-4">Fechado</h3>
 
             <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-[0.4rem]">
                 <p className="m-0 text-[1rem]">
-                    <strong className="text-[1.125rem] text-[var(--color-text-strong)]">{t("start_uppercase")}:</strong>{" "}
+                    <strong className="text-[1.125rem] text-[var(--color-text-strong)]">Início:</strong>{" "}
                     {new Date(quotation.quotationStart).toLocaleString()}
                 </p>
                 <p className="m-0 text-[1rem]">
-                    <strong className="text-[1.125rem] text-[var(--color-text-strong)]">{t("end_uppercase")}:</strong>{" "}
+                    <strong className="text-[1.125rem] text-[var(--color-text-strong)]">Fim:</strong>{" "}
                     {new Date(quotation.quotationEnd).toLocaleString()}
                 </p>
             </div>
 
             <div className="flex flex-col items-center flex-grow justify-center pb-60 w-full">
                 {winningItems.length === 0 ? (
-                    <p className="text-[var(--color-text-secondary)]">{t("not_won_bids")}</p>
+                    <p className="text-[var(--color-text-secondary)]">Você não venceu nenhum lance</p>
                 ) : (
                     <div className="w-full bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] p-4">
-                        <h4 className="m-0 mb-3 text-[var(--color-text-strong)]">{t("winning_bids")}</h4>
+                        <h4 className="m-0 mb-3 text-[var(--color-text-strong)]">Lances Vencedores</h4>
                         <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
                             <table className="w-full border-collapse text-[0.875rem]">
                                 <thead>
                                     <tr>
-                                        <th className={thCls}>{t("product")}</th>
-                                        <th className={thCls}>{t("brand")}</th>
-                                        <th className={thNumCls}>{t("quantity")}</th>
-                                        <th className={thNumCls}>{t("price_per_unit")}</th>
-                                        <th className={thNumCls}>{t("total_price")}</th>
+                                        <th className={thCls}>Produto</th>
+                                        <th className={thCls}>Marca</th>
+                                        <th className={thNumCls}>Quantidade</th>
+                                        <th className={thNumCls}>Preço Unitário</th>
+                                        <th className={thNumCls}>Preço Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -133,15 +131,15 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                                                 {item.brand ? item.brand : <span className="text-[var(--color-text-muted)] italic">-</span>}
                                             </td>
                                             <td className={tdNumCls}>{item.quantity} UN</td>
-                                            <td className={tdNumCls}>{formatMoney(item.pricePerUnit, i18n.language)}/UN</td>
-                                            <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(item.price, i18n.language)}</td>
+                                            <td className={tdNumCls}>{formatMoney(item.pricePerUnit)}/UN</td>
+                                            <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(item.price)}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border)]">{t("total_value")}</td>
-                                        <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border)]">{formatMoney(totalWinningValue, i18n.language)}</td>
+                                        <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border)]">Valor Total</td>
+                                        <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border)]">{formatMoney(totalWinningValue)}</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -151,7 +149,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
                 <div className="mt-6">
                     <Button onClick={handleDownloadReport}>
-                        {t("export_report_button")}
+                        Exportar Relatório
                     </Button>
                 </div>
             </div>

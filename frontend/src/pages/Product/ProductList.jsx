@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useTranslation, Trans } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
 import Modal from '../../components/Modal'
@@ -12,8 +11,6 @@ import { ENV } from '../../config/env'
 
 
 const ProductList = () => {
-
-    const { t } = useTranslation()
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
 
@@ -38,9 +35,9 @@ const ProductList = () => {
     const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
 
     const columns = [
-        { key: "productBarCodeNumber", label: t("barcode_number") },
-        { key: "productName", label: t("product_name") },
-        { key: "productDescription", label: t("product_description")},
+        { key: "productBarCodeNumber", label: "Código do Produto" },
+        { key: "productName", label: "Nome do Produto" },
+        { key: "productDescription", label: "Descrição do Produto" },
     ]
 
     const openEditModal = (product) => {
@@ -79,7 +76,7 @@ const ProductList = () => {
             fetchProducts(currentPage)
             setError("")
         }else{
-            setError(t("delete_product_error"))
+            setError("Erro ao remover produto. Por favor tente novamente.")
         }
         closeModals()
     }
@@ -130,20 +127,20 @@ const ProductList = () => {
                 className="toolbar-input"
                 value={searchWord}
                 onChange={e => setSearchWord(e.target.value)}
-                placeholder={t("product_name")}
+                placeholder={"Nome do Produto"}
                 onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
             />
-            <Button onClick={handleSearch} disabled={loading}>{t("search_button")}</Button>
+            <Button onClick={handleSearch} disabled={loading}>Buscar</Button>
         </>
-    ), [searchWord, handleSearch, loading, t])
+    ), [searchWord, handleSearch, loading])
 
     return (
         <div className="page-wrapper">
             {error && <Alert message={error}/>}
-            {status === 0 && <Alert message={t("server_internal_error")} />}
+            {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
             <Table
-                title={t("products_title_list")}
+                title={"Produtos"}
                 columns={columns}
                 data={products}
                 idKey="productId"
@@ -155,14 +152,14 @@ const ProductList = () => {
                 onSort={handleColumnSort}
                 sortField={sortField}
                 sortDirection={sortDirection}
-                emptyMessage={t("products_empty")}
+                emptyMessage={"Nenhum produto encontrado."}
                 toolbar={filterToolbar}
                 filterActive={appliedSearch.word !== ""}
             />
 
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
 
-            <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("products_title_edit")}>
+            <Modal isOpen={isEditModalOpen} onClose={closeModals} title={"Editar Produto"}>
                 <ProductEdit
                     product={productToEdit}
                     onSave={handleSaveEdit}
@@ -170,21 +167,21 @@ const ProductList = () => {
                 />
             </Modal>
 
-            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={t("products_title_create")}>
+            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={"Criar Produto"}>
                 <ProductCreate
                     onSave={handleSaveCreate}
                     onClose={closeModals}
                 />
             </Modal>
 
-            <Modal isOpen={confirmOpen} onClose={closeModals} title={t("confirm_removal")}>
+            <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>
                 <div>
                     <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
-                        <Trans i18nKey="product_remove_confirm" values={{product: productToRemove?.productName}} components={{strong: <strong />}}/>
+                        Tem certeza de que você deseja remover o produto <strong>${productToRemove?.productName}</strong>?
                     </p>
                     <div className="flex justify-end gap-3">
-                        <Button onClick={closeModals}>{t("cancel_button")}</Button>
-                        <Button onClick={confirmRemove} disabled={loading}>{t("confirm_button")}</Button>
+                        <Button onClick={closeModals}>Cancelar</Button>
+                        <Button onClick={confirmRemove} disabled={loading}>Confirmar</Button>
                     </div>
                 </div>
             </Modal>

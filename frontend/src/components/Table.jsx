@@ -1,11 +1,9 @@
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import Button from './Button'
 import { Pencil, Trash, Eye, Activity, SlidersHorizontal } from 'lucide-react'
 
 
 const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload, onMonitor, onSort, sortField, sortDirection, toolbar, filterActive = false }) => {
-    const { t } = useTranslation()
     const [toolbarOpen, setToolbarOpen] = useState(false)
 
     return (
@@ -31,8 +29,8 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                             )}
                         </div>
                     )}
-                    {onReload && <Button onClick={onReload}>{t("table_reload")}</Button>}
-                    {onAdd && <Button onClick={onAdd}>{t("table_add")}</Button>}
+                    {onReload && <Button onClick={onReload}>Atualizar</Button>}
+                    {onAdd && <Button onClick={onAdd}>Adicionar</Button>}
                 </div>
             </div>
 
@@ -70,7 +68,7 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                                 ))}
                                 {(onEdit || onDelete || onView || onMonitor) && (
                                     <th className="sticky top-0 z-[1] bg-[var(--color-accent)] text-[var(--color-on-dark-text)] text-left px-4 py-3 font-semibold text-[0.8125rem] uppercase tracking-[0.07em]">
-                                        <span className="block text-center">{t("table_actions")}</span>
+                                        <span className="block text-center">Ações</span>
                                     </th>
                                 )}
                             </tr>

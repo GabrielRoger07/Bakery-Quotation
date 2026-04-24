@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import Button from '../../components/Button'
 import { formatDateTime } from '../../utils/formatDateTime'
 import { CalendarClock, CalendarCheck, Gavel, Package, Users, Tag } from 'lucide-react'
@@ -18,39 +17,38 @@ const MetaCard = ({ icon, label, value, sub }) => (
 )
 
 const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => {
-    const { t } = useTranslation()
 
     const start = useMemo(() => formatDateTime(quotationData.start), [quotationData.start])
     const end = useMemo(() => formatDateTime(quotationData.end), [quotationData.end])
 
     const modeLabel = quotationData.isAuction
-        ? t("quotation_mode_auction")
-        : t("quotation_mode_single_proposal")
+        ? "Leilão"
+        : "Proposta única"
 
     return (
         <div className="max-w-[1000px] mx-auto">
-            <h2 className="text-center mt-0 mb-4 text-[var(--color-text-strong)] text-[1.125rem]">{t("quotation_step_4")}</h2>
+            <h2 className="text-center mt-0 mb-4 text-[var(--color-text-strong)] text-[1.125rem]">Etapa 4: Revisão</h2>
 
             <div className="p-[0.125rem]">
                 {/* Meta grid */}
                 <div className="grid grid-cols-3 gap-[0.625rem] mb-6 max-[560px]:grid-cols-1 max-[560px]:gap-2">
-                    <MetaCard icon={<CalendarClock size={18} />} label={t("quotation_start")} value={start ? start.date : "-"} sub={start?.time} />
-                    <MetaCard icon={<CalendarCheck size={18} />} label={t("quotation_end")} value={end ? end.date : "-"} sub={end?.time} />
-                    <MetaCard icon={<Gavel size={18} />} label={t("quotation_mode")} value={modeLabel} />
+                    <MetaCard icon={<CalendarClock size={18} />} label={"Início"} value={start ? start.date : "-"} sub={start?.time} />
+                    <MetaCard icon={<CalendarCheck size={18} />} label={"Fim"} value={end ? end.date : "-"} sub={end?.time} />
+                    <MetaCard icon={<Gavel size={18} />} label={"Modo da Cotação"} value={modeLabel} />
                 </div>
 
                 {/* Products section */}
                 <div className="mt-5">
                     <div className="flex items-center gap-[0.4rem] mb-[0.625rem] text-[var(--color-text-muted)]">
                         <Package size={16} />
-                        <h4 className="m-0 text-[var(--color-text-muted)] text-[0.75rem] font-bold uppercase tracking-[0.07em]">{t("products_title_list")}</h4>
+                        <h4 className="m-0 text-[var(--color-text-muted)] text-[0.75rem] font-bold uppercase tracking-[0.07em]">Produtos</h4>
                         <span className="text-[0.625rem] font-bold text-[var(--color-accent)] bg-[var(--color-highlight-soft)] px-2 py-[0.125rem] rounded-full tracking-[0.02em]">
                             {quotationData.products.length}
                         </span>
                     </div>
                     {quotationData.products.length === 0 ? (
                         <p className="m-0 p-4 text-center text-[var(--color-text-muted)] text-[0.875rem] bg-[var(--color-surface-1)] border border-dashed border-[var(--color-border)] rounded-[var(--radius-lg)]">
-                            {t("no_products_added")}
+                            Nenhum produto adicionado
                         </p>
                     ) : (
                         <ul className="list-none m-0 pl-0 border border-[var(--color-border-light)] rounded-[var(--radius-lg)] overflow-hidden">
@@ -65,7 +63,7 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
                                                 <Tag size={12} />{p.brand}
                                             </span>
                                         ) : (
-                                            <span className="text-[var(--color-text-muted)] italic font-normal">{t("brand_not_defined")}</span>
+                                            <span className="text-[var(--color-text-muted)] italic font-normal">Marca não definida</span>
                                         )}
                                     </div>
                                 </li>
@@ -78,14 +76,14 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
                 <div className="mt-5">
                     <div className="flex items-center gap-[0.4rem] mb-[0.625rem] text-[var(--color-text-muted)]">
                         <Users size={16} />
-                        <h4 className="m-0 text-[var(--color-text-muted)] text-[0.75rem] font-bold uppercase tracking-[0.07em]">{t("suppliers_title_list")}</h4>
+                        <h4 className="m-0 text-[var(--color-text-muted)] text-[0.75rem] font-bold uppercase tracking-[0.07em]">Fornecedores</h4>
                         <span className="text-[0.625rem] font-bold text-[var(--color-accent)] bg-[var(--color-highlight-soft)] px-2 py-[0.125rem] rounded-full tracking-[0.02em]">
                             {quotationData.suppliers.length}
                         </span>
                     </div>
                     {quotationData.suppliers.length === 0 ? (
                         <p className="m-0 p-4 text-center text-[var(--color-text-muted)] text-[0.875rem] bg-[var(--color-surface-1)] border border-dashed border-[var(--color-border)] rounded-[var(--radius-lg)]">
-                            {t("no_suppliers_added")}
+                            Nenhum fornecedor adicionado
                         </p>
                     ) : (
                         <ul className="list-none m-0 pl-0 border border-[var(--color-border-light)] rounded-[var(--radius-lg)] overflow-hidden">
@@ -106,9 +104,9 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
             </div>
 
             <div className="flex justify-center gap-3 mt-5 max-[768px]:flex-col max-[768px]:gap-[0.65rem]">
-                <Button onClick={onBack} disabled={loading} className="max-[768px]:w-full">{t("back_button")}</Button>
+                <Button onClick={onBack} disabled={loading} className="max-[768px]:w-full">Voltar</Button>
                 <Button onClick={onConfirm} disabled={loading} className="max-[768px]:w-full">
-                    {loading ? t("saving_message") : t("save_button")}
+                    {loading ? "Salvando..." : "Salvar"}
                 </Button>
             </div>
         </div>

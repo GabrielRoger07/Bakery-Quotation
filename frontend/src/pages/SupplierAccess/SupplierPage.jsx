@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import Cookies from 'js-cookie'
 import useFetch from '../../hooks/useFetch'
 import { ENV } from '../../config/env'
@@ -13,7 +12,6 @@ const statusCls = {
 
 const SupplierPage = () => {
 
-    const { t } = useTranslation()
     const { companyCnpj } = useParams()
     const navigate = useNavigate()
     const { request } = useFetch(ENV.API_BASE_URL)
@@ -36,19 +34,19 @@ const SupplierPage = () => {
                 setParticipations(res.data.content)
                 setError("")
             } else if (res.status !== 403) {
-                setError(t("supplier_quotations_load_error"))
+                setError("Erro ao carregar cotações")
             }
             setLoading(false)
         }
 
         fetchParticipations()
-    }, [companyCnpj, navigate, request, t])
+    }, [companyCnpj, navigate, request])
 
     const getStatus = (start, end) => {
         const now = new Date()
-        if (now < new Date(start)) return { label: t("quotation_scheduled"), cls: statusCls.scheduled }
-        if (now > new Date(end)) return { label: t("quotation_closed"), cls: statusCls.closed }
-        return { label: t("quotation_active"), cls: statusCls.active }
+        if (now < new Date(start)) return { label: "Agendado", cls: statusCls.scheduled }
+        if (now > new Date(end)) return { label: "Fechado", cls: statusCls.closed }
+        return { label: "Ativo", cls: statusCls.active }
     }
 
     const handleSelect = (participation) => {
@@ -59,7 +57,7 @@ const SupplierPage = () => {
 
     if (loading) return (
         <div className={containerCls}>
-            <p>{t("loading_message")}</p>
+            <p>Carregando...</p>
         </div>
     )
 
@@ -71,10 +69,10 @@ const SupplierPage = () => {
 
     return (
         <div className={containerCls}>
-            <h2 className="text-[var(--color-text-strong)] text-[1.25rem] m-0 mb-4">{t("supplier_quotations_title")}</h2>
+            <h2 className="text-[var(--color-text-strong)] text-[1.25rem] m-0 mb-4">Suas Cotações</h2>
 
             {participations.length === 0 ? (
-                <p className="text-[var(--color-text-secondary)]">{t("supplier_quotations_empty")}</p>
+                <p className="text-[var(--color-text-secondary)]">Você não participa de nenhuma cotação.</p>
             ) : (
                 <div className="flex flex-col gap-3 w-full max-w-[680px]">
                     {participations.map((p) => {
@@ -87,24 +85,24 @@ const SupplierPage = () => {
                             >
                                 <div className="flex justify-between items-center mb-[0.6rem]">
                                     <span className="font-semibold text-[1rem] text-[var(--color-text-strong)]">
-                                        {t("quotation")} {new Date(p.quotationStart).toLocaleDateString("pt-BR")} - #{p.quotationId}
+                                        Cotação {new Date(p.quotationStart).toLocaleDateString("pt-BR")} - #{p.quotationId}
                                     </span>
                                     <span className={status.cls}>{status.label}</span>
                                 </div>
 
                                 <div className="flex gap-[1.2rem] mb-2 max-[768px]:flex-col max-[768px]:gap-1">
                                     <p className="m-0 text-[0.875rem] text-[var(--color-text-secondary)]">
-                                        <strong className="text-[var(--color-text-strong)]">{t("start_uppercase")}:</strong>{" "}
+                                        <strong className="text-[var(--color-text-strong)]">Início:</strong>{" "}
                                         {new Date(p.quotationStart).toLocaleString()}
                                     </p>
                                     <p className="m-0 text-[0.875rem] text-[var(--color-text-secondary)]">
-                                        <strong className="text-[var(--color-text-strong)]">{t("end_uppercase")}:</strong>{" "}
+                                        <strong className="text-[var(--color-text-strong)]">Fim:</strong>{" "}
                                         {new Date(p.quotationEnd).toLocaleString()}
                                     </p>
                                 </div>
 
                                 <span className="text-[0.875rem] font-medium text-[var(--color-accent)]">
-                                    {t("view")} →
+                                    Visualizar →
                                 </span>
                             </div>
                         )

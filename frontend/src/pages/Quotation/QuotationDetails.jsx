@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Alert from '../../components/Alert'
 import { ENV } from '../../config/env'
@@ -28,7 +27,6 @@ const SectionHeader = ({ icon, label, count }) => (
 )
 
 const QuotationDetails = ({ quotation }) => {
-    const { t } = useTranslation()
     const { request } = useFetch(ENV.API_BASE_URL)
 
     const [products, setProducts] = useState([])
@@ -45,7 +43,7 @@ const QuotationDetails = ({ quotation }) => {
                 setProducts(resProducts.data)
                 setError("")
             }else{
-                setError(t("quotation_fetch_products_fail"))
+                setError("Erro ao buscar produtos")
             }
 
             const resSuppliers = await request("GET", `/participations/quotations/${quotation.quotationId}`)
@@ -54,35 +52,35 @@ const QuotationDetails = ({ quotation }) => {
                 setSuppliers(resSuppliers.data)
                 setError("")
             }else{
-                setError(t("quotation_fetch_suppliers_fail"))
+                setError("Erro ao buscar fornecedores")
             }
         }
 
         load()
-    }, [quotation, request, t])
+    }, [quotation, request])
 
     if(!quotation) return null
 
     const start = formatDateTime(quotation.quotationStart)
     const end = formatDateTime(quotation.quotationEnd)
-    const quotationMode = quotation.isAuction ? t("quotation_mode_auction") : t("quotation_mode_single_proposal")
+    const quotationMode = quotation.isAuction ? "Leilão" : "Proposta única"
 
     return (
         <div className="p-[0.125rem]">
             {error && <Alert message={error}/>}
 
             <div className="grid grid-cols-3 gap-[0.625rem] mb-6 max-[560px]:grid-cols-1 max-[560px]:gap-2">
-                <MetaCard icon={<CalendarClock size={18} />} label={t("quotation_start")} value={start ? start.date : "-"} sub={start?.time} />
-                <MetaCard icon={<CalendarCheck size={18} />} label={t("quotation_end")} value={end ? end.date : "-"} sub={end?.time} />
-                <MetaCard icon={<Gavel size={18} />} label={t("quotation_mode")} value={quotationMode} />
+                <MetaCard icon={<CalendarClock size={18} />} label={"Início"} value={start ? start.date : "-"} sub={start?.time} />
+                <MetaCard icon={<CalendarCheck size={18} />} label={"Fim"} value={end ? end.date : "-"} sub={end?.time} />
+                <MetaCard icon={<Gavel size={18} />} label={"Modo da Cotação"} value={quotationMode} />
             </div>
 
             {/* Products */}
             <div className="mt-5">
-                <SectionHeader icon={<Package size={16} />} label={t("products_title_list")} count={products.length} />
+                <SectionHeader icon={<Package size={16} />} label={"Produtos"} count={products.length} />
                 {products.length === 0 ? (
                     <p className="m-0 p-4 text-center text-[var(--color-text-muted)] text-[0.875rem] bg-[var(--color-surface-1)] border border-dashed border-[var(--color-border)] rounded-[var(--radius-lg)]">
-                        {t("quotation_no_products_linked")}
+                        Nenhum produto atrelado a essa cotação.
                     </p>
                 ) : (
                     <ul className="list-none m-0 pl-0 border border-[var(--color-border-light)] rounded-[var(--radius-lg)] overflow-hidden">
@@ -97,7 +95,7 @@ const QuotationDetails = ({ quotation }) => {
                                             <Tag size={12} />{p.brand}
                                         </span>
                                     ) : (
-                                        <span className="text-[var(--color-text-muted)] italic font-normal">{t("brand_not_defined")}</span>
+                                        <span className="text-[var(--color-text-muted)] italic font-normal">Marca não definida</span>
                                     )}
                                 </div>
                             </li>
@@ -108,10 +106,10 @@ const QuotationDetails = ({ quotation }) => {
 
             {/* Suppliers */}
             <div className="mt-5">
-                <SectionHeader icon={<Users size={16} />} label={t("suppliers_title_list")} count={suppliers.length} />
+                <SectionHeader icon={<Users size={16} />} label={"Fornecedores"} count={suppliers.length} />
                 {suppliers.length === 0 ? (
                     <p className="m-0 p-4 text-center text-[var(--color-text-muted)] text-[0.875rem] bg-[var(--color-surface-1)] border border-dashed border-[var(--color-border)] rounded-[var(--radius-lg)]">
-                        {t("quotation_no_suppliers_linked")}
+                        Nenhum fornecedor atrelado a essa cotação.
                     </p>
                 ) : (
                     <ul className="list-none m-0 pl-0 border border-[var(--color-border-light)] rounded-[var(--radius-lg)] overflow-hidden">

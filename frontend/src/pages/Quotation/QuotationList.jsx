@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useTranslation, Trans } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Modal from '../../components/Modal'
 import Table from '../../components/Table'
@@ -14,8 +13,6 @@ import { ENV } from '../../config/env'
 import { formatDateTime } from '../../utils/formatDateTime'
 
 const QuotationList = () => {
-
-    const { t } = useTranslation()
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate()
@@ -41,10 +38,10 @@ const QuotationList = () => {
     const [sortDirection, setSortDirection] = useState("asc")
 
     const columns = [
-        { key: "quotationId", label: t("quotation_id") },
-        { key: "quotationStartFormatted", label: t("quotation_start_date") },
-        { key: "quotationEndFormatted", label: t("quotation_end_date") },
-        { key: "status", label: t("quotation_status") }
+        { key: "quotationId", label: "ID" },
+        { key: "quotationStartFormatted", label: "Data de Início" },
+        { key: "quotationEndFormatted", label: "Data de Fim" },
+        { key: "status", label: "Status" }
     ]
 
     const sortMap = useMemo(() => ({
@@ -80,7 +77,7 @@ const QuotationList = () => {
     }
 
     const handleSaveEdit = (updatedQuotation) => {
-        const status = new Date(updatedQuotation.quotationStart) > new Date() ? t("quotation_scheduled") : new Date(updatedQuotation.quotationEnd) < new Date() ? t("quotation_closed") : t("quotation_active")
+        const status = new Date(updatedQuotation.quotationStart) > new Date() ? "Agendado" : new Date(updatedQuotation.quotationEnd) < new Date() ? "Fechado" : "Ativo"
         setQuotations((prev) =>
             prev.map((q) => q.quotationId === updatedQuotation.quotationId ? {...updatedQuotation, status} : q)
         )
@@ -107,7 +104,7 @@ const QuotationList = () => {
             fetchQuotations()
             setError("")
         }else{
-            setError(t("delete_quotation_error"))
+            setError("Erro ao remover cotação. Por favor tente novamente.")
         }
         closeModals()
     }
@@ -137,7 +134,7 @@ const QuotationList = () => {
                     quotationStartFormatted: start ? `${start.date} • ${start.time}` : "-",
                     quotationEndFormatted: end ? `${end.date} • ${end.time}` : "-",
                     status:
-                    new Date(q.quotationStart) > new Date() ? t("quotation_scheduled") : new Date(q.quotationEnd) < new Date() ? t("quotation_closed") : t("quotation_active")
+                    new Date(q.quotationStart) > new Date() ? "Agendado" : new Date(q.quotationEnd) < new Date() ? "Fechado" : "Ativo"
                 }
             })
 
@@ -148,7 +145,7 @@ const QuotationList = () => {
             setError(res.data?.message)
         }
         setStatus(res.status)
-    }, [request, sortField, sortDirection, sortMap, t])
+    }, [request, sortField, sortDirection, sortMap])
 
     const handleColumnSort = (columnKey) => {
 
@@ -173,10 +170,10 @@ const QuotationList = () => {
     return (
         <div className="page-wrapper">
             {error && <Alert message={error} />}
-            {status === 0 && <Alert message={t("server_internal_error")} />}
+            {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
             <Table
-                title={t("quotations_title_list")}
+                title={"Cotações"}
                 columns={columns}
                 data={quotations}
                 idKey="quotationId"
@@ -190,12 +187,12 @@ const QuotationList = () => {
                 sortDirection={sortDirection}
                 onView={openDetailsModal}
                 onMonitor={handleMonitor}
-                emptyMessage={t("quotations_empty")}
+                emptyMessage={"Nenhuma cotação encontrada."}
             />
 
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
-            <Modal isOpen={isEditModalOpen} onClose={closeModals} title={t("quotations_title_edit")}>
+            <Modal isOpen={isEditModalOpen} onClose={closeModals} title={"Editar Cotação"}>
                 <QuotationEdit
                     quotation={quotationToEdit}
                     onSave={handleSaveEdit}
@@ -203,30 +200,30 @@ const QuotationList = () => {
                 />
             </Modal>
 
-            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={t("quotations_title_create")}>
+            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={"Criar Cotação"}>
                 <QuotationCreate
                     onSave={handleSaveCreate}
                     onClose={closeModals}
                 />
             </Modal>
 
-            <Modal isOpen={isDetailsModalOpen} onClose={closeModals} title={t("quotations_title_details")}>
+            <Modal isOpen={isDetailsModalOpen} onClose={closeModals} title={"Detalhes da Cotação"}>
                 <QuotationDetails
                     quotation={quotationToView}
                 />
             </Modal>
 
-            <Modal isOpen={confirmOpen} onClose={closeModals} title={t("confirm_removal")}>
+            <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>
                 {cannotDelete ? (
-                    <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-4">{t("quotation_cannot_delete")}</p>
+                    <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-4">Você não pode remover uma cotação que já começou.</p>
                 ) : (
                     <div>
                         <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
-                            <Trans i18nKey="quotation_remove_confirm" values={{quotation: quotationToRemove?.quotationId}} components={{strong: <strong />}}/>
+                            Tem certeza de que você deseja remover a cotação <strong>${quotationToRemove?.quotationId}</strong>?
                         </p>
                         <div className="flex justify-end gap-3">
-                            <Button onClick={closeModals}>{t("cancel_button")}</Button>
-                            <Button onClick={confirmRemove} disabled={loading}>{t("confirm_button")}</Button>
+                            <Button onClick={closeModals}>Cancelar</Button>
+                            <Button onClick={confirmRemove} disabled={loading}>Confirmar</Button>
                         </div>
                     </div>
                 )}

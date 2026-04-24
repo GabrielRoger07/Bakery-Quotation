@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Input from '../../components/Input'
 import Button from '../../components/Button'
@@ -8,7 +7,6 @@ import Pagination from '../../components/Pagination'
 import { ENV } from '../../config/env'
 
 const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, loading }) => {
-    const { t } = useTranslation()
     const { request } = useFetch(ENV.API_BASE_URL)
 
     const [availableSuppliers, setAvailableSuppliers] = useState([])
@@ -44,12 +42,12 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
     }, [request, localSelected, searchField, searchWord])
 
     useEffect(() => {
-        fetchSuppliers(0, "", "")
+        fetchSuppliers(0, "", "") // eslint-disable-line react-hooks/set-state-in-effect
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
-        fetchSuppliers(0)
+        fetchSuppliers(0) // eslint-disable-line react-hooks/set-state-in-effect
     }, [localSelected, fetchSuppliers])
 
     const handleSearchSuppliers = () => {
@@ -59,7 +57,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
 
     const handleAddSupplier = (supplier) => {
         if(localSelected.some(s => s.supplierId === supplier.supplierId)){
-            setError(t("quotation_step_3_supplier_already_added"))
+            setError("Fornecedor já adicionado!")
             return
         }
         setLocalSelected([...localSelected, supplier].sort((a, b) => a.supplierName.localeCompare(b.supplierName)))
@@ -73,7 +71,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
 
     const handleFinishClick = () => {
         if(localSelected.length === 0) {
-            setError(t("quotation_step_3_no_selected_supplier"))
+            setError("Selecione ao menos 1 fornecedor")
             return
         }
 
@@ -84,7 +82,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
 
     return (
         <div className="max-w-[1000px] mx-auto">
-            <h2 className="text-center mt-0 mb-4 text-[var(--color-text-strong)] text-[1.125rem]">{t("quotation_step_3")}</h2>
+            <h2 className="text-center mt-0 mb-4 text-[var(--color-text-strong)] text-[1.125rem]">Etapa 3: Fornecedores</h2>
 
             {/* Search card */}
             <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
@@ -98,12 +96,12 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                             className="toolbar-select w-full"
                             required
                         >
-                            <option value="" disabled>{t("select_field")}</option>
-                            <option value="supplierName">{t("supplier_name")}</option>
-                            <option value="supplierEmail">{t("supplier_email")}</option>
-                            <option value="supplierWhatsappNumber">{t("supplier_whatsapp")}</option>
-                            <option value="employerName">{t("employer_name")}</option>
-                            <option value="employerCnpj">{t("employer_cnpj")}</option>
+                            <option value="" disabled>Selecione</option>
+                            <option value="supplierName">Nome</option>
+                            <option value="supplierEmail">E-mail</option>
+                            <option value="supplierWhatsappNumber">Whatsapp</option>
+                            <option value="employerName">Nome da Empresa</option>
+                            <option value="employerCnpj">CNPJ da Empresa</option>
                         </select>
                         <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -115,18 +113,18 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                             type="text"
                             value={searchWord}
                             onChange={e => setSearchWord(e.target.value)}
-                            placeholder={t("enter_search")}
+                            placeholder={"Digite o campo"}
                         />
                     </div>
 
-                    <Button onClick={handleSearchSuppliers} disabled={loading} className="whitespace-nowrap">{t("search_button")}</Button>
+                    <Button onClick={handleSearchSuppliers} disabled={loading} className="whitespace-nowrap">Buscar</Button>
                 </div>
             </div>
 
             {/* Results card */}
             <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
                 {availableSuppliers.length === 0 ? (
-                    <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">{t("no_suppliers_available")}</p>
+                    <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">Nenhum fornecedor disponível</p>
                 ) : (
                     <div className="border border-[var(--color-border-light)] rounded-[var(--radius-md)] overflow-hidden bg-[var(--color-surface-0)] mb-[0.4rem]">
                         {availableSuppliers.map(s => (
@@ -142,7 +140,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                                 <Button
                                     onClick={() => handleAddSupplier(s)}
                                     disabled={loading}
-                                >{t("table_add")}</Button>
+                                >Adicionar</Button>
                             </div>
                         ))}
                     </div>
@@ -160,11 +158,11 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
             {/* Selected suppliers card */}
             <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
                 <h4 className="m-0 mb-[0.6rem] text-[var(--color-text-secondary)] text-[1rem] font-semibold">
-                    {t("suppliers_added")} ({localSelected.length})
+                    Fornecedores Adicionados ({localSelected.length})
                 </h4>
 
                 {localSelected.length === 0 ? (
-                    <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">{t("no_suppliers_added")}</p>
+                    <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">Nenhum fornecedor adicionado</p>
                 ) : (
                     <ul className="list-none p-0 m-0">
                         {localSelected.map(s => (
@@ -173,7 +171,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                                     <strong className="text-[0.875rem] block text-[var(--color-text-strong)]">{s.supplierName}</strong>
                                     <span className="text-[0.75rem] text-[var(--color-text-muted)]">{s.employerName}</span>
                                 </div>
-                                <Button variant="danger" onClick={() => handleRemoveSupplier(s.supplierId)} disabled={loading}>{t("remove_button")}</Button>
+                                <Button variant="danger" onClick={() => handleRemoveSupplier(s.supplierId)} disabled={loading}>Remover</Button>
                             </li>
                         ))}
                     </ul>
@@ -181,8 +179,8 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
             </div>
 
             <div className="flex justify-center gap-3 mt-5 max-[768px]:flex-col max-[768px]:gap-[0.65rem]">
-                <Button onClick={onBack} disabled={loading} className="max-[768px]:w-full">{t("back_button")}</Button>
-                <Button onClick={handleFinishClick} disabled={loading} className="max-[768px]:w-full">{loading ? t("loading_message") : t("next_button")}</Button>
+                <Button onClick={onBack} disabled={loading} className="max-[768px]:w-full">Voltar</Button>
+                <Button onClick={handleFinishClick} disabled={loading} className="max-[768px]:w-full">{loading ? "Carregando..." : "Próximo"}</Button>
             </div>
         </div>
     )

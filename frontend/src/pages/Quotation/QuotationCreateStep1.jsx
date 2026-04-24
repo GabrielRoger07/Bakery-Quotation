@@ -1,12 +1,9 @@
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import { Gavel, FileText, Check } from 'lucide-react'
 
 const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading }) => {
-
-    const { t } = useTranslation()
 
     const [localStart, setLocalStart] = useState(start || "")
     const [localEnd, setLocalEnd] = useState(end || "")
@@ -19,7 +16,7 @@ const handleNextClick = () => {
         onChange("isAuction", localIsAuction)
 
         if(!localStart || !localEnd) {
-            setLocalError(t("all_fields_required"))
+            setLocalError("Todos os campos são obrigatórios")
             return
         }
 
@@ -28,13 +25,13 @@ const handleNextClick = () => {
         const e = new Date(localEnd)
 
         if(s <= now){
-            setLocalError(t("quotation_start_bigger_now"))
+            setLocalError("Data de início deve ser posterior à data atual")
             return
         } else if(e <= now) {
-            setLocalError(t("quotation_end_lower_now"))
+            setLocalError("Data de fim deve ser posterior à data atual")
             return
         } else if(e <= s){
-            setLocalError(t("quotation_end_lower_start"))
+            setLocalError("Data de fim deve ser posterior à data de início")
             return
         }
 
@@ -59,21 +56,21 @@ const handleNextClick = () => {
 
     return (
         <div className="max-w-[1000px] mx-auto">
-            <h2 className="text-center mt-0 mb-4 text-[var(--color-text-strong)] text-[1.125rem]">{t("quotation_step_1")}</h2>
+            <h2 className="text-center mt-0 mb-4 text-[var(--color-text-strong)] text-[1.125rem]">Etapa 1: Datas da Cotação</h2>
 
             <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] mb-3 [box-shadow:var(--shadow-xs)] overflow-hidden">
                 <div className="px-5 pt-4 pb-[0.6rem] flex flex-col gap-[0.15rem]">
-                    <span className="text-[0.875rem] font-semibold text-[var(--color-text-strong)]">{t("quotation_step_1_subtitle_1")}</span>
-                    <span className="text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.4]">{t("quotation_step_1_subtitle_2")}</span>
+                    <span className="text-[0.875rem] font-semibold text-[var(--color-text-strong)]">Selecione as datas de início e fim da cotação.</span>
+                    <span className="text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.4]">Lembre-se que elas precisam estar no futuro.</span>
                 </div>
                 <div className="px-5 pb-5">
                     <div className="grid grid-cols-2 gap-[0.85rem] max-[768px]:grid-cols-1">
                         <div className="flex flex-col gap-[0.35rem]">
-                            <label className="text-[0.8125rem] font-medium text-[var(--color-text-secondary)]">{t("quotation_start_date")}</label>
+                            <label className="text-[0.8125rem] font-medium text-[var(--color-text-secondary)]">Data de Início</label>
                             <input type="datetime-local" className={inputCls(localError && !localStart)} value={localStart} onChange={e => setLocalStart(e.target.value)} />
                         </div>
                         <div className="flex flex-col gap-[0.35rem]">
-                            <label className="text-[0.8125rem] font-medium text-[var(--color-text-secondary)]">{t("quotation_end_date")}</label>
+                            <label className="text-[0.8125rem] font-medium text-[var(--color-text-secondary)]">Data de Fim</label>
                             <input type="datetime-local" className={inputCls(localError && !localEnd)} value={localEnd} onChange={e => setLocalEnd(e.target.value)} />
                         </div>
                     </div>
@@ -82,13 +79,13 @@ const handleNextClick = () => {
 
             <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] mb-3 [box-shadow:var(--shadow-xs)] overflow-hidden">
                 <div className="px-5 pt-4 pb-[0.6rem] flex flex-col gap-[0.15rem]">
-                    <span className="text-[0.875rem] font-semibold text-[var(--color-text-strong)]">{t("quotation_mode")}</span>
-                    <span className="text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.4]">{t("quotation_mode_help")}</span>
+                    <span className="text-[0.875rem] font-semibold text-[var(--color-text-strong)]">Modo da Cotação</span>
+                    <span className="text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.4]">Escolha como os fornecedores enviarão suas propostas</span>
                 </div>
                 <div className="px-5 pb-5">
                     <div className="grid grid-cols-2 gap-2 max-[768px]:grid-cols-1">
-                        {[{ selected: localIsAuction, set: true, icon: <Gavel size={22} />, title: t("quotation_mode_auction"), desc: t("quotation_mode_auction_desc") },
-                          { selected: !localIsAuction, set: false, icon: <FileText size={22} />, title: t("quotation_mode_single_proposal"), desc: t("quotation_mode_single_proposal_desc") }
+                        {[{ selected: localIsAuction, set: true, icon: <Gavel size={22} />, title: "Leilão", desc: "Fornecedores competem em tempo real enviando lances pelo menor preço" },
+                          { selected: !localIsAuction, set: false, icon: <FileText size={22} />, title: "Proposta única", desc: "Fornecedores enviam apenas uma proposta por item, sem acompanhar lances" }
                         ].map(({ selected, set, icon, title, desc }) => (
                             <div key={title} className={modeCardCls(selected)} onClick={() => setLocalIsAuction(set)}>
                                 <div className={modeCheckCls(selected)}><Check size={11} strokeWidth={3} /></div>
@@ -104,7 +101,7 @@ const handleNextClick = () => {
             {localError && <Alert message={localError} />}
 
             <div className="flex justify-center gap-3 mt-5 max-[768px]:flex-col max-[768px]:gap-[0.65rem]">
-                <Button onClick={handleNextClick} disabled={loading} className="max-[768px]:w-full">{loading ? t("loading_message") : t("next_button")}</Button>
+                <Button onClick={handleNextClick} disabled={loading} className="max-[768px]:w-full">{loading ? "Carregando..." : "Próximo"}</Button>
             </div>
         </div>
     )

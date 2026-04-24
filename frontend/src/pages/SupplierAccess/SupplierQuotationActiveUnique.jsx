@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import { formatMoney } from '../../utils/formatMoney'
 import Button from '../../components/Button'
@@ -15,7 +14,6 @@ const tdCls = "px-[0.6rem] py-[0.55rem] text-[var(--color-text-default)] border-
 const tdNumCls = `${tdCls} text-right whitespace-nowrap`
 
 const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
-    const { t, i18n } = useTranslation()
     const { request } = useFetch(ENV.API_BASE_URL)
     const storageKey = `${DRAFT_KEY_PREFIX}${quotationId}_${participationId}`
 
@@ -42,7 +40,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
             const bidsRes = await request("GET", `/bids/participations/${participationId}`)
 
             if(!quotationRes.ok || !productsRes.ok){
-                setError(t("load_products_failed"))
+                setError("Falha em carregar produtos")
                 setLoading(false)
                 return
             }
@@ -68,7 +66,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
         }
 
         fetchData()
-    }, [participationId, quotationId, request, t, storageKey])
+    }, [participationId, quotationId, request, storageKey])
 
     useEffect(() => {
         if(!quotation) return
@@ -80,7 +78,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
             const diff = end - now
 
             if(diff <= 0){
-                setTimeRemaining(t("quotation_closed"))
+                setTimeRemaining("Fechado")
                 return
             }
 
@@ -95,7 +93,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
         const interval = setInterval(updateCountdown, 1000)
 
         return () => clearInterval(interval)
-    }, [quotation, t])
+    }, [quotation])
 
     const existingBidByProductId = useMemo(() => {
         return existingBids.reduce((acc, bid) => {
@@ -129,7 +127,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
         )
 
         if(validProducts.length === 0){
-            setError(t("single_proposal_no_prices"))
+            setError("Preencha o preço de pelo menos um produto antes de enviar.")
             return
         }
 
@@ -154,7 +152,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
 
         if(!submitRes.ok){
             setSubmitting(false)
-            setError(t("single_proposal_submit_error"))
+            setError("Falha ao enviar a proposta. Verifique os preços e tente novamente.")
             return
         }
 
@@ -163,7 +161,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
 
         localStorage.removeItem(storageKey)
         setSubmitting(false)
-        setSuccess(t("single_proposal_submit_success"))
+        setSuccess("Proposta única enviada com sucesso!")
     }
 
     const grandTotal = useMemo(() => {
@@ -178,27 +176,27 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
         }, 0)
     }, [products, numericPricesByProductId])
 
-    if(loading) return <p>{t("loading_products")}</p>
+    if(loading) return <p>Carregando produtos...</p>
     if(error && !products.length) return <p>{error}</p>
-    if(!products.length) return <p>{t("no_products_quotation")}</p>
+    if(!products.length) return <p>Nenhum produto encontrado para essa cotação</p>
 
     return (
         <div className="page-wrapper text-[var(--color-text-primary)]">
             <h2 className="text-[var(--color-text-strong)] text-[1.25rem] m-0">
-                {t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotationId}
+                Cotação {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotationId}
             </h2>
 
             {quotation && (
                 <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] mt-[0.3rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-[0.4rem]">
-                    <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">{t("start_uppercase")}:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
-                    <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">{t("end_uppercase")}:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
+                    <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">Início:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
+                    <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">Fim:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
                 </div>
             )}
 
             <div className="flex items-center justify-between gap-4 w-full bg-[var(--color-surface-0)] px-4 py-[0.88rem] border border-[var(--color-border)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] mb-[1.1rem] max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-3">
-                <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">{t("total_products")}: <strong>{products.length}</strong></p>
-                {hasSubmittedBids && <span className="text-[0.875rem] font-semibold text-[var(--color-success-strong)]">{t("single_proposal_already_submitted")}</span>}
-                {timeRemaining && <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">{t("time_remaining")}: {timeRemaining}</p>}
+                <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">Total de Produtos: <strong>{products.length}</strong></p>
+                {hasSubmittedBids && <span className="text-[0.875rem] font-semibold text-[var(--color-success-strong)]">Sua proposta já foi enviada para esta cotação.</span>}
+                {timeRemaining && <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">Tempo Restante: {timeRemaining}</p>}
             </div>
 
             <div className="w-full bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] p-4">
@@ -207,11 +205,11 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                         <table className="w-full border-collapse text-[0.875rem]">
                             <thead>
                                 <tr>
-                                    <th className={thCls}>{t("single_proposal_col_product")}</th>
-                                    <th className={thNumCls}>{t("single_proposal_col_brand")}</th>
-                                    <th className={thNumCls}>{t("single_proposal_col_qty")}</th>
-                                    <th className={thNumCls}>{t("single_proposal_col_unit_price")}</th>
-                                    <th className={thNumCls}>{t("single_proposal_col_total")}</th>
+                                    <th className={thCls}>Produto</th>
+                                    <th className={thNumCls}>Marca</th>
+                                    <th className={thNumCls}>Qtd.</th>
+                                    <th className={thNumCls}>Preço unit.</th>
+                                    <th className={thNumCls}>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -225,8 +223,8 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                                 <td className={tdCls}>{product.productName}</td>
                                                 {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
                                                 <td className={tdNumCls}>{product.quantity} UN</td>
-                                                <td className={tdNumCls}>{formatMoney(unitPrice, i18n.language)}</td>
-                                                <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(total, i18n.language)}</td>
+                                                <td className={tdNumCls}>{formatMoney(unitPrice)}</td>
+                                                <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(total)}</td>
                                             </tr>
                                         )
                                     }
@@ -235,7 +233,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                         <tr key={product.productId} className="opacity-50 [&>td]:bg-[var(--color-surface-1)]">
                                             <td className={tdCls}>
                                                 <span>{product.productName}</span>
-                                                <span className="inline-flex items-center ml-[0.45rem] px-[0.45rem] py-[0.1rem] text-[0.75rem] font-semibold tracking-[0.02em] text-[var(--color-warning-strong)] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] rounded-full align-middle whitespace-nowrap leading-[1.4]">{t("single_proposal_no_price_badge")}</span>
+                                                <span className="inline-flex items-center ml-[0.45rem] px-[0.45rem] py-[0.1rem] text-[0.75rem] font-semibold tracking-[0.02em] text-[var(--color-warning-strong)] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] rounded-full align-middle whitespace-nowrap leading-[1.4]">Sem preço</span>
                                             </td>
                                             {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
                                             <td className={tdNumCls}>{product.quantity} UN</td>
@@ -247,15 +245,15 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border)]">{t("potencial_value")}</td>
-                                    <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border)]">{formatMoney(submittedGrandTotal, i18n.language)}</td>
+                                    <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border)]">Valor Potencial</td>
+                                    <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border)]">{formatMoney(submittedGrandTotal)}</td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
                 ) : (
                     <>
-                        <p className="m-0 mb-[0.85rem] text-[0.875rem] text-[var(--color-text-secondary)]">{t("single_proposal_instruction")}</p>
+                        <p className="m-0 mb-[0.85rem] text-[0.875rem] text-[var(--color-text-secondary)]">Defina o preço dos itens que deseja ofertar e envie sua proposta. Itens sem preço não serão incluídos.</p>
 
                         <div className="flex flex-col gap-3">
                             {products.map(product => (
@@ -273,7 +271,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
 
                         <div className="mt-[0.8rem] flex justify-end max-[768px]:justify-stretch">
                             <Button onClick={handleReview} disabled={submitting} className="max-[768px]:w-full">
-                                {submitting ? t("single_proposal_submitting") : t("single_proposal_submit")}
+                                {submitting ? "Enviando proposta..." : "Revisar e enviar proposta"}
                             </Button>
                         </div>
                     </>
@@ -283,20 +281,20 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
             <Modal
                 isOpen={showConfirmModal}
                 onClose={() => setShowConfirmModal(false)}
-                title={t("single_proposal_review_title")}
+                title={"Revisar proposta"}
             >
                 <div className="flex flex-col gap-4">
-                    <p className="m-0 text-[0.875rem] text-[var(--color-text-secondary)]">{t("single_proposal_review_intro")}</p>
+                    <p className="m-0 text-[0.875rem] text-[var(--color-text-secondary)]">Confira os preços antes de confirmar o envio.</p>
 
                     <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
                         <table className="w-full border-collapse text-[0.875rem]">
                             <thead>
                                 <tr>
-                                    <th className={thCls}>{t("single_proposal_col_product")}</th>
-                                    <th className={thNumCls}>{t("single_proposal_col_brand")}</th>
-                                    <th className={thNumCls}>{t("single_proposal_col_qty")}</th>
-                                    <th className={thNumCls}>{t("single_proposal_col_unit_price")}</th>
-                                    <th className={thNumCls}>{t("single_proposal_col_total")}</th>
+                                    <th className={thCls}>Produto</th>
+                                    <th className={thNumCls}>Marca</th>
+                                    <th className={thNumCls}>Qtd.</th>
+                                    <th className={thNumCls}>Preço unit.</th>
+                                    <th className={thNumCls}>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -308,7 +306,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                         <tr key={product.productId} className="opacity-50 [&>td]:bg-[var(--color-surface-1)]">
                                             <td className={tdCls}>
                                                 <span>{product.productName}</span>
-                                                <span className="inline-flex items-center ml-[0.45rem] px-[0.45rem] py-[0.1rem] text-[0.75rem] font-semibold tracking-[0.02em] text-[var(--color-warning-strong)] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] rounded-full align-middle whitespace-nowrap leading-[1.4]">{t("single_proposal_no_price_badge")}</span>
+                                                <span className="inline-flex items-center ml-[0.45rem] px-[0.45rem] py-[0.1rem] text-[0.75rem] font-semibold tracking-[0.02em] text-[var(--color-warning-strong)] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] rounded-full align-middle whitespace-nowrap leading-[1.4]">Sem preço</span>
                                             </td>
                                             {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
                                             <td className={tdNumCls}>{product.quantity} UN</td>
@@ -323,16 +321,16 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                             <td className={tdCls}>{product.productName}</td>
                                             {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
                                             <td className={tdNumCls}>{product.quantity} UN</td>
-                                            <td className={tdNumCls}>{formatMoney(unitPrice, i18n.language)}</td>
-                                            <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(total, i18n.language)}</td>
+                                            <td className={tdNumCls}>{formatMoney(unitPrice)}</td>
+                                            <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(total)}</td>
                                         </tr>
                                     )
                                 })}
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border)]">{t("potencial_value")}</td>
-                                    <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border)]">{formatMoney(grandTotal, i18n.language)}</td>
+                                    <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border)]">Valor Potencial</td>
+                                    <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border)]">{formatMoney(grandTotal)}</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -341,17 +339,17 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                     {skippedProducts.length > 0 && (
                         <p className="m-0 px-[0.8rem] py-[0.6rem] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] rounded-[var(--radius-md)] text-[0.875rem] text-[var(--color-warning-strong)]">
                             {skippedProducts.length === 1
-                                ? t("single_proposal_skipped_warning_one")
-                                : t("single_proposal_skipped_warning_other", { count: skippedProducts.length })}
+                                ? "1 produto sem preço preenchido não será incluído na proposta."
+                                : `${skippedProducts.length} produtos sem preço preenchido não serão incluídos na proposta.`}
                         </p>
                     )}
 
                     <div className="flex justify-end gap-[0.6rem] pt-1 max-[768px]:flex-col-reverse max-[768px]:[&>button]:w-full">
                         <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
-                            {t("single_proposal_cancel")}
+                            Cancelar
                         </Button>
                         <Button variant="success" onClick={handleConfirmSubmit} loading={submitting}>
-                            {t("single_proposal_confirm_submit")}
+                            Confirmar e enviar
                         </Button>
                     </div>
                 </div>

@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import { ENV } from '../../config/env'
 import SupplierQuotationScheduled from './SupplierQuotationScheduled'
@@ -9,7 +8,6 @@ import SupplierQuotationActiveUnique from './SupplierQuotationActiveUnique'
 
 const SupplierQuotationRouter = ({ quotationId, participationId }) => {
     
-    const { t } = useTranslation()
     const { request } = useFetch(ENV.API_BASE_URL)
 
     const [quotation, setQuotation] = useState(null)
@@ -24,15 +22,15 @@ const SupplierQuotationRouter = ({ quotationId, participationId }) => {
 
     useEffect(() => {
         if(!quotationId) {
-            setQuotation(null)
+            setQuotation(null) // eslint-disable-line react-hooks/set-state-in-effect
             setLoading(false)
             return
         }
         fetchQuotation()
     }, [fetchQuotation, quotationId])
 
-    if(loading) return <p>{t("loading_message")}</p>
-    if(!quotation) return <p>{t("quotation_not_found")}</p>
+    if(loading) return <p>Carregando...</p>
+    if(!quotation) return <p>Cotação não encontrada</p>
 
     const now = new Date()
     const start = new Date(quotation.quotationStart)

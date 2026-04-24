@@ -1,5 +1,4 @@
 import {useState, useEffect, useCallback, useMemo} from 'react'
-import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import Alert from '../../components/Alert'
 import QuotationCreateStep1 from './QuotationCreateStep1'
@@ -10,15 +9,13 @@ import { Check } from 'lucide-react'
 import { ENV } from '../../config/env'
 
 const STEPS = [
-    { key: 1, labelKey: "stepper_dates" },
-    { key: 2, labelKey: "stepper_products" },
-    { key: 3, labelKey: "stepper_suppliers" },
-    { key: 4, labelKey: "stepper_review" }
+    { key: 1, labelKey: "Datas" },
+    { key: 2, labelKey: "Produtos" },
+    { key: 3, labelKey: "Fornecedores" },
+    { key: 4, labelKey: "Revisão" }
 ]
 
 const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave }) => {
-
-    const { t } = useTranslation()
 
     const [step, setStep] = useState(1)
     const [loading, setLoading] = useState(false)
@@ -58,7 +55,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
     }, [initialData, mode, request])
 
     useEffect(() => {
-        fetchEditData()
+        fetchEditData() // eslint-disable-line react-hooks/set-state-in-effect
     }, [fetchEditData])
 
     const handleStepChange = useCallback((field, value) => {
@@ -130,7 +127,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         }
 
         setLoading(false)
-        setSuccess(`${t("quotation")} ${mode === "create" ? t("created") : t("updated")} ${t("successfully")}!`)
+        setSuccess(`Cotação ${mode === "create" ? "criada" : "atualizada"} "com sucesso"!`)
         onSave && onSave(updatedQuotation)
 
         setTimeout(() => onClose(), 800)
@@ -186,7 +183,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                                     )}
                                 </div>
                                 <span className={`text-[0.8125rem] font-medium transition-colors duration-200 max-[768px]:hidden ${isActive || isDone ? 'text-[var(--color-text-strong)]' : 'text-[var(--color-text-muted)]'}`}>
-                                    {t(s.labelKey)}
+                                    {s.labelKey}
                                 </span>
                             </div>
                             {i < STEPS.length - 1 && (

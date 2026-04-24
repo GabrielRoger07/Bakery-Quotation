@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch'
 import { ENV } from '../../config/env'
 import SupplierQuotationRouter from './SupplierQuotationRouter'
 
 const SupplierQuotationPage = () => {
 
-    const { t } = useTranslation()
     const { request } = useFetch(ENV.API_BASE_URL)
 
     const [searchParams] = useSearchParams()
@@ -25,16 +23,16 @@ const SupplierQuotationPage = () => {
             if (res.ok) {
                 setValidated(true)
             } else if (res.status !== 403) {
-                setError(t("unable_fetch_participation"))
+                setError("Não foi possível encontrar a participação")
             }
         }
 
         validate()
-    }, [quotationId, participationId, request, t])
+    }, [quotationId, participationId, request])
 
-    if (!quotationId || !participationId) return <p>{t("quotation_missing_url")}</p>
+    if (!quotationId || !participationId) return <p>Está faltando quotationId e/ou supplierId na URL</p>
     if (error) return <p>{error}</p>
-    if (!validated) return <p>{t("loading_message")}</p>
+    if (!validated) return <p>Carregando...</p>
 
     return <SupplierQuotationRouter quotationId={quotationId} participationId={participationId} />
 }

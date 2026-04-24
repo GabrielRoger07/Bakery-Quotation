@@ -1,19 +1,21 @@
 import { Link } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-
 
 const LandingPage = () => {
-    const { t } = useTranslation()
 
     const benefits = [
-        { title: t("landing_benefit_1_title"), text: t("landing_benefit_1_text") },
-        { title: t("landing_benefit_2_title"), text: t("landing_benefit_2_text") },
-        { title: t("landing_benefit_3_title"), text: t("landing_benefit_3_text") },
-        { title: t("landing_benefit_4_title"), text: t("landing_benefit_4_text") },
-        { title: t("landing_benefit_5_title"), text: t("landing_benefit_5_text") },
+        { title: "Organização", text: "Todos os fornecedores e cotações em um único lugar." },
+        { title: "Agilidade", text: "Menos tempo operacional para abrir, acompanhar e fechar cotações." },
+        { title: "Transparência", text: "Visibilidade total de datas, status e evolução de propostas." },
+        { title: "Comparação simplificada", text: "Avalie preços e condições com leitura clara por produto." },
+        { title: "Histórico centralizado", text: "Consulte decisões passadas e negociações anteriores com facilidade." },
     ]
 
-    const steps = [t("landing_step_1"), t("landing_step_2"), t("landing_step_3"), t("landing_step_4")]
+    const steps = [
+        "Cadastre produtos e fornecedores em poucos minutos.",
+        "Crie a cotação e defina prazo de início e encerramento.",
+        "Fornecedores enviam lances online em tempo real.",
+        "Compare propostas e finalize com mais segurança."
+    ]
 
     return (
         <main className="landing-bg min-h-screen py-5 px-[1.1rem] pb-12 text-[var(--color-text-primary)] max-sm:px-[0.7rem] max-sm:py-[0.8rem] max-sm:pb-10">
@@ -22,39 +24,39 @@ const LandingPage = () => {
             <header className="landing-topbar max-w-[1180px] mx-auto h-16 border border-[var(--color-border)] rounded-[var(--radius-xl)] [box-shadow:var(--shadow-xs)] flex items-center justify-between px-4 max-sm:h-auto max-sm:py-3 max-sm:gap-[0.6rem] max-sm:flex-wrap">
                 <div className="inline-flex items-center gap-2 font-bold">
                     <span className="w-[1.9rem] h-[1.9rem] rounded-[0.55rem] grid place-items-center text-white bg-gradient-to-br from-[var(--color-accent-strong)] to-[var(--color-accent)] text-[0.875rem]">BQ</span>
-                    <span>{t("landing_brand")}</span>
+                    <span>Bakery Quotation</span>
                 </div>
                 <nav className="flex items-center gap-4 max-[1024px]:hidden">
-                    <a href="#problema" className="no-underline text-[var(--color-text-secondary)] text-[0.875rem] font-medium hover:text-[var(--color-text-strong)]">{t("landing_nav_problem")}</a>
-                    <a href="#solucao" className="no-underline text-[var(--color-text-secondary)] text-[0.875rem] font-medium hover:text-[var(--color-text-strong)]">{t("landing_nav_solution")}</a>
-                    <a href="#como-funciona" className="no-underline text-[var(--color-text-secondary)] text-[0.875rem] font-medium hover:text-[var(--color-text-strong)]">{t("landing_nav_how")}</a>
-                    <a href="#social-proof" className="no-underline text-[var(--color-text-secondary)] text-[0.875rem] font-medium hover:text-[var(--color-text-strong)]">{t("landing_nav_results")}</a>
+                    <a href="#problema" className="no-underline text-[var(--color-text-secondary)] text-[0.875rem] font-medium hover:text-[var(--color-text-strong)]">Problema</a>
+                    <a href="#solucao" className="no-underline text-[var(--color-text-secondary)] text-[0.875rem] font-medium hover:text-[var(--color-text-strong)]">Solução</a>
+                    <a href="#como-funciona" className="no-underline text-[var(--color-text-secondary)] text-[0.875rem] font-medium hover:text-[var(--color-text-strong)]">Como funciona</a>
+                    <a href="#social-proof" className="no-underline text-[var(--color-text-secondary)] text-[0.875rem] font-medium hover:text-[var(--color-text-strong)]">Resultados</a>
                 </nav>
                 <div className="inline-flex items-center gap-2 max-sm:w-full">
-                    <Link to="/login" className="no-underline rounded-[var(--radius-md)] text-[0.875rem] font-semibold text-[var(--color-text-secondary)] px-[0.65rem] py-2 max-sm:flex-1 max-sm:text-center">{t("login")}</Link>
-                    <Link to="/register" className="btn-landing-solid max-sm:flex-1 max-sm:text-center">{t("landing_cta_primary")}</Link>
+                    <Link to="/login" className="no-underline rounded-[var(--radius-md)] text-[0.875rem] font-semibold text-[var(--color-text-secondary)] px-[0.65rem] py-2 max-sm:flex-1 max-sm:text-center">Entrar</Link>
+                    <Link to="/register" className="btn-landing-solid max-sm:flex-1 max-sm:text-center">Criar conta</Link>
                 </div>
             </header>
 
             {/* Hero */}
             <section className="max-w-[1180px] mx-auto mt-[3.1rem] mb-8 grid grid-cols-[1.1fr_1fr] gap-8 items-center max-[1024px]:grid-cols-1 max-sm:mt-[1.8rem]">
                 <div>
-                    <p className="m-0 text-[var(--color-accent)] text-[0.875rem] font-bold tracking-[0.06em] uppercase">{t("landing_kicker")}</p>
-                    <h1 className="mt-[0.7rem] mb-4 text-[clamp(2rem,4.3vw,3.2rem)] leading-[1.1] text-[var(--color-text-strong)]">{t("landing_hero_title")}</h1>
-                    <p className="m-0 text-[var(--color-text-secondary)] text-base max-w-[50ch] max-[1024px]:max-w-none">{t("landing_hero_subtitle")}</p>
+                    <p className="m-0 text-[var(--color-accent)] text-[0.875rem] font-bold tracking-[0.06em] uppercase">SaaS B2B para compras corporativas</p>
+                    <h1 className="mt-[0.7rem] mb-4 text-[clamp(2rem,4.3vw,3.2rem)] leading-[1.1] text-[var(--color-text-strong)]">Centralize suas cotações e negocie com fornecedores em minutos</h1>
+                    <p className="m-0 text-[var(--color-text-secondary)] text-base max-w-[50ch] max-[1024px]:max-w-none">Substitua planilhas e processos manuais por um fluxo digital com comparação de propostas, histórico completo e mais velocidade para o time de compras.</p>
                     <div className="mt-[1.3rem] flex items-center flex-wrap gap-[0.65rem]">
-                        <Link to="/register" className="btn-landing-solid">{t("landing_cta_primary")}</Link>
-                        <Link to="/login" className="btn-landing-ghost">{t("landing_cta_secondary")}</Link>
+                        <Link to="/register" className="btn-landing-solid">Criar conta</Link>
+                        <Link to="/login" className="btn-landing-ghost">Entrar</Link>
                     </div>
                 </div>
 
                 <div className="relative min-h-[360px] max-sm:min-h-0" aria-hidden="true">
                     <div className="border border-[var(--color-border)] bg-white rounded-[var(--radius-xl)] [box-shadow:var(--shadow-md-soft)] p-4 w-[min(100%,470px)]">
-                        <h3 className="m-0 mb-4 text-base">{t("landing_mockup_title")}</h3>
+                        <h3 className="m-0 mb-4 text-base">Painel de Cotações</h3>
                         {[
-                            { name: t("landing_mockup_col_1"), price: t("landing_mockup_col_2"), status: t("landing_mockup_col_3"), strong: false },
-                            { name: "Arroz Tipo 1", price: "R$ 28,40", status: t("landing_mockup_status_1"), strong: true },
-                            { name: "Farinha 25kg", price: "R$ 87,90", status: t("landing_mockup_status_2"), strong: false },
+                            { name: "Produto", price: "Menor valor", status: "Status", strong: false },
+                            { name: "Arroz Tipo 1", price: "R$ 28,40", status: "Produto", strong: true },
+                            { name: "Farinha 25kg", price: "R$ 87,90", status: "Menor valor", strong: false },
                         ].map((row, i) => (
                             <div key={i} className={`grid grid-cols-[1fr_auto_auto] gap-[0.7rem] px-2 py-[0.6rem] border-b border-[var(--color-border-lighter)] text-[0.875rem] ${row.strong ? 'bg-[var(--color-highlight-lighter)] rounded-[0.55rem]' : ''}`}>
                                 <span>{row.name}</span><span>{row.price}</span><span>{row.status}</span>
@@ -62,26 +64,26 @@ const LandingPage = () => {
                         ))}
                     </div>
                     <div className="border border-[var(--color-border)] bg-white rounded-[var(--radius-xl)] [box-shadow:var(--shadow-md-soft)] p-4 w-[190px] absolute right-0 -bottom-5 max-[1024px]:static max-[1024px]:mt-3 max-sm:hidden">
-                        <p className="m-0 text-[var(--color-text-muted)] text-[0.8125rem]">{t("landing_mockup_metric_label")}</p>
+                        <p className="m-0 text-[var(--color-text-muted)] text-[0.8125rem]">Produtividade</p>
                         <strong className="block mt-[0.35rem] mb-[0.2rem] text-[1.5rem] text-[var(--color-text-strong)]">+38%</strong>
-                        <span className="text-[var(--color-text-secondary)] text-[0.8125rem]">{t("landing_mockup_metric_text")}</span>
+                        <span className="text-[var(--color-text-secondary)] text-[0.8125rem]">de ganho no ciclo de compra</span>
                     </div>
                 </div>
             </section>
 
             {/* Sections */}
             <section id="problema" className="landing-section bg-[var(--color-surface-0)]">
-                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-strong)]">{t("landing_problem_title")}</h2>
-                <p className="mt-[0.9rem] mb-0 text-[var(--color-text-secondary)] text-base max-w-[72ch]">{t("landing_problem_text")}</p>
+                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-strong)]">O processo tradicional de cotação custa tempo e previsibilidade</h2>
+                <p className="mt-[0.9rem] mb-0 text-[var(--color-text-secondary)] text-base max-w-[72ch]">Trocas por telefone, visitas presenciais, mensagens dispersas e planilhas diferentes dificultam comparar propostas com clareza. Isso gera retrabalho, atrasos e decisões com menos transparência.</p>
             </section>
 
             <section id="solucao" className="landing-section bg-gradient-to-b from-white to-[var(--color-highlight-lighter)]">
-                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-strong)]">{t("landing_solution_title")}</h2>
-                <p className="mt-[0.9rem] mb-0 text-[var(--color-text-secondary)] text-base max-w-[72ch]">{t("landing_solution_text")}</p>
+                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-strong)]">Uma operação de compras mais rápida, organizada e auditável</h2>
+                <p className="mt-[0.9rem] mb-0 text-[var(--color-text-secondary)] text-base max-w-[72ch]">Com o Bakery Quotation, sua equipe cria cotações em poucos cliques, convida fornecedores em escala e acompanha tudo em um único painel. Resultado: mais agilidade para negociar e mais confiança para decidir.</p>
             </section>
 
             <section className="landing-section">
-                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-strong)]">{t("landing_benefits_title")}</h2>
+                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-strong)]">Benefícios que impactam direto o resultado da compra</h2>
                 <div className="mt-5 grid grid-cols-[repeat(5,minmax(0,1fr))] gap-[0.8rem] max-[1024px]:grid-cols-2 max-sm:grid-cols-1">
                     {benefits.map((b) => (
                         <article key={b.title} className="rounded-[var(--radius-lg)] border border-[var(--color-border-light)] p-[1rem_0.9rem] bg-white">
@@ -93,7 +95,7 @@ const LandingPage = () => {
             </section>
 
             <section id="como-funciona" className="landing-section">
-                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-strong)]">{t("landing_how_title")}</h2>
+                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-strong)]">Como funciona</h2>
                 <ol className="mt-4 mb-0 pl-[1.1rem] grid gap-[0.8rem]">
                     {steps.map((step) => (
                         <li key={step} className="text-[0.9375rem] text-[var(--color-text-secondary)]">{step}</li>
@@ -102,9 +104,9 @@ const LandingPage = () => {
             </section>
 
             <section id="social-proof" className="landing-section">
-                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-strong)]">{t("landing_social_title")}</h2>
-                <p className="mt-[0.9rem] mb-0 text-[var(--color-text-secondary)] text-base max-w-[72ch]">{t("landing_social_text")}</p>
-                <div className="mt-4 grid grid-cols-[repeat(4,minmax(0,1fr))] gap-[0.7rem] max-sm:grid-cols-1" aria-label={t("landing_social_logos_aria")}>
+                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-strong)]">Pronto para escalar com sua operação</h2>
+                <p className="mt-[0.9rem] mb-0 text-[var(--color-text-secondary)] text-base max-w-[72ch]">Estrutura pronta para incluir logos de clientes, depoimentos e estudos de caso conforme sua estratégia comercial.</p>
+                <div className="mt-4 grid grid-cols-[repeat(4,minmax(0,1fr))] gap-[0.7rem] max-sm:grid-cols-1" aria-label="Espaços reservados para logos de clientes">
                     {["Empresa A", "Grupo B", "Indústria C", "Rede D"].map((name) => (
                         <span key={name} className="grid place-items-center min-h-[3.2rem] border border-dashed border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[var(--color-text-muted)] text-[0.875rem] font-semibold">{name}</span>
                     ))}
@@ -112,11 +114,11 @@ const LandingPage = () => {
             </section>
 
             <section className="landing-section text-center bg-gradient-to-b from-[var(--color-brand)] to-[var(--color-brand-mid)] text-[var(--color-on-dark-text)]">
-                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-on-dark-text)]">{t("landing_final_title")}</h2>
-                <p className="mt-[0.9rem] mb-0 text-[var(--color-on-dark-text)] text-base max-w-[72ch] mx-auto">{t("landing_final_text")}</p>
+                <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-on-dark-text)]">Leve sua área de compras para um padrão SaaS de alta performance</h2>
+                <p className="mt-[0.9rem] mb-0 text-[var(--color-on-dark-text)] text-base max-w-[72ch] mx-auto">Reduza o esforço operacional e aumente o controle sobre cada cotação com um fluxo profissional, digital e centralizado.</p>
                 <div className="mt-[1.3rem] flex items-center flex-wrap gap-[0.65rem] justify-center">
-                    <Link to="/register" className="btn-landing-solid">{t("landing_cta_primary")}</Link>
-                    <Link to="/login" className="btn-landing-ghost">{t("landing_cta_secondary")}</Link>
+                    <Link to="/register" className="btn-landing-solid">Criar conta</Link>
+                    <Link to="/login" className="btn-landing-ghost">Entrar</Link>
                 </div>
             </section>
         </main>

@@ -10,7 +10,6 @@ import QuotationList from './pages/Quotation/QuotationList';
 import Navbar from './components/Navbar';
 import SupplierNavbar from './components/SupplierNavbar';
 import QuotationMonitor from './pages/Quotation/QuotationMonitor';
-import PublicHeader from './components/PublicHeader';
 
 import SupplierAccessToken from './pages/SupplierAccess/SupplierAccessToken';
 import SupplierPage from './pages/SupplierAccess/SupplierPage';
@@ -34,7 +33,7 @@ function AppContent() {
 
   return (
     <>
-      {shouldShowNavbar ? <Navbar /> : shouldShowSupplierNavbar ? <SupplierNavbar /> : <PublicHeader />}
+      {shouldShowNavbar ? <Navbar /> : shouldShowSupplierNavbar ? <SupplierNavbar /> : null}
         <Routes>
           <Route path="/" element={<LandingPage />}></Route>
           <Route path="/login" element={<Login />}></Route>

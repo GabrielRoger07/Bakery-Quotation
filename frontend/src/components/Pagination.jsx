@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import Button from './Button'
 
 const pageButtonBase = 'min-w-[2rem] h-8 px-2 text-[0.875rem] font-medium rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-0)] cursor-pointer text-[var(--color-text-neutral-strong)] flex items-center justify-center transition-[background-color,border-color,color,box-shadow] duration-[160ms] ease-[ease]'
@@ -6,7 +5,6 @@ const pageButtonActive = '!bg-[var(--color-accent)] !text-white !border-[var(--c
 const pageButtonInactive = 'hover:bg-[var(--color-highlight-lighter)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-    const { t } = useTranslation()
 
     if (totalPages <= 1) return null
 
@@ -32,7 +30,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 onClick={() => onPageChange(currentPage - 1)}
                 className="!text-[0.875rem] !min-h-[2.125rem] !px-[0.875rem] !py-[0.375rem]"
             >
-                {"<"} {t("pagination_previous")}
+                {"<"} Anterior
             </Button>
 
             <div className="flex gap-1 items-center">
@@ -57,7 +55,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 onClick={() => onPageChange(currentPage + 1)}
                 className="!text-[0.875rem] !min-h-[2.125rem] !px-[0.875rem] !py-[0.375rem]"
             >
-                {t("pagination_next")} {">"}
+                Próximo {">"}
             </Button>
         </div>
     )

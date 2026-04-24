@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useWebSocket from '../../hooks/useWebSocket'
 import useFetch from '../../hooks/useFetch'
-import { useTranslation } from 'react-i18next'
 import Table from '../../components/Table'
 import Modal from '../../components/Modal'
 import Button from '../../components/Button'
@@ -12,7 +11,6 @@ import { formatMoney } from '../../utils/formatMoney'
 
 const SupplierQuotation = ({ participationId, quotationId }) => {
 
-  const { t, i18n } = useTranslation()
   const { request } = useFetch(ENV.API_BASE_URL)
 
   const [quotation, setQuotation] = useState(null)
@@ -53,13 +51,13 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
         })
 
       }else{
-        setError(t("load_products_failed"))
+        setError("Falha em carregar produtos")
       }
     }
 
     fetchData()
 
-  }, [quotationId, participationId, request, t])
+  }, [quotationId, participationId, request])
 
   useEffect(() => {
     if(!quotation) return
@@ -70,7 +68,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
       const now = new Date()
       const diff = end - now
       if(diff <= 0){
-        setTimeRemaining(t("quotation_closed"))
+        setTimeRemaining("Fechado")
         return
       }
 
@@ -84,7 +82,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
     updateCountdown()
     const interval = setInterval(updateCountdown, 1000)
     return () => clearInterval(interval)
-  }, [quotation, t])
+  }, [quotation])
 
   const handleNewBid = useCallback((bid) => {
 
@@ -104,14 +102,14 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   useWebSocket(quotationId, handleNewBid)
 
   const bidColumns = useMemo(() => [
-    { key: "productName", label: t("product") },
-    { key: "quantity", label: t("quantity") },
-    { key: "bonus", label: t("bonus") },
-    { key: "price", label: t("total_price") },
-    { key: "pricePerUnit", label: t("price_per_unit")},
-    { key: "createdAt", label: t("date_hour") },
+    { key: "productName", label: "Produto" },
+    { key: "quantity", label: "Quantidade" },
+    { key: "bonus", label: "Bônus" },
+    { key: "price", label: "Preço Total" },
+    { key: "pricePerUnit", label: "Preço Unitário" },
+    { key: "createdAt", label: "Data/Hora" },
     { key: "status", label: "Status" }
-  ], [t])
+  ], [])
 
   const formattedBids = bids.map(b => {
 
@@ -120,12 +118,12 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
 
     return {
       ...b,
-      price: formatMoney(b.price, i18n.language),
-      pricePerUnit: formatMoney(b.price / (b.quantity + b.bonus), i18n.language),
+      price: formatMoney(b.price),
+      pricePerUnit: formatMoney(b.price / (b.quantity + b.bonus)),
       createdAt: new Date(b.createdAt).toLocaleString(),
       status: isLowest
-          ? <span className="text-[var(--color-success)] font-semibold">{t("lowest")}</span>
-          : <span className="text-[var(--color-danger)] font-semibold">{t("outbid")}</span>
+          ? <span className="text-[var(--color-success)] font-semibold">Vencendo</span>
+          : <span className="text-[var(--color-danger)] font-semibold">Superado</span>
     }
   })
 
@@ -143,35 +141,35 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
     .filter(bid => bid && bid.participationId === participationId)
     .reduce((sum, bid) => sum + bid.price, 0)
 
-  if(loading) return <p>{t("loading_products")}</p>
+  if(loading) return <p>Carregando produtos...</p>
   if(error) return <p>{error}</p>
-  if(!products.length) return <p>{t("no_products_quotation")}</p>
+  if(!products.length) return <p>Nenhum produto encontrado para essa cotação</p>
 
   return (
       <div className="page-wrapper text-[var(--color-text-primary)]">
         <h2 className="text-[var(--color-text-strong)] text-[1.25rem] m-0">
-            {t("quotation")} {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotationId}
+            Cotação {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotationId}
         </h2>
 
         {participation?.supplierName && (
-          <p className="text-[1.125rem] text-[var(--color-text-muted)] mb-[0.7rem] mt-[0.3rem]">{t("supplier")}: {participation.supplierName}</p>
+          <p className="text-[1.125rem] text-[var(--color-text-muted)] mb-[0.7rem] mt-[0.3rem]">Fornecedor: {participation.supplierName}</p>
         )}
 
         {quotation && (
           <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-[0.4rem]">
-            <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">{t("start_uppercase")}:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
-            <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">{t("end_uppercase")}:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
+            <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">Início:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
+            <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">Fim:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
           </div>
         )}
 
         <div className="flex items-center justify-between gap-4 w-full bg-[var(--color-surface-0)] px-4 py-[0.88rem] border border-[var(--color-border)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] mb-[1.1rem] max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-3">
-          <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">{t("total_products")}: <strong>{products.length}</strong></p>
-          {timeRemaining && <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">{t("time_remaining")}: {timeRemaining}</p>}
+          <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">Total de Produtos: <strong>{products.length}</strong></p>
+          {timeRemaining && <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">Tempo Restante: {timeRemaining}</p>}
           <div className="flex items-center gap-[0.7rem]">
             <span className="font-semibold text-[var(--color-success-strong)]">
-              {t("winning")}: {winningCount}/{products.length}
+              Vencendo: {winningCount}/{products.length}
             </span>
-            <Button onClick={() => setIsWinningModalOpen(true)}>{t("view")}</Button>
+            <Button onClick={() => setIsWinningModalOpen(true)}>Visualizar</Button>
           </div>
         </div>
 
@@ -182,7 +180,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
                 type="text"
                 value={searchWord}
                 onChange={e => setSearchWord(e.target.value)}
-                placeholder={t("enter_search")}
+                placeholder={"Digite o campo"}
               />
             </div>
           </div>
@@ -194,39 +192,39 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
               <QuotationProductItem key={product.productId} product={product} participationId={participationId} currentLowestBid={lowestBids[product.productId] || null} />
             ))
           ) : (
-            <p>{t("no_products_available")}</p>
+            <p>Nenhum produto disponível</p>
           )}
         </div>
 
         <div className="mt-6 w-full">
-          <Table title={t("your_bids")} columns={bidColumns} data={formattedBids} loading={loading} emptyMessage={t("empty_bids")}/>
+          <Table title={"Seus Lances"} columns={bidColumns} data={formattedBids} loading={loading} emptyMessage={"Você ainda não tem nenhum lance."}/>
         </div>
 
-        <Modal isOpen={isWinningModalOpen} onClose={() => setIsWinningModalOpen(false)} title={t("winning_bids")}>
+        <Modal isOpen={isWinningModalOpen} onClose={() => setIsWinningModalOpen(false)} title={"Lances Vencedores"}>
           <div>
             {winningCount > 0 ? (
               <>
               <ul className="list-none p-0 m-0">
                 {Object.entries(lowestBids)
-                  .filter(([_, bid]) => bid && bid.participationId === participationId)
+                  .filter(([, bid]) => bid && bid.participationId === participationId)
                   .map(([productId, bid]) => {
                     const product = products.find(p => p.productId === Number(productId))
                     const pricePerUnit = bid.price / (bid.quantity + bid.bonus)
                     return (
                       <li key={productId} className="py-2 border-b border-[var(--color-border-lighter)] last:border-b-0 text-[1rem] text-[var(--color-text-secondary)]">
                         <strong>{product?.productName}</strong>
-                        {' '}- {formatMoney(bid.price, i18n.language)} - {formatMoney(pricePerUnit, i18n.language)}/UN
+                        {' '}- {formatMoney(bid.price)} - {formatMoney(pricePerUnit)}/UN
                       </li>
                     )
                   })
                 }
               </ul>
               <div className="mt-[0.8rem] px-[0.65rem] py-[0.65rem] bg-[var(--color-highlight-lighter)] border border-[var(--color-highlight-border)] rounded-[var(--radius-md)] text-[1rem] text-[var(--color-text-strong)] text-center">
-                <strong>{t("total_value")}: </strong>{formatMoney(totalWinningValue, i18n.language)}
+                <strong>Valor Total: </strong>{formatMoney(totalWinningValue)}
               </div>
               </>
             ) : (
-              <p>{t("not_winning_bids")}</p>
+              <p>Você não está vencendo nenhum produto agora.</p>
             )}
           </div>
         </Modal>

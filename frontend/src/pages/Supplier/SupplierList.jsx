@@ -336,7 +336,7 @@ const SupplierList = () => {
                     <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
                         Tem certeza de que você deseja remover o fornecedor <strong>{supplierToRemove?.supplierName}</strong> da empresa <strong>{supplierToRemove?.employerName}</strong>?
                     </p>
-                    <div className="flex justify-end gap-3">
+                    <div className="flex justify-center gap-3 mt-4">
                         <Button onClick={closeModals}>Cancelar</Button>
                         <Button onClick={confirmRemove} disabled={loading}>Confirmar</Button>
                     </div>

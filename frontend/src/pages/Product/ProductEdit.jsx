@@ -105,9 +105,12 @@ const ProductEdit = ({product, onSave, onClose}) => {
             )}
 
             <Alert message={error} />
+            
             {success && <div className="text-[var(--color-success)] font-medium mb-[0.875rem] text-[0.875rem]">{success}</div>}
 
-            <Button type="submit" disabled={isDisabled}>Salvar</Button>
+            <div className="flex justify-center gap-3 mt-4">
+                <Button type="submit" disabled={isDisabled}>Salvar</Button>
+            </div>
         </form>
     )
 }

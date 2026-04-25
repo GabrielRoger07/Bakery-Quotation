@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useFetch from '../../hooks/useFetch'
 import Modal from '../../components/Modal'
 import Table from '../../components/Table'
+import MobileCardList from '../../components/MobileCardList'
 import Alert from '../../components/Alert'
 import Button from '../../components/Button'
 import Pagination from '../../components/Pagination'
@@ -11,11 +12,14 @@ import QuotationEdit from './QuotationEdit'
 import QuotationDetails from './QuotationDetails'
 import { ENV } from '../../config/env'
 import { formatDateTime } from '../../utils/formatDateTime'
+import useIsMobile from '../../hooks/useIsMobile'
+import { CalendarRange } from 'lucide-react'
 
 const QuotationList = () => {
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate()
+    const isMobile = useIsMobile()
 
     const [quotations, setQuotations] = useState([])
     const [error, setError] = useState("")
@@ -167,28 +171,58 @@ const QuotationList = () => {
         fetchQuotations(currentPage);
     }, [fetchQuotations, currentPage])
 
+    const renderQuotationCard = (quotation) => {
+        const statusVariant =
+            quotation.status === 'Ativo' ? 'success' :
+            quotation.status === 'Agendado' ? 'accent' : ''
+
+        return {
+            avatar: <CalendarRange size={20} strokeWidth={1.75} />,
+            title: `Cotação #${quotation.quotationId}`,
+            subtitle: `${quotation.quotationStartFormatted} → ${quotation.quotationEndFormatted}`,
+            tags: [{ label: quotation.status, variant: statusVariant }],
+        }
+    }
+
     return (
         <div className="page-wrapper">
             {error && <Alert message={error} />}
             {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
-            <Table
-                title={"Cotações"}
-                columns={columns}
-                data={quotations}
-                idKey="quotationId"
-                loading={loading}
-                onEdit={openEditModal}
-                onDelete={requestRemove}
-                onAdd={() => setIsCreateModalOpen(true)}
-                onReload={() => fetchQuotations(currentPage)}
-                onSort={handleColumnSort}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onView={openDetailsModal}
-                onMonitor={handleMonitor}
-                emptyMessage={"Nenhuma cotação encontrada."}
-            />
+            {isMobile ? (
+                <MobileCardList
+                    title="Cotações"
+                    items={quotations}
+                    idKey="quotationId"
+                    loading={loading}
+                    emptyMessage="Nenhuma cotação encontrada."
+                    onReload={() => fetchQuotations(currentPage)}
+                    onAdd={() => setIsCreateModalOpen(true)}
+                    onEdit={openEditModal}
+                    onDelete={requestRemove}
+                    onView={openDetailsModal}
+                    onMonitor={handleMonitor}
+                    renderCard={renderQuotationCard}
+                />
+            ) : (
+                <Table
+                    title={"Cotações"}
+                    columns={columns}
+                    data={quotations}
+                    idKey="quotationId"
+                    loading={loading}
+                    onEdit={openEditModal}
+                    onDelete={requestRemove}
+                    onAdd={() => setIsCreateModalOpen(true)}
+                    onReload={() => fetchQuotations(currentPage)}
+                    onSort={handleColumnSort}
+                    sortField={sortField}
+                    sortDirection={sortDirection}
+                    onView={openDetailsModal}
+                    onMonitor={handleMonitor}
+                    emptyMessage={"Nenhuma cotação encontrada."}
+                />
+            )}
 
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
@@ -219,7 +253,7 @@ const QuotationList = () => {
                 ) : (
                     <div>
                         <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
-                            Tem certeza de que você deseja remover a cotação <strong>${quotationToRemove?.quotationId}</strong>?
+                            Tem certeza de que você deseja remover a cotação <strong>{quotationToRemove?.quotationId}</strong>?
                         </p>
                         <div className="flex justify-end gap-3">
                             <Button onClick={closeModals}>Cancelar</Button>

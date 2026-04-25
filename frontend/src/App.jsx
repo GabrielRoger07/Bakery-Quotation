@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes, useLocation, Navigate } from 'react-router-dom'
 import PrivateRoute from './components/PrivateRoute';
+import { MobilePageProvider } from './contexts/MobilePageContext';
 
 import LandingPage from './pages/Marketing/LandingPage';
 import Login from './pages/Company/Login';
@@ -20,7 +21,9 @@ function App() {
 
   return (
     <BrowserRouter>
-      <AppContent />
+      <MobilePageProvider>
+        <AppContent />
+      </MobilePageProvider>
     </BrowserRouter>
   )
 }

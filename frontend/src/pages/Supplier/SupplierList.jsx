@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
+import MobileCardList from '../../components/MobileCardList'
 import Modal from '../../components/Modal'
 import Alert from '../../components/Alert'
 import SupplierCreate from './SupplierCreate'
@@ -10,10 +11,21 @@ import Pagination from '../../components/Pagination'
 import { ENV } from '../../config/env'
 import { formatCnpj } from '../../utils/formatCnpj'
 import { formatPhone } from '../../utils/formatPhone'
+import { Phone, Building2 } from 'lucide-react'
+import useIsMobile from '../../hooks/useIsMobile'
+
+const SUPPLIER_FILTER_OPTIONS = [
+    { value: "supplierName",           label: "Nome" },
+    { value: "supplierEmail",          label: "E-mail" },
+    { value: "supplierWhatsappNumber", label: "Whatsapp" },
+    { value: "employerName",           label: "Empresa" },
+    { value: "employerCnpj",           label: "CNPJ" },
+]
 
 const SupplierList = () => {
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
+    const isMobile = useIsMobile()
 
     const [suppliers, setSuppliers] = useState([])
     const [error, setError] = useState("")
@@ -87,7 +99,7 @@ const SupplierList = () => {
     }
 
     const fetchSuppliers = useCallback(async (page = 0) => {
-        
+
         let query = `?page=${page}`
         sortField ? query += `&sort=${sortField},${sortDirection}` : query += `&sort=supplierName,${sortDirection}`
         if(appliedSearch.field) query += `&field=${appliedSearch.field}`
@@ -118,6 +130,12 @@ const SupplierList = () => {
             setSortDirection("asc")
         }
 
+        setCurrentPage(0)
+    }
+
+    const handleClearSort = () => {
+        setSortField(null)
+        setSortDirection("asc")
         setCurrentPage(0)
     }
 
@@ -152,34 +170,145 @@ const SupplierList = () => {
         </>
     ), [searchField, searchWord, handleSearch, loading])
 
+    const handleClearSearch = useCallback(() => {
+        setSearchField("")
+        setSearchWord("")
+        setAppliedSearch({ field: "", word: "" })
+        setCurrentPage(0)
+    }, [])
+
+    const mobileFilterToolbar = useMemo(() => (
+        <div className="mf-root">
+            <p className="mf-label">Filtrar por</p>
+            <div className="mf-chips">
+                {SUPPLIER_FILTER_OPTIONS.map(opt => (
+                    <button
+                        key={opt.value}
+                        type="button"
+                        className={`mf-chip ${searchField === opt.value ? 'selected' : ''}`}
+                        onClick={() => setSearchField(prev => prev === opt.value ? "" : opt.value)}
+                    >
+                        {opt.label}
+                    </button>
+                ))}
+            </div>
+            <div className="mf-input-row">
+                <div className="mf-input-wrap">
+                    <svg className="mf-input-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+                        <path d="M10.5 10.5L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                    <input
+                        type="text"
+                        className="mf-input"
+                        value={searchWord}
+                        onChange={e => setSearchWord(e.target.value)}
+                        placeholder={searchField ? `Buscar por ${SUPPLIER_FILTER_OPTIONS.find(o => o.value === searchField)?.label ?? '...'}` : "Selecione um campo acima"}
+                        onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
+                        disabled={!searchField}
+                    />
+                    {searchWord && (
+                        <button type="button" className="mf-input-clear" onClick={() => setSearchWord("")} aria-label="Limpar texto">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/></svg>
+                        </button>
+                    )}
+                </div>
+                <button
+                    type="button"
+                    className="mf-search-btn"
+                    onClick={handleSearch}
+                    disabled={loading || !searchField}
+                >
+                    Buscar
+                </button>
+            </div>
+            {appliedSearch.word && (
+                <div className="mf-active-row">
+                    <span className="mf-active-pill">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M4 6h4M6 4v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                        {SUPPLIER_FILTER_OPTIONS.find(o => o.value === appliedSearch.field)?.label}: <strong>{appliedSearch.word}</strong>
+                    </span>
+                    <button type="button" className="mf-clear-btn" onClick={handleClearSearch}>
+                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 1l9 9M10 1L1 10" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/></svg>
+                        Limpar
+                    </button>
+                </div>
+            )}
+        </div>
+    ), [searchField, searchWord, handleSearch, handleClearSearch, loading, appliedSearch])
+
     const formattedSuppliers = suppliers.map((supplier) => ({
         ...supplier,
         supplierWhatsappNumber: supplier.supplierWhatsappNumber ? formatPhone(supplier.supplierWhatsappNumber) : "-",
         employerCnpj: supplier.employerCnpj ? formatCnpj(supplier.employerCnpj) : "-"
     }))
 
+    const renderSupplierCard = (supplier) => {
+        const initials = supplier.supplierName
+            ? supplier.supplierName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
+            : '?'
+
+        const tags = []
+        if (supplier.supplierWhatsappNumber && supplier.supplierWhatsappNumber !== '-') {
+            tags.push({ label: supplier.supplierWhatsappNumber, icon: <Phone size={10} strokeWidth={2.5} />, variant: 'accent' })
+        }
+        if (supplier.employerCnpj && supplier.employerCnpj !== '-') {
+            tags.push({ label: supplier.employerCnpj, icon: <Building2 size={10} strokeWidth={2.5} /> })
+        }
+
+        return {
+            avatar: initials,
+            title: supplier.supplierName,
+            subtitle: supplier.employerName || undefined,
+            meta: supplier.supplierEmail && supplier.supplierEmail !== '-' ? supplier.supplierEmail : undefined,
+            tags,
+        }
+    }
+
     return (
         <div className="page-wrapper">
             {error && <Alert message={error}/>}
             {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
-            <Table
-                title={"Fornecedores"}
-                columns={columns}
-                data={formattedSuppliers}
-                idKey="supplierId"
-                loading={loading}
-                onEdit={openEditModal}
-                onDelete={requestRemove}
-                onAdd={() => setIsCreateModalOpen(true)}
-                onReload={() => fetchSuppliers(currentPage)}
-                onSort={handleColumnSort}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                emptyMessage={"Nenhum fornecedor encontrado."}
-                toolbar={filterToolbar}
-                filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
-            />
+            {isMobile ? (
+                <MobileCardList
+                    title="Fornecedores"
+                    items={formattedSuppliers}
+                    idKey="supplierId"
+                    loading={loading}
+                    emptyMessage="Nenhum fornecedor encontrado."
+                    onReload={() => fetchSuppliers(currentPage)}
+                    onAdd={() => setIsCreateModalOpen(true)}
+                    onEdit={openEditModal}
+                    onDelete={requestRemove}
+                    renderCard={renderSupplierCard}
+                    toolbar={mobileFilterToolbar}
+                    filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
+                    sortColumns={columns}
+                    sortField={sortField}
+                    sortDirection={sortDirection}
+                    onSort={handleColumnSort}
+                    onClearSort={handleClearSort}
+                />
+            ) : (
+                <Table
+                    title={"Fornecedores"}
+                    columns={columns}
+                    data={formattedSuppliers}
+                    idKey="supplierId"
+                    loading={loading}
+                    onEdit={openEditModal}
+                    onDelete={requestRemove}
+                    onAdd={() => setIsCreateModalOpen(true)}
+                    onReload={() => fetchSuppliers(currentPage)}
+                    onSort={handleColumnSort}
+                    sortField={sortField}
+                    sortDirection={sortDirection}
+                    emptyMessage={"Nenhum fornecedor encontrado."}
+                    toolbar={filterToolbar}
+                    filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
+                />
+            )}
 
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
@@ -201,7 +330,7 @@ const SupplierList = () => {
             <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>
                 <div>
                     <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
-                        Tem certeza de que você deseja remover o fornecedor <strong>${supplierToRemove?.supplierName}</strong> da empresa <strong>${supplierToRemove?.employerName}</strong>?",
+                        Tem certeza de que você deseja remover o fornecedor <strong>{supplierToRemove?.supplierName}</strong> da empresa <strong>{supplierToRemove?.employerName}</strong>?
                     </p>
                     <div className="flex justify-end gap-3">
                         <Button onClick={closeModals}>Cancelar</Button>

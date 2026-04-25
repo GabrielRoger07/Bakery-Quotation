@@ -1,15 +1,25 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from './Button'
-import { Pencil, Trash, Eye, Activity, SlidersHorizontal } from 'lucide-react'
+import { Pencil, Trash, Eye, Activity, SlidersHorizontal, Plus } from 'lucide-react'
+import { useMobilePage } from '../contexts/MobilePageContext'
 
 
 const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload, onMonitor, onSort, sortField, sortDirection, toolbar, filterActive = false }) => {
     const [toolbarOpen, setToolbarOpen] = useState(false)
+    const { registerPage, unregisterPage } = useMobilePage()
+
+    useEffect(() => {
+        if (title && onReload) {
+            registerPage(title, onReload)
+        }
+        return () => unregisterPage()
+    }, [title, onReload, registerPage, unregisterPage])
 
     return (
+        <>
         <div className="w-full max-w-[1200px] mx-auto mb-5 px-[1.625rem] py-6 bg-[var(--color-surface-0)] rounded-[var(--radius-xl)] border border-[var(--color-border)] [box-shadow:var(--shadow-card-soft)] hover:[box-shadow:var(--shadow-card-md)] transition-[box-shadow] duration-[160ms] max-sm:px-[0.75rem] max-sm:py-[0.875rem] max-sm:rounded-[var(--radius-md)] max-[768px]:px-[1.125rem] max-[768px]:rounded-[var(--radius-lg)]">
-            {/* Header */}
-            <div className="flex justify-between items-center mb-5 max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-[0.875rem]">
+            {/* Header — oculto no mobile (título e botões vão para a navbar) */}
+            <div className="flex justify-between items-center mb-5 max-[640px]:hidden max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-[0.875rem]">
                 <h1 className="m-0 text-[1.125rem] text-[var(--color-text-strong)] font-bold tracking-[-0.02em]">{title}</h1>
                 <div className="flex items-center gap-2 max-[768px]:w-full max-[768px]:justify-start max-[768px]:flex-wrap">
                     {loading && (
@@ -32,6 +42,27 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                     {onReload && <Button onClick={onReload}>Atualizar</Button>}
                     {onAdd && <Button onClick={onAdd}>Adicionar</Button>}
                 </div>
+            </div>
+
+            {/* Mobile: botão de filtro + spinner (título/reload/add foram para navbar) */}
+            <div className="hidden max-[640px]:flex items-center gap-2 mb-3">
+                {toolbar && (
+                    <div className="relative inline-flex">
+                        <Button
+                            variant={toolbarOpen ? 'primary' : 'secondary'}
+                            className="!p-[0.4375rem] !min-w-[2.375rem] !min-h-[2.375rem] flex items-center justify-center"
+                            onClick={() => setToolbarOpen(prev => !prev)}
+                        >
+                            <SlidersHorizontal size={16} />
+                        </Button>
+                        {filterActive && !toolbarOpen && (
+                            <span className="absolute top-[2px] right-[2px] w-[7px] h-[7px] rounded-full bg-[var(--color-accent)] border-[1.5px] border-[var(--color-surface-0)] pointer-events-none" />
+                        )}
+                    </div>
+                )}
+                {loading && (
+                    <div className="w-[0.9375rem] h-[0.9375rem] border-2 border-[var(--color-border-spinner)] border-t-[var(--color-accent)] rounded-full [animation:spin_0.65s_linear_infinite]" />
+                )}
             </div>
 
             {/* Toolbar (animated) */}
@@ -114,6 +145,19 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                 </div>
             )}
         </div>
+
+        {/* FAB mobile: botão + fixo acima do bottom nav */}
+        {onAdd && (
+            <button
+                onClick={onAdd}
+                className="hidden max-[640px]:flex fixed right-5 items-center justify-center w-[3.25rem] h-[3.25rem] rounded-full bg-[var(--color-accent)] text-white [box-shadow:var(--shadow-accent)] transition-[transform,box-shadow] duration-[160ms] active:scale-95 hover:[box-shadow:var(--shadow-hover-accent)] z-[999]"
+                style={{ bottom: 'calc(4.25rem + env(safe-area-inset-bottom) + 1rem)' }}
+                aria-label="Adicionar"
+            >
+                <Plus size={26} strokeWidth={2.5} />
+            </button>
+        )}
+        </>
     )
 }
 

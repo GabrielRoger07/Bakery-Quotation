@@ -203,28 +203,32 @@ const QuotationList = () => {
                     onView={openDetailsModal}
                     onMonitor={handleMonitor}
                     renderCard={renderQuotationCard}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
                 />
             ) : (
-                <Table
-                    title={"Cotações"}
-                    columns={columns}
-                    data={quotations}
-                    idKey="quotationId"
-                    loading={loading}
-                    onEdit={openEditModal}
-                    onDelete={requestRemove}
-                    onAdd={() => setIsCreateModalOpen(true)}
-                    onReload={() => fetchQuotations(currentPage)}
-                    onSort={handleColumnSort}
-                    sortField={sortField}
-                    sortDirection={sortDirection}
-                    onView={openDetailsModal}
-                    onMonitor={handleMonitor}
-                    emptyMessage={"Nenhuma cotação encontrada."}
-                />
+                <>
+                    <Table
+                        title={"Cotações"}
+                        columns={columns}
+                        data={quotations}
+                        idKey="quotationId"
+                        loading={loading}
+                        onEdit={openEditModal}
+                        onDelete={requestRemove}
+                        onAdd={() => setIsCreateModalOpen(true)}
+                        onReload={() => fetchQuotations(currentPage)}
+                        onSort={handleColumnSort}
+                        sortField={sortField}
+                        sortDirection={sortDirection}
+                        onView={openDetailsModal}
+                        onMonitor={handleMonitor}
+                        emptyMessage={"Nenhuma cotação encontrada."}
+                    />
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                </>
             )}
-
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
             <Modal isOpen={isEditModalOpen} onClose={closeModals} title={"Editar Cotação"}>
                 <QuotationEdit

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Pencil, Trash, Search, X, SlidersHorizontal, Plus, ChevronRight, Eye, BarChart2, ArrowUpDown } from 'lucide-react'
+import { Pencil, Trash, Search, X, SlidersHorizontal, Plus, Eye, BarChart2, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useMobilePage } from '../contexts/MobilePageContext'
 import SortBottomSheet from './SortBottomSheet'
 
@@ -27,6 +27,68 @@ import SortBottomSheet from './SortBottomSheet'
  *   sortDirection  "asc" | "desc"
  *   onSort         fn(columnKey)
  */
+const MobilePagination = ({ currentPage, totalPages, onPageChange }) => {
+    if (totalPages <= 1) return null
+
+    const useDots = totalPages <= 7
+    const progress = totalPages > 1 ? currentPage / (totalPages - 1) : 0
+
+    return (
+        <div className="mobile-pagination">
+            {/* ── Indicador ── */}
+            <div className="mpag-indicator">
+                {useDots ? (
+                    <div className="mpag-dots">
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <button
+                                key={i}
+                                className={`mpag-dot ${i === currentPage ? 'active' : ''}`}
+                                onClick={() => onPageChange(i)}
+                                aria-label={`Página ${i + 1}`}
+                                aria-current={i === currentPage ? 'page' : undefined}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="mpag-progress-wrap">
+                        <div className="mpag-progress-track">
+                            <div
+                                className="mpag-progress-fill"
+                                style={{ width: `${progress * 100}%` }}
+                            />
+                        </div>
+                        <span className="mpag-page-label">
+                            {currentPage + 1} <span className="mpag-page-sep">/</span> {totalPages}
+                        </span>
+                    </div>
+                )}
+            </div>
+
+            {/* ── Botões ── */}
+            <div className="mpag-btns">
+                <button
+                    className="mpag-btn"
+                    disabled={currentPage === 0}
+                    onClick={() => onPageChange(currentPage - 1)}
+                    aria-label="Página anterior"
+                >
+                    <ChevronLeft size={17} strokeWidth={2.5} />
+                    <span>Anterior</span>
+                </button>
+                <button
+                    className="mpag-btn mpag-btn-next"
+                    disabled={currentPage === totalPages - 1}
+                    onClick={() => onPageChange(currentPage + 1)}
+                    aria-label="Próxima página"
+                >
+                    <span>Próximo</span>
+                    <ChevronRight size={17} strokeWidth={2.5} />
+                </button>
+            </div>
+        </div>
+    )
+}
+
 const MobileCardList = ({
     title,
     items = [],
@@ -48,6 +110,9 @@ const MobileCardList = ({
     sortDirection,
     onSort,
     onClearSort,
+    currentPage,
+    totalPages,
+    onPageChange,
 }) => {
     const { registerPage, unregisterPage } = useMobilePage()
     const [filterOpen, setFilterOpen] = useState(false)
@@ -288,6 +353,15 @@ const MobileCardList = ({
                         )
                     })}
                 </ul>
+            )}
+
+            {/* ── Mobile Pagination ── */}
+            {!loading && totalPages > 1 && (
+                <MobilePagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={onPageChange}
+                />
             )}
 
             {/* ── FAB ── */}

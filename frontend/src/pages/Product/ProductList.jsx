@@ -241,28 +241,32 @@ const ProductList = () => {
                     sortDirection={sortDirection}
                     onSort={handleColumnSort}
                     onClearSort={handleClearSort}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
                 />
             ) : (
-                <Table
-                    title={"Produtos"}
-                    columns={columns}
-                    data={products}
-                    idKey="productId"
-                    loading={loading}
-                    onEdit={openEditModal}
-                    onDelete={requestRemove}
-                    onAdd={() => setIsCreateModalOpen(true)}
-                    onReload={() => fetchProducts(currentPage)}
-                    onSort={handleColumnSort}
-                    sortField={sortField}
-                    sortDirection={sortDirection}
-                    emptyMessage={"Nenhum produto encontrado."}
-                    toolbar={filterToolbar}
-                    filterActive={appliedSearch.word !== ""}
-                />
+                <>
+                    <Table
+                        title={"Produtos"}
+                        columns={columns}
+                        data={products}
+                        idKey="productId"
+                        loading={loading}
+                        onEdit={openEditModal}
+                        onDelete={requestRemove}
+                        onAdd={() => setIsCreateModalOpen(true)}
+                        onReload={() => fetchProducts(currentPage)}
+                        onSort={handleColumnSort}
+                        sortField={sortField}
+                        sortDirection={sortDirection}
+                        emptyMessage={"Nenhum produto encontrado."}
+                        toolbar={filterToolbar}
+                        filterActive={appliedSearch.word !== ""}
+                    />
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                </>
             )}
-
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
 
             <Modal isOpen={isEditModalOpen} onClose={closeModals} title={"Editar Produto"}>
                 <ProductEdit

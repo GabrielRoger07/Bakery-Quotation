@@ -289,28 +289,32 @@ const SupplierList = () => {
                     sortDirection={sortDirection}
                     onSort={handleColumnSort}
                     onClearSort={handleClearSort}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
                 />
             ) : (
-                <Table
-                    title={"Fornecedores"}
-                    columns={columns}
-                    data={formattedSuppliers}
-                    idKey="supplierId"
-                    loading={loading}
-                    onEdit={openEditModal}
-                    onDelete={requestRemove}
-                    onAdd={() => setIsCreateModalOpen(true)}
-                    onReload={() => fetchSuppliers(currentPage)}
-                    onSort={handleColumnSort}
-                    sortField={sortField}
-                    sortDirection={sortDirection}
-                    emptyMessage={"Nenhum fornecedor encontrado."}
-                    toolbar={filterToolbar}
-                    filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
-                />
+                <>
+                    <Table
+                        title={"Fornecedores"}
+                        columns={columns}
+                        data={formattedSuppliers}
+                        idKey="supplierId"
+                        loading={loading}
+                        onEdit={openEditModal}
+                        onDelete={requestRemove}
+                        onAdd={() => setIsCreateModalOpen(true)}
+                        onReload={() => fetchSuppliers(currentPage)}
+                        onSort={handleColumnSort}
+                        sortField={sortField}
+                        sortDirection={sortDirection}
+                        emptyMessage={"Nenhum fornecedor encontrado."}
+                        toolbar={filterToolbar}
+                        filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
+                    />
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                </>
             )}
-
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
             <Modal isOpen={isEditModalOpen} onClose={closeModals} title={"Editar Fornecedor"}>
                 <SupplierEdit

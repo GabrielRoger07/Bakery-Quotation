@@ -397,6 +397,8 @@ textarea {
 
   .mobile-card-list-root {
     position: relative;
+    /* always clear the fixed bottom nav + FAB */
+    padding-bottom: calc(4.25rem + env(safe-area-inset-bottom) + 5rem);
   }
 
   /* Search bar wrapper */
@@ -1150,9 +1152,7 @@ textarea {
     display: flex;
     flex-direction: column;
     gap: 0.625rem;
-    padding: 0.5rem 1rem;
-    /* bottom clearance: FAB height + FAB bottom + safe-area + breathing room */
-    padding-bottom: calc(3.25rem + 4.25rem + env(safe-area-inset-bottom) + 2rem);
+    padding: 0.5rem 1rem 1.5rem;
     animation: mpagIn 0.22s ease-out both;
   }
 

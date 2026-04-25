@@ -4,7 +4,7 @@ import { Pencil, Trash, Eye, Activity, SlidersHorizontal, Plus } from 'lucide-re
 import { useMobilePage } from '../contexts/MobilePageContext'
 
 
-const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload, onMonitor, onSort, sortField, sortDirection, toolbar, filterActive = false }) => {
+const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload, onMonitor, onSort, sortField, sortDirection, toolbar, filterActive = false, filterSlot }) => {
     const [toolbarOpen, setToolbarOpen] = useState(false)
     const { registerPage, unregisterPage } = useMobilePage()
 
@@ -73,6 +73,12 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                             {toolbar}
                         </div>
                     </div>
+                </div>
+            )}
+
+            {filterSlot && (
+                <div className="mb-4">
+                    {filterSlot}
                 </div>
             )}
 

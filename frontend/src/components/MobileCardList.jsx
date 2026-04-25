@@ -101,8 +101,10 @@ const MobileCardList = ({
     onDelete,
     onView,
     onMonitor,
+    onCardClick,
     renderCard,
     toolbar,
+    inlineToolbar,
     filterActive = false,
     searchBar,
     sortColumns,
@@ -147,6 +149,13 @@ const MobileCardList = ({
 
     return (
         <div className="mobile-card-list-root" onClick={closeSwipe}>
+            {/* ── Inline toolbar (always visible, no drawer) ── */}
+            {inlineToolbar && (
+                <div className="px-4 pt-3 pb-1">
+                    {inlineToolbar}
+                </div>
+            )}
+
             {/* ── Search / filter bar ── */}
             {(searchBar || toolbar || sortColumns) && (
                 <div className="px-4 pt-3 pb-1 flex flex-col gap-2">
@@ -236,55 +245,61 @@ const MobileCardList = ({
                         const swiped = swipedId === id
                         const card = renderCard ? renderCard(item) : {}
                         const { avatar, title: cardTitle, subtitle, meta, tags = [] } = card
+                        const clickable = !!onCardClick
                         const actionCount = [onMonitor, onView, onEdit, onDelete].filter(Boolean).length
                         const swipeOffset = `${actionCount * 4}rem`
 
                         return (
                             <li
                                 key={id ?? idx}
-                                className={`card-item ${swiped ? 'swiped' : ''}`}
+                                className={`card-item ${!clickable && swiped ? 'swiped' : ''}`}
                                 style={{ animationDelay: `${idx * 35}ms`, '--swipe-offset': swipeOffset }}
-                                onTouchStart={e => handleTouchStart(e, id)}
-                                onTouchEnd={e => handleTouchEnd(e, id)}
+                                onTouchStart={!clickable ? e => handleTouchStart(e, id) : undefined}
+                                onTouchEnd={!clickable ? e => handleTouchEnd(e, id) : undefined}
                             >
-                                {/* Swipe action background */}
-                                <div className="swipe-actions">
-                                    {onMonitor && (
-                                        <button
-                                            className="swipe-btn swipe-monitor"
-                                            onClick={e => { e.stopPropagation(); onMonitor(item); closeSwipe() }}
-                                        >
-                                            <BarChart2 size={18} strokeWidth={2} />
-                                        </button>
-                                    )}
-                                    {onView && (
-                                        <button
-                                            className="swipe-btn swipe-view"
-                                            onClick={e => { e.stopPropagation(); onView(item); closeSwipe() }}
-                                        >
-                                            <Eye size={18} strokeWidth={2} />
-                                        </button>
-                                    )}
-                                    {onEdit && (
-                                        <button
-                                            className="swipe-btn swipe-edit"
-                                            onClick={e => { e.stopPropagation(); onEdit(item); closeSwipe() }}
-                                        >
-                                            <Pencil size={18} strokeWidth={2} />
-                                        </button>
-                                    )}
-                                    {onDelete && (
-                                        <button
-                                            className="swipe-btn swipe-delete"
-                                            onClick={e => { e.stopPropagation(); onDelete(id); closeSwipe() }}
-                                        >
-                                            <Trash size={18} strokeWidth={2} />
-                                        </button>
-                                    )}
-                                </div>
+                                {/* Swipe action background (only when no onCardClick) */}
+                                {!clickable && (
+                                    <div className="swipe-actions">
+                                        {onMonitor && (
+                                            <button
+                                                className="swipe-btn swipe-monitor"
+                                                onClick={e => { e.stopPropagation(); onMonitor(item); closeSwipe() }}
+                                            >
+                                                <BarChart2 size={18} strokeWidth={2} />
+                                            </button>
+                                        )}
+                                        {onView && (
+                                            <button
+                                                className="swipe-btn swipe-view"
+                                                onClick={e => { e.stopPropagation(); onView(item); closeSwipe() }}
+                                            >
+                                                <Eye size={18} strokeWidth={2} />
+                                            </button>
+                                        )}
+                                        {onEdit && (
+                                            <button
+                                                className="swipe-btn swipe-edit"
+                                                onClick={e => { e.stopPropagation(); onEdit(item); closeSwipe() }}
+                                            >
+                                                <Pencil size={18} strokeWidth={2} />
+                                            </button>
+                                        )}
+                                        {onDelete && (
+                                            <button
+                                                className="swipe-btn swipe-delete"
+                                                onClick={e => { e.stopPropagation(); onDelete(id); closeSwipe() }}
+                                            >
+                                                <Trash size={18} strokeWidth={2} />
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
 
                                 {/* Card front */}
-                                <div className="card-front">
+                                <div
+                                    className={`card-front ${clickable ? 'card-front-clickable' : ''}`}
+                                    onClick={clickable ? () => onCardClick(item) : undefined}
+                                >
                                     {/* Avatar */}
                                     {avatar !== undefined && (
                                         <div className="card-avatar" aria-hidden="true">
@@ -309,45 +324,52 @@ const MobileCardList = ({
                                         )}
                                     </div>
 
-                                    {/* Actions (desktop fallback / explicit tap) */}
-                                    <div className="card-actions">
-                                        {onMonitor && (
-                                            <button
-                                                className="card-action-btn monitor"
-                                                onClick={e => { e.stopPropagation(); onMonitor(item) }}
-                                                aria-label="Monitorar"
-                                            >
-                                                <BarChart2 size={15} strokeWidth={2} />
-                                            </button>
-                                        )}
-                                        {onView && (
-                                            <button
-                                                className="card-action-btn view"
-                                                onClick={e => { e.stopPropagation(); onView(item) }}
-                                                aria-label="Detalhes"
-                                            >
-                                                <Eye size={15} strokeWidth={2} />
-                                            </button>
-                                        )}
-                                        {onEdit && (
-                                            <button
-                                                className="card-action-btn edit"
-                                                onClick={e => { e.stopPropagation(); onEdit(item) }}
-                                                aria-label="Editar"
-                                            >
-                                                <Pencil size={15} strokeWidth={2} />
-                                            </button>
-                                        )}
-                                        {onDelete && (
-                                            <button
-                                                className="card-action-btn delete"
-                                                onClick={e => { e.stopPropagation(); onDelete(id) }}
-                                                aria-label="Excluir"
-                                            >
-                                                <Trash size={15} strokeWidth={2} />
-                                            </button>
-                                        )}
-                                    </div>
+                                    {/* Actions (only when no onCardClick) */}
+                                    {!clickable && (
+                                        <div className="card-actions">
+                                            {onMonitor && (
+                                                <button
+                                                    className="card-action-btn monitor"
+                                                    onClick={e => { e.stopPropagation(); onMonitor(item) }}
+                                                    aria-label="Monitorar"
+                                                >
+                                                    <BarChart2 size={15} strokeWidth={2} />
+                                                </button>
+                                            )}
+                                            {onView && (
+                                                <button
+                                                    className="card-action-btn view"
+                                                    onClick={e => { e.stopPropagation(); onView(item) }}
+                                                    aria-label="Detalhes"
+                                                >
+                                                    <Eye size={15} strokeWidth={2} />
+                                                </button>
+                                            )}
+                                            {onEdit && (
+                                                <button
+                                                    className="card-action-btn edit"
+                                                    onClick={e => { e.stopPropagation(); onEdit(item) }}
+                                                    aria-label="Editar"
+                                                >
+                                                    <Pencil size={15} strokeWidth={2} />
+                                                </button>
+                                            )}
+                                            {onDelete && (
+                                                <button
+                                                    className="card-action-btn delete"
+                                                    onClick={e => { e.stopPropagation(); onDelete(id) }}
+                                                    aria-label="Excluir"
+                                                >
+                                                    <Trash size={15} strokeWidth={2} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Chevron hint for clickable cards */}
+                                    {clickable && (
+                                        <ChevronRight size={16} strokeWidth={2} className="card-chevron" />
+                                    )}
                                 </div>
                             </li>
                         )

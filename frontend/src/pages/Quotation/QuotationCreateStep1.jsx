@@ -1,36 +1,32 @@
 import { useState } from 'react'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
-import { Gavel, FileText, Check } from 'lucide-react'
+import { Gavel, FileText, Check, Calendar, Clock } from 'lucide-react'
 
 const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading }) => {
 
-    const [localStart, setLocalStart] = useState(start || "")
-    const [localEnd, setLocalEnd] = useState(end || "")
     const [localIsAuction, setLocalIsAuction] = useState(typeof isAuction === "boolean" ? isAuction : false)
     const [localError, setLocalError] = useState("")
 
-const handleNextClick = () => {
-        onChange("start", localStart)
-        onChange("end", localEnd)
+    const handleNextClick = () => {
         onChange("isAuction", localIsAuction)
 
-        if(!localStart || !localEnd) {
+        if (!start || !end) {
             setLocalError("Todos os campos são obrigatórios")
             return
         }
 
         const now = new Date()
-        const s = new Date(localStart)
-        const e = new Date(localEnd)
+        const s = new Date(start)
+        const e = new Date(end)
 
-        if(s <= now){
+        if (s <= now) {
             setLocalError("Data de início deve ser posterior à data atual")
             return
-        } else if(e <= now) {
+        } else if (e <= now) {
             setLocalError("Data de fim deve ser posterior à data atual")
             return
-        } else if(e <= s){
+        } else if (e <= s) {
             setLocalError("Data de fim deve ser posterior à data de início")
             return
         }
@@ -40,68 +36,133 @@ const handleNextClick = () => {
     }
 
     const inputCls = (hasError) => [
-        'w-full h-[2.375rem] border-[1.5px] rounded-[var(--radius-md)] px-3 font-sans text-[0.875rem] text-[var(--color-text-primary)] bg-transparent outline-none transition-[border-color,box-shadow] duration-[160ms]',
-        hasError ? 'border-[var(--color-danger)]' : 'border-[var(--color-border-strong)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]',
-    ].join(' ')
-
-    const modeCardCls = (selected) => [
-        'border-[1.5px] rounded-[var(--radius-md)] p-4 cursor-pointer relative transition-[background-color,border-color,box-shadow] duration-[160ms]',
-        selected ? 'border-[var(--color-accent)] bg-[var(--color-selected-card-bg)] [box-shadow:0_0_0_1px_var(--color-accent)]' : 'border-[var(--color-border)] hover:bg-[var(--color-surface-1)]',
-    ].join(' ')
-
-    const modeCheckCls = (selected) => [
-        'absolute top-2 right-2 w-5 h-5 border-[1.5px] rounded-full grid place-items-center transition-[background-color,border-color,color] duration-[160ms]',
-        selected ? 'bg-[var(--color-accent)] border-[var(--color-accent)] text-white' : 'border-[var(--color-border)] text-transparent',
+        'w-full h-[2.5rem] border-[1.5px] rounded-[var(--radius-md)] px-3 font-sans text-[0.875rem] text-[var(--color-text-primary)] bg-transparent outline-none transition-[border-color,box-shadow] duration-[160ms]',
+        hasError
+            ? 'border-[var(--color-danger)] focus:[box-shadow:var(--shadow-focus-danger)]'
+            : 'border-[var(--color-border-strong)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]',
     ].join(' ')
 
     return (
-        <div className="max-w-[1000px] mx-auto">
-            <h2 className="text-center mt-0 mb-4 text-[var(--color-text-strong)] text-[1.125rem]">Etapa 1: Datas da Cotação</h2>
+        <div>
+            {/* Section label */}
+            <div className="mb-5">
+                <h2 className="m-0 text-[1.0625rem] font-bold text-[var(--color-text-strong)] tracking-[-0.015em]">Período e modo</h2>
+                <p className="mt-1 mb-0 text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.5]">
+                    Defina quando a cotação estará aberta e como os fornecedores irão participar.
+                </p>
+            </div>
 
-            <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] mb-3 [box-shadow:var(--shadow-xs)] overflow-hidden">
-                <div className="px-5 pt-4 pb-[0.6rem] flex flex-col gap-[0.15rem]">
-                    <span className="text-[0.875rem] font-semibold text-[var(--color-text-strong)]">Selecione as datas de início e fim da cotação.</span>
-                    <span className="text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.4]">Lembre-se que elas precisam estar no futuro.</span>
+            {/* Dates card */}
+            <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-xl)] mb-4 [box-shadow:var(--shadow-xs)] overflow-hidden">
+                <div className="px-5 pt-4 pb-3 flex items-center gap-2.5 border-b border-[var(--color-border-light)]">
+                    <div className="w-7 h-7 rounded-[var(--radius-md)] bg-[var(--color-highlight-lighter)] border border-[var(--color-highlight-border)] flex items-center justify-center flex-shrink-0 text-[var(--color-accent)]">
+                        <Calendar size={14} strokeWidth={2} />
+                    </div>
+                    <div>
+                        <p className="m-0 text-[0.875rem] font-semibold text-[var(--color-text-strong)] leading-tight">Período da cotação</p>
+                        <p className="m-0 text-[0.75rem] text-[var(--color-text-muted)] leading-tight mt-0.5">As datas precisam estar no futuro</p>
+                    </div>
                 </div>
-                <div className="px-5 pb-5">
-                    <div className="grid grid-cols-2 gap-[0.85rem] max-[768px]:grid-cols-1">
-                        <div className="flex flex-col gap-[0.35rem]">
-                            <label className="text-[0.8125rem] font-medium text-[var(--color-text-secondary)]">Data de Início</label>
-                            <input type="datetime-local" className={inputCls(localError && !localStart)} value={localStart} onChange={e => setLocalStart(e.target.value)} />
+                <div className="px-5 py-4">
+                    <div className="grid grid-cols-2 gap-4 max-[600px]:grid-cols-1">
+                        <div className="flex flex-col gap-[0.375rem]">
+                            <label className="text-[0.75rem] font-semibold text-[var(--color-text-secondary)] flex items-center gap-1.5">
+                                <Clock size={11} strokeWidth={2.5} />
+                                Início
+                            </label>
+                            <input
+                                type="datetime-local"
+                                className={inputCls(localError && !start)}
+                                value={start}
+                                onChange={e => onChange("start", e.target.value)}
+                            />
                         </div>
-                        <div className="flex flex-col gap-[0.35rem]">
-                            <label className="text-[0.8125rem] font-medium text-[var(--color-text-secondary)]">Data de Fim</label>
-                            <input type="datetime-local" className={inputCls(localError && !localEnd)} value={localEnd} onChange={e => setLocalEnd(e.target.value)} />
+                        <div className="flex flex-col gap-[0.375rem]">
+                            <label className="text-[0.75rem] font-semibold text-[var(--color-text-secondary)] flex items-center gap-1.5">
+                                <Clock size={11} strokeWidth={2.5} />
+                                Fim
+                            </label>
+                            <input
+                                type="datetime-local"
+                                className={inputCls(localError && !end)}
+                                value={end}
+                                onChange={e => onChange("end", e.target.value)}
+                            />
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] mb-3 [box-shadow:var(--shadow-xs)] overflow-hidden">
-                <div className="px-5 pt-4 pb-[0.6rem] flex flex-col gap-[0.15rem]">
-                    <span className="text-[0.875rem] font-semibold text-[var(--color-text-strong)]">Modo da Cotação</span>
-                    <span className="text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.4]">Escolha como os fornecedores enviarão suas propostas</span>
+            {/* Mode selector card */}
+            <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-xl)] mb-4 [box-shadow:var(--shadow-xs)] overflow-hidden">
+                <div className="px-5 pt-4 pb-3 flex items-center gap-2.5 border-b border-[var(--color-border-light)]">
+                    <div className="w-7 h-7 rounded-[var(--radius-md)] bg-[var(--color-highlight-lighter)] border border-[var(--color-highlight-border)] flex items-center justify-center flex-shrink-0 text-[var(--color-accent)]">
+                        <Gavel size={14} strokeWidth={2} />
+                    </div>
+                    <div>
+                        <p className="m-0 text-[0.875rem] font-semibold text-[var(--color-text-strong)] leading-tight">Modo da cotação</p>
+                        <p className="m-0 text-[0.75rem] text-[var(--color-text-muted)] leading-tight mt-0.5">Como os fornecedores enviarão suas propostas</p>
+                    </div>
                 </div>
-                <div className="px-5 pb-5">
-                    <div className="grid grid-cols-2 gap-2 max-[768px]:grid-cols-1">
-                        {[{ selected: localIsAuction, set: true, icon: <Gavel size={22} />, title: "Leilão", desc: "Fornecedores competem em tempo real enviando lances pelo menor preço" },
-                          { selected: !localIsAuction, set: false, icon: <FileText size={22} />, title: "Proposta única", desc: "Fornecedores enviam apenas uma proposta por item, sem acompanhar lances" }
-                        ].map(({ selected, set, icon, title, desc }) => (
-                            <div key={title} className={modeCardCls(selected)} onClick={() => setLocalIsAuction(set)}>
-                                <div className={modeCheckCls(selected)}><Check size={11} strokeWidth={3} /></div>
-                                <span className={`block mb-[0.35rem] ${selected ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'}`}>{icon}</span>
-                                <span className="font-semibold text-[0.875rem] text-[var(--color-text-strong)] block mb-[0.2rem]">{title}</span>
-                                <span className="text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.4] block">{desc}</span>
-                            </div>
-                        ))}
+                <div className="px-5 py-4">
+                    <div className="grid grid-cols-2 gap-3 max-[600px]:grid-cols-1">
+                        {[
+                            {
+                                value: true,
+                                icon: <Gavel size={20} strokeWidth={1.75} />,
+                                title: "Leilão",
+                                desc: "Fornecedores competem em tempo real enviando lances pelo menor preço"
+                            },
+                            {
+                                value: false,
+                                icon: <FileText size={20} strokeWidth={1.75} />,
+                                title: "Proposta única",
+                                desc: "Fornecedores enviam apenas uma proposta por item, sem acompanhar lances"
+                            }
+                        ].map(({ value, icon, title, desc }) => {
+                            const selected = localIsAuction === value
+                            return (
+                                <button
+                                    key={title}
+                                    type="button"
+                                    onClick={() => setLocalIsAuction(value)}
+                                    className={[
+                                        'relative text-left border-[1.5px] rounded-[var(--radius-lg)] p-4 cursor-pointer transition-[background-color,border-color,box-shadow] duration-[160ms] w-full',
+                                        selected
+                                            ? 'border-[var(--color-accent)] bg-[var(--color-selected-card-bg)] [box-shadow:0_0_0_1px_var(--color-accent)]'
+                                            : 'border-[var(--color-border)] hover:border-[var(--color-border-strong)] hover:bg-[var(--color-surface-1)]',
+                                    ].join(' ')}
+                                >
+                                    {/* check indicator */}
+                                    <span className={[
+                                        'absolute top-3 right-3 w-[18px] h-[18px] border-[1.5px] rounded-full grid place-items-center transition-[background-color,border-color] duration-[160ms] flex-shrink-0',
+                                        selected ? 'bg-[var(--color-accent)] border-[var(--color-accent)] text-white' : 'border-[var(--color-border-strong)] text-transparent',
+                                    ].join(' ')}>
+                                        <Check size={10} strokeWidth={3} />
+                                    </span>
+
+                                    <span className={`block mb-2.5 ${selected ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'}`}>
+                                        {icon}
+                                    </span>
+                                    <span className="font-semibold text-[0.875rem] text-[var(--color-text-strong)] block mb-1 leading-tight pr-5">{title}</span>
+                                    <span className="text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.45] block">{desc}</span>
+                                </button>
+                            )
+                        })}
                     </div>
                 </div>
             </div>
 
-            {localError && <Alert message={localError} />}
+            {localError && 
+                <div className='flex justify-center gap-3 mt-4'>
+                    <Alert message={localError} />
+                </div>
+            }
 
-            <div className="flex justify-center gap-3 mt-5 max-[768px]:flex-col max-[768px]:gap-[0.65rem]">
-                <Button onClick={handleNextClick} disabled={loading} className="max-[768px]:w-full">{loading ? "Carregando..." : "Próximo"}</Button>
+            <div className="flex justify-end mt-5 max-[768px]:justify-stretch">
+                <Button onClick={handleNextClick} disabled={loading} className="max-[768px]:w-full">
+                    {loading ? "Carregando..." : "Próximo"}
+                </Button>
             </div>
         </div>
     )

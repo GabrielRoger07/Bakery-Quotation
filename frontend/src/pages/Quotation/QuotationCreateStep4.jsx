@@ -26,8 +26,11 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
         : "Proposta única"
 
     return (
-        <div className="max-w-[1000px] mx-auto">
-            <h2 className="text-center mt-0 mb-4 text-[var(--color-text-strong)] text-[1.125rem]">Etapa 4: Revisão</h2>
+        <div>
+            <div className="mb-5">
+                <h2 className="m-0 text-[1.0625rem] font-bold text-[var(--color-text-strong)] tracking-[-0.015em]">Revisão</h2>
+                <p className="mt-1 mb-0 text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.5]">Revise os dados antes de salvar a cotação.</p>
+            </div>
 
             <div className="p-[0.125rem]">
                 {/* Meta grid */}
@@ -103,7 +106,7 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
                 </div>
             </div>
 
-            <div className="flex justify-center gap-3 mt-5 max-[768px]:flex-col max-[768px]:gap-[0.65rem]">
+            <div className="flex justify-center gap-3 mt-5">
                 <Button onClick={onBack} disabled={loading} className="max-[768px]:w-full">Voltar</Button>
                 <Button onClick={onConfirm} disabled={loading} className="max-[768px]:w-full">
                     {loading ? "Salvando..." : "Salvar"}

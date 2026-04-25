@@ -8,6 +8,8 @@ import CompanyCreate from './pages/Company/CompanyCreate';
 import SupplierList from './pages/Supplier/SupplierList';
 import ProductList from './pages/Product/ProductList';
 import QuotationList from './pages/Quotation/QuotationList';
+import QuotationCreatePage from './pages/Quotation/QuotationCreatePage';
+import QuotationEditPage from './pages/Quotation/QuotationEditPage';
 import Navbar from './components/Navbar';
 import SupplierNavbar from './components/SupplierNavbar';
 import QuotationMonitor from './pages/Quotation/QuotationMonitor';
@@ -30,8 +32,8 @@ function App() {
 
 function AppContent() {
   const location = useLocation()
-  const showNavbarRoutes = ["/suppliers", "/products", "/quotations", "/quotations/monitor"]
-  const shouldShowNavbar = showNavbarRoutes.includes(location.pathname)
+  const showNavbarRoutes = ["/suppliers", "/products"]
+  const shouldShowNavbar = showNavbarRoutes.includes(location.pathname) || location.pathname.startsWith("/quotations")
   const shouldShowSupplierNavbar = location.pathname.startsWith("/supplier") && !location.pathname.startsWith("/supplier/login/")
 
   return (
@@ -44,6 +46,8 @@ function AppContent() {
           <Route path="/suppliers" element={<PrivateRoute> <SupplierList /> </PrivateRoute>}></Route>
           <Route path="/products" element={<PrivateRoute> <ProductList /> </PrivateRoute>}></Route>
           <Route path="/quotations" element={<PrivateRoute> <QuotationList /> </PrivateRoute>}></Route>
+          <Route path="/quotations/new" element={<PrivateRoute> <QuotationCreatePage /> </PrivateRoute>}></Route>
+          <Route path="/quotations/:id/edit" element={<PrivateRoute> <QuotationEditPage /> </PrivateRoute>}></Route>
           <Route path="/quotations/monitor/" element={<PrivateRoute> <QuotationMonitor /> </PrivateRoute>}></Route>
 
           <Route path="/supplier/login/:companyCnpj" element={<SupplierAccessToken />}></Route>

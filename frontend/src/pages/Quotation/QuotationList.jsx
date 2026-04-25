@@ -7,8 +7,6 @@ import MobileCardList from '../../components/MobileCardList'
 import Alert from '../../components/Alert'
 import Button from '../../components/Button'
 import Pagination from '../../components/Pagination'
-import QuotationCreate from './QuotationCreate'
-import QuotationEdit from './QuotationEdit'
 import QuotationDetails from './QuotationDetails'
 import { ENV } from '../../config/env'
 import { formatDateTime } from '../../utils/formatDateTime'
@@ -25,10 +23,7 @@ const QuotationList = () => {
     const [error, setError] = useState("")
     const [status, setStatus] = useState(null)
 
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
-    const [quotationToEdit, setQuotationToEdit] = useState(null)
     const [quotationToView, setQuotationToView] = useState(null)
 
     const [confirmOpen, setConfirmOpen] = useState(false)
@@ -53,12 +48,7 @@ const QuotationList = () => {
         quotationStartFormatted: "quotationStart",
         quotationEndFormatted: "quotationEnd",
         status: null
-    }), []);
-
-    const openEditModal = (quotation) => {
-        setQuotationToEdit(quotation)
-        setIsEditModalOpen(true)
-    }
+    }), [])
 
     const openDetailsModal = (quotation) => {
         setQuotationToView(quotation)
@@ -66,34 +56,20 @@ const QuotationList = () => {
     }
 
     const closeModals = () => {
-        setQuotationToEdit(null)
         setQuotationToView(null)
-        setIsEditModalOpen(false)
-        setIsCreateModalOpen(false)
         setIsDetailsModalOpen(false)
         setConfirmOpen(false)
         setQuotationToRemove(null)
         setCannotDelete(false)
     }
 
-    const handleSaveCreate = () => {
-        fetchQuotations()
-    }
-
-    const handleSaveEdit = (updatedQuotation) => {
-        const status = new Date(updatedQuotation.quotationStart) > new Date() ? "Agendado" : new Date(updatedQuotation.quotationEnd) < new Date() ? "Fechado" : "Ativo"
-        setQuotations((prev) =>
-            prev.map((q) => q.quotationId === updatedQuotation.quotationId ? {...updatedQuotation, status} : q)
-        )
-    }
-
     const requestRemove = (quotationId) => {
         const q = quotations.find((x) => x.quotationId === quotationId)
-        if(new Date(q.quotationStart) <= new Date()){
+        if (new Date(q.quotationStart) <= new Date()) {
             setCannotDelete(true)
             setConfirmOpen(true)
             setQuotationToRemove(null)
-        }else{
+        } else {
             setQuotationToRemove(q)
             setCannotDelete(false)
             setConfirmOpen(true)
@@ -101,13 +77,12 @@ const QuotationList = () => {
     }
 
     const confirmRemove = async () => {
-        if(!quotationToRemove) return
-
+        if (!quotationToRemove) return
         const res = await request("DELETE", `/quotations/${quotationToRemove.quotationId}`)
-        if(res.ok){
+        if (res.ok) {
             fetchQuotations()
             setError("")
-        }else{
+        } else {
             setError("Erro ao remover cotação. Por favor tente novamente.")
         }
         closeModals()
@@ -120,62 +95,50 @@ const QuotationList = () => {
     const fetchQuotations = useCallback(async (page = 0) => {
         let sortQuery = ""
         const backendSortField = sortMap[sortField]
-
-        if(sortField) {
-            sortQuery = `&sort=${backendSortField},${sortDirection}`
-        }
+        if (sortField) sortQuery = `&sort=${backendSortField},${sortDirection}`
 
         const res = await request("GET", `/quotations/company?page=${page}${sortQuery}`)
-
-        if(res.ok){
+        if (res.ok) {
             const mapped = res.data.content.map((q) => {
-
                 const start = formatDateTime(q.quotationStart)
                 const end = formatDateTime(q.quotationEnd)
-
                 return {
                     ...q,
                     quotationStartFormatted: start ? `${start.date} • ${start.time}` : "-",
                     quotationEndFormatted: end ? `${end.date} • ${end.time}` : "-",
-                    status:
-                    new Date(q.quotationStart) > new Date() ? "Agendado" : new Date(q.quotationEnd) < new Date() ? "Fechado" : "Ativo"
+                    status: new Date(q.quotationStart) > new Date() ? "Agendado"
+                          : new Date(q.quotationEnd) < new Date() ? "Fechado"
+                          : "Ativo"
                 }
             })
-
-            setQuotations(mapped);
+            setQuotations(mapped)
             setTotalPages(res.data.totalPages)
             setError("")
-        }else{
+        } else {
             setError(res.data?.message)
         }
         setStatus(res.status)
     }, [request, sortField, sortDirection, sortMap])
 
     const handleColumnSort = (columnKey) => {
-
-        if(!sortMap[columnKey]) {
-            return
-        }
-
-        if(sortField === columnKey) {
+        if (!sortMap[columnKey]) return
+        if (sortField === columnKey) {
             setSortDirection(prev => prev === "asc" ? "desc" : "asc")
         } else {
             setSortField(columnKey)
             setSortDirection("asc")
         }
-
         setCurrentPage(0)
     }
 
     useEffect(() => {
-        fetchQuotations(currentPage);
+        fetchQuotations(currentPage)
     }, [fetchQuotations, currentPage])
 
     const renderQuotationCard = (quotation) => {
         const statusVariant =
             quotation.status === 'Ativo' ? 'success' :
             quotation.status === 'Agendado' ? 'accent' : ''
-
         return {
             avatar: <CalendarRange size={20} strokeWidth={1.75} />,
             title: `Cotação #${quotation.quotationId}`,
@@ -197,8 +160,8 @@ const QuotationList = () => {
                     loading={loading}
                     emptyMessage="Nenhuma cotação encontrada."
                     onReload={() => fetchQuotations(currentPage)}
-                    onAdd={() => setIsCreateModalOpen(true)}
-                    onEdit={openEditModal}
+                    onAdd={() => navigate('/quotations/new')}
+                    onEdit={(q) => navigate(`/quotations/${q.quotationId}/edit`)}
                     onDelete={requestRemove}
                     onView={openDetailsModal}
                     onMonitor={handleMonitor}
@@ -215,9 +178,9 @@ const QuotationList = () => {
                         data={quotations}
                         idKey="quotationId"
                         loading={loading}
-                        onEdit={openEditModal}
+                        onEdit={(q) => navigate(`/quotations/${q.quotationId}/edit`)}
                         onDelete={requestRemove}
-                        onAdd={() => setIsCreateModalOpen(true)}
+                        onAdd={() => navigate('/quotations/new')}
                         onReload={() => fetchQuotations(currentPage)}
                         onSort={handleColumnSort}
                         sortField={sortField}
@@ -230,25 +193,8 @@ const QuotationList = () => {
                 </>
             )}
 
-            <Modal isOpen={isEditModalOpen} onClose={closeModals} title={"Editar Cotação"}>
-                <QuotationEdit
-                    quotation={quotationToEdit}
-                    onSave={handleSaveEdit}
-                    onClose={closeModals}
-                />
-            </Modal>
-
-            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={"Criar Cotação"}>
-                <QuotationCreate
-                    onSave={handleSaveCreate}
-                    onClose={closeModals}
-                />
-            </Modal>
-
             <Modal isOpen={isDetailsModalOpen} onClose={closeModals} title={"Detalhes da Cotação"}>
-                <QuotationDetails
-                    quotation={quotationToView}
-                />
+                <QuotationDetails quotation={quotationToView} />
             </Modal>
 
             <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>

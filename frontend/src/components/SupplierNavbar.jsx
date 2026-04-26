@@ -3,7 +3,6 @@ import Cookies from 'js-cookie'
 import { useMemo, useState } from 'react'
 import Button from './Button'
 import { decodeJwt } from '../utils/decodeJwt'
-import SupplierMobileMenu from './SupplierMobileMenu'
 import LogoutConfirmModal from './LogoutConfirmModal'
 
 const SupplierNavbar = () => {
@@ -28,7 +27,7 @@ const SupplierNavbar = () => {
 
     return (
         <>
-            <nav className="flex justify-between items-center gap-4 px-6 h-[3.375rem] bg-[var(--color-brand)] border-b border-[var(--color-on-dark-border)] sticky top-0 z-[1000] [box-shadow:var(--shadow-md-strong)] max-[640px]:px-4">
+            <nav className="flex justify-between items-center gap-4 px-6 h-[4.5rem] sm:h-[3.375rem] bg-[var(--color-brand)] border-b border-[var(--color-on-dark-border)] sticky top-0 z-[1000] [box-shadow:var(--shadow-md-strong)] max-[640px]:px-4">
                 <div className="flex items-center">
                     {supplierName && (
                         <div className="flex items-center gap-[0.6rem] px-[0.75rem] py-[0.3rem] pl-[0.3rem] rounded-full bg-[var(--color-on-dark-bg)] border border-[var(--color-on-dark-border-soft)] [animation:supplierAppear_0.4s_ease_both]">
@@ -43,16 +42,10 @@ const SupplierNavbar = () => {
                     )}
                 </div>
 
-                <div className="flex items-center justify-end gap-[0.625rem] ml-auto max-[640px]:hidden">
+                <div className="flex items-center justify-end gap-[0.625rem] ml-auto">
                     <Button onClick={() => setConfirmOpen(true)}>Sair</Button>
                 </div>
             </nav>
-
-            <SupplierMobileMenu
-                onLogout={() => setConfirmOpen(true)}
-                supplierName={supplierName}
-                initial={initial}
-            />
 
             <LogoutConfirmModal
                 open={confirmOpen}

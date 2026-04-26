@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
 import MobileCardList from '../../components/MobileCardList'
+import SupplierBottomSheet from '../../components/SupplierBottomSheet'
+import SupplierFormBottomSheet from '../../components/SupplierFormBottomSheet'
 import Modal from '../../components/Modal'
 import Alert from '../../components/Alert'
 import SupplierCreate from './SupplierCreate'
@@ -11,7 +13,6 @@ import Pagination from '../../components/Pagination'
 import { ENV } from '../../config/env'
 import { formatCnpj } from '../../utils/formatCnpj'
 import { formatPhone } from '../../utils/formatPhone'
-import { Phone, Building2 } from 'lucide-react'
 import useIsMobile from '../../hooks/useIsMobile'
 
 const SUPPLIER_FILTER_OPTIONS = [
@@ -35,6 +36,12 @@ const SupplierList = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [supplierToEdit, setSupplierToEdit] = useState(null)
 
+    const [formSheetOpen, setFormSheetOpen] = useState(false)
+    const [formSheetMode, setFormSheetMode] = useState('create')
+
+    const [sheetOpen, setSheetOpen] = useState(false)
+    const [sheetSupplier, setSheetSupplier] = useState(null)
+
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [supplierToRemove, setSupplierToRemove] = useState(null)
 
@@ -56,9 +63,39 @@ const SupplierList = () => {
         { key: "employerCnpj", label: "CNPJ da Empresa"}
     ]
 
+    const openSheet = (supplier) => {
+        setSheetSupplier(supplier)
+        setSheetOpen(true)
+    }
+
+    const closeSheet = () => {
+        setSheetOpen(false)
+        setSheetSupplier(null)
+    }
+
     const openEditModal = (supplier) => {
         setSupplierToEdit(supplier)
-        setIsEditModalOpen(true)
+        if (isMobile) {
+            setFormSheetMode('edit')
+            setFormSheetOpen(true)
+        } else {
+            setIsEditModalOpen(true)
+        }
+    }
+
+    const openCreateForm = () => {
+        if (isMobile) {
+            setSupplierToEdit(null)
+            setFormSheetMode('create')
+            setFormSheetOpen(true)
+        } else {
+            setIsCreateModalOpen(true)
+        }
+    }
+
+    const closeFormSheet = () => {
+        setFormSheetOpen(false)
+        setSupplierToEdit(null)
     }
 
     const closeModals = () => {
@@ -248,20 +285,10 @@ const SupplierList = () => {
             ? supplier.supplierName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
             : '?'
 
-        const tags = []
-        if (supplier.supplierWhatsappNumber && supplier.supplierWhatsappNumber !== '-') {
-            tags.push({ label: supplier.supplierWhatsappNumber, icon: <Phone size={10} strokeWidth={2.5} />, variant: 'accent' })
-        }
-        if (supplier.employerCnpj && supplier.employerCnpj !== '-') {
-            tags.push({ label: supplier.employerCnpj, icon: <Building2 size={10} strokeWidth={2.5} /> })
-        }
-
         return {
             avatar: initials,
             title: supplier.supplierName,
             subtitle: supplier.employerName || undefined,
-            meta: supplier.supplierEmail && supplier.supplierEmail !== '-' ? supplier.supplierEmail : undefined,
-            tags,
         }
     }
 
@@ -271,28 +298,44 @@ const SupplierList = () => {
             {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
             {isMobile ? (
-                <MobileCardList
-                    title="Fornecedores"
-                    items={formattedSuppliers}
-                    idKey="supplierId"
-                    loading={loading}
-                    emptyMessage="Nenhum fornecedor encontrado."
-                    onReload={() => fetchSuppliers(currentPage)}
-                    onAdd={() => setIsCreateModalOpen(true)}
-                    onEdit={openEditModal}
-                    onDelete={requestRemove}
-                    renderCard={renderSupplierCard}
-                    toolbar={mobileFilterToolbar}
-                    filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
-                    sortColumns={columns}
-                    sortField={sortField}
-                    sortDirection={sortDirection}
-                    onSort={handleColumnSort}
-                    onClearSort={handleClearSort}
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                />
+                <>
+                    <MobileCardList
+                        title="Fornecedores"
+                        items={formattedSuppliers}
+                        idKey="supplierId"
+                        loading={loading}
+                        emptyMessage="Nenhum fornecedor encontrado."
+                        onReload={() => fetchSuppliers(currentPage)}
+                        onAdd={openCreateForm}
+                        onCardClick={openSheet}
+                        renderCard={renderSupplierCard}
+                        toolbar={mobileFilterToolbar}
+                        filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
+                        sortColumns={columns}
+                        sortField={sortField}
+                        sortDirection={sortDirection}
+                        onSort={handleColumnSort}
+                        onClearSort={handleClearSort}
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                    />
+                    <SupplierBottomSheet
+                        isOpen={sheetOpen}
+                        onClose={closeSheet}
+                        supplier={sheetSupplier}
+                        onEdit={openEditModal}
+                        onDelete={requestRemove}
+                    />
+                    <SupplierFormBottomSheet
+                        isOpen={formSheetOpen}
+                        onClose={closeFormSheet}
+                        mode={formSheetMode}
+                        supplier={supplierToEdit}
+                        onSaveCreate={handleSaveCreate}
+                        onSaveEdit={handleSaveEdit}
+                    />
+                </>
             ) : (
                 <>
                     <Table

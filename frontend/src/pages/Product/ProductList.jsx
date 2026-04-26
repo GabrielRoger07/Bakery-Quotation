@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import useFetch from '../../hooks/useFetch'
 import Table from '../../components/Table'
 import MobileCardList from '../../components/MobileCardList'
+import ProductBottomSheet from '../../components/ProductBottomSheet'
+import ProductFormBottomSheet from '../../components/ProductFormBottomSheet'
 import Modal from '../../components/Modal'
 import Alert from '../../components/Alert'
 import ProductCreate from './ProductCreate'
@@ -9,7 +11,6 @@ import ProductEdit from './ProductEdit'
 import Button from '../../components/Button'
 import Pagination from '../../components/Pagination'
 import { ENV } from '../../config/env'
-import { Barcode } from 'lucide-react'
 import useIsMobile from '../../hooks/useIsMobile'
 
 const ProductList = () => {
@@ -24,6 +25,12 @@ const ProductList = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [productToEdit, setProductToEdit] = useState(null)
+
+    const [formSheetOpen, setFormSheetOpen] = useState(false)
+    const [formSheetMode, setFormSheetMode] = useState('create')
+
+    const [sheetOpen, setSheetOpen] = useState(false)
+    const [sheetProduct, setSheetProduct] = useState(null)
 
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [productToRemove, setProductToRemove] = useState(null)
@@ -43,9 +50,39 @@ const ProductList = () => {
         { key: "productDescription", label: "Descrição do Produto" },
     ]
 
+    const openSheet = (product) => {
+        setSheetProduct(product)
+        setSheetOpen(true)
+    }
+
+    const closeSheet = () => {
+        setSheetOpen(false)
+        setSheetProduct(null)
+    }
+
     const openEditModal = (product) => {
         setProductToEdit(product)
-        setIsEditModalOpen(true)
+        if (isMobile) {
+            setFormSheetMode('edit')
+            setFormSheetOpen(true)
+        } else {
+            setIsEditModalOpen(true)
+        }
+    }
+
+    const openCreateForm = () => {
+        if (isMobile) {
+            setProductToEdit(null)
+            setFormSheetMode('create')
+            setFormSheetOpen(true)
+        } else {
+            setIsCreateModalOpen(true)
+        }
+    }
+
+    const closeFormSheet = () => {
+        setFormSheetOpen(false)
+        setProductToEdit(null)
     }
 
     const closeModals = () => {
@@ -200,20 +237,10 @@ const ProductList = () => {
             ? product.productName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
             : '?'
 
-        const tags = []
-        if (product.productBarCodeNumber) {
-            tags.push({
-                label: product.productBarCodeNumber,
-                icon: <Barcode size={10} strokeWidth={2.5} />,
-                variant: 'accent',
-            })
-        }
-
         return {
             avatar: initials,
             title: product.productName,
             subtitle: product.productDescription || undefined,
-            tags,
         }
     }
 
@@ -223,28 +250,44 @@ const ProductList = () => {
             {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
             {isMobile ? (
-                <MobileCardList
-                    title="Produtos"
-                    items={products}
-                    idKey="productId"
-                    loading={loading}
-                    emptyMessage="Nenhum produto encontrado."
-                    onReload={() => fetchProducts(currentPage)}
-                    onAdd={() => setIsCreateModalOpen(true)}
-                    onEdit={openEditModal}
-                    onDelete={requestRemove}
-                    renderCard={renderProductCard}
-                    toolbar={mobileFilterToolbar}
-                    filterActive={appliedSearch.word !== ""}
-                    sortColumns={columns}
-                    sortField={sortField}
-                    sortDirection={sortDirection}
-                    onSort={handleColumnSort}
-                    onClearSort={handleClearSort}
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                />
+                <>
+                    <MobileCardList
+                        title="Produtos"
+                        items={products}
+                        idKey="productId"
+                        loading={loading}
+                        emptyMessage="Nenhum produto encontrado."
+                        onReload={() => fetchProducts(currentPage)}
+                        onAdd={openCreateForm}
+                        onCardClick={openSheet}
+                        renderCard={renderProductCard}
+                        toolbar={mobileFilterToolbar}
+                        filterActive={appliedSearch.word !== ""}
+                        sortColumns={columns}
+                        sortField={sortField}
+                        sortDirection={sortDirection}
+                        onSort={handleColumnSort}
+                        onClearSort={handleClearSort}
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                    />
+                    <ProductBottomSheet
+                        isOpen={sheetOpen}
+                        onClose={closeSheet}
+                        product={sheetProduct}
+                        onEdit={openEditModal}
+                        onDelete={requestRemove}
+                    />
+                    <ProductFormBottomSheet
+                        isOpen={formSheetOpen}
+                        onClose={closeFormSheet}
+                        mode={formSheetMode}
+                        product={productToEdit}
+                        onSaveCreate={handleSaveCreate}
+                        onSaveEdit={handleSaveEdit}
+                    />
+                </>
             ) : (
                 <>
                     <Table

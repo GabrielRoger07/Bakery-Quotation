@@ -61,7 +61,7 @@ const Navbar = () => {
                 )}
             </nav>
 
-            <MobileMenu onLogout={() => setConfirmOpen(true)} />
+            <MobileMenu onLogout={doLogout} />
 
             <LogoutConfirmModal
                 open={confirmOpen}

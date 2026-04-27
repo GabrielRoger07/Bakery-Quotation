@@ -2616,4 +2616,920 @@ textarea {
     border-top: 1px solid var(--color-border-lighter);
     margin-top: 0.125rem;
   }
+
+  /* ──────────────────────────────────────────────────────────────
+     SupplierQuotationClosed — mobile layout (sqc-*)
+  ────────────────────────────────────────────────────────────── */
+
+  /* Loading state */
+  .sqc-loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.875rem;
+    padding: 4rem 1rem;
+    color: var(--color-text-muted);
+  }
+  .sqc-loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 2.5px solid var(--color-border);
+    border-top-color: var(--color-accent);
+    animation: spin 0.8s linear infinite;
+  }
+  .sqc-loading-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+
+  /* No-win banner (full-width, spanning both stat cols) */
+  .sqc-no-win-banner {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* Winning item card */
+  .sqc-win-card {
+    background: var(--color-success-lighter);
+    border: 1px solid var(--color-success-border);
+    border-left: 3px solid var(--color-success);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    animation: cardAppear 0.22s ease-out both;
+  }
+  .sqc-win-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.875rem;
+  }
+  .sqc-win-avatar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.375rem;
+    height: 2.375rem;
+    border-radius: var(--radius-md);
+    background: var(--color-success-soft-bg-2);
+    border: 1.5px solid var(--color-success-soft-border);
+    color: var(--color-success-strong);
+  }
+  .sqc-win-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .sqc-win-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-strong);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+  }
+  .sqc-win-brand {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sqc-win-qty-badge {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.05rem;
+    padding: 0.3rem 0.5rem;
+    background: var(--color-success-soft-bg);
+    border: 1px solid var(--color-success-soft-border);
+    border-radius: var(--radius-md);
+    min-width: 3.5rem;
+  }
+  .sqc-win-qty-label {
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-success-strong);
+    opacity: 0.75;
+  }
+  .sqc-win-qty-value {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-success-strong);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* Prices row inside winning card */
+  .sqc-win-prices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--color-success-soft-border);
+    background: rgba(5,150,105,0.04);
+  }
+  .sqc-win-price-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.625rem 0.875rem 0.75rem;
+  }
+  .sqc-win-price-metric--total {
+    border-left: 1px solid var(--color-success-soft-border);
+    background: var(--color-success-soft-bg);
+  }
+  .sqc-win-price-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-success-strong);
+    opacity: 0.7;
+  }
+  .sqc-win-price-value {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-text-strong);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .sqc-win-price-value--total {
+    color: var(--color-success-strong);
+    font-size: 1rem;
+  }
+
+  /* Bonus pill */
+  .sqc-win-bonus-row {
+    padding: 0 0.875rem 0.625rem;
+    display: flex;
+  }
+  .sqc-win-bonus-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2rem;
+    background: var(--color-success-soft-bg-2);
+    border: 1px solid var(--color-success-soft-border);
+    color: var(--color-success-strong);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  /* Total footer inside section */
+  .sqc-total-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin: 0 1rem 1rem;
+    padding: 0.875rem 1rem;
+    background: var(--color-highlight-lighter);
+    border: 1.5px solid var(--color-highlight-border);
+    border-radius: var(--radius-lg);
+  }
+  .sqc-total-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    line-height: 1.3;
+  }
+  .sqc-total-value {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--color-accent-strong);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  /* ──────────────────────────────────────────────────────────────
+     SupplierQuotationActiveUnique — mobile layout (saqu-*)
+  ────────────────────────────────────────────────────────────── */
+
+  /* Status banner (enviado / pendente) */
+  .saqu-status-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin: 0.75rem 1rem 0;
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid;
+    animation: qmFadeUp 0.25s ease-out both;
+    animation-delay: 0.08s;
+  }
+  .saqu-status-banner--sent {
+    background: var(--color-info-soft);
+    border-color: var(--color-info-border);
+  }
+  .saqu-status-banner--pending {
+    background: var(--color-highlight-lighter);
+    border-color: var(--color-highlight-border);
+  }
+  .saqu-status-banner-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-md);
+    background: rgba(91,33,182,0.1);
+    border: 1.5px solid var(--color-info-border);
+    color: var(--color-accent);
+  }
+  .saqu-status-banner-icon--pending {
+    background: var(--color-accent-soft-bg);
+    border-color: var(--color-highlight-border);
+    color: var(--color-accent);
+  }
+  .saqu-status-banner-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .saqu-status-banner-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-text-strong);
+    line-height: 1.2;
+  }
+  .saqu-status-banner-sub {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .saqu-status-banner-check {
+    flex-shrink: 0;
+    color: var(--color-accent);
+  }
+
+  /* Hint text above input cards */
+  .saqu-section-hint {
+    margin: 0;
+    padding: 0.75rem 1rem 0;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  /* Product input card (preenchimento) */
+  .saqu-input-card {
+    background: var(--color-surface-0);
+    border: 1.5px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    animation: cardAppear 0.22s ease-out both;
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+  }
+  .saqu-input-card--filled {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(91,33,182,0.07);
+  }
+  .saqu-input-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.875rem 0.625rem;
+  }
+  .saqu-input-avatar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.375rem;
+    height: 2.375rem;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    border: 1.5px solid var(--color-border);
+    color: var(--color-text-muted);
+    transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
+  }
+  .saqu-input-avatar--filled {
+    background: var(--color-highlight-lighter);
+    border-color: var(--color-highlight-border);
+    color: var(--color-accent);
+  }
+  .saqu-input-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .saqu-input-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-strong);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+  }
+  .saqu-input-desc {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .saqu-input-qty-badge {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.05rem;
+    padding: 0.3rem 0.5rem;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    min-width: 3rem;
+  }
+  .saqu-input-qty-label {
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .saqu-input-qty-value {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-text-strong);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .saqu-input-brand-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0 0.875rem 0.625rem;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  /* Price input field row */
+  .saqu-input-field-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 0.875rem 0.75rem;
+  }
+  .saqu-input-field-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .saqu-price-input {
+    flex: 1;
+    min-width: 0;
+    height: 2.625rem;
+    padding-inline: 0.875rem;
+    border: 1.5px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-primary);
+    background: var(--color-surface-1);
+    outline: none;
+    text-align: right;
+    transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .saqu-price-input::placeholder {
+    color: var(--color-text-disabled);
+    font-weight: 400;
+  }
+  .saqu-price-input:focus {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-focus-accent-soft);
+    background: var(--color-surface-0);
+  }
+  .saqu-price-input--filled {
+    border-color: var(--color-accent);
+    color: var(--color-accent-strong);
+    background: var(--color-highlight-lighter);
+  }
+
+  /* Total inline dentro do card de input */
+  .saqu-input-total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.875rem 0.625rem;
+    border-top: 1px solid var(--color-border-lighter);
+    background: var(--color-highlight-lighter);
+  }
+  .saqu-input-total-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    opacity: 0.75;
+  }
+  .saqu-input-total-value {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-accent-strong);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /* Submitted product card (proposta enviada) */
+  .saqu-submitted-card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    animation: cardAppear 0.22s ease-out both;
+    border-left-width: 3px;
+    border-left-style: solid;
+    border-top: 1px solid;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+  }
+  .saqu-submitted-card--priced {
+    border-left-color: var(--color-accent);
+    border-top-color: var(--color-highlight-border);
+    border-right-color: var(--color-highlight-border);
+    border-bottom-color: var(--color-highlight-border);
+    background: var(--color-highlight-lighter);
+  }
+  .saqu-submitted-card--empty {
+    border-left-color: var(--color-warning);
+    border-top-color: var(--color-warning-border);
+    border-right-color: var(--color-warning-border);
+    border-bottom-color: var(--color-warning-border);
+    background: var(--color-warning-lighter);
+  }
+  .saqu-submitted-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.875rem;
+  }
+  .saqu-submitted-avatar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    border: 1.5px solid var(--color-border);
+    color: var(--color-text-muted);
+  }
+  .saqu-submitted-avatar--priced {
+    background: var(--color-accent-soft-bg);
+    border-color: var(--color-highlight-border);
+    color: var(--color-accent);
+  }
+  .saqu-submitted-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .saqu-submitted-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-strong);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+  }
+  .saqu-submitted-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+  .saqu-submitted-qty {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.05rem;
+    padding: 0.3rem 0.5rem;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    min-width: 3rem;
+  }
+  .saqu-submitted-qty-label {
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .saqu-submitted-qty-value {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-text-strong);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .saqu-submitted-prices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--color-highlight-border);
+    background: rgba(91,33,182,0.03);
+  }
+  .saqu-submitted-price-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.5rem 0.875rem 0.625rem;
+  }
+  .saqu-submitted-price-cell--total {
+    border-left: 1px solid var(--color-highlight-border);
+    background: var(--color-accent-soft-bg);
+  }
+  .saqu-submitted-price-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    opacity: 0.7;
+  }
+  .saqu-submitted-price-value {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-text-strong);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .saqu-submitted-price-value--total {
+    color: var(--color-accent-strong);
+  }
+  .saqu-submitted-no-price {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem 0.625rem;
+    border-top: 1px solid var(--color-warning-border);
+  }
+  .saqu-submitted-no-price span {
+    font-size: 0.8125rem;
+    color: var(--color-warning-strong);
+    font-weight: 600;
+  }
+
+  /* Alert inline (erro / sucesso) */
+  .saqu-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin: 0.75rem 1rem 0;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.4;
+    animation: qmFadeUp 0.2s ease-out both;
+  }
+  .saqu-alert--error {
+    background: rgba(220,38,38,0.07);
+    border: 1px solid rgba(239,68,68,0.25);
+    color: var(--color-danger-strong);
+  }
+  .saqu-alert--success {
+    background: var(--color-success-soft-bg);
+    border: 1px solid var(--color-success-soft-border);
+    color: var(--color-success-strong);
+  }
+
+  /* CTA fixo no rodapé (durante preenchimento) */
+  .saqu-bottom-cta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    background: linear-gradient(to top, var(--color-surface-app) 70%, transparent);
+    pointer-events: none;
+  }
+  .saqu-bottom-cta-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin: 0 1rem;
+    pointer-events: all;
+  }
+  .saqu-bottom-cta-meta {
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .saqu-bottom-cta-total {
+    font-weight: 700;
+    color: var(--color-accent-strong);
+  }
+  .saqu-submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    width: 100%;
+    height: 3.25rem;
+    border-radius: var(--radius-lg);
+    border: none;
+    background: var(--color-accent);
+    color: white;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 140ms ease, transform 100ms ease, box-shadow 140ms ease;
+    box-shadow: var(--shadow-accent);
+    -webkit-tap-highlight-color: transparent;
+    letter-spacing: -0.01em;
+  }
+  .saqu-submit-btn:not(:disabled):active {
+    transform: scale(0.98);
+    box-shadow: none;
+  }
+  .saqu-submit-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* Bottom sheet de confirmação */
+  .saqu-sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    background: var(--color-overlay-drawer);
+    z-index: 1100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 280ms ease;
+  }
+  .saqu-sheet-backdrop.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .saqu-confirm-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1101;
+    background: var(--color-surface-0);
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+    box-shadow: 0 -8px 40px rgba(15,13,35,0.18);
+    transform: translateY(100%);
+    transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+    will-change: transform;
+    max-height: 88dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .saqu-confirm-sheet.open {
+    transform: translateY(0);
+  }
+  .saqu-sheet-handle {
+    width: 2.5rem;
+    height: 0.25rem;
+    border-radius: 2rem;
+    background: var(--color-border-strong);
+    margin: 0.75rem auto 0;
+  }
+  .saqu-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem 0.875rem;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+  .saqu-sheet-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-strong);
+    letter-spacing: -0.01em;
+  }
+  .saqu-sheet-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: none;
+    background: var(--color-surface-2);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: background 140ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .saqu-sheet-close:active { background: var(--color-surface-3); }
+  .saqu-sheet-body {
+    padding: 1rem 1.25rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+  .saqu-sheet-intro {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+  .saqu-sheet-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+  .saqu-review-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+  }
+  .saqu-review-row--skipped {
+    opacity: 0.5;
+  }
+  .saqu-review-row-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .saqu-review-row-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-strong);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .saqu-review-row-qty {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+  .saqu-review-total {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-accent-strong);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .saqu-review-no-price-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border-radius: 2rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    background: var(--color-warning-lighter);
+    color: var(--color-warning-strong);
+    border: 1px solid var(--color-warning-border);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .saqu-sheet-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    padding: 0.75rem 0.875rem;
+    background: var(--color-warning-lighter);
+    border: 1px solid var(--color-warning-border);
+    border-radius: var(--radius-md);
+    font-size: 0.8125rem;
+    color: var(--color-warning-strong);
+    line-height: 1.45;
+  }
+  .saqu-sheet-warning svg { flex-shrink: 0; margin-top: 0.1rem; }
+  .saqu-sheet-total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.875rem 1rem;
+    background: var(--color-highlight-lighter);
+    border: 1.5px solid var(--color-highlight-border);
+    border-radius: var(--radius-lg);
+  }
+  .saqu-sheet-total-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    line-height: 1.3;
+  }
+  .saqu-sheet-total-value {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--color-accent-strong);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .saqu-sheet-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 0.75rem 1.25rem 0;
+  }
+  .saqu-sheet-confirm-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    height: 3.125rem;
+    border-radius: var(--radius-lg);
+    border: none;
+    background: var(--color-success-strong);
+    color: white;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 140ms ease, transform 100ms ease, box-shadow 140ms ease;
+    box-shadow: var(--shadow-hover-success);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .saqu-sheet-confirm-btn:not(:disabled):active {
+    transform: scale(0.98);
+    box-shadow: none;
+  }
+  .saqu-sheet-confirm-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .saqu-sheet-cancel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 2.875rem;
+    border-radius: var(--radius-lg);
+    border: 1.5px solid var(--color-border-strong);
+    background: var(--color-surface-1);
+    color: var(--color-text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 140ms ease, border-color 140ms ease, transform 100ms ease;
+    -webkit-tap-highlight-color: transparent;
+    order: 1;
+  }
+  .saqu-sheet-cancel-btn:active {
+    transform: scale(0.98);
+    background: var(--color-surface-2);
+  }
+  .saqu-btn-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: white;
+    animation: spin 0.7s linear infinite;
+  }
 }

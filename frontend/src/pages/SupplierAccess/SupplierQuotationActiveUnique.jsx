@@ -1,10 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useFetch from '../../hooks/useFetch'
+import useIsMobile from '../../hooks/useIsMobile'
 import { formatMoney } from '../../utils/formatMoney'
+import { useCurrencyMask } from '../../hooks/useCurrencyMask'
 import Button from '../../components/Button'
 import Modal from '../../components/Modal'
 import SingleProposalProductRow from './SingleProposalProductRow'
 import { ENV } from '../../config/env'
+import {
+    ChevronLeft, Clock, Package, Tag, CheckCircle2,
+    AlertCircle, Send, FileCheck2, X, MinusCircle, Hourglass
+} from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 const DRAFT_KEY_PREFIX = "draft_prices_"
 
@@ -13,8 +20,215 @@ const thNumCls = `${thCls} text-right`
 const tdCls = "px-[0.6rem] py-[0.55rem] text-[var(--color-text-default)] border-b border-[var(--color-border-lighter)] align-middle"
 const tdNumCls = `${tdCls} text-right whitespace-nowrap`
 
+/* ── Mobile sub-components ──────────────────────────────────────── */
+
+const MobileProductInputCard = ({ product, initialNumericValue, onNumericChange, index }) => {
+    const { value, handleChange, getNumericValue, setValue } = useCurrencyMask()
+    const hasPrice = getNumericValue() > 0
+
+    useEffect(() => {
+        if (initialNumericValue > 0) {
+            setValue(formatMoney(initialNumericValue))
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    useEffect(() => {
+        onNumericChange(product.productId, getNumericValue())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value])
+
+    return (
+        <div
+            className={`saqu-input-card ${hasPrice ? 'saqu-input-card--filled' : ''}`}
+            style={{ animationDelay: `${index * 55}ms` }}
+        >
+            <div className="saqu-input-card-header">
+                <div className={`saqu-input-avatar ${hasPrice ? 'saqu-input-avatar--filled' : ''}`}>
+                    <Package size={17} strokeWidth={1.75} />
+                </div>
+                <div className="saqu-input-info">
+                    <span className="saqu-input-name">{product.productName}</span>
+                    {product.productDescription && (
+                        <span className="saqu-input-desc">{product.productDescription}</span>
+                    )}
+                </div>
+                <div className="saqu-input-qty-badge">
+                    <span className="saqu-input-qty-label">Qtd</span>
+                    <span className="saqu-input-qty-value">{product.quantity} UN</span>
+                </div>
+            </div>
+
+            {product.brand && (
+                <div className="saqu-input-brand-row">
+                    <Tag size={11} strokeWidth={2} />
+                    <span>{product.brand}</span>
+                </div>
+            )}
+
+            <div className="saqu-input-field-row">
+                <span className="saqu-input-field-label">Preço unitário</span>
+                <input
+                    type="text"
+                    className={`saqu-price-input ${hasPrice ? 'saqu-price-input--filled' : ''}`}
+                    value={value}
+                    onChange={handleChange}
+                    placeholder="R$ 0,00"
+                    inputMode="numeric"
+                />
+            </div>
+
+            {hasPrice && (
+                <div className="saqu-input-total-row">
+                    <span className="saqu-input-total-label">Total do item</span>
+                    <span className="saqu-input-total-value">
+                        {formatMoney(getNumericValue() * Number(product.quantity))}
+                    </span>
+                </div>
+            )}
+        </div>
+    )
+}
+
+const MobileSubmittedCard = ({ product, unitPrice, index }) => {
+    const hasPrice = unitPrice > 0
+    const total = unitPrice * Number(product.quantity)
+
+    return (
+        <div
+            className={`saqu-submitted-card ${hasPrice ? 'saqu-submitted-card--priced' : 'saqu-submitted-card--empty'}`}
+            style={{ animationDelay: `${index * 55}ms` }}
+        >
+            <div className="saqu-submitted-header">
+                <div className={`saqu-submitted-avatar ${hasPrice ? 'saqu-submitted-avatar--priced' : ''}`}>
+                    <Package size={17} strokeWidth={1.75} />
+                </div>
+                <div className="saqu-submitted-info">
+                    <span className="saqu-submitted-name">{product.productName}</span>
+                    {product.brand && (
+                        <span className="saqu-submitted-brand">
+                            <Tag size={10} strokeWidth={2} />
+                            {product.brand}
+                        </span>
+                    )}
+                </div>
+                <div className="saqu-submitted-qty">
+                    <span className="saqu-submitted-qty-label">Qtd</span>
+                    <span className="saqu-submitted-qty-value">{product.quantity} UN</span>
+                </div>
+            </div>
+
+            {hasPrice ? (
+                <div className="saqu-submitted-prices">
+                    <div className="saqu-submitted-price-cell">
+                        <span className="saqu-submitted-price-label">Unitário</span>
+                        <span className="saqu-submitted-price-value">{formatMoney(unitPrice)}</span>
+                    </div>
+                    <div className="saqu-submitted-price-cell saqu-submitted-price-cell--total">
+                        <span className="saqu-submitted-price-label">Total</span>
+                        <span className="saqu-submitted-price-value saqu-submitted-price-value--total">{formatMoney(total)}</span>
+                    </div>
+                </div>
+            ) : (
+                <div className="saqu-submitted-no-price">
+                    <MinusCircle size={14} strokeWidth={2.5} style={{ flexShrink: 0, color: 'var(--color-warning-strong)' }} />
+                    <span>Não cotado</span>
+                </div>
+            )}
+        </div>
+    )
+}
+
+/* Bottom sheet de confirmação nativo mobile */
+const MobileConfirmSheet = ({
+    isOpen, onClose, products, existingBidByProductId,
+    numericPricesByProductId, skippedProducts, grandTotal,
+    onConfirm, submitting
+}) => (
+    <>
+        <div
+            className={`saqu-sheet-backdrop ${isOpen ? 'open' : ''}`}
+            onClick={onClose}
+        />
+        <div className={`saqu-confirm-sheet ${isOpen ? 'open' : ''}`}>
+            <div className="saqu-sheet-handle" />
+            <div className="saqu-sheet-header">
+                <span className="saqu-sheet-title">Revisar proposta</span>
+                <button className="saqu-sheet-close" onClick={onClose} type="button">
+                    <X size={16} strokeWidth={2.5} />
+                </button>
+            </div>
+
+            <div className="saqu-sheet-body">
+                <p className="saqu-sheet-intro">Confira os valores antes de confirmar o envio.</p>
+
+                <div className="saqu-sheet-items">
+                    {products.filter(p => !existingBidByProductId[p.productId]).map((product) => {
+                        const unitPrice = numericPricesByProductId[product.productId] ?? 0
+                        const isSkipped = unitPrice <= 0
+                        const total = unitPrice * Number(product.quantity)
+
+                        return (
+                            <div key={product.productId} className={`saqu-review-row ${isSkipped ? 'saqu-review-row--skipped' : ''}`}>
+                                <div className="saqu-review-row-info">
+                                    <span className="saqu-review-row-name">{product.productName}</span>
+                                    <span className="saqu-review-row-qty">{product.quantity} UN</span>
+                                </div>
+                                {isSkipped ? (
+                                    <span className="saqu-review-no-price-pill">Sem preço</span>
+                                ) : (
+                                    <span className="saqu-review-total">{formatMoney(total)}</span>
+                                )}
+                            </div>
+                        )
+                    })}
+                </div>
+
+                {skippedProducts.length > 0 && (
+                    <div className="saqu-sheet-warning">
+                        <AlertCircle size={15} strokeWidth={2} />
+                        <span>
+                            {skippedProducts.length === 1
+                                ? '1 produto sem preço não será incluído.'
+                                : `${skippedProducts.length} produtos sem preço não serão incluídos.`}
+                        </span>
+                    </div>
+                )}
+
+                <div className="saqu-sheet-total-row">
+                    <span className="saqu-sheet-total-label">Valor total da proposta</span>
+                    <span className="saqu-sheet-total-value">{formatMoney(grandTotal)}</span>
+                </div>
+            </div>
+
+            <div className="saqu-sheet-footer">
+                <button className="saqu-sheet-cancel-btn" onClick={onClose} type="button">
+                    Cancelar
+                </button>
+                <button
+                    className="saqu-sheet-confirm-btn"
+                    onClick={onConfirm}
+                    disabled={submitting}
+                    type="button"
+                >
+                    {submitting ? (
+                        <span className="saqu-btn-spinner" />
+                    ) : (
+                        <Send size={16} strokeWidth={2.5} />
+                    )}
+                    {submitting ? 'Enviando...' : 'Confirmar e enviar'}
+                </button>
+            </div>
+        </div>
+    </>
+)
+
+/* ── Main component ──────────────────────────────────────────────── */
+
 const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
     const { request } = useFetch(ENV.API_BASE_URL)
+    const isMobile = useIsMobile()
+    const navigate = useNavigate()
     const storageKey = `${DRAFT_KEY_PREFIX}${quotationId}_${participationId}`
 
     const [quotation, setQuotation] = useState(null)
@@ -176,6 +390,231 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
         }, 0)
     }, [products, numericPricesByProductId])
 
+    /* ── Mobile layout ──────────────────────────────────────────── */
+    if (isMobile) {
+        if (loading) return (
+            <div className="qm-mobile-root">
+                <div className="qm-mobile-header">
+                    <button className="qm-mobile-back-btn" onClick={() => navigate(-1)} aria-label="Voltar">
+                        <ChevronLeft size={20} strokeWidth={2.5} />
+                    </button>
+                    <div className="qm-mobile-header-center">
+                        <span className="qm-mobile-title">Cotação #{quotationId}</span>
+                        <span className="qm-mobile-status-pill qm-status--active">Ativo</span>
+                    </div>
+                    <div style={{ width: '2.25rem' }} />
+                </div>
+                <div className="sqc-loading-state">
+                    <div className="sqc-loading-spinner" />
+                    <span className="sqc-loading-text">Carregando produtos...</span>
+                </div>
+            </div>
+        )
+
+        if (error && !products.length) return (
+            <div className="qm-mobile-root">
+                <div className="qm-mobile-header">
+                    <button className="qm-mobile-back-btn" onClick={() => navigate(-1)}>
+                        <ChevronLeft size={20} strokeWidth={2.5} />
+                    </button>
+                    <div className="qm-mobile-header-center">
+                        <span className="qm-mobile-title">Cotação #{quotationId}</span>
+                    </div>
+                    <div style={{ width: '2.25rem' }} />
+                </div>
+                <div className="empty-state" style={{ margin: '2rem 1rem' }}>
+                    <div className="empty-icon"><AlertCircle size={22} strokeWidth={1.5} /></div>
+                    <p>{error}</p>
+                </div>
+            </div>
+        )
+
+        const filledCount = products.filter(p => (numericPricesByProductId[p.productId] ?? 0) > 0).length
+
+        return (
+            <div className="qm-mobile-root">
+                {/* Sticky header */}
+                <div className="qm-mobile-header">
+                    <button className="qm-mobile-back-btn" onClick={() => navigate(-1)} aria-label="Voltar">
+                        <ChevronLeft size={20} strokeWidth={2.5} />
+                    </button>
+                    <div className="qm-mobile-header-center">
+                        <span className="qm-mobile-title">Cotação #{quotationId}</span>
+                        <span className="qm-mobile-status-pill qm-status--active">Ativo</span>
+                    </div>
+                    <div style={{ width: '2.25rem' }} />
+                </div>
+
+                {/* Countdown banner */}
+                {timeRemaining && timeRemaining !== 'Fechado' && (
+                    <div className="qm-countdown-banner qm-status--active">
+                        <Clock size={14} strokeWidth={2} />
+                        <span>Encerra em</span>
+                        <span className="qm-countdown-time">{timeRemaining}</span>
+                    </div>
+                )}
+
+                {/* Dates row */}
+                {quotation && (
+                    <div className="qm-dates-row">
+                        <div className="qm-date-item">
+                            <span className="qm-date-label">Início</span>
+                            <span className="qm-date-value">{new Date(quotation.quotationStart).toLocaleString()}</span>
+                        </div>
+                        <div className="qm-date-divider" />
+                        <div className="qm-date-item">
+                            <span className="qm-date-label">Encerra em</span>
+                            <span className="qm-date-value">{new Date(quotation.quotationEnd).toLocaleString()}</span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Status card: proposta enviada ou progresso de preenchimento */}
+                {hasSubmittedBids ? (
+                    <div className="saqu-status-banner saqu-status-banner--sent">
+                        <div className="saqu-status-banner-icon">
+                            <Hourglass size={18} strokeWidth={1.75} />
+                        </div>
+                        <div className="saqu-status-banner-body">
+                            <span className="saqu-status-banner-title">Proposta enviada — aguardando resultado</span>
+                            <span className="saqu-status-banner-sub">
+                                {products.filter(p => (numericPricesByProductId[p.productId] ?? 0) > 0).length} produto(s) cotado(s)
+                            </span>
+                        </div>
+                        <FileCheck2 size={18} strokeWidth={1.75} className="saqu-status-banner-check" />
+                    </div>
+                ) : (
+                    <div className="saqu-status-banner saqu-status-banner--pending">
+                        <div className="saqu-status-banner-icon saqu-status-banner-icon--pending">
+                            <Send size={18} strokeWidth={1.75} />
+                        </div>
+                        <div className="saqu-status-banner-body">
+                            <span className="saqu-status-banner-title">Proposta não enviada</span>
+                            <span className="saqu-status-banner-sub">
+                                {filledCount}/{products.length} produto(s) com preço
+                            </span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Products section */}
+                <div className="qm-section" style={{ animationDelay: '0.15s' }}>
+                    <div className="qm-section-header" style={{ cursor: 'default' }}>
+                        <div className="qm-section-header-left">
+                            <span className="qm-section-icon">
+                                <Package size={15} strokeWidth={2} />
+                            </span>
+                            <span className="qm-section-title">
+                                {hasSubmittedBids ? 'Sua proposta' : 'Preencher preços'}
+                            </span>
+                            <span className="qm-section-count">{products.length}</span>
+                        </div>
+                    </div>
+
+                    <div className="qm-section-body">
+                        {!hasSubmittedBids && (
+                            <p className="saqu-section-hint">
+                                Defina o preço unitário dos produtos. Itens sem preço não serão incluídos.
+                            </p>
+                        )}
+
+                        <div className="qm-cards-list">
+                            {hasSubmittedBids
+                                ? products.map((product, i) => (
+                                    <MobileSubmittedCard
+                                        key={product.productId}
+                                        product={product}
+                                        unitPrice={numericPricesByProductId[product.productId] ?? 0}
+                                        index={i}
+                                    />
+                                ))
+                                : products.map((product, i) => (
+                                    <MobileProductInputCard
+                                        key={product.productId}
+                                        product={product}
+                                        initialNumericValue={numericPricesByProductId[product.productId] ?? 0}
+                                        onNumericChange={handleNumericPriceChange}
+                                        index={i}
+                                    />
+                                ))
+                            }
+                        </div>
+
+                        {/* Total footer quando proposta enviada */}
+                        {hasSubmittedBids && submittedGrandTotal > 0 && (
+                            <div className="sqc-total-footer">
+                                <span className="sqc-total-label">Valor potencial</span>
+                                <span className="sqc-total-value">{formatMoney(submittedGrandTotal)}</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Mensagens de erro/sucesso */}
+                {error && (
+                    <div className="saqu-alert saqu-alert--error">
+                        <AlertCircle size={15} strokeWidth={2} />
+                        <span>{error}</span>
+                    </div>
+                )}
+                {success && (
+                    <div className="saqu-alert saqu-alert--success">
+                        <CheckCircle2 size={15} strokeWidth={2} />
+                        <span>{success}</span>
+                    </div>
+                )}
+
+                {/* CTA fixo no bottom quando preenchendo */}
+                {!hasSubmittedBids && (
+                    <div className="saqu-bottom-cta">
+                        <div className="saqu-bottom-cta-inner">
+                            {filledCount > 0 && (
+                                <div className="saqu-bottom-cta-meta">
+                                    <span>{filledCount} produto(s) · </span>
+                                    <span className="saqu-bottom-cta-total">
+                                        {formatMoney(
+                                            products
+                                                .filter(p => (numericPricesByProductId[p.productId] ?? 0) > 0)
+                                                .reduce((s, p) => s + (numericPricesByProductId[p.productId] ?? 0) * Number(p.quantity), 0)
+                                        )}
+                                    </span>
+                                </div>
+                            )}
+                            <button
+                                className="saqu-submit-btn"
+                                onClick={handleReview}
+                                disabled={submitting || filledCount === 0}
+                                type="button"
+                            >
+                                <Send size={17} strokeWidth={2.5} />
+                                Revisar e enviar proposta
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                <div style={{ height: hasSubmittedBids
+                    ? 'calc(4.25rem + env(safe-area-inset-bottom) + 1.5rem)'
+                    : 'calc(4.25rem + env(safe-area-inset-bottom) + 6rem)'
+                }} />
+
+                {/* Bottom sheet de confirmação */}
+                <MobileConfirmSheet
+                    isOpen={showConfirmModal}
+                    onClose={() => setShowConfirmModal(false)}
+                    products={products}
+                    existingBidByProductId={existingBidByProductId}
+                    numericPricesByProductId={numericPricesByProductId}
+                    skippedProducts={skippedProducts}
+                    grandTotal={grandTotal}
+                    onConfirm={handleConfirmSubmit}
+                    submitting={submitting}
+                />
+            </div>
+        )
+    }
+
+    /* ── Desktop layout ──────────────────────────────────────────── */
     if(loading) return <p>Carregando produtos...</p>
     if(error && !products.length) return <p>{error}</p>
     if(!products.length) return <p>Nenhum produto encontrado para essa cotação</p>

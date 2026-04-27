@@ -5,11 +5,12 @@ import useWebSocket from '../../hooks/useWebSocket'
 import useIsMobile from '../../hooks/useIsMobile'
 import { useMobilePage } from '../../contexts/MobilePageContext'
 import Button from '../../components/Button'
+import Modal from '../../components/Modal'
 import Table from '../../components/Table'
 import { ENV } from '../../config/env'
 import { formatCnpj } from '../../utils/formatCnpj'
 import { formatMoney } from '../../utils/formatMoney'
-import { X, FileDown, Package, Gavel, TrendingDown, Users, Clock, Activity, ChevronDown, ChevronLeft } from 'lucide-react'
+import { X, FileDown, Package, Gavel, TrendingDown, Users, Clock, Activity, ChevronDown, ChevronLeft, CheckCircle2, MinusCircle, Building2 } from 'lucide-react'
 import Cookies from 'js-cookie'
 
 
@@ -151,7 +152,7 @@ const MobileProductCard = ({ product }) => {
                 </div>
             ) : (
                 <div className="qm-product-no-bid">
-                    <span>Aguardando lances</span>
+                    <span>Sem lances</span>
                 </div>
             )}
         </div>
@@ -240,6 +241,84 @@ const MobileSection = ({ title, icon, count, children, filterSlot, filterActive,
     )
 }
 
+/* ── Suppliers panel (sheet mobile / Modal desktop) ─────────────── */
+const SuppliersPanel = ({ suppliers, onClose, isMobile }) => {
+    const withBid    = suppliers.filter(s => s.hasBid)
+    const withoutBid = suppliers.filter(s => !s.hasBid)
+
+    const row = (s, i) => (
+        <div key={s.participationId} className="sqm-row" style={{ animationDelay: `${i * 35}ms` }}>
+            <div className={`sqm-row-avatar ${s.hasBid ? 'sqm-row-avatar--active' : ''}`}>
+                <Building2 size={15} strokeWidth={1.75} />
+            </div>
+            <div className="sqm-row-info">
+                <span className="sqm-row-name">{s.supplierName}</span>
+                {s.employerName && <span className="sqm-row-employer">{s.employerName}</span>}
+            </div>
+            <div className={`sqm-row-badge ${s.hasBid ? 'sqm-row-badge--active' : 'sqm-row-badge--pending'}`}>
+                {s.hasBid
+                    ? <><CheckCircle2 size={11} strokeWidth={2.5} />{s.bidCount} lance{s.bidCount !== 1 ? 's' : ''}</>
+                    : <><MinusCircle size={11} strokeWidth={2} />Sem lance</>
+                }
+            </div>
+        </div>
+    )
+
+    const body = (
+        <>
+            {withBid.length > 0 && (
+                <div className="sqm-group">
+                    <div className="sqm-group-header sqm-group-header--active">
+                        <CheckCircle2 size={13} strokeWidth={2.5} />
+                        <span>Com lance</span>
+                        <span className="sqm-group-count">{withBid.length}</span>
+                    </div>
+                    {withBid.map((s, i) => row(s, i))}
+                </div>
+            )}
+            {withoutBid.length > 0 && (
+                <div className="sqm-group">
+                    <div className="sqm-group-header sqm-group-header--pending">
+                        <MinusCircle size={13} strokeWidth={2} />
+                        <span>Sem lance</span>
+                        <span className="sqm-group-count">{withoutBid.length}</span>
+                    </div>
+                    {withoutBid.map((s, i) => row(s, withBid.length + i))}
+                </div>
+            )}
+            {suppliers.length === 0 && (
+                <div className="qm-empty" style={{ padding: '2rem 1rem' }}>Nenhum fornecedor participando.</div>
+            )}
+        </>
+    )
+
+    if (!isMobile) return (
+        <Modal isOpen onClose={onClose} title={`Fornecedores (${suppliers.length})`}>
+            {body}
+        </Modal>
+    )
+
+    return (
+        <>
+            <div className="sqm-backdrop" onClick={onClose} />
+            <div className="sqm-sheet">
+                <div className="sqm-sheet-handle" />
+                <div className="sqm-sheet-header">
+                    <div className="sqm-sheet-title-row">
+                        <Users size={16} strokeWidth={2} />
+                        <span className="sqm-sheet-title">Fornecedores</span>
+                        <span className="sqm-sheet-count">{suppliers.length}</span>
+                    </div>
+                    <button className="sqm-close-btn" onClick={onClose} aria-label="Fechar">
+                        <X size={18} strokeWidth={2.5} />
+                    </button>
+                </div>
+                <div className="sqm-body">{body}</div>
+            </div>
+        </>
+    )
+}
+
 /* ── Main component ─────────────────────────────────────────────── */
 
 const QuotationMonitor = () => {
@@ -265,7 +344,8 @@ const QuotationMonitor = () => {
     const [bidSearchWord, setBidSearchWord] = useState("")
     const [appliedBidSearch, setAppliedBidSearch] = useState({ field: "", word: "" })
 
-    const [uniqueSuppliers, setUniqueSuppliers] = useState(0)
+    const [participations, setParticipations] = useState([])
+    const [showSuppliersPanel, setShowSuppliersPanel] = useState(false)
     const [countdown, setCountdown] = useState({ status: '', timeRemaining: '' })
 
     useEffect(() => {
@@ -280,7 +360,7 @@ const QuotationMonitor = () => {
             if(quotationRes.ok) setQuotation(quotationRes.data)
 
             const participationRes = await request("GET", `/participations/quotations/${quotationId}`)
-            if(participationRes.ok) setUniqueSuppliers(participationRes.data.length)
+            if(participationRes.ok) setParticipations(participationRes.data)
 
             const containsRes = await request("GET", `/contains/${quotationId}`)
             if(containsRes.ok) setBaseProducts(containsRes.data)
@@ -339,6 +419,17 @@ const QuotationMonitor = () => {
         }
         return map
     }, [bids])
+
+    const uniqueSuppliers = participations.length
+
+    const suppliersWithBidStatus = useMemo(() => {
+        const supplierIdsWithBids = new Set(bids.map(b => b.participationId))
+        return participations.map(p => ({
+            ...p,
+            hasBid: supplierIdsWithBids.has(p.participationId),
+            bidCount: bids.filter(b => b.participationId === p.participationId).length,
+        }))
+    }, [participations, bids])
 
     const products = useMemo(() => baseProducts.map(p => {
         const lowest = lowestBids[p.productId]
@@ -693,11 +784,11 @@ const QuotationMonitor = () => {
                         <span className="qm-stat-value">{bids.length}</span>
                         <span className="qm-stat-label">Lances</span>
                     </div>
-                    <div className="qm-stat-card">
+                    <button className="qm-stat-card qm-stat-card--clickable" onClick={() => setShowSuppliersPanel(true)}>
                         <div className="qm-stat-icon"><Users size={16} strokeWidth={2} /></div>
                         <span className="qm-stat-value">{uniqueSuppliers}</span>
                         <span className="qm-stat-label">Fornecedores</span>
-                    </div>
+                    </button>
                     <div className="qm-stat-card">
                         <div className="qm-stat-icon"><Package size={16} strokeWidth={2} /></div>
                         <span className="qm-stat-value">{productsWithBidsCount}<span className="qm-stat-value-denom">/{products.length}</span></span>
@@ -749,6 +840,14 @@ const QuotationMonitor = () => {
 
                 {/* bottom safe-area padding */}
                 <div style={{ height: 'calc(4.25rem + env(safe-area-inset-bottom) + 1.5rem)' }} />
+
+                {showSuppliersPanel && (
+                    <SuppliersPanel
+                        suppliers={suppliersWithBidStatus}
+                        onClose={() => setShowSuppliersPanel(false)}
+                        isMobile={true}
+                    />
+                )}
             </div>
         )
     }
@@ -788,11 +887,15 @@ const QuotationMonitor = () => {
                     { label: `Status: ${countdown.status === 'Active' ? "Ativo" : countdown.status === 'Scheduled' ? "Agendado" : "Fechado"}` },
                     ...(countdown.status === 'Active' || countdown.status === 'Scheduled' ? [{ label: `"Tempo Restante": ${countdown.timeRemaining}` }] : []),
                     { label: `Total de Lances: ${bids.length}` },
-                    { label: `Fornecedores: ${uniqueSuppliers}` },
+                    { label: `Fornecedores: ${uniqueSuppliers}`, clickable: true },
                     { label: `Produtos com lances: ${productsWithBidsCount}/${products.length}` },
                     { label: `Total: ${formattedTotalEstimated}`, highlight: true },
                 ].map((item, i) => (
-                    <div key={i} className={`rounded-[var(--radius-lg)] border px-2 py-[0.875rem] text-[1rem] font-semibold flex items-center justify-center text-center min-h-[4.5rem] transition-[transform,box-shadow] duration-[160ms] hover:-translate-y-[2px] hover:[box-shadow:var(--shadow-sm)] ${item.highlight ? 'bg-[var(--color-highlight-lighter)] border-[var(--color-highlight-border)] text-[var(--color-accent)] font-bold text-[1.125rem]' : 'bg-[var(--color-surface-1)] border-[var(--color-border-lighter)] text-[var(--color-text-neutral-strong)]'}`}>
+                    <div
+                        key={i}
+                        onClick={item.clickable ? () => setShowSuppliersPanel(true) : undefined}
+                        className={`rounded-[var(--radius-lg)] border px-2 py-[0.875rem] text-[1rem] font-semibold flex items-center justify-center text-center min-h-[4.5rem] transition-[transform,box-shadow] duration-[160ms] hover:-translate-y-[2px] hover:[box-shadow:var(--shadow-sm)] ${item.highlight ? 'bg-[var(--color-highlight-lighter)] border-[var(--color-highlight-border)] text-[var(--color-accent)] font-bold text-[1.125rem]' : 'bg-[var(--color-surface-1)] border-[var(--color-border-lighter)] text-[var(--color-text-neutral-strong)]'} ${item.clickable ? 'cursor-pointer hover:border-[var(--color-accent)] hover:bg-[var(--color-highlight-lighter)] hover:text-[var(--color-accent)]' : ''}`}
+                    >
                         {item.label}
                     </div>
                 ))}
@@ -821,6 +924,13 @@ const QuotationMonitor = () => {
                 />
             </div>
 
+            {showSuppliersPanel && (
+                <SuppliersPanel
+                    suppliers={suppliersWithBidStatus}
+                    onClose={() => setShowSuppliersPanel(false)}
+                    isMobile={false}
+                />
+            )}
         </div>
     )
 }

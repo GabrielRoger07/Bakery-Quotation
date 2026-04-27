@@ -52,16 +52,17 @@ const MobileProductInputCard = ({ product, initialNumericValue, onNumericChange,
                     {product.productDescription && (
                         <span className="saqu-input-desc">{product.productDescription}</span>
                     )}
+                    <div className="saqu-input-meta-row">
+                        <span className="saqu-input-brand-inline">
+                            <Tag size={10} strokeWidth={2} />
+                            {product.brand || "Marca não definida"}
+                        </span>
+                        <div className="saqu-input-qty-badge">
+                            <span className="saqu-input-qty-label">Qtd</span>
+                            <span className="saqu-input-qty-value">{product.quantity} UN</span>
+                        </div>
+                    </div>
                 </div>
-                <div className="saqu-input-qty-badge">
-                    <span className="saqu-input-qty-label">Qtd</span>
-                    <span className="saqu-input-qty-value">{product.quantity} UN</span>
-                </div>
-            </div>
-
-            <div className="saqu-input-brand-row">
-                <Tag size={11} strokeWidth={2} />
-                <span>{product.brand || "Marca não definida"}</span>
             </div>
 
             <div className="saqu-input-field-row">
@@ -94,16 +95,16 @@ const MobileSubmittedCard = ({ product, unitPrice, index }) => {
                 </div>
                 <div className="saqu-submitted-info">
                     <span className="saqu-submitted-name">{product.productName}</span>
-                    {product.brand && (
+                    <div className="saqu-submitted-meta-row">
                         <span className="saqu-submitted-brand">
                             <Tag size={10} strokeWidth={2} />
-                            {product.brand}
+                            {product.brand || "Marca não definida"}
                         </span>
-                    )}
-                </div>
-                <div className="saqu-submitted-qty">
-                    <span className="saqu-submitted-qty-label">Qtd</span>
-                    <span className="saqu-submitted-qty-value">{product.quantity} UN</span>
+                        <div className="saqu-submitted-qty">
+                            <span className="saqu-submitted-qty-label">Qtd</span>
+                            <span className="saqu-submitted-qty-value">{product.quantity} UN</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 

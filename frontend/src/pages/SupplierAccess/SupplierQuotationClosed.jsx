@@ -26,9 +26,7 @@ const MobileWinningCard = ({ item, index }) => (
             </div>
             <div className="sqc-win-info">
                 <span className="sqc-win-name">{item.productName}</span>
-                {item.brand && (
-                    <span className="sqc-win-brand">{item.brand}</span>
-                )}
+                <span className="sqc-win-brand">{item.brand || "Marca não definida"}</span>
             </div>
             <div className="sqc-win-qty-badge">
                 <span className="sqc-win-qty-label">Qtd</span>
@@ -208,7 +206,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                         <div className="qm-stat-card qm-stat-card--total">
                             <div className="qm-stat-icon"><TrendingDown size={16} strokeWidth={2} /></div>
                             <span className="qm-stat-value">{formatMoney(totalWinningValue)}</span>
-                            <span className="qm-stat-label">Total vencedor</span>
+                            <span className="qm-stat-label">Valor Total</span>
                         </div>
                     ) : (
                         <div className="sqc-no-win-banner">
@@ -216,22 +214,6 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                             <span>Você não venceu nenhum lance nesta cotação.</span>
                         </div>
                     )}
-                    <div className="qm-stat-card">
-                        <div className="qm-stat-icon" style={{ background: didWin ? 'var(--color-success-soft-bg-2)' : 'var(--color-surface-2)', color: didWin ? 'var(--color-success-strong)' : 'var(--color-text-muted)', borderColor: didWin ? 'var(--color-success-soft-border)' : 'var(--color-border)' }}>
-                            <Trophy size={16} strokeWidth={2} />
-                        </div>
-                        <span className="qm-stat-value" style={{ color: didWin ? 'var(--color-success-strong)' : 'var(--color-text-strong)' }}>{winningItems.length}</span>
-                        <span className="qm-stat-label">Lances ganhos</span>
-                    </div>
-                    <div className="qm-stat-card">
-                        <div className="qm-stat-icon">
-                            <Package size={16} strokeWidth={2} />
-                        </div>
-                        <span className="qm-stat-value">
-                            {products.length}
-                        </span>
-                        <span className="qm-stat-label">Produtos totais</span>
-                    </div>
                 </div>
 
                 {/* Winning items section */}

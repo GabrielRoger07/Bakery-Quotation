@@ -2937,7 +2937,7 @@ textarea {
   }
   .saqu-input-card-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.75rem;
     padding: 0.75rem 0.875rem 0.625rem;
   }
@@ -2953,6 +2953,7 @@ textarea {
     border: 1.5px solid var(--color-border);
     color: var(--color-text-muted);
     transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
+    margin-top: 0.1rem;
   }
   .saqu-input-avatar--filled {
     background: var(--color-highlight-lighter);
@@ -2964,23 +2965,35 @@ textarea {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
+    gap: 0.25rem;
   }
   .saqu-input-name {
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--color-text-strong);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.3;
+    line-height: 1.35;
+    word-break: break-word;
   }
   .saqu-input-desc {
     font-size: 0.75rem;
     color: var(--color-text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.4;
+  }
+  .saqu-input-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.1rem;
+  }
+  .saqu-input-brand-inline {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    min-width: 0;
+    flex: 1;
   }
   .saqu-input-qty-badge {
     flex-shrink: 0;
@@ -2988,11 +3001,11 @@ textarea {
     flex-direction: column;
     align-items: center;
     gap: 0.05rem;
-    padding: 0.3rem 0.5rem;
+    padding: 0.25rem 0.45rem;
     background: var(--color-surface-2);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    min-width: 3rem;
+    min-width: 2.75rem;
   }
   .saqu-input-qty-label {
     font-size: 0.5625rem;
@@ -3007,14 +3020,6 @@ textarea {
     color: var(--color-text-strong);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
-  }
-  .saqu-input-brand-row {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0 0.875rem 0.625rem;
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
   }
 
   /* Price input field row */
@@ -3117,7 +3122,7 @@ textarea {
   }
   .saqu-submitted-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.75rem;
     padding: 0.75rem 0.875rem;
   }
@@ -3132,6 +3137,7 @@ textarea {
     background: var(--color-surface-2);
     border: 1.5px solid var(--color-border);
     color: var(--color-text-muted);
+    margin-top: 0.1rem;
   }
   .saqu-submitted-avatar--priced {
     background: var(--color-accent-soft-bg);
@@ -3143,16 +3149,20 @@ textarea {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.25rem;
   }
   .saqu-submitted-name {
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--color-text-strong);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.3;
+    line-height: 1.35;
+    word-break: break-word;
+  }
+  .saqu-submitted-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
   }
   .saqu-submitted-brand {
     display: flex;
@@ -3160,6 +3170,8 @@ textarea {
     gap: 0.3rem;
     font-size: 0.75rem;
     color: var(--color-text-muted);
+    min-width: 0;
+    flex: 1;
   }
   .saqu-submitted-qty {
     flex-shrink: 0;
@@ -3167,11 +3179,11 @@ textarea {
     flex-direction: column;
     align-items: center;
     gap: 0.05rem;
-    padding: 0.3rem 0.5rem;
+    padding: 0.25rem 0.45rem;
     background: var(--color-surface-2);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    min-width: 3rem;
+    min-width: 2.75rem;
   }
   .saqu-submitted-qty-label {
     font-size: 0.5625rem;

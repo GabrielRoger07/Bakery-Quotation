@@ -98,7 +98,7 @@ const ProductCreate = ({ onClose, onSave }) => {
 
             <Alert message={error} />
             
-            {success && <div className="text-[var(--color-success)] font-medium mb-[0.875rem] text-[0.875rem]">{success}</div>}
+            {success && <div className="text-[var(--color-success)] flex justify-center font-medium mb-[0.875rem] text-[0.875rem]">{success}</div>}
             
             <div className="flex justify-center gap-3 mt-4">
                 <Button type="submit" disabled={isDisabled}>Criar</Button>

@@ -2886,13 +2886,40 @@ textarea {
     color: var(--color-accent);
   }
 
-  /* Hint text above input cards */
-  .saqu-section-hint {
-    margin: 0;
-    padding: 0.75rem 1rem 0;
-    font-size: 0.8125rem;
+  /* Info icon button in section header */
+  .saqu-hint-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-border);
+    background: var(--color-surface-1);
     color: var(--color-text-muted);
-    line-height: 1.5;
+    cursor: pointer;
+    transition: color 120ms, background 120ms, border-color 120ms;
+    flex-shrink: 0;
+  }
+
+  .saqu-hint-btn--active,
+  .saqu-hint-btn:active {
+    color: var(--color-accent);
+    background: var(--color-highlight-lighter);
+    border-color: var(--color-highlight-border);
+  }
+
+  /* Expandable hint balloon */
+  .saqu-hint-balloon {
+    margin: 0.5rem 1rem 0;
+    padding: 0.65rem 0.85rem;
+    background: var(--color-highlight-lighter);
+    border: 1px solid var(--color-highlight-border);
+    border-radius: var(--radius-md);
+    font-size: 0.8125rem;
+    color: var(--color-accent-strong);
+    line-height: 1.55;
+    animation: qmFadeUp 0.18s ease-out both;
   }
 
   /* Product input card (preenchimento) */
@@ -3378,9 +3405,8 @@ textarea {
   }
   .saqu-review-row {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
+    flex-direction: column;
+    gap: 0.3rem;
     padding: 0.625rem 0.875rem;
     background: var(--color-surface-1);
     border: 1px solid var(--color-border-light);
@@ -3389,12 +3415,17 @@ textarea {
   .saqu-review-row--skipped {
     opacity: 0.5;
   }
-  .saqu-review-row-info {
-    flex: 1;
-    min-width: 0;
+  .saqu-review-row-top {
     display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .saqu-review-row-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
   }
   .saqu-review-row-name {
     font-size: 0.875rem;
@@ -3403,10 +3434,28 @@ textarea {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 0;
   }
-  .saqu-review-row-qty {
+  .saqu-review-row-meta {
     font-size: 0.75rem;
     color: var(--color-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .saqu-review-row-unit {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .saqu-review-row-unit-label {
+    font-weight: 400;
+    font-size: 0.6875rem;
+    opacity: 0.75;
   }
   .saqu-review-total {
     font-size: 0.9375rem;

@@ -9,7 +9,7 @@ import SingleProposalProductRow from './SingleProposalProductRow'
 import { ENV } from '../../config/env'
 import {
     ChevronLeft, Clock, Package, Tag, CheckCircle2,
-    AlertCircle, Send, FileCheck2, X, MinusCircle, Hourglass
+    AlertCircle, Send, FileCheck2, X, MinusCircle, Hourglass, Info
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -59,15 +59,13 @@ const MobileProductInputCard = ({ product, initialNumericValue, onNumericChange,
                 </div>
             </div>
 
-            {product.brand && (
-                <div className="saqu-input-brand-row">
-                    <Tag size={11} strokeWidth={2} />
-                    <span>{product.brand}</span>
-                </div>
-            )}
+            <div className="saqu-input-brand-row">
+                <Tag size={11} strokeWidth={2} />
+                <span>{product.brand || "Marca não definida"}</span>
+            </div>
 
             <div className="saqu-input-field-row">
-                <span className="saqu-input-field-label">Preço unitário</span>
+                <span className="saqu-input-field-label">Preço da unidade</span>
                 <input
                     type="text"
                     className={`saqu-price-input ${hasPrice ? 'saqu-price-input--filled' : ''}`}
@@ -77,15 +75,6 @@ const MobileProductInputCard = ({ product, initialNumericValue, onNumericChange,
                     inputMode="numeric"
                 />
             </div>
-
-            {hasPrice && (
-                <div className="saqu-input-total-row">
-                    <span className="saqu-input-total-label">Total do item</span>
-                    <span className="saqu-input-total-value">
-                        {formatMoney(getNumericValue() * Number(product.quantity))}
-                    </span>
-                </div>
-            )}
         </div>
     )
 }
@@ -170,15 +159,26 @@ const MobileConfirmSheet = ({
 
                         return (
                             <div key={product.productId} className={`saqu-review-row ${isSkipped ? 'saqu-review-row--skipped' : ''}`}>
-                                <div className="saqu-review-row-info">
+                                <div className="saqu-review-row-top">
                                     <span className="saqu-review-row-name">{product.productName}</span>
-                                    <span className="saqu-review-row-qty">{product.quantity} UN</span>
+                                    {isSkipped ? (
+                                        <span className="saqu-review-no-price-pill">Sem preço</span>
+                                    ) : (
+                                        <span className="saqu-review-total">{formatMoney(total)}</span>
+                                    )}
                                 </div>
-                                {isSkipped ? (
-                                    <span className="saqu-review-no-price-pill">Sem preço</span>
-                                ) : (
-                                    <span className="saqu-review-total">{formatMoney(total)}</span>
-                                )}
+                                <div className="saqu-review-row-bottom">
+                                    <span className="saqu-review-row-meta">
+                                        {product.quantity} UN
+                                        {' · '}
+                                        {product.brand || 'Marca não definida'}
+                                    </span>
+                                    {!isSkipped && (
+                                        <span className="saqu-review-row-unit">
+                                            {formatMoney(unitPrice)}<span className="saqu-review-row-unit-label">/UN</span>
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         )
                     })}
@@ -189,14 +189,14 @@ const MobileConfirmSheet = ({
                         <AlertCircle size={15} strokeWidth={2} />
                         <span>
                             {skippedProducts.length === 1
-                                ? '1 produto sem preço não será incluído.'
+                                ? '1 produto sem preço preenchido não será incluído na proposta.'
                                 : `${skippedProducts.length} produtos sem preço não serão incluídos.`}
                         </span>
                     </div>
                 )}
 
                 <div className="saqu-sheet-total-row">
-                    <span className="saqu-sheet-total-label">Valor total da proposta</span>
+                    <span className="saqu-sheet-total-label">Valor potencial</span>
                     <span className="saqu-sheet-total-value">{formatMoney(grandTotal)}</span>
                 </div>
             </div>
@@ -243,6 +243,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
     const [showConfirmModal, setShowConfirmModal] = useState(false)
     const [productsToSubmit, setProductsToSubmit] = useState([])
     const [skippedProducts, setSkippedProducts] = useState([])
+    const [hintOpen, setHintOpen] = useState(false)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -509,14 +510,24 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                             </span>
                             <span className="qm-section-count">{products.length}</span>
                         </div>
+                        {!hasSubmittedBids && (
+                            <button
+                                className={`saqu-hint-btn${hintOpen ? ' saqu-hint-btn--active' : ''}`}
+                                onClick={() => setHintOpen(v => !v)}
+                                aria-label="Como funciona"
+                            >
+                                <Info size={15} strokeWidth={2} />
+                            </button>
+                        )}
                     </div>
 
+                    {!hasSubmittedBids && hintOpen && (
+                        <div className="saqu-hint-balloon">
+                            Defina o preço unitário dos produtos que deseja ofertar e envie sua proposta. Itens sem preço não serão incluídos.
+                        </div>
+                    )}
+
                     <div className="qm-section-body">
-                        {!hasSubmittedBids && (
-                            <p className="saqu-section-hint">
-                                Defina o preço unitário dos produtos. Itens sem preço não serão incluídos.
-                            </p>
-                        )}
 
                         <div className="qm-cards-list">
                             {hasSubmittedBids
@@ -568,18 +579,6 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                 {!hasSubmittedBids && (
                     <div className="saqu-bottom-cta">
                         <div className="saqu-bottom-cta-inner">
-                            {filledCount > 0 && (
-                                <div className="saqu-bottom-cta-meta">
-                                    <span>{filledCount} produto(s) · </span>
-                                    <span className="saqu-bottom-cta-total">
-                                        {formatMoney(
-                                            products
-                                                .filter(p => (numericPricesByProductId[p.productId] ?? 0) > 0)
-                                                .reduce((s, p) => s + (numericPricesByProductId[p.productId] ?? 0) * Number(p.quantity), 0)
-                                        )}
-                                    </span>
-                                </div>
-                            )}
                             <button
                                 className="saqu-submit-btn"
                                 onClick={handleReview}
@@ -692,7 +691,9 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                     </div>
                 ) : (
                     <>
-                        <p className="m-0 mb-[0.85rem] text-[0.875rem] text-[var(--color-text-secondary)]">Defina o preço dos itens que deseja ofertar e envie sua proposta. Itens sem preço não serão incluídos.</p>
+                        <p className="m-0 mb-[0.85rem] text-[0.875rem] text-[var(--color-text-secondary)]">
+                            Defina o preço unitário dos produtos que deseja ofertar e envie sua proposta. Itens sem preço não serão incluídos.
+                        </p>
 
                         <div className="flex flex-col gap-3">
                             {products.map(product => (

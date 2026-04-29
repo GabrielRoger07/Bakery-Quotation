@@ -5,7 +5,7 @@ import com.bakeryquotation.backend.Contain.Contain;
 import com.bakeryquotation.backend.Participation.Participation;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,13 +19,13 @@ public class Quotation {
     private Long id;
 
     @Column(name = "quotationStart", nullable = false, columnDefinition = "DATETIME")
-    private LocalDateTime quotationStart;
+    private Instant quotationStart;
 
     @Column(name = "quotationEnd", nullable = false, columnDefinition = "DATETIME")
-    private LocalDateTime quotationEnd;
+    private Instant quotationEnd;
 
     @Column(name = "createdAt", nullable = false, columnDefinition = "DATETIME", updatable = false)
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @Column(name = "isAuction", nullable = false)
     private Boolean isAuction;
@@ -49,15 +49,15 @@ public class Quotation {
     public Quotation() {
     }
 
-    public Quotation(LocalDateTime quotationStart, LocalDateTime quotationEnd, Boolean isAuction, Company company) {
+    public Quotation(Instant quotationStart, Instant quotationEnd, Boolean isAuction, Company company) {
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
         this.isAuction = isAuction != null ? isAuction : false;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = Instant.now();
         this.company = company;
     }
 
-    public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, Boolean isAuction, LocalDateTime createdAt, Company company) {
+    public Quotation(Long id, Instant quotationStart, Instant quotationEnd, Boolean isAuction, Instant createdAt, Company company) {
         this.id = id;
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
@@ -66,7 +66,7 @@ public class Quotation {
         this.company = company;
     }
 
-    public Quotation(Long id, LocalDateTime quotationStart, LocalDateTime quotationEnd, Boolean isAuction, LocalDateTime createdAt, Company company, List<Participation> participations, List<Contain> contains) {
+    public Quotation(Long id, Instant quotationStart, Instant quotationEnd, Boolean isAuction, Instant createdAt, Company company, List<Participation> participations, List<Contain> contains) {
         this.id = id;
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
@@ -85,27 +85,27 @@ public class Quotation {
         this.id = id;
     }
 
-    public LocalDateTime getQuotationStart() {
+    public Instant getQuotationStart() {
         return quotationStart;
     }
 
-    public void setQuotationStart(LocalDateTime quotationStart) {
+    public void setQuotationStart(Instant quotationStart) {
         this.quotationStart = quotationStart;
     }
 
-    public LocalDateTime getQuotationEnd() {
+    public Instant getQuotationEnd() {
         return quotationEnd;
     }
 
-    public void setQuotationEnd(LocalDateTime quotationEnd) {
+    public void setQuotationEnd(Instant quotationEnd) {
         this.quotationEnd = quotationEnd;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 

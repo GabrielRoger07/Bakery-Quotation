@@ -1,20 +1,20 @@
 package com.bakeryquotation.backend.Quotation.DTO;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public class QuotationResponseDTO {
 
     private Long quotationId;
-    private LocalDateTime quotationStart;
-    private LocalDateTime quotationEnd;
+    private Instant quotationStart;
+    private Instant quotationEnd;
     private Boolean isAuction;
     private String companyCnpj;
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     public QuotationResponseDTO() {
     }
 
-    public QuotationResponseDTO(Long quotationId, LocalDateTime quotationStart, LocalDateTime quotationEnd, Boolean isAuction, String companyCnpj, LocalDateTime createdAt) {
+    public QuotationResponseDTO(Long quotationId, Instant quotationStart, Instant quotationEnd, Boolean isAuction, String companyCnpj, Instant createdAt) {
         this.quotationId = quotationId;
         this.quotationStart = quotationStart;
         this.quotationEnd = quotationEnd;
@@ -31,19 +31,19 @@ public class QuotationResponseDTO {
         this.quotationId = quotationId;
     }
 
-    public LocalDateTime getQuotationStart() {
+    public Instant getQuotationStart() {
         return quotationStart;
     }
 
-    public void setQuotationStart(LocalDateTime quotationStart) {
+    public void setQuotationStart(Instant quotationStart) {
         this.quotationStart = quotationStart;
     }
 
-    public LocalDateTime getQuotationEnd() {
+    public Instant getQuotationEnd() {
         return quotationEnd;
     }
 
-    public void setQuotationEnd(LocalDateTime quotationEnd) {
+    public void setQuotationEnd(Instant quotationEnd) {
         this.quotationEnd = quotationEnd;
     }
 
@@ -63,11 +63,11 @@ public class QuotationResponseDTO {
         this.companyCnpj = companyCnpj;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 }

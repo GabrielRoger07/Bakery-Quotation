@@ -1,6 +1,6 @@
 package com.bakeryquotation.backend.Participation.DTO;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public class SupplierParticipationResponseDTO {
 
@@ -9,8 +9,8 @@ public class SupplierParticipationResponseDTO {
     private String supplierName;
     private String employerName;
     private Long quotationId;
-    private LocalDateTime quotationStart;
-    private LocalDateTime quotationEnd;
+    private Instant quotationStart;
+    private Instant quotationEnd;
 
     public SupplierParticipationResponseDTO() {
     }
@@ -21,7 +21,7 @@ public class SupplierParticipationResponseDTO {
         this.quotationId = quotationId;
     }
 
-    public SupplierParticipationResponseDTO(Long participationId, Long supplierId, Long quotationId, String supplierName, String employerName, LocalDateTime quotationStart, LocalDateTime quotationEnd) {
+    public SupplierParticipationResponseDTO(Long participationId, Long supplierId, Long quotationId, String supplierName, String employerName, Instant quotationStart, Instant quotationEnd) {
         this.participationId = participationId;
         this.supplierId = supplierId;
         this.quotationId = quotationId;
@@ -71,19 +71,19 @@ public class SupplierParticipationResponseDTO {
         this.employerName = employerName;
     }
 
-    public LocalDateTime getQuotationStart() {
+    public Instant getQuotationStart() {
         return quotationStart;
     }
 
-    public void setQuotationStart(LocalDateTime quotationStart) {
+    public void setQuotationStart(Instant quotationStart) {
         this.quotationStart = quotationStart;
     }
 
-    public LocalDateTime getQuotationEnd() {
+    public Instant getQuotationEnd() {
         return quotationEnd;
     }
 
-    public void setQuotationEnd(LocalDateTime quotationEnd) {
+    public void setQuotationEnd(Instant quotationEnd) {
         this.quotationEnd = quotationEnd;
     }
 }

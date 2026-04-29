@@ -246,7 +246,11 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                 </>
             )}
 
-            {error && <Alert message={error} />}
+            {error &&
+                <div className='flex justify-center gap-3 mt-4'>
+                    <Alert message={error} />
+                </div>
+            }
 
             <div className="flex justify-center gap-3 mt-5">
                 <Button onClick={onBack} disabled={loading} className="max-[768px]:w-full">Voltar</Button>

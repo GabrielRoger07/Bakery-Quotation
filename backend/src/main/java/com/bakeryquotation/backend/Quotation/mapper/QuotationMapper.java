@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 public interface QuotationMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "createdAt", expression = "java(java.time.Instant.now())")
     @Mapping(target = "company", ignore = true)
     @Mapping(target = "participations", ignore = true)
     @Mapping(target = "contains", ignore = true)

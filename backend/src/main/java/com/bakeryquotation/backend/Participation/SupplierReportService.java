@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.List;
 @Service
 public class SupplierReportService {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.of("America/Sao_Paulo"));
     private static final Locale PT_BR = new Locale("pt", "BR");
 
     private final ParticipationRepository participationRepository;
@@ -121,8 +122,8 @@ public class SupplierReportService {
         grid.setWidthPercentage(100);
         grid.setSpacingAfter(20);
 
-        addInfoCard(grid, "Início", participation.getQuotation().getQuotationStart().format(DATE_FORMATTER), labelFont, valueFont, false);
-        addInfoCard(grid, "Fim", participation.getQuotation().getQuotationEnd().format(DATE_FORMATTER), labelFont, valueFont, false);
+        addInfoCard(grid, "Início", DATE_FORMATTER.format(participation.getQuotation().getQuotationStart()), labelFont, valueFont, false);
+        addInfoCard(grid, "Fim", DATE_FORMATTER.format(participation.getQuotation().getQuotationEnd()), labelFont, valueFont, false);
         addInfoCard(grid, "Itens Vencidos", String.valueOf(totalWon), labelFont, valueFont, false);
         addInfoCard(grid, "Total Vencido", formatMoney(total), labelFont, valueAccentFont, true);
 

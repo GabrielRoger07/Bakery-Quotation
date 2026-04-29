@@ -15,6 +15,13 @@ const STEPS = [
     { key: 4, labelKey: "Revisão" }
 ]
 
+const toLocalDateTimeInputValue = (isoString) => {
+    if (!isoString) return ""
+    const d = new Date(isoString)
+    const pad = n => String(n).padStart(2, '0')
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
 const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave }) => {
 
     const [step, setStep] = useState(1)
@@ -44,8 +51,8 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         const suppliers = suppliersRes.ok ? suppliersRes.data : []
 
         setQuotationData({
-            start: initialData.quotationStart,
-            end: initialData.quotationEnd,
+            start: toLocalDateTimeInputValue(initialData.quotationStart),
+            end: toLocalDateTimeInputValue(initialData.quotationEnd),
             isAuction: initialData.isAuction ?? false,
             products: products,
             suppliers: suppliers
@@ -93,8 +100,8 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
 
         if(mode === "create"){
             const quotation = {
-                quotationStart: finalData.start,
-                quotationEnd: finalData.end,
+                quotationStart: new Date(finalData.start).toISOString(),
+                quotationEnd: new Date(finalData.end).toISOString(),
                 isAuction: finalData.isAuction
             }
 
@@ -110,8 +117,8 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             await saveRelatedData(quotationId, mode, finalData)
         }else if(mode === "edit" && initialData){
             const quotation = {
-                quotationStart: finalData.start,
-                quotationEnd: finalData.end,
+                quotationStart: new Date(finalData.start).toISOString(),
+                quotationEnd: new Date(finalData.end).toISOString(),
                 isAuction: finalData.isAuction
             }
 

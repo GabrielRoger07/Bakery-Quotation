@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -117,7 +117,7 @@ public class BidService {
             }
         }
 
-        BidId bidId = new BidId(participationId, productId, LocalDateTime.now());
+        BidId bidId = new BidId(participationId, productId, Instant.now());
 
         Bid bid = bidMapper.toEntity(bidRequestDTO);
         bid.setParticipation(participation);
@@ -135,7 +135,7 @@ public class BidService {
     @Transactional
     public ResponseEntity<List<BidResponseDTO>> createBids(List<BidRequestDTO> bidRequestDTOList) {
         List<BidResponseDTO> bidResponseDTOList = new ArrayList<>();
-        LocalDateTime createdAt = LocalDateTime.now();
+        Instant createdAt = Instant.now();
 
         bidRequestDTOList.forEach(bidRequestDTO -> {
             Long participationId = bidRequestDTO.getParticipationId();

@@ -4,7 +4,7 @@ import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Participation.Participation;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class Supplier {
     private String supplierPassword;
 
     @Column(name = "createdAt", nullable = false, updatable = false, columnDefinition = "DATETIME")
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, targetEntity = Company.class)
     @JoinColumn(name = "companyCnpj",
@@ -66,11 +66,11 @@ public class Supplier {
         this.employerName = employerName;
         this.employerCnpj = employerCnpj;
         this.supplierPassword = supplierPassword;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = Instant.now();
         this.company = company;
     }
 
-    public Supplier(Long id, String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, String supplierPassword, LocalDateTime createdAt, Company company, List<Participation> participations) {
+    public Supplier(Long id, String supplierName, String supplierEmail, String supplierWhatsappNumber, String employerName, String employerCnpj, String supplierPassword, Instant createdAt, Company company, List<Participation> participations) {
         this.id = id;
         this.supplierName = supplierName;
         this.supplierEmail = supplierEmail;
@@ -139,11 +139,11 @@ public class Supplier {
         this.supplierPassword = supplierPassword;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 

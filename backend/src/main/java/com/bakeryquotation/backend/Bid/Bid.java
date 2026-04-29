@@ -5,7 +5,7 @@ import com.bakeryquotation.backend.Product.Product;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "bid")
@@ -46,7 +46,7 @@ public class Bid {
         this.bidId = new BidId();
         this.bidId.setParticipationId(participation.getId());
         this.bidId.setProductId(product.getId());
-        this.bidId.setCreatedAt(LocalDateTime.now());
+        this.bidId.setCreatedAt(Instant.now());
     }
 
     public Bid(BidId bidId, Participation participation, Product product, BigDecimal price, BigDecimal quantity, BigDecimal bonus) {

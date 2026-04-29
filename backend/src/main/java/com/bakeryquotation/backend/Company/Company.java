@@ -5,7 +5,7 @@ import com.bakeryquotation.backend.Quotation.Quotation;
 import com.bakeryquotation.backend.Supplier.Supplier;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -33,7 +33,7 @@ public class Company {
     private String companyPassword;
 
     @Column(name = "createdAt", nullable = false, columnDefinition = "DATETIME", updatable = false)
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
@@ -57,10 +57,10 @@ public class Company {
         this.companyWhatsappNumber = companyWhatsappNumber;
         this.companyEmail = companyEmail;
         this.companyPassword = companyPassword;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = Instant.now();
     }
 
-    public Company(String companyCnpj, String companyName, String companyWhatsappNumber, String companyEmail, String companyPassword, LocalDateTime createdAt, List<Product> products, List<Quotation> quotations, List<Supplier> suppliers) {
+    public Company(String companyCnpj, String companyName, String companyWhatsappNumber, String companyEmail, String companyPassword, Instant createdAt, List<Product> products, List<Quotation> quotations, List<Supplier> suppliers) {
         this.companyCnpj = companyCnpj;
         this.companyName = companyName;
         this.companyWhatsappNumber = companyWhatsappNumber;
@@ -112,11 +112,11 @@ public class Company {
         this.companyPassword = companyPassword;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 

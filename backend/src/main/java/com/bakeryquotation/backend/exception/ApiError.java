@@ -1,17 +1,17 @@
 package com.bakeryquotation.backend.exception;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public class ApiError {
 
     private String message;
     private int status;
-    private LocalDateTime timestamp;
+    private Instant timestamp;
 
     public ApiError(String message, int status) {
         this.message = message;
         this.status = status;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = Instant.now();
     }
 
     public String getMessage() {
@@ -30,11 +30,11 @@ public class ApiError {
         this.status = status;
     }
 
-    public LocalDateTime getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 }

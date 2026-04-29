@@ -2,7 +2,8 @@ package com.bakeryquotation.backend.Bid;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import java.time.LocalDateTime;
+
+import java.time.Instant;
 import java.util.Objects;
 
 @Embeddable
@@ -12,7 +13,7 @@ public class BidId {
     private Long productId;
 
     @Column(columnDefinition = "DATETIME")
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     public BidId() {
     }
@@ -22,7 +23,7 @@ public class BidId {
         this.productId = productId;
     }
 
-    public BidId(Long participationId, Long productId, LocalDateTime createdAt) {
+    public BidId(Long participationId, Long productId, Instant createdAt) {
         this.participationId = participationId;
         this.productId = productId;
         this.createdAt = createdAt;
@@ -44,11 +45,11 @@ public class BidId {
         this.productId = productId;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 

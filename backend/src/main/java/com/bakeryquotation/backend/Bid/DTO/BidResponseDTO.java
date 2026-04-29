@@ -1,7 +1,7 @@
 package com.bakeryquotation.backend.Bid.DTO;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public class BidResponseDTO {
 
@@ -10,7 +10,7 @@ public class BidResponseDTO {
     private BigDecimal price;
     private BigDecimal quantity;
     private BigDecimal bonus;
-    private LocalDateTime createdAt;
+    private Instant createdAt;
     private String productName;
     private String productBarCodeNumber;
     private String supplierName;
@@ -20,7 +20,7 @@ public class BidResponseDTO {
     public BidResponseDTO() {
     }
 
-    public BidResponseDTO(Long participationId, Long productId, BigDecimal price, BigDecimal quantity, BigDecimal bonus, LocalDateTime createdAt) {
+    public BidResponseDTO(Long participationId, Long productId, BigDecimal price, BigDecimal quantity, BigDecimal bonus, Instant createdAt) {
         this.participationId = participationId;
         this.productId = productId;
         this.price = price;
@@ -29,7 +29,7 @@ public class BidResponseDTO {
         this.createdAt = createdAt;
     }
 
-    public BidResponseDTO(Long participationId, Long productId, BigDecimal price, BigDecimal quantity, BigDecimal bonus, LocalDateTime createdAt, String productName, String productBarCodeNumber, String supplierName, String employerName, String employerCnpj) {
+    public BidResponseDTO(Long participationId, Long productId, BigDecimal price, BigDecimal quantity, BigDecimal bonus, Instant createdAt, String productName, String productBarCodeNumber, String supplierName, String employerName, String employerCnpj) {
         this.participationId = participationId;
         this.productId = productId;
         this.price = price;
@@ -83,11 +83,11 @@ public class BidResponseDTO {
         this.bonus = bonus;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 

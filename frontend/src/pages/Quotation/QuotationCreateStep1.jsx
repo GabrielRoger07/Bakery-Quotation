@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import { Gavel, FileText, Check, Calendar, Clock } from 'lucide-react'
@@ -8,10 +8,42 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
     const [localIsAuction, setLocalIsAuction] = useState(typeof isAuction === "boolean" ? isAuction : false)
     const [localError, setLocalError] = useState("")
 
+    // Decompõe "YYYY-MM-DDTHH:mm" → { date: "YYYY-MM-DD", time: "HH:mm" }
+    const splitDateTimeLocal = (dateTimeLocal) => {
+        if (!dateTimeLocal) return { date: '', time: '' }
+        const [date, time = ''] = dateTimeLocal.split('T')
+        return { date, time }
+    }
+
+    const [startDateValue, setStartDateValue] = useState(splitDateTimeLocal(start).date)
+    const [startTimeValue, setStartTimeValue] = useState(splitDateTimeLocal(start).time)
+    const [endDateValue,   setEndDateValue]   = useState(splitDateTimeLocal(end).date)
+    const [endTimeValue,   setEndTimeValue]   = useState(splitDateTimeLocal(end).time)
+
+    // Sincroniza estado interno quando as props mudarem (ex: modo edição carregando do backend)
+    useEffect(() => {
+        const { date, time } = splitDateTimeLocal(start)
+        setStartDateValue(date) // eslint-disable-line react-hooks/set-state-in-effect
+        setStartTimeValue(time)
+    }, [start])
+
+    useEffect(() => {
+        const { date, time } = splitDateTimeLocal(end)
+        setEndDateValue(date) // eslint-disable-line react-hooks/set-state-in-effect
+        setEndTimeValue(time)
+    }, [end])
+
+    const handleDateTimeChange = (field, newDateValue, newTimeValue) => {
+        const combined = newDateValue && newTimeValue ? `${newDateValue}T${newTimeValue}` : ''
+        onChange(field, combined)
+    }
+
+    const today = new Date().toISOString().split('T')[0]
+
     const handleNextClick = () => {
         onChange("isAuction", localIsAuction)
 
-        if (!start || !end) {
+        if (!startDateValue || !startTimeValue || !endDateValue || !endTimeValue) {
             setLocalError("Todos os campos são obrigatórios")
             return
         }
@@ -65,29 +97,74 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
                 </div>
                 <div className="px-5 py-4">
                     <div className="grid grid-cols-2 gap-4 max-[600px]:grid-cols-1">
+                        {/* Início */}
                         <div className="flex flex-col gap-[0.375rem]">
-                            <label className="text-[0.75rem] font-semibold text-[var(--color-text-secondary)] flex items-center gap-1.5">
-                                <Clock size={11} strokeWidth={2.5} />
+                            <span className="text-[0.75rem] font-semibold text-[var(--color-text-secondary)] flex items-center gap-1.5">
+                                <Calendar size={11} strokeWidth={2.5} />
                                 Início
-                            </label>
-                            <input
-                                type="datetime-local"
-                                className={inputCls(localError && !start)}
-                                value={start}
-                                onChange={e => onChange("start", e.target.value)}
-                            />
+                            </span>
+                            <div className="flex gap-2">
+                                <div className="flex flex-col gap-[0.375rem] flex-1 min-w-0">
+                                    <span className="text-[0.6875rem] font-medium text-[var(--color-text-muted)]">Data</span>
+                                    <input
+                                        type="date"
+                                        min={today}
+                                        className={inputCls(localError && !startDateValue)}
+                                        value={startDateValue}
+                                        onChange={e => {
+                                            setStartDateValue(e.target.value)
+                                            handleDateTimeChange("start", e.target.value, startTimeValue)
+                                        }}
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-[0.375rem] flex-1 min-w-0">
+                                    <span className="text-[0.6875rem] font-medium text-[var(--color-text-muted)]">Hora</span>
+                                    <input
+                                        type="time"
+                                        className={inputCls(localError && !startTimeValue)}
+                                        value={startTimeValue}
+                                        onChange={e => {
+                                            setStartTimeValue(e.target.value)
+                                            handleDateTimeChange("start", startDateValue, e.target.value)
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         </div>
+
+                        {/* Fim */}
                         <div className="flex flex-col gap-[0.375rem]">
-                            <label className="text-[0.75rem] font-semibold text-[var(--color-text-secondary)] flex items-center gap-1.5">
+                            <span className="text-[0.75rem] font-semibold text-[var(--color-text-secondary)] flex items-center gap-1.5">
                                 <Clock size={11} strokeWidth={2.5} />
                                 Fim
-                            </label>
-                            <input
-                                type="datetime-local"
-                                className={inputCls(localError && !end)}
-                                value={end}
-                                onChange={e => onChange("end", e.target.value)}
-                            />
+                            </span>
+                            <div className="flex gap-2">
+                                <div className="flex flex-col gap-[0.375rem] flex-1 min-w-0">
+                                    <span className="text-[0.6875rem] font-medium text-[var(--color-text-muted)]">Data</span>
+                                    <input
+                                        type="date"
+                                        min={today}
+                                        className={inputCls(localError && !endDateValue)}
+                                        value={endDateValue}
+                                        onChange={e => {
+                                            setEndDateValue(e.target.value)
+                                            handleDateTimeChange("end", e.target.value, endTimeValue)
+                                        }}
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-[0.375rem] flex-1 min-w-0">
+                                    <span className="text-[0.6875rem] font-medium text-[var(--color-text-muted)]">Hora</span>
+                                    <input
+                                        type="time"
+                                        className={inputCls(localError && !endTimeValue)}
+                                        value={endTimeValue}
+                                        onChange={e => {
+                                            setEndTimeValue(e.target.value)
+                                            handleDateTimeChange("end", endDateValue, e.target.value)
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -153,7 +230,7 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
                 </div>
             </div>
 
-            {localError && 
+            {localError &&
                 <div className='flex justify-center gap-3 mt-4'>
                     <Alert message={localError} />
                 </div>

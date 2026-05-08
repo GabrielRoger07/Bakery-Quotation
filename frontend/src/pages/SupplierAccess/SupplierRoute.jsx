@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import Cookies from 'js-cookie'
-import FetchAuthContext from '../../contexts/FetchAuthContext'
+import FetchAuthContext from '@/contexts/FetchAuthContext'
 
 const SupplierRoute = ({ children }) => {
     const { companyCnpj } = useParams()

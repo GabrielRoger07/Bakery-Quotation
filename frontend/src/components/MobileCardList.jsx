@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Pencil, Trash, Search, X, SlidersHorizontal, Plus, Eye, BarChart2, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
-import { useMobilePage } from '../contexts/MobilePageContext'
-import SortBottomSheet from './SortBottomSheet'
+import { useMobilePage } from '@/contexts/MobilePageContext'
+import SortBottomSheet from '@/components/SortBottomSheet'
 
 /**
  * MobileCardList — padrão mobile-native para listas de Fornecedores e Produtos.

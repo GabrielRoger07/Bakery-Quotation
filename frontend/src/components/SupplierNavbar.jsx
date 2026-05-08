@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import { useMemo, useState } from 'react'
-import Button from './Button'
-import { decodeJwt } from '../utils/decodeJwt'
-import LogoutConfirmModal from './LogoutConfirmModal'
+import Button from '@/components/Button'
+import { decodeJwt } from '@/utils/decodeJwt'
+import LogoutConfirmModal from '@/components/LogoutConfirmModal'
 
 const SupplierNavbar = () => {
     const navigate = useNavigate()

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import Button from '../../components/Button'
-import { formatDateTime } from '../../utils/formatDateTime'
+import Button from '@/components/Button'
+import { formatDateTime } from '@/utils/formatDateTime'
 import { CalendarClock, CalendarCheck, Gavel, Package, Users, Tag } from 'lucide-react'
 
 const MetaCard = ({ icon, label, value, sub }) => (

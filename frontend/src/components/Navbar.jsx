@@ -2,10 +2,10 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { RotateCw } from "lucide-react";
-import Button from "./Button";
-import MobileMenu from "./MobileMenu";
-import LogoutConfirmModal from "./LogoutConfirmModal";
-import { useMobilePage } from "../contexts/MobilePageContext";
+import Button from "@/components/Button";
+import MobileMenu from "@/components/MobileMenu";
+import LogoutConfirmModal from "@/components/LogoutConfirmModal";
+import { useMobilePage } from "@/contexts/MobilePageContext";
 
 const navLinkClass = ({ isActive }) =>
     [

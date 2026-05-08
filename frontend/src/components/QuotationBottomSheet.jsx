@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { X, Pencil, Trash, BarChart2 } from 'lucide-react'
-import QuotationDetails from '../pages/Quotation/QuotationDetails'
+import QuotationDetails from '@/pages/Quotation/QuotationDetails'
 
 const QuotationBottomSheet = ({
     isOpen,

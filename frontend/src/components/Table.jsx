@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import Button from './Button'
+import Button from '@/components/Button'
 import { Pencil, Trash, Eye, Activity, SlidersHorizontal, Plus } from 'lucide-react'
-import { useMobilePage } from '../contexts/MobilePageContext'
+import { useMobilePage } from '@/contexts/MobilePageContext'
 
 
 const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload, onMonitor, onSort, sortField, sortDirection, toolbar, filterActive = false, filterSlot }) => {

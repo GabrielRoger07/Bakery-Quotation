@@ -1,5 +1,5 @@
-import Modal from './Modal'
-import Button from './Button'
+import Modal from '@/components/Modal'
+import Button from '@/components/Button'
 
 const LogoutConfirmModal = ({ open, onConfirm, onCancel }) => (
     <Modal isOpen={open} onClose={onCancel} title="Confirmar Saída">

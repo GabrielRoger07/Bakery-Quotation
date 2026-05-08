@@ -1,23 +1,22 @@
 import { BrowserRouter, Route, Routes, useLocation, Navigate } from 'react-router-dom'
-import PrivateRoute from './components/PrivateRoute';
-import { MobilePageProvider } from './contexts/MobilePageContext';
+import PrivateRoute from '@/components/PrivateRoute';
+import { MobilePageProvider } from '@/contexts/MobilePageContext';
 
-import LandingPage from './pages/Marketing/LandingPage';
-import Login from './pages/Company/Login';
-import CompanyCreate from './pages/Company/CompanyCreate';
-import SupplierList from './pages/Supplier/SupplierList';
-import ProductList from './pages/Product/ProductList';
-import QuotationList from './pages/Quotation/QuotationList';
-import QuotationCreatePage from './pages/Quotation/QuotationCreatePage';
-import QuotationEditPage from './pages/Quotation/QuotationEditPage';
-import Navbar from './components/Navbar';
-import SupplierNavbar from './components/SupplierNavbar';
-import QuotationMonitor from './pages/Quotation/QuotationMonitor';
-
-import SupplierAccessToken from './pages/SupplierAccess/SupplierAccessToken';
-import SupplierPage from './pages/SupplierAccess/SupplierPage';
-import SupplierQuotationPage from './pages/SupplierAccess/SupplierQuotationPage';
-import SupplierRoute from './pages/SupplierAccess/SupplierRoute';
+import LandingPage from '@/pages/Marketing/LandingPage';
+import Login from '@/pages/Company/Login';
+import CompanyCreate from '@/pages/Company/CompanyCreate';
+import SupplierList from '@/pages/Supplier/SupplierList';
+import ProductList from '@/pages/Product/ProductList';
+import QuotationList from '@/pages/Quotation/QuotationList';
+import QuotationCreatePage from '@/pages/Quotation/QuotationCreatePage';
+import QuotationEditPage from '@/pages/Quotation/QuotationEditPage';
+import Navbar from '@/components/Navbar';
+import SupplierNavbar from '@/components/SupplierNavbar';
+import QuotationMonitor from '@/pages/Quotation/QuotationMonitor';
+import SupplierAccessToken from '@/pages/SupplierAccess/SupplierAccessToken';
+import SupplierPage from '@/pages/SupplierAccess/SupplierPage';
+import SupplierQuotationPage from '@/pages/SupplierAccess/SupplierQuotationPage';
+import SupplierRoute from '@/pages/SupplierAccess/SupplierRoute';
 
 function App() {
 

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { X } from 'lucide-react'
-import SupplierCreate from '../pages/Supplier/SupplierCreate'
-import SupplierEdit from '../pages/Supplier/SupplierEdit'
+import SupplierCreate from '@/pages/Supplier/SupplierCreate'
+import SupplierEdit from '@/pages/Supplier/SupplierEdit'
 
 const SupplierFormBottomSheet = ({ isOpen, onClose, mode, supplier, onSaveCreate, onSaveEdit }) => {
     useEffect(() => {

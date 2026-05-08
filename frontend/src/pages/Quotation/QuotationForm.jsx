@@ -1,12 +1,12 @@
 import {useState, useEffect, useCallback, useMemo} from 'react'
-import useFetch from '../../hooks/useFetch'
-import Alert from '../../components/Alert'
-import QuotationCreateStep1 from './QuotationCreateStep1'
-import QuotationCreateStep2 from './QuotationCreateStep2'
-import QuotationCreateStep3 from './QuotationCreateStep3'
-import QuotationCreateStep4 from './QuotationCreateStep4'
+import useFetch from '@/hooks/useFetch'
+import Alert from '@/components/Alert'
+import QuotationCreateStep1 from '@/pages/Quotation/QuotationCreateStep1'
+import QuotationCreateStep2 from '@/pages/Quotation/QuotationCreateStep2'
+import QuotationCreateStep3 from '@/pages/Quotation/QuotationCreateStep3'
+import QuotationCreateStep4 from '@/pages/Quotation/QuotationCreateStep4'
 import { Check, ArrowLeft } from 'lucide-react'
-import { ENV } from '../../config/env'
+import { ENV } from '@/config/env'
 
 const STEPS = [
     { key: 1, labelKey: "Datas" },

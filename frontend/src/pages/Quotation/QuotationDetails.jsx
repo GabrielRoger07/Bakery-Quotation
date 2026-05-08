@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import useFetch from '../../hooks/useFetch'
-import Alert from '../../components/Alert'
-import { ENV } from '../../config/env'
-import { formatDateTime } from '../../utils/formatDateTime'
+import useFetch from '@/hooks/useFetch'
+import Alert from '@/components/Alert'
+import { ENV } from '@/config/env'
+import { formatDateTime } from '@/utils/formatDateTime'
 import { CalendarClock, CalendarCheck, Gavel, Package, Users, Tag } from 'lucide-react'
 
 const MetaCard = ({ icon, label, value, sub }) => (

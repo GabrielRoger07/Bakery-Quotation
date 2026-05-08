@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from 'react'
-import useFetch from '../../hooks/useFetch'
-import useIsMobile from '../../hooks/useIsMobile'
-import Input from '../../components/Input'
-import Button from '../../components/Button'
-import Alert from '../../components/Alert'
-import Pagination from '../../components/Pagination'
+import useFetch from '@/hooks/useFetch'
+import useIsMobile from '@/hooks/useIsMobile'
+import Input from '@/components/Input'
+import Button from '@/components/Button'
+import Alert from '@/components/Alert'
+import Pagination from '@/components/Pagination'
 import { X } from 'lucide-react'
-import { ENV } from '../../config/env'
+import { ENV } from '@/config/env'
 
 const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, loading }) => {
     const { request } = useFetch(ENV.API_BASE_URL)

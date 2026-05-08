@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import useFetch from '../../hooks/useFetch'
-import useIsMobile from '../../hooks/useIsMobile'
-import { formatMoney } from '../../utils/formatMoney'
-import { useCurrencyMask } from '../../hooks/useCurrencyMask'
-import Button from '../../components/Button'
-import Modal from '../../components/Modal'
-import SingleProposalProductRow from './SingleProposalProductRow'
-import { ENV } from '../../config/env'
+import useFetch from '@/hooks/useFetch'
+import useIsMobile from '@/hooks/useIsMobile'
+import { formatMoney } from '@/utils/formatMoney'
+import { useCurrencyMask } from '@/hooks/useCurrencyMask'
+import Button from '@/components/Button'
+import Modal from '@/components/Modal'
+import SingleProposalProductRow from '@/pages/SupplierAccess/SingleProposalProductRow'
+import { ENV } from '@/config/env'
 import {
     ChevronLeft, Clock, Package, Tag, CheckCircle2,
     AlertCircle, Send, FileCheck2, X, MinusCircle, Hourglass, Info

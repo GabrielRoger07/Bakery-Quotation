@@ -1,7 +1,7 @@
 import { useCallback, useContext, useState } from 'react'
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
-import FetchAuthContext from '../contexts/FetchAuthContext'
+import FetchAuthContext from '@/contexts/FetchAuthContext'
 
 const useFetch = (baseUrl = "") => {
 

@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { Tag } from 'lucide-react'
-import { useCurrencyMask } from '../../hooks/useCurrencyMask'
-import { formatMoney } from '../../utils/formatMoney'
-import Input from '../../components/Input'
+import { useCurrencyMask } from '@/hooks/useCurrencyMask'
+import { formatMoney } from '@/utils/formatMoney'
+import Input from '@/components/Input'
 
 const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNumericChange }) => {
     const { value, handleChange, getNumericValue, setValue } = useCurrencyMask()

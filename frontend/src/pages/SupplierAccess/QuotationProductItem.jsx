@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { useCurrencyMask } from '../../hooks/useCurrencyMask'
-import useFetch from '../../hooks/useFetch'
-import Input from '../../components/Input'
-import Button from '../../components/Button'
-import { ENV } from '../../config/env'
-import { formatDecimal, formatMoney } from '../../utils/formatMoney'
+import { useCurrencyMask } from '@/hooks/useCurrencyMask'
+import useFetch from '@/hooks/useFetch'
+import Input from '@/components/Input'
+import Button from '@/components/Button'
+import { ENV } from '@/config/env'
+import { formatDecimal, formatMoney } from '@/utils/formatMoney'
 
 const QuotationProductItem = ({ product, participationId, currentLowestBid }) => {
 

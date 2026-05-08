@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
-import useFetch from '../../hooks/useFetch'
-import Input from '../../components/Input'
-import Button from '../../components/Button'
-import Alert from '../../components/Alert'
-import { ENV } from '../../config/env'
+import useFetch from '@/hooks/useFetch'
+import Input from '@/components/Input'
+import Button from '@/components/Button'
+import Alert from '@/components/Alert'
+import { ENV } from '@/config/env'
 
 const SupplierAccessToken = () => {
 

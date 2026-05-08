@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import useFetch from '../../hooks/useFetch'
-import useIsMobile from '../../hooks/useIsMobile'
-import useCharLimit from '../../hooks/useCharLimit'
-import Button from '../../components/Button'
-import Alert from '../../components/Alert'
-import Input from '../../components/Input'
-import Modal from '../../components/Modal'
-import Pagination from '../../components/Pagination'
+import useFetch from '@/hooks/useFetch'
+import useIsMobile from '@/hooks/useIsMobile'
+import useCharLimit from '@/hooks/useCharLimit'
+import Button from '@/components/Button'
+import Alert from '@/components/Alert'
+import Input from '@/components/Input'
+import Modal from '@/components/Modal'
+import Pagination from '@/components/Pagination'
 import { X, Plus, Package, ChevronDown, Pencil, Check } from 'lucide-react'
-import { ENV } from '../../config/env'
+import { ENV } from '@/config/env'
 
 /* ── Create product inline form (used inside Modal on desktop, Modal on mobile too) ── */
 const CreateProductModalForm = ({ onSuccess, onClose, request }) => {

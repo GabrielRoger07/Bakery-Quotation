@@ -1,4 +1,4 @@
-import Button from './Button'
+import Button from '@/components/Button'
 
 const pageButtonBase = 'min-w-[2rem] h-8 px-2 text-[0.875rem] font-medium rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-0)] cursor-pointer text-[var(--color-text-neutral-strong)] flex items-center justify-center transition-[background-color,border-color,color,box-shadow] duration-[160ms] ease-[ease]'
 const pageButtonActive = '!bg-[var(--color-accent)] !text-white !border-[var(--color-accent)] font-bold [box-shadow:var(--shadow-accent)]'

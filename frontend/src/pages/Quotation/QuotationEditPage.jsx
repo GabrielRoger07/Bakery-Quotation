@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import useFetch from '../../hooks/useFetch'
-import QuotationForm from './QuotationForm'
-import { useMobilePage } from '../../contexts/MobilePageContext'
-import { ENV } from '../../config/env'
+import useFetch from '@/hooks/useFetch'
+import QuotationForm from '@/pages/Quotation/QuotationForm'
+import { useMobilePage } from '@/contexts/MobilePageContext'
+import { ENV } from '@/config/env'
 
 const QuotationEditPage = () => {
     const { id } = useParams()

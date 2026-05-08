@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import useWebSocket from '../../hooks/useWebSocket'
-import useFetch from '../../hooks/useFetch'
-import Table from '../../components/Table'
-import Modal from '../../components/Modal'
-import Button from '../../components/Button'
-import Input from '../../components/Input'
-import QuotationProductItem from './QuotationProductItem'
-import { ENV } from '../../config/env'
-import { formatMoney } from '../../utils/formatMoney'
+import useWebSocket from '@/hooks/useWebSocket'
+import useFetch from '@/hooks/useFetch'
+import Table from '@/components/Table'
+import Modal from '@/components/Modal'
+import Button from '@/components/Button'
+import Input from '@/components/Input'
+import QuotationProductItem from '@/pages/SupplierAccess/QuotationProductItem'
+import { ENV } from '@/config/env'
+import { formatMoney } from '@/utils/formatMoney'
 
 const SupplierQuotation = ({ participationId, quotationId }) => {
 

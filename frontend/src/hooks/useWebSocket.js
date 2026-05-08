@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import Cookies from "js-cookie";
-import { ENV } from "../config/env";
+import { ENV } from "@/config/env";
 
 export default function useWebSocket(quotationId, onMessage){
   const clientRef = useRef(null)

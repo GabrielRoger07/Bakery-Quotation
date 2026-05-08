@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import Button from '../../components/Button'
-import Alert from '../../components/Alert'
+import Button from '@/components/Button'
+import Alert from '@/components/Alert'
 import { Gavel, FileText, Check, Calendar, Clock } from 'lucide-react'
 
 const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading }) => {

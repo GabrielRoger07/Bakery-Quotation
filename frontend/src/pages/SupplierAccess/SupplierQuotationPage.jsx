@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import useFetch from '../../hooks/useFetch'
-import { ENV } from '../../config/env'
-import SupplierQuotationRouter from './SupplierQuotationRouter'
+import useFetch from '@/hooks/useFetch'
+import { ENV } from '@/config/env'
+import SupplierQuotationRouter from '@/pages/SupplierAccess/SupplierQuotationRouter'
 
 const SupplierQuotationPage = () => {
 

@@ -1,4 +1,4 @@
-import QuotationForm from './QuotationForm'
+import QuotationForm from '@/pages/Quotation/QuotationForm'
 
 const QuotationEdit = ({ quotation, onClose, onSave }) => {
     return (

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { formatCnpj } from "../utils/formatCnpj";
+import { formatCnpj } from "@/utils/formatCnpj";
 
 export default function useCnpjMask() {
     const [value, setValue] = useState("")

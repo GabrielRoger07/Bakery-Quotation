@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { X } from 'lucide-react'
-import ProductCreate from '../pages/Product/ProductCreate'
-import ProductEdit from '../pages/Product/ProductEdit'
+import ProductCreate from '@/pages/Product/ProductCreate'
+import ProductEdit from '@/pages/Product/ProductEdit'
 
 const ProductFormBottomSheet = ({ isOpen, onClose, mode, product, onSaveCreate, onSaveEdit }) => {
     useEffect(() => {

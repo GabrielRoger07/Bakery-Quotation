@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import useFetch from '../../hooks/useFetch'
-import Input from '../../components/Input'
-import Button from '../../components/Button'
-import Alert from '../../components/Alert'
-import useCharLimit from '../../hooks/useCharLimit'
-import { ENV } from '../../config/env'
+import useFetch from '@/hooks/useFetch'
+import Input from '@/components/Input'
+import Button from '@/components/Button'
+import Alert from '@/components/Alert'
+import useCharLimit from '@/hooks/useCharLimit'
+import { ENV } from '@/config/env'
 
 const ProductCreate = ({ onClose, onSave }) => {
 

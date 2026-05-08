@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { formatPhone } from "../utils/formatPhone";
+import { formatPhone } from "@/utils/formatPhone";
 
 export default function usePhoneMask() {
     const [value, setValue] = useState("")

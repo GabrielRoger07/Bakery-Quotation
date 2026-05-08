@@ -1,10 +1,10 @@
 import { useEffect, useState, useCallback } from 'react'
-import useFetch from '../../hooks/useFetch'
-import { ENV } from '../../config/env'
-import SupplierQuotationScheduled from './SupplierQuotationScheduled'
-import SupplierQuotationClosed from './SupplierQuotationClosed'
-import SupplierQuotationActiveAuction from './SupplierQuotationActiveAuction'
-import SupplierQuotationActiveUnique from './SupplierQuotationActiveUnique'
+import useFetch from '@/hooks/useFetch'
+import { ENV } from '@/config/env'
+import SupplierQuotationScheduled from '@/pages/SupplierAccess/SupplierQuotationScheduled'
+import SupplierQuotationClosed from '@/pages/SupplierAccess/SupplierQuotationClosed'
+import SupplierQuotationActiveAuction from '@/pages/SupplierAccess/SupplierQuotationActiveAuction'
+import SupplierQuotationActiveUnique from '@/pages/SupplierAccess/SupplierQuotationActiveUnique'
 
 const SupplierQuotationRouter = ({ quotationId, participationId }) => {
     

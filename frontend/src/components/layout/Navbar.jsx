@@ -5,7 +5,7 @@ import { RotateCw } from "lucide-react";
 import Button from "@/components/ui/Button";
 import MobileMenu from "@/components/layout/MobileMenu";
 import LogoutConfirmModal from "@/components/layout/LogoutConfirmModal";
-import { useMobilePage } from "@/contexts/MobilePageContext";
+import useMobilePage from "@/hooks/useMobilePage";
 
 const navLinkClass = ({ isActive }) =>
     [

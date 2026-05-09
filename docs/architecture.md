@@ -142,20 +142,33 @@ Rotas públicas: `/api/v1/companies/login`, `/api/v1/companies/register`, `/api/
 
 ```
 frontend/src/
-├── components/          ← Componentes reutilizáveis de UI
-├── contexts/            ← FetchAuthContext, MobilePageContext
-├── hooks/               ← Hooks customizados
-├── pages/
-│   ├── Company/         ← Login, CompanyCreate, Home
-│   ├── Marketing/       ← LandingPage
-│   ├── Product/         ← ProductList, ProductCreate, ProductEdit
-│   ├── Quotation/       ← QuotationList, QuotationCreatePage, QuotationEditPage, QuotationMonitor
-│   ├── Supplier/        ← SupplierList, SupplierCreate, SupplierEdit
-│   └── SupplierAccess/  ← SupplierPage, SupplierQuotationPage, SupplierAccessToken, SupplierRoute
-├── utils/               ← Formatadores e decoders
-├── config/              ← env.js (variáveis de ambiente)
-├── styles/              ← index.css (CSS variables + component layers)
-└── main.jsx, App.jsx
+├── components/              ← componentes cross-feature (compartilhados)
+│   ├── ui/                  ← primitivos sem domínio: Button, Input, Alert, Modal, Pagination, BottomSheet, DetailRow
+│   ├── layout/              ← shell da app: Navbar, SupplierNavbar, MobileMenu, PrivateRoute, LogoutConfirmModal
+│   └── data-display/        ← exibição genérica: Table, MobileCardList, StatusTabFilter, SortBottomSheet
+├── features/                ← uma pasta por domínio de negócio
+│   ├── products/
+│   │   ├── pages/           ← ProductList, ProductCreate, ProductEdit
+│   │   └── components/      ← ProductBottomSheet, ProductFormBottomSheet
+│   ├── suppliers/
+│   │   ├── pages/           ← SupplierList, SupplierCreate, SupplierEdit
+│   │   └── components/      ← SupplierBottomSheet, SupplierFormBottomSheet
+│   ├── quotations/
+│   │   ├── pages/           ← QuotationList, QuotationCreatePage, QuotationEditPage, QuotationForm, Steps 1-4, QuotationMonitor
+│   │   └── components/      ← QuotationBottomSheet, QuotationDetails
+│   ├── supplier-access/
+│   │   ├── pages/           ← SupplierPage, SupplierQuotationPage, SupplierRoute, SupplierQuotationRouter, Active/Closed/Scheduled
+│   │   └── components/      ← QuotationProductItem, SingleProposalProductRow
+│   └── company/
+│       └── pages/           ← Login, CompanyCreate, Home
+├── pages/                   ← páginas sem domínio (só marketing): LandingPage
+├── hooks/                   ← hooks cross-feature: useFetch, useIsMobile, useWebSocket, useListPage, masks...
+├── contexts/                ← FetchAuthContext, MobilePageContext
+├── utils/                   ← formatCnpj, formatPhone, formatMoney, formatDateTime, decodeJwt
+├── config/env.js
+├── styles/index.css         ← tema global, animações, classes de componente (@layer components)
+├── App.jsx
+└── main.jsx
 ```
 
 ### Rotas (App.jsx)
@@ -218,6 +231,7 @@ useWebSocket(quotationId, (message) => { /* atualiza estado */ })
 | Hook | Responsabilidade |
 |---|---|
 | `useIsMobile` | Detecta se viewport ≤ 640px |
+| `useListPage` | Estado central de páginas de listagem: paginação, ordenação, busca, modais, sheets e confirmação de exclusão |
 | `useMobileMenu` | Estado de abertura do menu mobile |
 | `useCnpjMask` | Formatação de input de CNPJ |
 | `usePhoneMask` | Formatação de input de telefone |
@@ -238,14 +252,16 @@ useWebSocket(quotationId, (message) => { /* atualiza estado */ })
 | `SupplierRoute` | Guard de rota fornecedor (injeta contexto) |
 | `Navbar` | Navegação da empresa |
 | `SupplierNavbar` | Navegação do fornecedor |
-| `Modal` | Dialog genérico |
+| `Modal` | Dialog genérico (desktop) |
+| `BottomSheet` | Painel deslizante genérico (mobile) — wrapper com scroll-lock, teclado e backdrop |
+| `DetailRow` | Linha de detalhe com ícone, label e valor — usada dentro de bottom sheets |
 | `Table` | Tabela com paginação e ordenação |
 | `Pagination` | Controles de paginação |
 | `MobileCardList` | Lista de cards para mobile |
 | `MobileMenu` / `SupplierMobileMenu` | Gaveta de navegação mobile |
-| `ProductBottomSheet` | Seleção de produtos (mobile) |
+| `ProductBottomSheet` | Detalhes e ações de produto (mobile) |
 | `ProductFormBottomSheet` | Formulário de produto (mobile) |
-| `SupplierBottomSheet` | Seleção de fornecedores (mobile) |
+| `SupplierBottomSheet` | Detalhes e ações de fornecedor (mobile) |
 | `SupplierFormBottomSheet` | Formulário de fornecedor (mobile) |
 | `QuotationBottomSheet` | Detalhes de cotação (mobile) |
 | `SortBottomSheet` | Opções de ordenação (mobile) |

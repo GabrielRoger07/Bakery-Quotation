@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import useFetch from '@/hooks/useFetch'
+import { useListPage } from '@/hooks/useListPage'
 import Table from '@/components/data-display/Table'
 import MobileCardList from '@/components/data-display/MobileCardList'
 import ProductBottomSheet from '@/features/products/components/ProductBottomSheet'
@@ -11,166 +12,67 @@ import ProductEdit from '@/features/products/pages/ProductEdit'
 import Button from '@/components/ui/Button'
 import Pagination from '@/components/ui/Pagination'
 import { ENV } from '@/config/env'
-import useIsMobile from '@/hooks/useIsMobile'
+
+const columns = [
+    { key: "productBarCodeNumber", label: "Código do Produto" },
+    { key: "productName", label: "Nome do Produto" },
+    { key: "productDescription", label: "Descrição do Produto" },
+]
 
 const ProductList = () => {
-
     const { request, loading } = useFetch(ENV.API_BASE_URL)
-    const isMobile = useIsMobile()
-
-    const [products, setProducts] = useState([])
-    const [error, setError] = useState("")
-    const [status, setStatus] = useState(null)
-
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-    const [productToEdit, setProductToEdit] = useState(null)
-
-    const [formSheetOpen, setFormSheetOpen] = useState(false)
-    const [formSheetMode, setFormSheetMode] = useState('create')
-
-    const [sheetOpen, setSheetOpen] = useState(false)
-    const [sheetProduct, setSheetProduct] = useState(null)
-
-    const [confirmOpen, setConfirmOpen] = useState(false)
-    const [productToRemove, setProductToRemove] = useState(null)
-
-    const [currentPage, setCurrentPage] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
-
-    const [sortField, setSortField] = useState(null)
-    const [sortDirection, setSortDirection] = useState("asc")
-
-    const [searchWord, setSearchWord] = useState("")
-    const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
-
-    const columns = [
-        { key: "productBarCodeNumber", label: "Código do Produto" },
-        { key: "productName", label: "Nome do Produto" },
-        { key: "productDescription", label: "Descrição do Produto" },
-    ]
-
-    const openSheet = (product) => {
-        setSheetProduct(product)
-        setSheetOpen(true)
-    }
-
-    const closeSheet = () => {
-        setSheetOpen(false)
-        setSheetProduct(null)
-    }
-
-    const openEditModal = (product) => {
-        setProductToEdit(product)
-        if (isMobile) {
-            setFormSheetMode('edit')
-            setFormSheetOpen(true)
-        } else {
-            setIsEditModalOpen(true)
-        }
-    }
-
-    const openCreateForm = () => {
-        if (isMobile) {
-            setProductToEdit(null)
-            setFormSheetMode('create')
-            setFormSheetOpen(true)
-        } else {
-            setIsCreateModalOpen(true)
-        }
-    }
-
-    const closeFormSheet = () => {
-        setFormSheetOpen(false)
-        setProductToEdit(null)
-    }
-
-    const closeModals = () => {
-        setProductToEdit(null)
-        setIsEditModalOpen(false)
-        setIsCreateModalOpen(false)
-        setConfirmOpen(false)
-        setProductToRemove(null)
-    }
-
-    const handleSaveCreate = () => {
-        fetchProducts()
-    }
-
-    const handleSaveEdit = (updatedProduct) => {
-        setProducts(prev => prev.map(p => p.productId === updatedProduct.productId ? updatedProduct : p))
-    }
-
-    const requestRemove = (productId) => {
-        const product = products.find(p => p.productId === productId)
-        setProductToRemove(product)
-        setConfirmOpen(true)
-    }
-
-    const confirmRemove = async () => {
-
-        if(!productToRemove) return
-
-        const res = await request("DELETE", `/products/${productToRemove.productId}`)
-        if(res.ok){
-            fetchProducts(currentPage)
-            setError("")
-        }else{
-            setError("Erro ao remover produto. Por favor tente novamente.")
-        }
-        closeModals()
-    }
+    const {
+        isMobile,
+        items, setItems, error, setError, status, setStatus,
+        currentPage, setCurrentPage, totalPages, setTotalPages,
+        sortField, sortDirection,
+        searchWord, setSearchWord, appliedSearch, setAppliedSearch,
+        sheetOpen, selectedItem, openSheet, closeSheet,
+        isCreateModalOpen, isEditModalOpen,
+        formSheetOpen, formSheetMode,
+        openCreateForm, openEditForm, closeFormSheet, closeModals,
+        confirmOpen, itemToRemove, requestRemove,
+        handleSaveEdit, handleColumnSort, handleClearSort,
+        handleClearSearch,
+    } = useListPage({ idKey: 'productId' })
 
     const fetchProducts = useCallback(async (page = 0) => {
-
         let query = `?page=${page}`
         sortField ? query += `&sort=${sortField},${sortDirection}` : query += `&sort=productName,${sortDirection}`
-        if(appliedSearch.field) query += `&field=${appliedSearch.field}`
-        if(appliedSearch.word) query += `&value=${appliedSearch.word}`
+        if (appliedSearch.field) query += `&field=${appliedSearch.field}`
+        if (appliedSearch.word) query += `&value=${appliedSearch.word}`
 
         const res = await request("GET", `/products/company${query}`)
-
-        if(res.ok){
-            setProducts(res.data.content);
+        if (res.ok) {
+            setItems(res.data.content)
             setTotalPages(res.data.totalPages)
             setError("")
-        }else{
+        } else {
             setError(res.data?.message)
         }
         setStatus(res.status)
-    }, [request, sortField, sortDirection, appliedSearch])
+    }, [request, sortField, sortDirection, appliedSearch, setItems, setTotalPages, setError, setStatus])
+
+    useEffect(() => {
+        fetchProducts(currentPage)
+    }, [fetchProducts, currentPage])
 
     const handleSearch = useCallback(() => {
         setCurrentPage(0)
         setAppliedSearch({ field: "productName", word: searchWord })
-    }, [searchWord])
+    }, [searchWord, setCurrentPage, setAppliedSearch])
 
-    const handleColumnSort = (columnKey) => {
-        if(sortField === columnKey){
-            setSortDirection(prev => (prev === "asc" ? "desc" : "asc"))
+    const confirmRemove = async () => {
+        if (!itemToRemove) return
+        const res = await request("DELETE", `/products/${itemToRemove.productId}`)
+        if (res.ok) {
+            fetchProducts(currentPage)
+            setError("")
         } else {
-            setSortField(columnKey)
-            setSortDirection("asc")
+            setError("Erro ao remover produto. Por favor tente novamente.")
         }
-
-        setCurrentPage(0)
+        closeModals()
     }
-
-    const handleClearSort = () => {
-        setSortField(null)
-        setSortDirection("asc")
-        setCurrentPage(0)
-    }
-
-    useEffect(() => {
-        fetchProducts(currentPage);
-    }, [fetchProducts, currentPage])
-
-    const handleClearSearch = useCallback(() => {
-        setSearchWord("")
-        setAppliedSearch({ field: "", word: "" })
-        setCurrentPage(0)
-    }, [])
 
     const filterToolbar = useMemo(() => (
         <>
@@ -179,12 +81,12 @@ const ProductList = () => {
                 className="toolbar-input"
                 value={searchWord}
                 onChange={e => setSearchWord(e.target.value)}
-                placeholder={"Nome do Produto"}
+                placeholder="Nome do Produto"
                 onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
             />
             <Button onClick={handleSearch} disabled={loading}>Buscar</Button>
         </>
-    ), [searchWord, handleSearch, loading])
+    ), [searchWord, setSearchWord, handleSearch, loading])
 
     const mobileFilterToolbar = useMemo(() => (
         <div className="mf-root">
@@ -208,12 +110,7 @@ const ProductList = () => {
                         </button>
                     )}
                 </div>
-                <button
-                    type="button"
-                    className="mf-search-btn"
-                    onClick={handleSearch}
-                    disabled={loading}
-                >
+                <button type="button" className="mf-search-btn" onClick={handleSearch} disabled={loading}>
                     Buscar
                 </button>
             </div>
@@ -230,30 +127,26 @@ const ProductList = () => {
                 </div>
             )}
         </div>
-    ), [searchWord, handleSearch, handleClearSearch, loading, appliedSearch])
+    ), [searchWord, setSearchWord, handleSearch, handleClearSearch, loading, appliedSearch])
 
-    const renderProductCard = (product) => {
-        const initials = product.productName
+    const renderProductCard = (product) => ({
+        avatar: product.productName
             ? product.productName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
-            : '?'
-
-        return {
-            avatar: initials,
-            title: product.productName,
-            subtitle: product.productDescription || undefined,
-        }
-    }
+            : '?',
+        title: product.productName,
+        subtitle: product.productDescription || undefined,
+    })
 
     return (
         <div className="page-wrapper">
-            {error && <Alert message={error}/>}
-            {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
+            {error && <Alert message={error} />}
+            {status === 0 && <Alert message="Erro Interno do Servidor" />}
 
             {isMobile ? (
                 <>
                     <MobileCardList
                         title="Produtos"
-                        items={products}
+                        items={items}
                         idKey="productId"
                         loading={loading}
                         emptyMessage="Nenhum produto encontrado."
@@ -275,35 +168,35 @@ const ProductList = () => {
                     <ProductBottomSheet
                         isOpen={sheetOpen}
                         onClose={closeSheet}
-                        product={sheetProduct}
-                        onEdit={openEditModal}
-                        onDelete={requestRemove}
+                        product={selectedItem}
+                        onEdit={openEditForm}
+                        onDelete={(id) => requestRemove(id, items)}
                     />
                     <ProductFormBottomSheet
                         isOpen={formSheetOpen}
                         onClose={closeFormSheet}
                         mode={formSheetMode}
-                        product={productToEdit}
-                        onSaveCreate={handleSaveCreate}
+                        product={selectedItem}
+                        onSaveCreate={fetchProducts}
                         onSaveEdit={handleSaveEdit}
                     />
                 </>
             ) : (
                 <>
                     <Table
-                        title={"Produtos"}
+                        title="Produtos"
                         columns={columns}
-                        data={products}
+                        data={items}
                         idKey="productId"
                         loading={loading}
-                        onEdit={openEditModal}
-                        onDelete={requestRemove}
-                        onAdd={() => setIsCreateModalOpen(true)}
+                        onEdit={openEditForm}
+                        onDelete={(id) => requestRemove(id, items)}
+                        onAdd={openCreateForm}
                         onReload={() => fetchProducts(currentPage)}
                         onSort={handleColumnSort}
                         sortField={sortField}
                         sortDirection={sortDirection}
-                        emptyMessage={"Nenhum produto encontrado."}
+                        emptyMessage="Nenhum produto encontrado."
                         toolbar={filterToolbar}
                         filterActive={appliedSearch.word !== ""}
                     />
@@ -311,25 +204,25 @@ const ProductList = () => {
                 </>
             )}
 
-            <Modal isOpen={isEditModalOpen} onClose={closeModals} title={"Editar Produto"}>
+            <Modal isOpen={isEditModalOpen} onClose={closeModals} title="Editar Produto">
                 <ProductEdit
-                    product={productToEdit}
+                    product={selectedItem}
                     onSave={handleSaveEdit}
                     onClose={closeModals}
                 />
             </Modal>
 
-            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={"Criar Produto"}>
+            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title="Criar Produto">
                 <ProductCreate
-                    onSave={handleSaveCreate}
+                    onSave={fetchProducts}
                     onClose={closeModals}
                 />
             </Modal>
 
-            <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>
+            <Modal isOpen={confirmOpen} onClose={closeModals} title="Confirmar Remoção">
                 <div>
                     <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
-                        Tem certeza de que você deseja remover o produto <strong>{productToRemove?.productName}</strong>?
+                        Tem certeza de que você deseja remover o produto <strong>{itemToRemove?.productName}</strong>?
                     </p>
                     <div className="flex justify-center gap-3 mt-4">
                         <Button onClick={closeModals}>Cancelar</Button>

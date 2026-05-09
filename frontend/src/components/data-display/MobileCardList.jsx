@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Pencil, Trash, Search, X, SlidersHorizontal, Plus, Eye, BarChart2, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
-import { useMobilePage } from '@/contexts/MobilePageContext'
+import useMobilePage from '@/hooks/useMobilePage'
 import SortBottomSheet from '@/components/data-display/SortBottomSheet'
 
 /**

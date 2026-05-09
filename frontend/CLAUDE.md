@@ -15,7 +15,7 @@ React 19 · Vite · Tailwind CSS v4 · React Router v6
 ```
 src/
 ├── components/              ← apenas componentes cross-feature (compartilhados)
-│   ├── ui/                  ← primitivos sem domínio: Button, Input, Alert, Modal, Pagination
+│   ├── ui/                  ← primitivos sem domínio: Button, Input, Alert, Modal, Pagination, BottomSheet, DetailRow
 │   ├── layout/              ← shell da app: Navbar, SupplierNavbar, MobileMenu, PrivateRoute, LogoutConfirmModal
 │   └── data-display/        ← exibição genérica: Table, MobileCardList, StatusTabFilter, SortBottomSheet
 │
@@ -38,7 +38,7 @@ src/
 ├── pages/                   ← páginas sem domínio (só marketing)
 │   └── LandingPage.jsx
 │
-├── hooks/                   ← hooks cross-feature: useFetch, useIsMobile, useWebSocket, masks...
+├── hooks/                   ← hooks cross-feature: useFetch, useIsMobile, useWebSocket, useListPage, masks...
 ├── contexts/                ← FetchAuthContext, MobilePageContext
 ├── utils/                   ← formatCnpj, formatPhone, formatMoney, formatDateTime, decodeJwt
 ├── config/env.js
@@ -65,7 +65,9 @@ src/
 2. **Antes de criar qualquer hook, verificar `hooks/`**
 3. **`useFetch` é o único cliente HTTP**
 4. **Modal já existe em `components/ui/Modal.jsx`** — nunca reinventar
-5. Usar `useIsMobile()` para decisões de layout (estrutura JSX diferente); `max-sm:` do Tailwind para ajustes visuais no mesmo elemento
+5. **BottomSheet já existe em `components/ui/BottomSheet.jsx`** — usar para qualquer painel que desliza de baixo no mobile
+6. **`useListPage` já existe em `hooks/useListPage.js`** — usar em toda página de listagem com paginação, ordenação e CRUD
+7. Usar `useIsMobile()` para decisões de layout (estrutura JSX diferente); `max-sm:` do Tailwind para ajustes visuais no mesmo elemento
 
 ## Responsividade
 

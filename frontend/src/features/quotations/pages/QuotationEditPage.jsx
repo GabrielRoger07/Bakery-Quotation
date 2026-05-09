@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import useFetch from '@/hooks/useFetch'
 import QuotationForm from '@/features/quotations/pages/QuotationForm'
-import { useMobilePage } from '@/contexts/MobilePageContext'
+import useMobilePage from '@/hooks/useMobilePage'
 import { ENV } from '@/config/env'
 
 const QuotationEditPage = () => {

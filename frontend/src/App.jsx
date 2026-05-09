@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes, useLocation, Navigate } from 'react-router-dom'
 import PrivateRoute from '@/components/layout/PrivateRoute';
-import { MobilePageProvider } from '@/contexts/MobilePageContext';
+import MobilePageProvider from '@/contexts/MobilePageProvider';
 
 import LandingPage from '@/pages/LandingPage';
 import Login from '@/features/company/pages/Login';

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useFetch from '@/hooks/useFetch'
+import { useListPage } from '@/hooks/useListPage'
 import Table from '@/components/data-display/Table'
 import MobileCardList from '@/components/data-display/MobileCardList'
 import SupplierBottomSheet from '@/features/suppliers/components/SupplierBottomSheet'
@@ -13,7 +14,6 @@ import Pagination from '@/components/ui/Pagination'
 import { ENV } from '@/config/env'
 import { formatCnpj } from '@/utils/formatCnpj'
 import { formatPhone } from '@/utils/formatPhone'
-import useIsMobile from '@/hooks/useIsMobile'
 
 const SUPPLIER_FILTER_OPTIONS = [
     { value: "supplierName",           label: "Nome" },
@@ -23,162 +23,76 @@ const SUPPLIER_FILTER_OPTIONS = [
     { value: "employerCnpj",           label: "CNPJ" },
 ]
 
+const columns = [
+    { key: "supplierName",           label: "Nome" },
+    { key: "supplierEmail",          label: "E-mail" },
+    { key: "supplierWhatsappNumber", label: "Whatsapp" },
+    { key: "employerName",           label: "Nome da Empresa" },
+    { key: "employerCnpj",           label: "CNPJ da Empresa" },
+]
+
 const SupplierList = () => {
-
     const { request, loading } = useFetch(ENV.API_BASE_URL)
-    const isMobile = useIsMobile()
-
-    const [suppliers, setSuppliers] = useState([])
-    const [error, setError] = useState("")
-    const [status, setStatus] = useState(null)
-
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-    const [supplierToEdit, setSupplierToEdit] = useState(null)
-
-    const [formSheetOpen, setFormSheetOpen] = useState(false)
-    const [formSheetMode, setFormSheetMode] = useState('create')
-
-    const [sheetOpen, setSheetOpen] = useState(false)
-    const [sheetSupplier, setSheetSupplier] = useState(null)
-
-    const [confirmOpen, setConfirmOpen] = useState(false)
-    const [supplierToRemove, setSupplierToRemove] = useState(null)
-
-    const [currentPage, setCurrentPage] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
-
-    const [sortField, setSortField] = useState(null)
-    const [sortDirection, setSortDirection] = useState("asc")
+    const {
+        isMobile,
+        items, setItems, error, setError, status, setStatus,
+        currentPage, setCurrentPage, totalPages, setTotalPages,
+        sortField, sortDirection,
+        searchWord, setSearchWord, appliedSearch, setAppliedSearch,
+        sheetOpen, selectedItem, openSheet, closeSheet,
+        isCreateModalOpen, isEditModalOpen,
+        formSheetOpen, formSheetMode,
+        openCreateForm, openEditForm, closeFormSheet, closeModals,
+        confirmOpen, itemToRemove, requestRemove,
+        handleSaveEdit, handleColumnSort, handleClearSort,
+    } = useListPage({ idKey: 'supplierId' })
 
     const [searchField, setSearchField] = useState("")
-    const [searchWord, setSearchWord] = useState("")
-    const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
-
-    const columns = [
-        { key: "supplierName", label: "Nome"},
-        { key: "supplierEmail", label: "E-mail"},
-        { key: "supplierWhatsappNumber", label: "Whatsapp"},
-        { key: "employerName", label: "Nome da Empresa"},
-        { key: "employerCnpj", label: "CNPJ da Empresa"}
-    ]
-
-    const openSheet = (supplier) => {
-        setSheetSupplier(supplier)
-        setSheetOpen(true)
-    }
-
-    const closeSheet = () => {
-        setSheetOpen(false)
-        setSheetSupplier(null)
-    }
-
-    const openEditModal = (supplier) => {
-        setSupplierToEdit(supplier)
-        if (isMobile) {
-            setFormSheetMode('edit')
-            setFormSheetOpen(true)
-        } else {
-            setIsEditModalOpen(true)
-        }
-    }
-
-    const openCreateForm = () => {
-        if (isMobile) {
-            setSupplierToEdit(null)
-            setFormSheetMode('create')
-            setFormSheetOpen(true)
-        } else {
-            setIsCreateModalOpen(true)
-        }
-    }
-
-    const closeFormSheet = () => {
-        setFormSheetOpen(false)
-        setSupplierToEdit(null)
-    }
-
-    const closeModals = () => {
-        setSupplierToEdit(null)
-        setIsEditModalOpen(false)
-        setIsCreateModalOpen(false)
-        setConfirmOpen(false)
-        setSupplierToRemove(null)
-    }
-
-    const handleSaveCreate = () => {
-        fetchSuppliers()
-    }
-
-    const handleSaveEdit = (updatedSupplier) => {
-        setSuppliers(prev => prev.map(s => s.supplierId === updatedSupplier.supplierId ? updatedSupplier : s))
-    }
-
-    const requestRemove = (supplierId) => {
-        const supplier = suppliers.find(s => s.supplierId === supplierId)
-        setSupplierToRemove(supplier)
-        setConfirmOpen(true)
-    }
-
-    const confirmRemove = async () => {
-
-        if(!supplierToRemove) return
-
-        const res = await request("DELETE", `/suppliers/${supplierToRemove.supplierId}`)
-
-        if(res.ok){
-            fetchSuppliers();
-            setError("")
-        }else{
-            setError("Erro ao remover fornecedor. Por favor tente novamente.")
-        }
-        closeModals()
-    }
 
     const fetchSuppliers = useCallback(async (page = 0) => {
-
         let query = `?page=${page}`
         sortField ? query += `&sort=${sortField},${sortDirection}` : query += `&sort=supplierName,${sortDirection}`
-        if(appliedSearch.field) query += `&field=${appliedSearch.field}`
-        if(appliedSearch.word) query += `&value=${appliedSearch.word}`
+        if (appliedSearch.field) query += `&field=${appliedSearch.field}`
+        if (appliedSearch.word) query += `&value=${appliedSearch.word}`
 
         const res = await request("GET", `/suppliers/company${query}`)
-
-        if(res.ok){
-            setSuppliers(res.data.content);
+        if (res.ok) {
+            setItems(res.data.content)
             setTotalPages(res.data.totalPages)
             setError("")
-        }else{
+        } else {
             setError(res.data?.message)
         }
         setStatus(res.status)
-    }, [request, sortField, sortDirection, appliedSearch])
+    }, [request, sortField, sortDirection, appliedSearch, setItems, setTotalPages, setError, setStatus])
+
+    useEffect(() => {
+        fetchSuppliers(currentPage)
+    }, [fetchSuppliers, currentPage])
 
     const handleSearch = useCallback(() => {
         setCurrentPage(0)
         setAppliedSearch({ field: searchField, word: searchWord })
-    }, [searchField, searchWord])
+    }, [searchField, searchWord, setCurrentPage, setAppliedSearch])
 
-    const handleColumnSort = (columnKey) => {
-        if(sortField === columnKey){
-            setSortDirection(prev => prev === "asc" ? "desc" : "asc")
+    const handleClearSearch = useCallback(() => {
+        setSearchField("")
+        setSearchWord("")
+        setAppliedSearch({ field: "", word: "" })
+        setCurrentPage(0)
+    }, [setSearchWord, setAppliedSearch, setCurrentPage])
+
+    const confirmRemove = async () => {
+        if (!itemToRemove) return
+        const res = await request("DELETE", `/suppliers/${itemToRemove.supplierId}`)
+        if (res.ok) {
+            fetchSuppliers()
+            setError("")
         } else {
-            setSortField(columnKey)
-            setSortDirection("asc")
+            setError("Erro ao remover fornecedor. Por favor tente novamente.")
         }
-
-        setCurrentPage(0)
+        closeModals()
     }
-
-    const handleClearSort = () => {
-        setSortField(null)
-        setSortDirection("asc")
-        setCurrentPage(0)
-    }
-
-    useEffect(() => {
-        fetchSuppliers(currentPage);
-    }, [fetchSuppliers, currentPage])
 
     const filterToolbar = useMemo(() => (
         <>
@@ -200,19 +114,12 @@ const SupplierList = () => {
                 className="toolbar-input"
                 value={searchWord}
                 onChange={e => setSearchWord(e.target.value)}
-                placeholder={"Digite o campo"}
+                placeholder="Digite o campo"
                 onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
             />
             <Button onClick={handleSearch} disabled={loading || !searchField}>Buscar</Button>
         </>
-    ), [searchField, searchWord, handleSearch, loading])
-
-    const handleClearSearch = useCallback(() => {
-        setSearchField("")
-        setSearchWord("")
-        setAppliedSearch({ field: "", word: "" })
-        setCurrentPage(0)
-    }, [])
+    ), [searchField, searchWord, setSearchWord, handleSearch, loading])
 
     const mobileFilterToolbar = useMemo(() => (
         <div className="mf-root">
@@ -250,12 +157,7 @@ const SupplierList = () => {
                         </button>
                     )}
                 </div>
-                <button
-                    type="button"
-                    className="mf-search-btn"
-                    onClick={handleSearch}
-                    disabled={loading || !searchField}
-                >
+                <button type="button" className="mf-search-btn" onClick={handleSearch} disabled={loading || !searchField}>
                     Buscar
                 </button>
             </div>
@@ -272,30 +174,26 @@ const SupplierList = () => {
                 </div>
             )}
         </div>
-    ), [searchField, searchWord, handleSearch, handleClearSearch, loading, appliedSearch])
+    ), [searchField, searchWord, setSearchWord, handleSearch, handleClearSearch, loading, appliedSearch])
 
-    const formattedSuppliers = suppliers.map((supplier) => ({
+    const formattedSuppliers = items.map(supplier => ({
         ...supplier,
         supplierWhatsappNumber: supplier.supplierWhatsappNumber ? formatPhone(supplier.supplierWhatsappNumber) : "-",
-        employerCnpj: supplier.employerCnpj ? formatCnpj(supplier.employerCnpj) : "-"
+        employerCnpj: supplier.employerCnpj ? formatCnpj(supplier.employerCnpj) : "-",
     }))
 
-    const renderSupplierCard = (supplier) => {
-        const initials = supplier.supplierName
+    const renderSupplierCard = (supplier) => ({
+        avatar: supplier.supplierName
             ? supplier.supplierName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
-            : '?'
-
-        return {
-            avatar: initials,
-            title: supplier.supplierName,
-            subtitle: supplier.employerName || undefined,
-        }
-    }
+            : '?',
+        title: supplier.supplierName,
+        subtitle: supplier.employerName || undefined,
+    })
 
     return (
         <div className="page-wrapper">
-            {error && <Alert message={error}/>}
-            {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
+            {error && <Alert message={error} />}
+            {status === 0 && <Alert message="Erro Interno do Servidor" />}
 
             {isMobile ? (
                 <>
@@ -323,35 +221,35 @@ const SupplierList = () => {
                     <SupplierBottomSheet
                         isOpen={sheetOpen}
                         onClose={closeSheet}
-                        supplier={sheetSupplier}
-                        onEdit={openEditModal}
-                        onDelete={requestRemove}
+                        supplier={selectedItem}
+                        onEdit={openEditForm}
+                        onDelete={(id) => requestRemove(id, items)}
                     />
                     <SupplierFormBottomSheet
                         isOpen={formSheetOpen}
                         onClose={closeFormSheet}
                         mode={formSheetMode}
-                        supplier={supplierToEdit}
-                        onSaveCreate={handleSaveCreate}
+                        supplier={selectedItem}
+                        onSaveCreate={fetchSuppliers}
                         onSaveEdit={handleSaveEdit}
                     />
                 </>
             ) : (
                 <>
                     <Table
-                        title={"Fornecedores"}
+                        title="Fornecedores"
                         columns={columns}
                         data={formattedSuppliers}
                         idKey="supplierId"
                         loading={loading}
-                        onEdit={openEditModal}
-                        onDelete={requestRemove}
-                        onAdd={() => setIsCreateModalOpen(true)}
+                        onEdit={openEditForm}
+                        onDelete={(id) => requestRemove(id, items)}
+                        onAdd={openCreateForm}
                         onReload={() => fetchSuppliers(currentPage)}
                         onSort={handleColumnSort}
                         sortField={sortField}
                         sortDirection={sortDirection}
-                        emptyMessage={"Nenhum fornecedor encontrado."}
+                        emptyMessage="Nenhum fornecedor encontrado."
                         toolbar={filterToolbar}
                         filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
                     />
@@ -359,25 +257,25 @@ const SupplierList = () => {
                 </>
             )}
 
-            <Modal isOpen={isEditModalOpen} onClose={closeModals} title={"Editar Fornecedor"}>
+            <Modal isOpen={isEditModalOpen} onClose={closeModals} title="Editar Fornecedor">
                 <SupplierEdit
-                    supplier={supplierToEdit}
+                    supplier={selectedItem}
                     onSave={handleSaveEdit}
                     onClose={closeModals}
                 />
             </Modal>
 
-            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title={"Criar Fornecedor"}>
+            <Modal isOpen={isCreateModalOpen} onClose={closeModals} title="Criar Fornecedor">
                 <SupplierCreate
-                    onSave={handleSaveCreate}
+                    onSave={fetchSuppliers}
                     onClose={closeModals}
                 />
             </Modal>
 
-            <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>
+            <Modal isOpen={confirmOpen} onClose={closeModals} title="Confirmar Remoção">
                 <div>
                     <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
-                        Tem certeza de que você deseja remover o fornecedor <strong>{supplierToRemove?.supplierName}</strong> da empresa <strong>{supplierToRemove?.employerName}</strong>?
+                        Tem certeza de que você deseja remover o fornecedor <strong>{itemToRemove?.supplierName}</strong> da empresa <strong>{itemToRemove?.employerName}</strong>?
                     </p>
                     <div className="flex justify-center gap-3 mt-4">
                         <Button onClick={closeModals}>Cancelar</Button>

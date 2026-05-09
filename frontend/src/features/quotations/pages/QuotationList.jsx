@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useFetch from '@/hooks/useFetch'
+import { useListPage } from '@/hooks/useListPage'
 import Modal from '@/components/ui/Modal'
 import Table from '@/components/data-display/Table'
 import MobileCardList from '@/components/data-display/MobileCardList'
@@ -12,102 +13,40 @@ import Button from '@/components/ui/Button'
 import Pagination from '@/components/ui/Pagination'
 import { ENV } from '@/config/env'
 import { formatDateTime } from '@/utils/formatDateTime'
-import useIsMobile from '@/hooks/useIsMobile'
 import { CalendarRange } from 'lucide-react'
 
-const QuotationList = () => {
+const columns = [
+    { key: "quotationId",             label: "ID" },
+    { key: "quotationStartFormatted", label: "Data de Início" },
+    { key: "quotationEndFormatted",   label: "Data de Fim" },
+    { key: "status",                  label: "Status" },
+]
 
+const sortMap = {
+    quotationId:             "id",
+    quotationStartFormatted: "quotationStart",
+    quotationEndFormatted:   "quotationEnd",
+    status:                  null,
+}
+
+const QuotationList = () => {
     const { request, loading } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate()
-    const isMobile = useIsMobile()
-
-    const [quotations, setQuotations] = useState([])
-    const [error, setError] = useState("")
-    const [status, setStatus] = useState(null)
+    const {
+        isMobile,
+        items, setItems, error, setError, status, setStatus,
+        currentPage, setCurrentPage, totalPages, setTotalPages,
+        sortField, sortDirection,
+        sheetOpen, selectedItem, openSheet, closeSheet,
+        confirmOpen, itemToRemove, requestRemove,
+        handleColumnSort: lpHandleColumnSort,
+        closeModals,
+    } = useListPage({ idKey: 'quotationId' })
 
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
     const [quotationToView, setQuotationToView] = useState(null)
-
-    const [sheetOpen, setSheetOpen] = useState(false)
-    const [sheetQuotation, setSheetQuotation] = useState(null)
-
-    const [confirmOpen, setConfirmOpen] = useState(false)
-    const [quotationToRemove, setQuotationToRemove] = useState(null)
     const [cannotDelete, setCannotDelete] = useState(false)
-
-    const [currentPage, setCurrentPage] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
-
-    const [sortField, setSortField] = useState(null)
-    const [sortDirection, setSortDirection] = useState("asc")
-
     const [statusFilter, setStatusFilter] = useState("")
-
-    const columns = [
-        { key: "quotationId", label: "ID" },
-        { key: "quotationStartFormatted", label: "Data de Início" },
-        { key: "quotationEndFormatted", label: "Data de Fim" },
-        { key: "status", label: "Status" }
-    ]
-
-    const sortMap = useMemo(() => ({
-        quotationId: "id",
-        quotationStartFormatted: "quotationStart",
-        quotationEndFormatted: "quotationEnd",
-        status: null
-    }), [])
-
-    const openDetailsModal = (quotation) => {
-        setQuotationToView(quotation)
-        setIsDetailsModalOpen(true)
-    }
-
-    const closeModals = () => {
-        setQuotationToView(null)
-        setIsDetailsModalOpen(false)
-        setConfirmOpen(false)
-        setQuotationToRemove(null)
-        setCannotDelete(false)
-    }
-
-    const openSheet = (quotation) => {
-        setSheetQuotation(quotation)
-        setSheetOpen(true)
-    }
-
-    const closeSheet = () => {
-        setSheetOpen(false)
-        setSheetQuotation(null)
-    }
-
-    const requestRemove = (quotationId) => {
-        const q = quotations.find((x) => x.quotationId === quotationId)
-        if (new Date(q.quotationStart) <= new Date()) {
-            setCannotDelete(true)
-            setConfirmOpen(true)
-            setQuotationToRemove(null)
-        } else {
-            setQuotationToRemove(q)
-            setCannotDelete(false)
-            setConfirmOpen(true)
-        }
-    }
-
-    const confirmRemove = async () => {
-        if (!quotationToRemove) return
-        const res = await request("DELETE", `/quotations/${quotationToRemove.quotationId}`)
-        if (res.ok) {
-            fetchQuotations()
-            setError("")
-        } else {
-            setError("Erro ao remover cotação. Por favor tente novamente.")
-        }
-        closeModals()
-    }
-
-    const handleMonitor = (quotation) => {
-        navigate(`/quotations/monitor?id=${quotation.quotationId}`)
-    }
 
     const fetchQuotations = useCallback(async (page = 0) => {
         let sortQuery = ""
@@ -125,46 +64,79 @@ const QuotationList = () => {
                     quotationEndFormatted: end ? `${end.date} • ${end.time}` : "-",
                     status: new Date(q.quotationStart) > new Date() ? "Agendado"
                           : new Date(q.quotationEnd) < new Date() ? "Fechado"
-                          : "Ativo"
+                          : "Ativo",
                 }
             })
-            setQuotations(mapped)
+            setItems(mapped)
             setTotalPages(res.data.totalPages)
             setError("")
         } else {
             setError(res.data?.message)
         }
         setStatus(res.status)
-    }, [request, sortField, sortDirection, sortMap])
-
-    const handleColumnSort = (columnKey) => {
-        if (!sortMap[columnKey]) return
-        if (sortField === columnKey) {
-            setSortDirection(prev => prev === "asc" ? "desc" : "asc")
-        } else {
-            setSortField(columnKey)
-            setSortDirection("asc")
-        }
-        setCurrentPage(0)
-    }
+    }, [request, sortField, sortDirection, setItems, setTotalPages, setError, setStatus])
 
     useEffect(() => {
         fetchQuotations(currentPage)
     }, [fetchQuotations, currentPage])
 
+    const handleColumnSort = (columnKey) => {
+        if (!sortMap[columnKey]) return
+        lpHandleColumnSort(columnKey)
+    }
+
+    const openDetailsModal = (quotation) => {
+        setQuotationToView(quotation)
+        setIsDetailsModalOpen(true)
+    }
+
+    const closeAllModals = () => {
+        setQuotationToView(null)
+        setIsDetailsModalOpen(false)
+        setCannotDelete(false)
+        closeModals()
+    }
+
+    const handleRequestRemove = (quotationId) => {
+        const q = items.find(x => x.quotationId === quotationId)
+        if (new Date(q.quotationStart) <= new Date()) {
+            setCannotDelete(true)
+            requestRemove(quotationId, [])
+        } else {
+            setCannotDelete(false)
+            requestRemove(quotationId, items)
+        }
+    }
+
+    const confirmRemove = async () => {
+        if (!itemToRemove) return
+        const res = await request("DELETE", `/quotations/${itemToRemove.quotationId}`)
+        if (res.ok) {
+            fetchQuotations()
+            setError("")
+        } else {
+            setError("Erro ao remover cotação. Por favor tente novamente.")
+        }
+        closeAllModals()
+    }
+
+    const handleMonitor = (quotation) => {
+        navigate(`/quotations/monitor?id=${quotation.quotationId}`)
+    }
+
     const statusCounts = useMemo(() => {
-        const counts = { "": quotations.length, agendado: 0, ativo: 0, fechado: 0 }
-        for (const q of quotations) {
+        const counts = { "": items.length, agendado: 0, ativo: 0, fechado: 0 }
+        for (const q of items) {
             const key = q.status.toLowerCase()
             if (key in counts) counts[key]++
         }
         return counts
-    }, [quotations])
+    }, [items])
 
     const filteredQuotations = useMemo(() => {
-        if (!statusFilter) return quotations
-        return quotations.filter(q => q.status.toLowerCase() === statusFilter)
-    }, [quotations, statusFilter])
+        if (!statusFilter) return items
+        return items.filter(q => q.status.toLowerCase() === statusFilter)
+    }, [items, statusFilter])
 
     const renderQuotationCard = (quotation) => {
         const statusVariant =
@@ -180,12 +152,10 @@ const QuotationList = () => {
 
     return (
         <div className="page-wrapper">
-
-            <div className='flex justify-center gap-3 mt-4'>
+            <div className="flex justify-center gap-3 mt-4">
                 {error && <Alert message={error} />}
-                {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
+                {status === 0 && <Alert message="Erro Interno do Servidor" />}
             </div>
-
 
             {isMobile ? (
                 <>
@@ -214,22 +184,22 @@ const QuotationList = () => {
                     <QuotationBottomSheet
                         isOpen={sheetOpen}
                         onClose={closeSheet}
-                        quotation={sheetQuotation}
+                        quotation={selectedItem}
                         onEdit={(q) => navigate(`/quotations/${q.quotationId}/edit`)}
-                        onDelete={requestRemove}
+                        onDelete={handleRequestRemove}
                         onMonitor={handleMonitor}
                     />
                 </>
             ) : (
                 <>
                     <Table
-                        title={"Cotações"}
+                        title="Cotações"
                         columns={columns}
                         data={filteredQuotations}
                         idKey="quotationId"
                         loading={loading}
                         onEdit={(q) => navigate(`/quotations/${q.quotationId}/edit`)}
-                        onDelete={requestRemove}
+                        onDelete={handleRequestRemove}
                         onAdd={() => navigate('/quotations/new')}
                         onReload={() => fetchQuotations(currentPage)}
                         onSort={handleColumnSort}
@@ -237,7 +207,7 @@ const QuotationList = () => {
                         sortDirection={sortDirection}
                         onView={openDetailsModal}
                         onMonitor={handleMonitor}
-                        emptyMessage={"Nenhuma cotação encontrada."}
+                        emptyMessage="Nenhuma cotação encontrada."
                         filterSlot={
                             <StatusTabFilter
                                 value={statusFilter}
@@ -250,20 +220,22 @@ const QuotationList = () => {
                 </>
             )}
 
-            <Modal isOpen={isDetailsModalOpen} onClose={closeModals} title={"Detalhes da Cotação"}>
+            <Modal isOpen={isDetailsModalOpen} onClose={closeAllModals} title="Detalhes da Cotação">
                 <QuotationDetails quotation={quotationToView} />
             </Modal>
 
-            <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>
+            <Modal isOpen={confirmOpen} onClose={closeAllModals} title="Confirmar Remoção">
                 {cannotDelete ? (
-                    <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-4">Você não pode remover uma cotação que já começou.</p>
+                    <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-4">
+                        Você não pode remover uma cotação que já começou.
+                    </p>
                 ) : (
                     <div>
                         <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
-                            Tem certeza de que você deseja remover a cotação <strong>{quotationToRemove?.quotationId}</strong>?
+                            Tem certeza de que você deseja remover a cotação <strong>{itemToRemove?.quotationId}</strong>?
                         </p>
                         <div className="flex justify-center gap-3 mt-4">
-                            <Button onClick={closeModals}>Cancelar</Button>
+                            <Button onClick={closeAllModals}>Cancelar</Button>
                             <Button onClick={confirmRemove} disabled={loading}>Confirmar</Button>
                         </div>
                     </div>

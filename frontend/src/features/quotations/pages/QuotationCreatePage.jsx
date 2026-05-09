@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import QuotationForm from '@/features/quotations/pages/QuotationForm'
-import { useMobilePage } from '@/contexts/MobilePageContext'
+import useMobilePage from '@/hooks/useMobilePage'
 
 const QuotationCreatePage = () => {
     const navigate = useNavigate()

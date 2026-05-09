@@ -1953,6 +1953,121 @@ textarea {
     color: var(--color-danger);
   }
 
+  /* ── Mobile search bar (Step 2 — barra de busca reorganizada) ── */
+  .msearch-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.625rem;
+  }
+  .msearch-input-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+  }
+  .msearch-icon {
+    position: absolute;
+    left: 0.75rem;
+    color: var(--color-text-disabled);
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+  .msearch-input {
+    width: 100%;
+    height: 2.625rem;
+    padding-left: 2.25rem;
+    padding-right: 2.25rem;
+    border: 1.5px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-family: var(--font-sans);
+    color: var(--color-text-primary);
+    background: var(--color-surface-0);
+    outline: none;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+  }
+  .msearch-input::placeholder { color: var(--color-text-disabled); }
+  .msearch-input:focus {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-focus-accent-soft);
+  }
+  .msearch-clear {
+    position: absolute;
+    right: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: none;
+    background: var(--color-surface-3);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .msearch-clear:active { background: var(--color-surface-4); }
+
+  .msearch-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.625rem;
+    height: 2.625rem;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--color-border-strong);
+    background: var(--color-surface-2);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 100ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .msearch-btn:active {
+    background: var(--color-highlight-lighter);
+    border-color: var(--color-highlight-border);
+    color: var(--color-accent);
+    transform: scale(0.94);
+  }
+
+  .msearch-new-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    height: 2.5rem;
+    border-radius: var(--radius-md);
+    border: 1.5px dashed var(--color-highlight-border);
+    background: var(--color-highlight-lighter);
+    color: var(--color-accent);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 140ms ease, border-color 140ms ease, transform 100ms ease, box-shadow 140ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .msearch-new-btn:active {
+    background: var(--color-highlight);
+    border-color: var(--color-accent);
+    transform: scale(0.98);
+  }
+  .msearch-new-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-accent);
+    color: white;
+    flex-shrink: 0;
+  }
+
   /* ── Supplier row card (Step 3 mobile list) ── */
   .sup-row-card {
     display: flex;

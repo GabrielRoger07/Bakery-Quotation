@@ -7,7 +7,7 @@ import Alert from '@/components/ui/Alert'
 import Input from '@/components/ui/Input'
 import Modal from '@/components/ui/Modal'
 import Pagination from '@/components/ui/Pagination'
-import { X, Plus, Package, ChevronDown, Pencil, Check } from 'lucide-react'
+import { X, Plus, Package, ChevronDown, Pencil, Check, Search } from 'lucide-react'
 import { ENV } from '@/config/env'
 
 /* ── Create product inline form (used inside Modal on desktop, Modal on mobile too) ── */
@@ -359,10 +359,110 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const iconBtnDanger  = `${iconBtnBase} hover:bg-[var(--color-danger-soft-bg)] hover:text-[var(--color-danger)]`
     const iconBtnSuccess = `${iconBtnBase} text-[var(--color-success)] hover:bg-[var(--color-success-soft-bg-2)] hover:text-[var(--color-success-strong)]`
 
-    /* ── Search panel (shared between desktop and mobile search tab) ── */
-    const renderSearchPanel = () => (
+    /* ── Search results list (shared between desktop and mobile) ── */
+    const renderProductList = () => (
+        <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
+            {availableProducts.length === 0 ? (
+                <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">
+                    {appliedSearch ? (
+                        <>Produto não encontrado.{' '}
+                            <button className="bg-none border-none p-0 text-[0.875rem] font-sans font-medium text-[var(--color-accent)] cursor-pointer underline underline-offset-[2px] transition-opacity duration-[160ms] hover:opacity-75" onClick={() => setShowCreateModal(true)}>Criar agora</button>
+                        </>
+                    ) : "Nenhum produto disponível"}
+                </p>
+            ) : (
+                <>
+                    <div className="border border-[var(--color-border-light)] rounded-[var(--radius-md)] overflow-hidden mb-1">
+                        {availableProducts.map(p => {
+                            const isExpanded = !isMobile && expandedId === p.productId
+                            return (
+                                <div key={p.productId} className="border-b border-[var(--color-border-lighter)] last:border-b-0">
+                                    <div
+                                        onClick={() => isMobile
+                                            ? handleOpenSheet(p, null)
+                                            : handleExpandProduct(p)
+                                        }
+                                        className={`flex items-center justify-between px-3 py-[0.6rem] cursor-pointer gap-2 transition-[background-color] duration-[160ms] ${isExpanded ? 'bg-[var(--color-highlight-lighter)]' : 'hover:bg-[var(--color-surface-1)]'}`}
+                                    >
+                                        <div className="flex flex-col min-w-0 flex-1">
+                                            <span className="font-medium text-[0.875rem] text-[var(--color-text-strong)] overflow-hidden text-ellipsis whitespace-nowrap">{p.productName}</span>
+                                            {p.productDescription && <span className="text-[0.8125rem] text-[var(--color-text-muted)] mt-px">{p.productDescription}</span>}
+                                        </div>
+                                        {isMobile ? (
+                                            <Plus size={16} strokeWidth={2.5} className="text-[var(--color-accent)] flex-shrink-0" />
+                                        ) : (
+                                            <ChevronDown size={16} className={`text-[var(--color-text-muted)] flex-shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                                        )}
+                                    </div>
+                                    {/* Desktop inline expand */}
+                                    {!isMobile && isExpanded && (
+                                        <div className="px-3 py-2 pb-3 bg-[var(--color-highlight-lighter)] border-t border-[var(--color-border-lighter)] flex items-end gap-[0.625rem] [animation:step2ExpandIn_0.15s_ease]">
+                                            <div className="flex gap-2 flex-1">
+                                                <div className="flex flex-col gap-[0.2rem] flex-1">
+                                                    <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Quantidade *</label>
+                                                    <input type="number" className={`${smallInputCls} text-center [font-variant-numeric:tabular-nums] appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`} value={pendingQty} onChange={e => setPendingQty(e.target.value)} onKeyDown={e => { if (['-','e','E'].includes(e.key)) e.preventDefault(); if (e.key === "Enter") handleAddProduct(p) }} onFocus={e => e.target.select()} placeholder="0" min="0" autoFocus />
+                                                </div>
+                                                <div className="flex flex-col gap-[0.2rem] flex-1">
+                                                    <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Marca</label>
+                                                    <input type="text" className={smallInputCls} value={pendingBrand} onChange={e => setPendingBrand(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleAddProduct(p) }} placeholder="Marca" />
+                                                </div>
+                                            </div>
+                                            <Button onClick={() => handleAddProduct(p)} disabled={!pendingQty || Number(pendingQty) <= 0} className="flex-shrink-0 flex items-center gap-[0.3rem] whitespace-nowrap">
+                                                <Plus size={15} />Adicionar
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+                            )
+                        })}
+                    </div>
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => fetchProducts(page)} />
+                </>
+            )}
+        </div>
+    )
+
+    /* ── Mobile search panel — input full-width, "Novo Produto" em destaque ── */
+    const renderMobileSearchPanel = () => (
         <>
-            {/* Search bar */}
+            <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-3 mb-3 [box-shadow:var(--shadow-xs)]">
+                {/* Input row: search field + clear button */}
+                <div className="msearch-row">
+                    <div className="msearch-input-wrap">
+                        <Search size={15} strokeWidth={2} className="msearch-icon" aria-hidden="true" />
+                        <input
+                            type="text"
+                            value={searchWord}
+                            onChange={e => setSearchWord(e.target.value)}
+                            placeholder="Nome do produto"
+                            onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
+                            className="msearch-input"
+                        />
+                        {appliedSearch && (
+                            <button className="msearch-clear" onClick={handleClearSearch} aria-label="Limpar busca">
+                                <X size={13} strokeWidth={2.5} />
+                            </button>
+                        )}
+                    </div>
+                    <button className="msearch-btn" onClick={handleSearch} aria-label="Buscar">
+                        <Search size={15} strokeWidth={2} />
+                    </button>
+                </div>
+
+                {/* "Novo Produto" — botão de criação em destaque */}
+                <button className="msearch-new-btn" onClick={() => setShowCreateModal(true)}>
+                    <span className="msearch-new-icon"><Plus size={15} strokeWidth={2.5} /></span>
+                    Novo Produto
+                </button>
+            </div>
+
+            {renderProductList()}
+        </>
+    )
+
+    /* ── Desktop search panel ── */
+    const renderDesktopSearchPanel = () => (
+        <>
             <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
                 <div className="flex gap-2 items-center">
                     <input
@@ -382,66 +482,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 </div>
             </div>
 
-            {/* Results */}
-            <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
-                {availableProducts.length === 0 ? (
-                    <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">
-                        {appliedSearch ? (
-                            <>Produto não encontrado.{' '}
-                                <button className="bg-none border-none p-0 text-[0.875rem] font-sans font-medium text-[var(--color-accent)] cursor-pointer underline underline-offset-[2px] transition-opacity duration-[160ms] hover:opacity-75" onClick={() => setShowCreateModal(true)}>Criar agora</button>
-                            </>
-                        ) : "Nenhum produto disponível"}
-                    </p>
-                ) : (
-                    <>
-                        <div className="border border-[var(--color-border-light)] rounded-[var(--radius-md)] overflow-hidden mb-1">
-                            {availableProducts.map(p => {
-                                const isExpanded = !isMobile && expandedId === p.productId
-                                return (
-                                    <div key={p.productId} className="border-b border-[var(--color-border-lighter)] last:border-b-0">
-                                        <div
-                                            onClick={() => isMobile
-                                                ? handleOpenSheet(p, null)
-                                                : handleExpandProduct(p)
-                                            }
-                                            className={`flex items-center justify-between px-3 py-[0.6rem] cursor-pointer gap-2 transition-[background-color] duration-[160ms] ${isExpanded ? 'bg-[var(--color-highlight-lighter)]' : 'hover:bg-[var(--color-surface-1)]'}`}
-                                        >
-                                            <div className="flex flex-col min-w-0 flex-1">
-                                                <span className="font-medium text-[0.875rem] text-[var(--color-text-strong)] overflow-hidden text-ellipsis whitespace-nowrap">{p.productName}</span>
-                                                {p.productDescription && <span className="text-[0.8125rem] text-[var(--color-text-muted)] mt-px">{p.productDescription}</span>}
-                                            </div>
-                                            {isMobile ? (
-                                                <Plus size={16} className="text-[var(--color-accent)] flex-shrink-0" />
-                                            ) : (
-                                                <ChevronDown size={16} className={`text-[var(--color-text-muted)] flex-shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
-                                            )}
-                                        </div>
-                                        {/* Desktop inline expand */}
-                                        {!isMobile && isExpanded && (
-                                            <div className="px-3 py-2 pb-3 bg-[var(--color-highlight-lighter)] border-t border-[var(--color-border-lighter)] flex items-end gap-[0.625rem] [animation:step2ExpandIn_0.15s_ease]">
-                                                <div className="flex gap-2 flex-1">
-                                                    <div className="flex flex-col gap-[0.2rem] flex-1">
-                                                        <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Quantidade *</label>
-                                                        <input type="number" className={`${smallInputCls} text-center [font-variant-numeric:tabular-nums] appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`} value={pendingQty} onChange={e => setPendingQty(e.target.value)} onKeyDown={e => { if (['-','e','E'].includes(e.key)) e.preventDefault(); if (e.key === "Enter") handleAddProduct(p) }} onFocus={e => e.target.select()} placeholder="0" min="0" autoFocus />
-                                                    </div>
-                                                    <div className="flex flex-col gap-[0.2rem] flex-1">
-                                                        <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Marca</label>
-                                                        <input type="text" className={smallInputCls} value={pendingBrand} onChange={e => setPendingBrand(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleAddProduct(p) }} placeholder="Marca" />
-                                                    </div>
-                                                </div>
-                                                <Button onClick={() => handleAddProduct(p)} disabled={!pendingQty || Number(pendingQty) <= 0} className="flex-shrink-0 flex items-center gap-[0.3rem] whitespace-nowrap">
-                                                    <Plus size={15} />Adicionar
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </div>
-                                )
-                            })}
-                        </div>
-                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => fetchProducts(page)} />
-                    </>
-                )}
-            </div>
+            {renderProductList()}
         </>
     )
 
@@ -576,13 +617,13 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                         </button>
                     </div>
 
-                    {mobileTab === 'search' && renderSearchPanel()}
+                    {mobileTab === 'search' && renderMobileSearchPanel()}
                     {mobileTab === 'selected' && renderSelectedPanel()}
                 </>
             ) : (
                 /* ── Desktop layout: stacked ── */
                 <>
-                    {renderSearchPanel()}
+                    {renderDesktopSearchPanel()}
                     {renderSelectedPanel()}
                 </>
             )}

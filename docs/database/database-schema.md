@@ -1,7 +1,7 @@
 # Database Schema
 
 MySQL 8.0 · Flyway migrations em `backend/src/main/resources/db/migration/`
-ERD visual em `docs/Entity-Relationship_Diagram.png` · Lógico em `docs/Logical_Data_Diagram.png`
+ERD visual em `docs/database/Entity-Relationship_Diagram.png` · Lógico em `docs/database/Logical_Data_Diagram.png`
 
 ## Tabelas
 

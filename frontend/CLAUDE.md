@@ -39,7 +39,7 @@ src/
 │   └── LandingPage.jsx
 │
 ├── hooks/                   ← hooks cross-feature: useFetch, useIsMobile, useWebSocket, useListPage, masks...
-├── contexts/                ← FetchAuthContext, MobilePageContext
+├── contexts/                ← FetchAuthContext, MobilePageContext (contexto), MobilePageProvider (provider)
 ├── utils/                   ← formatCnpj, formatPhone, formatMoney, formatDateTime, decodeJwt
 ├── config/env.js
 ├── styles/index.css         ← tema global, animações, classes de componente (@layer components)

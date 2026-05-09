@@ -163,7 +163,7 @@ frontend/src/
 │       └── pages/           ← Login, CompanyCreate, Home
 ├── pages/                   ← páginas sem domínio (só marketing): LandingPage
 ├── hooks/                   ← hooks cross-feature: useFetch, useIsMobile, useWebSocket, useListPage, masks...
-├── contexts/                ← FetchAuthContext, MobilePageContext
+├── contexts/                ← FetchAuthContext, MobilePageContext (contexto), MobilePageProvider (provider)
 ├── utils/                   ← formatCnpj, formatPhone, formatMoney, formatDateTime, decodeJwt
 ├── config/env.js
 ├── styles/index.css         ← tema global, animações, classes de componente (@layer components)
@@ -242,7 +242,7 @@ useWebSocket(quotationId, (message) => { /* atualiza estado */ })
 
 **`FetchAuthContext`** — Provê `{ cookieName, loginPath }` para o `useFetch`. O valor padrão é empresa; `SupplierRoute` sobrescreve com os valores do fornecedor.
 
-**`MobilePageContext`** — Gerencia título e ações do header mobile. Páginas chamam `registerPage(title, actions)` ao montar e `unregisterPage()` ao desmontar.
+**`MobilePageContext`** / **`MobilePageProvider`** — Gerencia título e ações do header mobile. Páginas chamam `registerPage(title, reloadFn)` ao montar e `unregisterPage()` ao desmontar. O hook de acesso (`useMobilePage`) fica em `hooks/useMobilePage.js` — separado para satisfazer a regra de fast refresh do Vite.
 
 ### Componentes principais
 

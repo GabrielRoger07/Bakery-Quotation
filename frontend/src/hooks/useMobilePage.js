@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { MobilePageContext } from '@/contexts/MobilePageContext'
+import MobilePageContext from '@/contexts/MobilePageContext'
 
 const useMobilePage = () => {
     const ctx = useContext(MobilePageContext)

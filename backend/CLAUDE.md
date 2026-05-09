@@ -13,9 +13,29 @@ Spring Boot 3.5.6 · Java 21 · MySQL 8.0 · Flyway · OpenPDF
 
 ## Estrutura de pacotes
 
-Domain Driven Development - Cada entidade de negócio tem seu próprio pacote com `Controller`, `Service`, `Repository` e `Entity`:
+- Domain Driven Development - Cada entidade de negócio tem seu próprio pacote com `Controller`, `Service`, `Repository` e `Entity`:
 `company`, `product`, `supplier`, `quotation`, `participation`, `bid`, `contain`
-Configurações em `config/`: `WebConfig` (CORS), `SecurityConfig` (JWT filter), `TokenConfig`, `AuthConfig`, `WebSocketConfig`.
+- Configurações em `config/`: `WebConfig` (CORS), `SecurityConfig` (JWT filter), `TokenConfig`, `AuthConfig`, `WebSocketConfig`.
+- Os DTOs ficam no mesmo pacote da entidade que representam
+
+## Convenção de Respostas
+
+- **Quem retorna `ResponseEntity`:** a camada de **Service**, não o Controller. O Controller apenas delega para o Service e repassa o retorno.
+- **Corpo da resposta:** sempre um DTO ou `List<DTO>` ou `Page<DTO>` — sem envelope customizado. Para PDFs, `byte[]` com `Content-Type: application/pdf` e `Content-Disposition`.
+
+## Tratamento de Erros
+
+- Todas as exceções customizadas estendem `RuntimeException`, em `exception/`
+- `IllegalArgumentException` e exceções do Spring/JPA também são mapeadas pelo handler global
+- Todas as exceções são capturadas por `GlobalExceptionHandler` (`@RestControllerAdvice`). O corpo de erro segue sempre o mesmo formato:
+
+```json
+{
+  "message": "descrição do erro",
+  "status": 400,
+  "timestamp": "2025-01-01T00:00:00Z"
+}
+```
 
 ## Schema do banco
 

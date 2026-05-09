@@ -4,19 +4,17 @@
 SaaS B2B para gestão de cotações de compra em empresas. Empresas criam cotações com produtos e convidam fornecedores para dar lances; Suporte a leilão reverso em tempo real (WebSocket/STOMP) e geração de relatórios PDF.
 
 ## Tecnologias
-- **Frontend:** React 19 + Vite + Tailwind CSS v4 (via `@theme` no CSS)
-- **Backend:** Spring Boot 3.5.6 · Java 21 (REST). Fetch via `useFetch`.
-- **DB:** MySQL 8.0 · Flyway para migrations → @docs/database-schema.md
+- **Frontend:** React 19 + Vite + Tailwind CSS v4 (via `@theme` no CSS); Fetch via `useFetch`
+- **Backend:** Spring Boot 3.5.6 · Java 21 (REST)
+- **DB:** MySQL 8.0 · Flyway para migrations → @docs/database/database-schema.md
 
 ## Autenticação
-- **Empresa** `POST /api/v1/companies/login` (email + senha) → retorna `accessToken` + `refreshToken` no body; o frontend armazena `accessToken` em cookie (`secure`, `sameSite: Strict`).
-- **Fornecedor** `POST /api/v1/suppliers/login/{companyCnpj}` (whatsapp + senha) → retorna `accessToken` + `refreshToken`; frontend armazena `supplierAccessToken` e `supplierCompanyCnpj` em cookies.
-- Senhas de fornecedor são geradas automaticamente (8 chars) no cadastro.
-- O frontend envia `Authorization: Bearer {token}` em toda requisição via `useFetch`; o backend nunca lê cookies diretamente.
+- **Empresa** `POST /api/v1/companies/login` → armazena `accessToken` em cookie `"accessToken"`.
+- **Fornecedor** `POST /api/v1/suppliers/login/{companyCnpj}` → armazena `supplierAccessToken` em cookie `"supplierAccessToken"`.
+- `useFetch` injeta `Authorization: Bearer {token}` em toda requisição; backend nunca lê cookies.
 - Token inválido/expirado retorna 403 → `useFetch` remove o cookie e redireciona para o login.
-- `PrivateRoute` valida a expiração do JWT no frontend (via `jwtDecode`) antes de renderizar rotas protegidas.
-- Expiração: empresa access=24h / refresh=7d · fornecedor access=2h / refresh=4h. Ainda não há endpoint de refresh implementado.
-- WebSocket (STOMP) autentica via `connectHeaders` com o mesmo Bearer token; usa `accessToken` fixo (não o contexto do `useFetch`).
+
+> Detalhes de expiração, refresh e auth WebSocket: @docs/architecture.md
 
 ## Comandos Chave
 Frontend (pasta /frontend):
@@ -31,6 +29,11 @@ Backend (pasta /backend):
 Docker (raiz do projeto)
 - `docker-compose up`                       # stack completa (perfil prod)
 - `docker-compose -f docker-compose.yml -f docker-compose.override.yml up`  # dev (porta MySQL 3307)
+
+## Documentação
+- Arquitetura, fluxos e componentes: @docs/architecture.md
+- Endpoints da API: @docs/backend/api-reference.md
+- Schema do banco: @docs/database/database-schema.md
 
 ## Ressalvas do projeto
 - **Dois papéis de usuário com auth separada:** empresa usa `accessToken`; fornecedor usa `supplierAccessToken`. Os dois contextos nunca se misturam — rotas, cookies e navbars são completamente distintos.

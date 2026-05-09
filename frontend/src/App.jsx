@@ -1,22 +1,22 @@
 import { BrowserRouter, Route, Routes, useLocation, Navigate } from 'react-router-dom'
-import PrivateRoute from '@/components/PrivateRoute';
+import PrivateRoute from '@/components/layout/PrivateRoute';
 import { MobilePageProvider } from '@/contexts/MobilePageContext';
 
-import LandingPage from '@/pages/Marketing/LandingPage';
-import Login from '@/pages/Company/Login';
-import CompanyCreate from '@/pages/Company/CompanyCreate';
-import SupplierList from '@/pages/Supplier/SupplierList';
-import ProductList from '@/pages/Product/ProductList';
-import QuotationList from '@/pages/Quotation/QuotationList';
-import QuotationCreatePage from '@/pages/Quotation/QuotationCreatePage';
-import QuotationEditPage from '@/pages/Quotation/QuotationEditPage';
-import Navbar from '@/components/Navbar';
-import SupplierNavbar from '@/components/SupplierNavbar';
-import QuotationMonitor from '@/pages/Quotation/QuotationMonitor';
-import SupplierAccessToken from '@/pages/SupplierAccess/SupplierAccessToken';
-import SupplierPage from '@/pages/SupplierAccess/SupplierPage';
-import SupplierQuotationPage from '@/pages/SupplierAccess/SupplierQuotationPage';
-import SupplierRoute from '@/pages/SupplierAccess/SupplierRoute';
+import LandingPage from '@/pages/LandingPage';
+import Login from '@/features/company/pages/Login';
+import CompanyCreate from '@/features/company/pages/CompanyCreate';
+import SupplierList from '@/features/suppliers/pages/SupplierList';
+import ProductList from '@/features/products/pages/ProductList';
+import QuotationList from '@/features/quotations/pages/QuotationList';
+import QuotationCreatePage from '@/features/quotations/pages/QuotationCreatePage';
+import QuotationEditPage from '@/features/quotations/pages/QuotationEditPage';
+import Navbar from '@/components/layout/Navbar';
+import SupplierNavbar from '@/components/layout/SupplierNavbar';
+import QuotationMonitor from '@/features/quotations/pages/QuotationMonitor';
+import SupplierAccessToken from '@/features/supplier-access/pages/SupplierAccessToken';
+import SupplierPage from '@/features/supplier-access/pages/SupplierPage';
+import SupplierQuotationPage from '@/features/supplier-access/pages/SupplierQuotationPage';
+import SupplierRoute from '@/features/supplier-access/pages/SupplierRoute';
 
 function App() {
 

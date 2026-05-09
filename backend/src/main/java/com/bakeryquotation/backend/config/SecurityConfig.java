@@ -33,9 +33,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/companies/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/companies/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/suppliers/login/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
 
                         //rotas fornecedor
-                        .requestMatchers("/ws/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/participations/*/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/participations/*").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/v1/participations/validateToken/*").authenticated()

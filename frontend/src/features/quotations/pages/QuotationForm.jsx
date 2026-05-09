@@ -25,6 +25,9 @@ const toLocalDateTimeInputValue = (isoString) => {
 const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave }) => {
 
     const [step, setStep] = useState(1)
+
+    useEffect(() => { window.scrollTo(0, 0) }, [step])
+
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")

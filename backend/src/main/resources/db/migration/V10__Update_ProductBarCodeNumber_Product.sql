@@ -1,0 +1,1 @@
+ALTER TABLE product MODIFY productBarCodeNumber VARCHAR(13);

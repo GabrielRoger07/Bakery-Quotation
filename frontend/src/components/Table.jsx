@@ -115,7 +115,7 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                                 <tr key={item[idKey] || index} className="even:[&>td]:bg-[var(--color-surface-1)] hover:[&>td]:bg-[var(--color-highlight-lighter)] hover:[&>td]:transition-[background-color] hover:[&>td]:duration-[160ms]">
                                     {columns.map((col) => (
                                         <td key={col.key} className="px-4 py-[0.875rem] border-b border-r border-[var(--color-border-lighter)] text-[var(--color-text-neutral-strong)] text-[0.875rem] leading-[1.4] bg-[var(--color-surface-0)] last:border-r-0 max-[768px]:px-3 max-[768px]:py-[0.625rem] max-[768px]:text-[0.8125rem]">
-                                            {item[col.key]}
+                                            {item[col.key] ? item[col.key] : "-"}
                                         </td>
                                     ))}
                                     {(onEdit || onDelete || onView || onMonitor) && (

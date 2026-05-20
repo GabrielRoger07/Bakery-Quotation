@@ -145,7 +145,8 @@ public class SupplierService {
         Supplier supplier = supplierMapper.toEntity(supplierRequestDTO);
         supplier.setCompany(company);
 
-        String password = generatePassword(8);
+        // String password = generatePassword(8);
+        String password = supplier.getEmployerCnpj();
         supplier.setSupplierPassword(passwordEncoder.encode(password));
 
         Supplier supplierSaved = supplierRepository.save(supplier);

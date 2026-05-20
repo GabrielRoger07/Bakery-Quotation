@@ -9,8 +9,6 @@ public class ProductRequestDTO {
     @NotEmpty(message = "Product name cannot be empty")
     private String productName;
 
-    @NotNull(message = "Product Barcode Number is required")
-    @NotEmpty(message = "Product Barcode Number cannot be empty")
     private String productBarCodeNumber;
 
     private String productDescription;

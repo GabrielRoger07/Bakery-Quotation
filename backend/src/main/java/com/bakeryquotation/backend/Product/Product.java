@@ -19,7 +19,7 @@ public class Product {
     @Column(name = "productName", nullable = false, length = 60)
     private String productName;
 
-    @Column(name = "productBarCodeNumber", nullable = false, length = 13)
+    @Column(name = "productBarCodeNumber", length = 13)
     private String productBarCodeNumber;
 
     @Column(name = "productDescription")

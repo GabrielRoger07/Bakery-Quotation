@@ -25,9 +25,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
     }, [product, setProductBarCodeNumber, setProductName, setProductDescription])
 
     const isDisabled = 
-        barCodeWarning ||
         nameWarning ||
-        !productBarCodeNumber ||
         !productName
 
     const warningCls = "text-[var(--color-danger-strong)] text-[0.8125rem] font-medium [margin:-0.25rem_0_0.625rem]"
@@ -36,8 +34,8 @@ const ProductEdit = ({product, onSave, onClose}) => {
         e.preventDefault()
         if(!product) return
 
-        if(!productBarCodeNumber.trim() || !productName.trim()){
-            setError("Todos os campos são obrigatórios")
+        if(!productName.trim()){
+            setError("O nome do produto é obrigatório")
             setSuccess("")
             return;
         }
@@ -45,7 +43,7 @@ const ProductEdit = ({product, onSave, onClose}) => {
         setError("")
 
         const body = {
-            productBarCodeNumber: productBarCodeNumber.trim(),
+            productBarCodeNumber: productBarCodeNumber ? productBarCodeNumber.trim() : null,
             productName: productName.trim(),
             productDescription: productDescription ? productDescription.trim() : null,
         }
@@ -65,18 +63,6 @@ const ProductEdit = ({product, onSave, onClose}) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Input label={"Código do Produto"} type="text" name="productBarCodeNumber" value={productBarCodeNumber} onChange={handleBarCodeChange} onBlur={handleBarCodeBlur} placeholder={"Digite o código do produto"} isInvalid={isBarCodeInvalid} required />
-            {barCodeWarning && (
-                <div className={warningCls}>
-                    {barCodeWarning.type === "too_short" &&
-                        `É permitido ter no mínimo ${barCodeWarning.min} caracteres para ${barCodeWarning.fieldName}.`
-                    }
-
-                    {barCodeWarning.type === "too_long" &&
-                        `É permitido ter no máximo ${barCodeWarning.max} caracteres para ${barCodeWarning.fieldName}.`
-                    }
-                </div>
-            )}
             
             <Input label={"Nome do Produto"} type="text" name="productName" value={productName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder={"Digite o nome do produto"} isInvalid={isNameInvalid} required />
             {nameWarning && (
@@ -87,6 +73,19 @@ const ProductEdit = ({product, onSave, onClose}) => {
 
                     {nameWarning.type === "too_long" &&
                         `É permitido ter no máximo ${nameWarning.max} caracteres para ${nameWarning.fieldName}.`
+                    }
+                </div>
+            )}
+            
+            <Input label={"Código do Produto"} type="text" name="productBarCodeNumber" value={productBarCodeNumber} onChange={handleBarCodeChange} onBlur={handleBarCodeBlur} placeholder={"Digite o código do produto"} isInvalid={isBarCodeInvalid} />
+            {barCodeWarning && (
+                <div className={warningCls}>
+                    {barCodeWarning.type === "too_short" &&
+                        `É permitido ter no mínimo ${barCodeWarning.min} caracteres para ${barCodeWarning.fieldName}.`
+                    }
+
+                    {barCodeWarning.type === "too_long" &&
+                        `É permitido ter no máximo ${barCodeWarning.max} caracteres para ${barCodeWarning.fieldName}.`
                     }
                 </div>
             )}

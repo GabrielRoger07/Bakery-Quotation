@@ -13,6 +13,8 @@ public class ProductRequestDTO {
 
     private String productDescription;
 
+    private Long departmentId;
+
     public ProductRequestDTO() {
     }
 
@@ -20,6 +22,13 @@ public class ProductRequestDTO {
         this.productName = productName;
         this.productBarCodeNumber = productBarCodeNumber;
         this.productDescription = productDescription;
+    }
+
+    public ProductRequestDTO(String productName, String productBarCodeNumber, String productDescription, Long departmentId) {
+        this.productName = productName;
+        this.productBarCodeNumber = productBarCodeNumber;
+        this.productDescription = productDescription;
+        this.departmentId = departmentId;
     }
 
     public String getProductName() {
@@ -44,5 +53,13 @@ public class ProductRequestDTO {
 
     public void setProductDescription(String productDescription) {
         this.productDescription = productDescription;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 }

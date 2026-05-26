@@ -74,6 +74,10 @@ public class DepartmentService {
         String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Company company = companyRepository.findByCompanyEmail(companyEmail).orElseThrow(() -> new ResourceNotFoundException("Company with email " + companyEmail + " does not exist"));
 
+        if(departmentRepository.existsByCompany_CompanyEmailAndDepartmentNameIgnoreCase(companyEmail, departmentRequestDTO.getDepartmentName())) {
+            throw new IllegalArgumentException("Department with name '" + departmentRequestDTO.getDepartmentName() + "' already exists");
+        }
+
         List<Department> departments = departmentRepository.findByCompany_CompanyEmail(companyEmail);
         Department department;
 
@@ -100,6 +104,10 @@ public class DepartmentService {
 
         if(department.getDepartmentName().equalsIgnoreCase("Default")) {
             throw new AccessDeniedException("You do not have created any department yet");
+        }
+
+        if(departmentRepository.existsByCompany_CompanyEmailAndDepartmentNameIgnoreCase(companyEmail, departmentRequestDTO.getDepartmentName())) {
+            throw new IllegalArgumentException("Department with name '" + departmentRequestDTO.getDepartmentName() + "' already exists");
         }
 
         department.setDepartmentName(departmentRequestDTO.getDepartmentName());

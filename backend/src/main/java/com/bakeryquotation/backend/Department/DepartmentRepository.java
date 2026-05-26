@@ -15,4 +15,6 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     List<Department> findByCompany_CompanyEmail(String companyEmail);
 
     Page<Department> findByCompany_CompanyEmailAndDepartmentNameContainsIgnoreCase(String companyCompanyEmail, String departmentName, Pageable pageable);
+
+    boolean existsByCompany_CompanyEmailAndDepartmentNameIgnoreCase(String companyEmail, String departmentName);
 }

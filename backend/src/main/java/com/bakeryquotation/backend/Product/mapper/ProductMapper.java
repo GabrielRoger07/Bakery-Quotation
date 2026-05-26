@@ -13,9 +13,12 @@ public interface ProductMapper {
     @Mapping(target = "company", ignore = true)
     @Mapping(target = "bids", ignore = true)
     @Mapping(target = "contains", ignore = true)
+    @Mapping(target = "department", ignore = true)
     Product toEntity(ProductRequestDTO productRequestDTO);
 
     @Mapping(source = "id", target = "productId")
     @Mapping(source = "company.companyCnpj", target = "companyCnpj")
+    @Mapping(source = "department.id", target = "departmentId")
+    @Mapping(source = "department.departmentName", target = "departmentName")
     ProductResponseDTO toDto(Product product);
 }

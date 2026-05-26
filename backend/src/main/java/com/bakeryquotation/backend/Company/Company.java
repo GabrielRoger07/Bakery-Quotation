@@ -2,6 +2,7 @@ package com.bakeryquotation.backend.Company;
 
 import com.bakeryquotation.backend.Product.Product;
 import com.bakeryquotation.backend.Quotation.Quotation;
+import com.bakeryquotation.backend.Department.Department;
 import com.bakeryquotation.backend.Supplier.Supplier;
 import jakarta.persistence.*;
 
@@ -48,6 +49,9 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     private List<Supplier> suppliers;
 
+    @OneToMany(mappedBy = "company", cascade = {CascadeType.REMOVE}, orphanRemoval = true)
+    private List<Department> departments;
+
     public Company() {
     }
 
@@ -60,7 +64,7 @@ public class Company {
         this.createdAt = Instant.now();
     }
 
-    public Company(String companyCnpj, String companyName, String companyWhatsappNumber, String companyEmail, String companyPassword, Instant createdAt, List<Product> products, List<Quotation> quotations, List<Supplier> suppliers) {
+    public Company(String companyCnpj, String companyName, String companyWhatsappNumber, String companyEmail, String companyPassword, Instant createdAt, List<Product> products, List<Quotation> quotations, List<Supplier> suppliers, List<Department> departments) {
         this.companyCnpj = companyCnpj;
         this.companyName = companyName;
         this.companyWhatsappNumber = companyWhatsappNumber;
@@ -70,6 +74,7 @@ public class Company {
         this.products = products;
         this.quotations = quotations;
         this.suppliers = suppliers;
+        this.departments = departments;
     }
 
     public String getCompanyCnpj() {
@@ -152,4 +157,11 @@ public class Company {
         this.suppliers = suppliers;
     }
 
+    public List<Department> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(List<Department> departments) {
+        this.departments = departments;
+    }
 }

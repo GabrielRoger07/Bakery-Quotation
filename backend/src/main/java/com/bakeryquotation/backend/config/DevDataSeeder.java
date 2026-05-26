@@ -6,6 +6,8 @@ import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Company.CompanyRepository;
 import com.bakeryquotation.backend.Contain.Contain;
 import com.bakeryquotation.backend.Contain.ContainRepository;
+import com.bakeryquotation.backend.Department.Department;
+import com.bakeryquotation.backend.Department.DepartmentRepository;
 import com.bakeryquotation.backend.Participation.Participation;
 import com.bakeryquotation.backend.Participation.ParticipationRepository;
 import com.bakeryquotation.backend.Product.Product;
@@ -39,6 +41,7 @@ public class DevDataSeeder {
                                  ContainRepository containRepository,
                                  ParticipationRepository participationRepository,
                                  BidRepository bidRepository,
+                                 DepartmentRepository departmentRepository,
                                  PasswordEncoder passwordEncoder){
         return args -> {
             Faker faker = new Faker(new Locale("pt-BR"));
@@ -51,7 +54,9 @@ public class DevDataSeeder {
             Company company2 = new Company("61703542949549", "Teste Soluções LTDA", "61988888888", "testesolucoes@gmail.com", password2);
 
             companyRepository.save(company1);
+            departmentRepository.save(new Department("Default", company1));
             companyRepository.save(company2);
+            departmentRepository.save(new Department("Default", company2));
 
             Quotation quotation1 = new Quotation(Instant.parse("2025-12-10T08:00:00Z"), Instant.parse("2026-12-31T10:00:00Z"), false, company1);
             Quotation quotation2 = new Quotation(Instant.parse("2025-12-25T16:00:00Z"), Instant.parse("2025-12-25T18:00:00Z"), true, company1);
@@ -61,18 +66,21 @@ public class DevDataSeeder {
             quotationRepository.save(quotation2);
             quotationRepository.save(quotation3);
 
+            Department department1 = departmentRepository.findByCompany_CompanyEmail(company1.getCompanyEmail()).getFirst();
+            Department department2 = departmentRepository.findByCompany_CompanyEmail(company2.getCompanyEmail()).getFirst();
+
             for(int i = 0; i < 26; i++){
 
                 String barcode = String.format("%013d", Math.abs(rnd.nextLong()) % 10000000000000L);
 
                 if(i < 21){
                     Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), passwordEncoder.encode("password"), company1);
-                    Product product = new Product(faker.commerce().productName(), barcode, faker.commerce().material(), company1);
+                    Product product = new Product(faker.commerce().productName(), barcode, faker.commerce().material(), company1, department1);
                     supplierRepository.save(supplier);
                     productRepository.save(product);
                 }else{
                     Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), passwordEncoder.encode("password"), company2);
-                    Product product = new Product(faker.commerce().productName(), barcode, faker.commerce().material(), company2);
+                    Product product = new Product(faker.commerce().productName(), barcode, faker.commerce().material(), company2, department2);
                     supplierRepository.save(supplier);
                     productRepository.save(product);
                 }

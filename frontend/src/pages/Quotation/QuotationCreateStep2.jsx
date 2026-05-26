@@ -7,20 +7,22 @@ import Alert from '@/components/Alert'
 import Input from '@/components/Input'
 import Modal from '@/components/Modal'
 import Pagination from '@/components/Pagination'
+import StatusTabFilter from '@/components/StatusTabFilter'
 import { X, Plus, Package, ChevronDown, Pencil, Check } from 'lucide-react'
 import { ENV } from '@/config/env'
 
 /* ── Create product inline form (used inside Modal on desktop, Modal on mobile too) ── */
-const CreateProductModalForm = ({ onSuccess, onClose, request }) => {
+const CreateProductModalForm = ({ onSuccess, onClose, request, departments = [], initialDepartmentId = '' }) => {
     const { value: barcode, onChange: handleBarcodeChange, onBlur: handleBarcodeBlur, warning: barcodeWarning, isInvalid: isBarcodeInvalid } = useCharLimit(13, "Código do Produto")
     const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "Nome do Produto")
     const { value: productDescription, onChange: handleDescChange, onBlur: handleDescBlur, warning: descWarning, isInvalid: isDescInvalid } = useCharLimit(255, "Descrição do Produto")
 
+    const [departmentId, setDepartmentId] = useState(initialDepartmentId)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
     const [submitting, setSubmitting] = useState(false)
 
-    const isDisabled = barcodeWarning || nameWarning || !barcode || !productName || submitting
+    const isDisabled = barcodeWarning || nameWarning || !barcode || !productName || submitting || (departments.length >= 2 && !departmentId)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -31,6 +33,7 @@ const CreateProductModalForm = ({ onSuccess, onClose, request }) => {
             productBarCodeNumber: barcode,
             productName,
             productDescription: productDescription || null,
+            ...(departments.length >= 2 ? { departmentId: Number(departmentId) } : {}),
         })
         setSubmitting(false)
         if (res.ok) {
@@ -53,7 +56,31 @@ const CreateProductModalForm = ({ onSuccess, onClose, request }) => {
             
             <Input label="Descrição do Produto" type="text" name="productDescription" value={productDescription} onChange={handleDescChange} onBlur={handleDescBlur} placeholder="Digite a descrição do produto" isInvalid={isDescInvalid} />
             {productDescription && descWarning && <div className={warnCls}>{descWarning.type === "too_short" ? `Mínimo ${descWarning.min} caracteres.` : `Máximo ${descWarning.max} caracteres.`}</div>}
-            
+
+            {departments.length >= 2 && (
+                <div className="flex flex-col mb-[1.125rem]">
+                    <label className="mb-[0.375rem] font-semibold text-[var(--color-text-subtle)] text-[0.875rem] tracking-[0.005em] mr-auto">
+                        Departamento <span className="ml-[2px] font-bold text-[var(--color-danger-strong)]">*</span>
+                    </label>
+                    <div className="relative">
+                        <select
+                            required
+                            value={departmentId}
+                            onChange={e => setDepartmentId(e.target.value)}
+                            className="w-full min-h-[2.625rem] py-[0.5625rem] pl-[0.875rem] pr-10 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
+                        >
+                            <option value="" disabled>Selecionar departamento</option>
+                            {departments.map(d => (
+                                <option key={d.departmentId} value={d.departmentId}>{d.departmentName}</option>
+                            ))}
+                        </select>
+                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        </span>
+                    </div>
+                </div>
+            )}
+
             <Alert message={error} />
             
             {success && <div className="text-[var(--color-success)] font-medium py-2 px-3 bg-[var(--color-success-soft-bg)] rounded-[var(--radius-md)] border border-[var(--color-success-soft-border)] text-center mt-1 text-[0.875rem]">{success}</div>}
@@ -173,6 +200,9 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const { request } = useFetch(ENV.API_BASE_URL)
     const isMobile = useIsMobile(768)
 
+    const [userDepts, setUserDepts] = useState([])
+    const [deptFilter, setDeptFilter] = useState(null)
+
     const [availableProducts, setAvailableProducts] = useState([])
     const [localSelected, setLocalSelected] = useState(() => {
         const map = {}
@@ -220,6 +250,18 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     useEffect(() => {
         fetchProducts(0) // eslint-disable-line react-hooks/set-state-in-effect
     }, [fetchProducts])
+
+    const fetchDepartments = useCallback(async () => {
+        const res = await request('GET', '/departments/company?size=50&sort=departmentName,asc')
+        if (res.ok) {
+            const all = res.data.content ?? res.data
+            setUserDepts(all.filter(d => d.departmentName !== 'Default'))
+        }
+    }, [request])
+
+    useEffect(() => {
+        fetchDepartments()
+    }, [fetchDepartments])
 
     const handleSearch = useCallback(() => {
         setCurrentPage(0)
@@ -362,6 +404,20 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     /* ── Search panel (shared between desktop and mobile search tab) ── */
     const renderSearchPanel = () => (
         <>
+            {userDepts.length > 1 && (
+                <StatusTabFilter
+                    value={deptFilter === null ? 'all' : String(deptFilter)}
+                    onChange={val => {
+                        setDeptFilter(val === 'all' ? null : Number(val))
+                        setCurrentPage(0)
+                    }}
+                    tabs={[
+                        { value: 'all', label: 'Todos' },
+                        ...userDepts.map(d => ({ value: String(d.departmentId), label: d.departmentName })),
+                    ]}
+                />
+            )}
+
             {/* Search bar */}
             <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
                 <div className="flex gap-2 items-center">
@@ -600,7 +656,13 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
 
             {/* Create product modal */}
             <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Criar Novo Produto">
-                <CreateProductModalForm onSuccess={handleNewProductCreated} onClose={() => setShowCreateModal(false)} request={request} />
+                <CreateProductModalForm
+                    onSuccess={handleNewProductCreated}
+                    onClose={() => setShowCreateModal(false)}
+                    request={request}
+                    departments={userDepts}
+                    initialDepartmentId={deptFilter !== null ? String(deptFilter) : ''}
+                />
             </Modal>
 
             {/* Mobile product bottom sheet */}

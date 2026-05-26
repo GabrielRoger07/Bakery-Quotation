@@ -9,7 +9,7 @@ import Alert from '@/components/Alert'
 import Button from '@/components/Button'
 import Input from '@/components/Input'
 import { ENV } from '@/config/env'
-import { X } from 'lucide-react'
+import { Pencil, Trash2, X } from 'lucide-react'
 
 const DepartmentForm = ({ department, onSave, onClose }) => {
     const [name, setName] = useState(department?.departmentName ?? '')
@@ -99,6 +99,53 @@ const DepartmentFormSheet = ({ isOpen, onClose, department, onSave }) => {
     )
 }
 
+const DepartmentDetailSheet = ({ isOpen, onClose, department, onEdit, onDelete }) => {
+    useEffect(() => {
+        if (!isOpen) return
+        const handleKey = (e) => { if (e.key === 'Escape') onClose() }
+        document.addEventListener('keydown', handleKey)
+        return () => document.removeEventListener('keydown', handleKey)
+    }, [isOpen, onClose])
+
+    useEffect(() => {
+        document.body.style.overflow = isOpen ? 'hidden' : ''
+        return () => { document.body.style.overflow = '' }
+    }, [isOpen])
+
+    return (
+        <>
+            <div className={`sort-sheet-backdrop ${isOpen ? 'open' : ''}`} onClick={onClose} aria-hidden="true" />
+            <div className={`sform-sheet ${isOpen ? 'open' : ''}`} role="dialog" aria-modal="true" aria-label="Departamento">
+                <div className="sort-sheet-handle" />
+                <div className="sform-sheet-header">
+                    <span className="sform-sheet-title">{department?.departmentName}</span>
+                    <button className="sort-sheet-close" onClick={onClose} aria-label="Fechar">
+                        <X size={18} strokeWidth={2} />
+                    </button>
+                </div>
+                <div className="sform-sheet-body">
+                    <div className="flex flex-col gap-3 pt-1">
+                        <button
+                            className="flex items-center gap-3 w-full px-4 py-3 rounded-[var(--radius-md)] text-[0.9375rem] font-medium text-[var(--color-text-primary)] bg-[var(--color-surface-1)] hover:bg-[var(--color-surface-2)] transition-colors duration-[160ms] text-left"
+                            onClick={() => { onClose(); setTimeout(() => onEdit(department), 200) }}
+                        >
+                            <Pencil size={18} strokeWidth={2} className="text-[var(--color-accent)]" />
+                            Editar
+                        </button>
+                        <button
+                            className="flex items-center gap-3 w-full px-4 py-3 rounded-[var(--radius-md)] text-[0.9375rem] font-medium text-[var(--color-danger)] bg-[var(--color-danger-soft-bg)] hover:bg-[var(--color-danger-soft-bg-hover,var(--color-danger-soft-bg))] transition-colors duration-[160ms] text-left"
+                            onClick={() => { onClose(); setTimeout(() => onDelete(department.departmentId), 200) }}
+                        >
+                            <Trash2 size={18} strokeWidth={2} />
+                            Remover
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
 const DepartmentList = () => {
     const { request, loading } = useFetch(ENV.API_BASE_URL)
     const isMobile = useIsMobile()
@@ -110,6 +157,9 @@ const DepartmentList = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [departmentToEdit, setDepartmentToEdit] = useState(null)
+
+    const [detailSheetOpen, setDetailSheetOpen] = useState(false)
+    const [detailSheetDept, setDetailSheetDept] = useState(null)
 
     const [formSheetOpen, setFormSheetOpen] = useState(false)
     const [formSheetDept, setFormSheetDept] = useState(null)
@@ -140,6 +190,16 @@ const DepartmentList = () => {
         registerPage('Departamentos', fetchDepartments)
         return () => unregisterPage()
     }, [registerPage, unregisterPage, fetchDepartments])
+
+    const openDetailSheet = (dept) => {
+        setDetailSheetDept(dept)
+        setDetailSheetOpen(true)
+    }
+
+    const closeDetailSheet = () => {
+        setDetailSheetOpen(false)
+        setDetailSheetDept(null)
+    }
 
     const openCreateForm = () => {
         if (isMobile) {
@@ -219,9 +279,16 @@ const DepartmentList = () => {
                         emptyMessage="Nenhum departamento cadastrado."
                         onReload={fetchDepartments}
                         onAdd={openCreateForm}
-                        onCardClick={openEditModal}
+                        onCardClick={openDetailSheet}
                         renderCard={renderDepartmentCard}
                         sortColumns={columns}
+                    />
+                    <DepartmentDetailSheet
+                        isOpen={detailSheetOpen}
+                        onClose={closeDetailSheet}
+                        department={detailSheetDept}
+                        onEdit={openEditModal}
+                        onDelete={requestRemove}
                     />
                     <DepartmentFormSheet
                         isOpen={formSheetOpen}

@@ -41,7 +41,7 @@ const ProductFormBottomSheet = ({ isOpen, onClose, mode, product, onSaveCreate, 
                 </div>
 
                 <div className="sform-sheet-body">
-                    {mode === 'edit' ? (
+                    {isOpen && (mode === 'edit' ? (
                         <ProductEdit
                             product={product}
                             onSave={onSaveEdit}
@@ -54,7 +54,7 @@ const ProductFormBottomSheet = ({ isOpen, onClose, mode, product, onSaveCreate, 
                             onClose={onClose}
                             departments={departments}
                         />
-                    )}
+                    ))}
                 </div>
             </div>
         </>

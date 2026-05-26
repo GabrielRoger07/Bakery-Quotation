@@ -3,7 +3,7 @@ import { X } from 'lucide-react'
 import ProductCreate from '@/pages/Product/ProductCreate'
 import ProductEdit from '@/pages/Product/ProductEdit'
 
-const ProductFormBottomSheet = ({ isOpen, onClose, mode, product, onSaveCreate, onSaveEdit }) => {
+const ProductFormBottomSheet = ({ isOpen, onClose, mode, product, onSaveCreate, onSaveEdit, departments = [] }) => {
     useEffect(() => {
         if (!isOpen) return
         const handleKey = (e) => { if (e.key === 'Escape') onClose() }
@@ -46,11 +46,13 @@ const ProductFormBottomSheet = ({ isOpen, onClose, mode, product, onSaveCreate, 
                             product={product}
                             onSave={onSaveEdit}
                             onClose={onClose}
+                            departments={departments}
                         />
                     ) : (
                         <ProductCreate
                             onSave={onSaveCreate}
                             onClose={onClose}
+                            departments={departments}
                         />
                     )}
                 </div>

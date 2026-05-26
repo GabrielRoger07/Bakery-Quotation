@@ -6,6 +6,8 @@ import com.bakeryquotation.backend.Company.DTO.Login.LoginRequestDTO;
 import com.bakeryquotation.backend.Company.DTO.Login.LoginResponseDTO;
 import com.bakeryquotation.backend.Company.mapper.CompanyMapper;
 import com.bakeryquotation.backend.Company.mapper.CompanyUpdate;
+import com.bakeryquotation.backend.Department.Department;
+import com.bakeryquotation.backend.Department.DepartmentRepository;
 import com.bakeryquotation.backend.config.AuthUserDetails;
 import com.bakeryquotation.backend.config.TokenConfig;
 import com.bakeryquotation.backend.exception.DuplicateResourceException;
@@ -32,14 +34,16 @@ public class CompanyService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final TokenConfig tokenConfig;
+    private final DepartmentRepository departmentRepository;
 
-    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper, CompanyUpdate companyUpdate, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenConfig tokenConfig){
+    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper, CompanyUpdate companyUpdate, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenConfig tokenConfig, DepartmentRepository departmentRepository){
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
         this.companyUpdate = companyUpdate;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.tokenConfig = tokenConfig;
+        this.departmentRepository = departmentRepository;
     }
 
     public ResponseEntity<CompanyResponseDTO> getCompanyByCnpj(String cnpj){
@@ -78,7 +82,9 @@ public class CompanyService {
         Company company = companyMapper.toEntity(companyRequestDTO);
         company.setRole(CompanyRole.COMPANY);
         company.setCompanyPassword(passwordEncoder.encode(company.getCompanyPassword()));
-        CompanyResponseDTO companyResponseDTO = companyMapper.toDto(companyRepository.save(company));
+        Company savedCompany = companyRepository.save(company);
+        departmentRepository.save(new Department("Default", savedCompany));
+        CompanyResponseDTO companyResponseDTO = companyMapper.toDto(savedCompany);
         return ResponseEntity.status(HttpStatus.CREATED).body(companyResponseDTO);
     }
 

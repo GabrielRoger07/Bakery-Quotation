@@ -19,6 +19,15 @@ const ProductsIcon = ({ active }) => (
     </svg>
 )
 
+const DepartmentsIcon = ({ active }) => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.2 : 1.8} strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+    </svg>
+)
+
 const QuotationsIcon = ({ active }) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.2 : 1.8} strokeLinecap="round" strokeLinejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -42,9 +51,10 @@ const MobileMenu = ({ onLogout }) => {
     const [logoutOpen, setLogoutOpen] = useState(false)
 
     const tabs = [
-        { to: '/suppliers', label: 'Fornecedores', Icon: SuppliersIcon },
-        { to: '/products',  label: 'Produtos',     Icon: ProductsIcon  },
-        { to: '/quotations',label: 'Cotações',     Icon: QuotationsIcon },
+        { to: '/suppliers',   label: 'Fornecedores',    Icon: SuppliersIcon   },
+        { to: '/products',    label: 'Produtos',        Icon: ProductsIcon    },
+        { to: '/quotations',  label: 'Cotações',        Icon: QuotationsIcon  },
+        { to: '/departments', label: 'Departamentos',         Icon: DepartmentsIcon },
     ]
 
     return (

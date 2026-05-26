@@ -35,6 +35,7 @@ const Navbar = () => {
                     <NavLink to="/suppliers" className={navLinkClass}>Fornecedores</NavLink>
                     <NavLink to="/products" className={navLinkClass}>Produtos</NavLink>
                     <NavLink to="/quotations" className={navLinkClass}>Cotações</NavLink>
+                    <NavLink to="/departments" className={navLinkClass}>Departamentos</NavLink>
                 </div>
 
                 {/* Mobile: título da página à esquerda */}

@@ -6,20 +6,22 @@ import Alert from '@/components/Alert'
 import useCharLimit from '@/hooks/useCharLimit'
 import { ENV } from '@/config/env'
 
-const ProductCreate = ({ onClose, onSave }) => {
+const ProductCreate = ({ onClose, onSave, departments = [] }) => {
 
     const { value: productBarCodeNumber, onChange: handleBarCodeChange, onBlur: handleBarCodeBlur, warning: barCodeWarning, isInvalid: isBarCodeInvalid } = useCharLimit(13, "Código do Produto")
     const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "Nome do Produto")
     const { value: productDescription, onChange: handleDescriptionChange, onBlur: handleDescriptionBlur, warning: descriptionWarning, isInvalid: isDescriptionInvalid } = useCharLimit(255, "Descrição do Produto")
 
+    const [departmentId, setDepartmentId] = useState('')
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
     const { request } = useFetch(ENV.API_BASE_URL)
 
-    const isDisabled = 
+    const isDisabled =
         nameWarning ||
-        !productName
+        !productName ||
+        (departments.length >= 2 && !departmentId)
 
     const warningCls = "text-[var(--color-danger-strong)] text-[0.8125rem] font-medium [margin:-0.25rem_0_0.625rem]"
 
@@ -37,7 +39,8 @@ const ProductCreate = ({ onClose, onSave }) => {
         const product = {
             productBarCodeNumber: productBarCodeNumber ? productBarCodeNumber.trim() : null,
             productName: productName.trim(),
-            productDescription: productDescription ? productDescription.trim() : null
+            productDescription: productDescription ? productDescription.trim() : null,
+            ...(departments.length >= 2 ? { departmentId: Number(departmentId) } : {}),
         }
 
         const res = await request("POST", "/products", product)
@@ -91,6 +94,30 @@ const ProductCreate = ({ onClose, onSave }) => {
                     {descriptionWarning.type === "too_long" &&
                         `É permitido ter no máximo ${descriptionWarning.max} caracteres para ${descriptionWarning.fieldName}.`
                     }
+                </div>
+            )}
+
+            {departments.length >= 2 && (
+                <div className="flex flex-col mb-[1.125rem]">
+                    <label className="mb-[0.375rem] font-semibold text-[var(--color-text-subtle)] text-[0.875rem] tracking-[0.005em] mr-auto">
+                        Departamento <span className="ml-[2px] font-bold text-[var(--color-danger-strong)]">*</span>
+                    </label>
+                    <div className="relative">
+                        <select
+                            required
+                            value={departmentId}
+                            onChange={e => setDepartmentId(e.target.value)}
+                            className="w-full min-h-[2.625rem] py-[0.5625rem] pl-[0.875rem] pr-10 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
+                        >
+                            <option value="" disabled>Selecionar departamento</option>
+                            {departments.map(d => (
+                                <option key={d.departmentId} value={d.departmentId}>{d.departmentName}</option>
+                            ))}
+                        </select>
+                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        </span>
+                    </div>
                 </div>
             )}
 

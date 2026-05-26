@@ -3,6 +3,7 @@ package com.bakeryquotation.backend.Product;
 import com.bakeryquotation.backend.Bid.Bid;
 import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Contain.Contain;
+import com.bakeryquotation.backend.Department.Department;
 import jakarta.persistence.*;
 
 import java.util.*;
@@ -35,6 +36,16 @@ public class Product {
     )
     private Company company;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, targetEntity = Department.class)
+    @JoinColumn(name = "departmentId",
+            referencedColumnName = "departmentId",
+            foreignKey = @ForeignKey(
+                    name = "product_department_fk"
+            ),
+            nullable = false
+    )
+    private Department department;
+
     @OneToMany(mappedBy = "product", cascade = {CascadeType.REMOVE})
     private List<Contain> contains = new ArrayList<>();
 
@@ -44,19 +55,21 @@ public class Product {
     public Product() {
     }
 
-    public Product(String productName, String productBarCodeNumber, String productDescription, Company company) {
+    public Product(String productName, String productBarCodeNumber, String productDescription, Company company, Department department) {
         this.productName = productName;
         this.productBarCodeNumber = productBarCodeNumber;
         this.productDescription = productDescription;
         this.company = company;
+        this.department = department;
     }
 
-    public Product(Long id, String productName, String productBarCodeNumber, String productDescription, Company company, List<Contain> contains, List<Bid> bids) {
+    public Product(Long id, String productName, String productBarCodeNumber, String productDescription, Company company, Department department, List<Contain> contains, List<Bid> bids) {
         this.id = id;
         this.productName = productName;
         this.productBarCodeNumber = productBarCodeNumber;
         this.productDescription = productDescription;
         this.company = company;
+        this.department = department;
         this.contains = contains;
         this.bids = bids;
     }
@@ -101,6 +114,14 @@ public class Product {
         this.company = company;
     }
 
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
     public List<Contain> getContains() {
         return contains;
     }
@@ -121,11 +142,11 @@ public class Product {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(id, product.id) && Objects.equals(productName, product.productName) && Objects.equals(productBarCodeNumber, product.productBarCodeNumber) && Objects.equals(productDescription, product.productDescription) && Objects.equals(company, product.company) && Objects.equals(contains, product.contains) && Objects.equals(bids, product.bids);
+        return Objects.equals(id, product.id) && Objects.equals(productName, product.productName) && Objects.equals(productBarCodeNumber, product.productBarCodeNumber) && Objects.equals(productDescription, product.productDescription) && Objects.equals(company, product.company) && Objects.equals(department, product.department) && Objects.equals(contains, product.contains) && Objects.equals(bids, product.bids);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, productName, productBarCodeNumber, productDescription, company, contains, bids);
+        return Objects.hash(id, productName, productBarCodeNumber, productDescription, company, department, contains, bids);
     }
 }

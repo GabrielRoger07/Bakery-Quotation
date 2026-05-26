@@ -14,6 +14,7 @@ public interface CompanyMapper {
     @Mapping(target = "products", ignore = true)
     @Mapping(target = "quotations", ignore = true)
     @Mapping(target = "suppliers", ignore = true)
+    @Mapping(target = "departments", ignore = true)
     Company toEntity(CompanyRequestDTO companyRequestDTO);
 
     CompanyResponseDTO toDto(Company company);

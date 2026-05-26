@@ -2,9 +2,11 @@ package com.bakeryquotation.backend.Product;
 
 import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Company.CompanyRepository;
+import com.bakeryquotation.backend.Department.Department;
 import com.bakeryquotation.backend.Product.DTO.ProductRequestDTO;
 import com.bakeryquotation.backend.Product.DTO.ProductResponseDTO;
 import com.bakeryquotation.backend.Product.mapper.ProductMapper;
+import com.bakeryquotation.backend.Department.DepartmentRepository;
 import com.bakeryquotation.backend.exception.AccessDeniedException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,11 +30,13 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final CompanyRepository companyRepository;
+    private final DepartmentRepository departmentRepository;
 
-    public ProductService(ProductRepository productRepository, ProductMapper productMapper, CompanyRepository companyRepository){
+    public ProductService(ProductRepository productRepository, ProductMapper productMapper, CompanyRepository companyRepository, DepartmentRepository departmentRepository){
         this.productRepository = productRepository;
         this.productMapper = productMapper;
         this.companyRepository = companyRepository;
+        this.departmentRepository = departmentRepository;
     }
 
     public ResponseEntity<ProductResponseDTO> getProductById(Long id){
@@ -95,6 +99,22 @@ public class ProductService {
         Company company = companyRepository.findByCompanyEmail(companyEmail).orElseThrow(() -> new ResourceNotFoundException("Company with email " + companyEmail + " does not exists"));
 
         Product product = productMapper.toEntity(productRequestDTO);
+
+        List<Department> departments = departmentRepository.findByCompany_CompanyEmail(companyEmail);
+
+        if(departments.isEmpty()) {
+            throw new ResourceNotFoundException("This company does not have any registered department");
+        } else if (departments.size() == 1) {
+            product.setDepartment(departments.getFirst());
+        } else {
+            Department department = departments.stream()
+                    .filter(dep -> dep.getId().equals(productRequestDTO.getDepartmentId()))
+                    .findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
+
+            product.setDepartment(department);
+        }
+
         product.setCompany(company);
 
         Product productSaved = productRepository.save(product);
@@ -107,6 +127,17 @@ public class ProductService {
 
         if(!companyEmail.equals(product.getCompany().getCompanyEmail())) {
             throw new AccessDeniedException("You do not have permission to perform this action. Nice try");
+        }
+
+        List<Department> departments = departmentRepository.findByCompany_CompanyEmail(companyEmail);
+
+        if(departments.size() > 1) {
+            Department department = departments.stream()
+                    .filter(dep -> dep.getId().equals(productRequestDTO.getDepartmentId()))
+                    .findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
+
+            product.setDepartment(department);
         }
 
         product.setProductName(productRequestDTO.getProductName());

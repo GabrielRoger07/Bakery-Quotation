@@ -22,6 +22,9 @@ const ProductList = () => {
     const [error, setError] = useState("")
     const [status, setStatus] = useState(null)
 
+    const [userDepts, setUserDepts] = useState([])
+    const [deptFilter, setDeptFilter] = useState(null)
+
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [productToEdit, setProductToEdit] = useState(null)
@@ -48,6 +51,7 @@ const ProductList = () => {
         { key: "productBarCodeNumber", label: "Código do Produto" },
         { key: "productName", label: "Nome do Produto" },
         { key: "productDescription", label: "Descrição do Produto" },
+        ...(userDepts.length > 0 ? [{ key: "departmentName", label: "Departamento" }] : []),
     ]
 
     const openSheet = (product) => {
@@ -162,6 +166,18 @@ const ProductList = () => {
         setCurrentPage(0)
     }
 
+    const fetchDepartments = useCallback(async () => {
+        const res = await request('GET', '/departments/company?size=50&sort=departmentName,asc')
+        if (res.ok) {
+            const all = res.data.content ?? res.data
+            setUserDepts(all.filter(d => d.departmentName !== 'Default'))
+        }
+    }, [request])
+
+    useEffect(() => {
+        fetchDepartments()
+    }, [fetchDepartments])
+
     useEffect(() => {
         fetchProducts(currentPage);
     }, [fetchProducts, currentPage])
@@ -174,6 +190,23 @@ const ProductList = () => {
 
     const filterToolbar = useMemo(() => (
         <>
+            {userDepts.length >= 2 && (
+                <div className="relative">
+                    <select
+                        value={deptFilter === null ? '' : String(deptFilter)}
+                        onChange={e => { setDeptFilter(e.target.value === '' ? null : Number(e.target.value)); setCurrentPage(0) }}
+                        className="h-[2.25rem] pl-[0.75rem] pr-8 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
+                    >
+                        <option value="">Todos os setores</option>
+                        {userDepts.map(d => (
+                            <option key={d.departmentId} value={d.departmentId}>{d.departmentName}</option>
+                        ))}
+                    </select>
+                    <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </span>
+                </div>
+            )}
             <input
                 type="text"
                 className="toolbar-input"
@@ -184,10 +217,29 @@ const ProductList = () => {
             />
             <Button onClick={handleSearch} disabled={loading}>Buscar</Button>
         </>
-    ), [searchWord, handleSearch, loading])
+    ), [userDepts, deptFilter, searchWord, handleSearch, loading])
 
     const mobileFilterToolbar = useMemo(() => (
         <div className="mf-root">
+            {userDepts.length >= 2 && (
+                <div className="mf-input-row mb-2">
+                    <div className="relative flex-1">
+                        <select
+                            value={deptFilter === null ? '' : String(deptFilter)}
+                            onChange={e => { setDeptFilter(e.target.value === '' ? null : Number(e.target.value)); setCurrentPage(0) }}
+                            className="w-full h-[2.375rem] pl-[0.75rem] pr-8 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
+                        >
+                            <option value="">Todos os setores</option>
+                            {userDepts.map(d => (
+                                <option key={d.departmentId} value={d.departmentId}>{d.departmentName}</option>
+                            ))}
+                        </select>
+                        <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        </span>
+                    </div>
+                </div>
+            )}
             <div className="mf-input-row">
                 <div className="mf-input-wrap">
                     <svg className="mf-input-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -230,7 +282,7 @@ const ProductList = () => {
                 </div>
             )}
         </div>
-    ), [searchWord, handleSearch, handleClearSearch, loading, appliedSearch])
+    ), [userDepts, deptFilter, searchWord, handleSearch, handleClearSearch, loading, appliedSearch])
 
     const renderProductCard = (product) => {
         const initials = product.productName
@@ -241,6 +293,7 @@ const ProductList = () => {
             avatar: initials,
             title: product.productName,
             subtitle: product.productDescription || undefined,
+            ...(userDepts.length > 0 && product.departmentName ? { tags: [{ label: product.departmentName }] } : {}),
         }
     }
 
@@ -262,7 +315,7 @@ const ProductList = () => {
                         onCardClick={openSheet}
                         renderCard={renderProductCard}
                         toolbar={mobileFilterToolbar}
-                        filterActive={appliedSearch.word !== ""}
+                        filterActive={appliedSearch.word !== "" || deptFilter !== null}
                         sortColumns={columns}
                         sortField={sortField}
                         sortDirection={sortDirection}
@@ -286,6 +339,7 @@ const ProductList = () => {
                         product={productToEdit}
                         onSaveCreate={handleSaveCreate}
                         onSaveEdit={handleSaveEdit}
+                        departments={userDepts}
                     />
                 </>
             ) : (
@@ -316,6 +370,7 @@ const ProductList = () => {
                     product={productToEdit}
                     onSave={handleSaveEdit}
                     onClose={closeModals}
+                    departments={userDepts}
                 />
             </Modal>
 
@@ -323,6 +378,7 @@ const ProductList = () => {
                 <ProductCreate
                     onSave={handleSaveCreate}
                     onClose={closeModals}
+                    departments={userDepts}
                 />
             </Modal>
 

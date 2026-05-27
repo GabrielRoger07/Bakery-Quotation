@@ -146,7 +146,8 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             quotationId,
             quantity: p.quantity,
             bonusLimit: Number(0),
-            brand: p.brand
+            brand: p.brand,
+            unitOfMeasure: p.unitOfMeasure 
         }))
 
         const suppliersPayload = data.suppliers.map(s => ({

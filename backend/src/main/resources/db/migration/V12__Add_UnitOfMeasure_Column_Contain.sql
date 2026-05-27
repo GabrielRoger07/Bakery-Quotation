@@ -1,0 +1,1 @@
+ALTER TABLE contain ADD COLUMN unitOfMeasure ENUM('L', 'bag', 'balde', 'CX', 'FD', 'KG', 'PCT', 'UND') NOT NULL DEFAULT 'UND';

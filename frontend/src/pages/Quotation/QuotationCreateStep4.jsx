@@ -59,7 +59,7 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
                                 <li key={p.productId} className="px-[0.875rem] py-[0.625rem] border-b border-[var(--color-border-lighter)] last:border-b-0 flex flex-col gap-[0.3rem]">
                                     <span className="text-[0.875rem] font-semibold text-[var(--color-text-neutral-strong)] leading-[1.35]">{p.productName}</span>
                                     <div className="flex items-center gap-2 text-[0.75rem]">
-                                        <span className="font-bold text-[var(--color-text-primary)]">{p.quantity} UN</span>
+                                        <span className="font-bold text-[var(--color-text-primary)]">{p.quantity} {(p.unitOfMeasure).toUpperCase()}{['bag', 'balde'].includes(p.unitOfMeasure) && p.quantity > 1 ? 'S' : ''}</span>
                                         <span className="w-[3px] h-[3px] rounded-full bg-[var(--color-border-strong)] flex-shrink-0" aria-hidden="true" />
                                         {p.brand ? (
                                             <span className="flex items-center gap-1 text-[var(--color-accent)] font-medium">

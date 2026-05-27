@@ -3,6 +3,8 @@ package com.bakeryquotation.backend.Contain;
 import com.bakeryquotation.backend.Product.Product;
 import com.bakeryquotation.backend.Quotation.Quotation;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
@@ -32,28 +34,35 @@ public class Contain {
     @Column(name = "brand", length = 40)
     private String brand;
 
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Column(name = "unitOfMeasure", nullable = false)
+    private UnitOfMeasure unitOfMeasure;
+
     public Contain() {
     }
 
-    public Contain(Quotation quotation, Product product, BigDecimal quantity, BigDecimal bonusLimit, String brand) {
+    public Contain(Quotation quotation, Product product, BigDecimal quantity, BigDecimal bonusLimit, String brand, UnitOfMeasure unitOfMeasure) {
         this.quotation = quotation;
         this.product = product;
         this.quantity = quantity;
         this.bonusLimit = bonusLimit;
         this.brand = brand;
+        this.unitOfMeasure = unitOfMeasure;
 
         this.containId = new ContainId();
         this.containId.setProductId(product.getId());
         this.containId.setQuotationId(quotation.getId());
     }
 
-    public Contain(ContainId containId, Quotation quotation, Product product, BigDecimal quantity, BigDecimal bonusLimit, String brand) {
+    public Contain(ContainId containId, Quotation quotation, Product product, BigDecimal quantity, BigDecimal bonusLimit, String brand, UnitOfMeasure unitOfMeasure) {
         this.containId = containId;
         this.quotation = quotation;
         this.product = product;
         this.quantity = quantity;
         this.bonusLimit = bonusLimit;
         this.brand = brand;
+        this.unitOfMeasure = unitOfMeasure;
     }
 
     public ContainId getContainId() {
@@ -102,5 +111,13 @@ public class Contain {
 
     public void setBrand(String brand) {
         this.brand = brand;
+    }
+
+    public UnitOfMeasure getUnitOfMeasure() {
+        return unitOfMeasure;
+    }
+
+    public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
+        this.unitOfMeasure = unitOfMeasure;
     }
 }

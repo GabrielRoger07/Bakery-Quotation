@@ -258,17 +258,18 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         let query = `?page=${page}&sort=productName,asc`
         if (appliedSearch) query += `&field=productName&value=${appliedSearch}`
         if (excludedIds.length > 0) query += `&excludedIds=${excludedIds.join(",")}`
+        if (deptFilter !== null) query += `&departmentId=${deptFilter}`
         const res = await request("GET", `/products/company${query}`)
         if (res.ok) {
             setAvailableProducts(res.data.content)
             setCurrentPage(res.data.number)
             setTotalPages(res.data.totalPages)
         }
-    }, [request, appliedSearch, excludedIds])
+    }, [request, appliedSearch, excludedIds, deptFilter])
 
     useEffect(() => {
-        fetchProducts(0) // eslint-disable-line react-hooks/set-state-in-effect
-    }, [fetchProducts])
+        fetchProducts(0)
+    }, [appliedSearch, excludedIds, deptFilter]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const fetchDepartments = useCallback(async () => {
         const res = await request('GET', '/departments/company?size=50&sort=departmentName,asc')

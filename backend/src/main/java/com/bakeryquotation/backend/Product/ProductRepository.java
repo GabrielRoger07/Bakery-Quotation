@@ -26,4 +26,16 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE p.company.companyEmail = :companyEmail AND LOWER(p.productBarCodeNumber) LIKE LOWER(CONCAT('%', :value, '%')) AND p.id NOT IN :excludedIds")
     Page<Product> findByCompanyEmailAndBarcodeExcludingIds(String companyEmail, String value, List<Long> excludedIds, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.company.companyEmail = :companyEmail AND p.department.id = :departmentId")
+    Page<Product> findByCompanyEmailAndDepartment(String companyEmail, Long departmentId, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.company.companyEmail = :companyEmail AND p.department.id = :departmentId AND p.id NOT IN :excludedIds")
+    Page<Product> findByCompanyEmailAndDepartmentExcludingIds(String companyEmail, Long departmentId, List<Long> excludedIds, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.company.companyEmail = :companyEmail AND p.department.id = :departmentId AND LOWER(p.productName) LIKE LOWER(CONCAT('%', :value, '%'))")
+    Page<Product> findByCompanyEmailAndDepartmentAndName(String companyEmail, Long departmentId, String value, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.company.companyEmail = :companyEmail AND p.department.id = :departmentId AND LOWER(p.productName) LIKE LOWER(CONCAT('%', :value, '%')) AND p.id NOT IN :excludedIds")
+    Page<Product> findByCompanyEmailAndDepartmentAndNameExcludingIds(String companyEmail, Long departmentId, String value, List<Long> excludedIds, Pageable pageable);
 }

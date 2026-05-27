@@ -57,15 +57,30 @@ public class ProductService {
         return ResponseEntity.status(HttpStatus.OK).body(productResponseDTOS);
     }
 
-    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyEmail(Pageable pageable, String field, String value, List<Long> excludedIds){
+    public ResponseEntity<Page<ProductResponseDTO>> getProductsByCompanyEmail(Pageable pageable, String field, String value, List<Long> excludedIds, Long departmentId){
         String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
         Page<Product> productsByCompany;
 
         boolean applyFilter = field != null && value != null && !value.isBlank();
         boolean hasExcludedIds = excludedIds != null && !excludedIds.isEmpty();
+        boolean hasDeptFilter = departmentId != null;
 
-        if(applyFilter){
+        if(hasDeptFilter){
+            if(applyFilter && field.equals("productName")){
+                if(hasExcludedIds){
+                    productsByCompany = productRepository.findByCompanyEmailAndDepartmentAndNameExcludingIds(companyEmail, departmentId, value, excludedIds, safePageable);
+                } else {
+                    productsByCompany = productRepository.findByCompanyEmailAndDepartmentAndName(companyEmail, departmentId, value, safePageable);
+                }
+            } else {
+                if(hasExcludedIds){
+                    productsByCompany = productRepository.findByCompanyEmailAndDepartmentExcludingIds(companyEmail, departmentId, excludedIds, safePageable);
+                } else {
+                    productsByCompany = productRepository.findByCompanyEmailAndDepartment(companyEmail, departmentId, safePageable);
+                }
+            }
+        } else if(applyFilter){
             if(field.equals("productBarCodeNumber")){
                 if(hasExcludedIds){
                     productsByCompany = productRepository.findByCompanyEmailAndBarcodeExcludingIds(companyEmail, value, excludedIds, safePageable);
@@ -81,7 +96,6 @@ public class ProductService {
             } else {
                 throw new ResourceNotFoundException("Invalid field");
             }
-
         } else {
             if(hasExcludedIds) {
                 productsByCompany = productRepository.findByCompanyEmailExcludingIds(companyEmail, excludedIds, safePageable);

@@ -1,5 +1,7 @@
 package com.bakeryquotation.backend.Contain.DTO;
 
+import com.bakeryquotation.backend.Contain.UnitOfMeasure;
+
 import java.math.BigDecimal;
 
 public class ContainResponseDTO {
@@ -12,11 +14,12 @@ public class ContainResponseDTO {
     private BigDecimal quantity;
     private BigDecimal bonusLimit;
     private String brand;
+    private UnitOfMeasure unitOfMeasure;
 
     public ContainResponseDTO() {
     }
 
-    public ContainResponseDTO(Long productId, Long quotationId, BigDecimal quantity, BigDecimal bonusLimit, String productBarCodeNumber, String productName, String productDescription, String brand) {
+    public ContainResponseDTO(Long productId, Long quotationId, BigDecimal quantity, BigDecimal bonusLimit, String productBarCodeNumber, String productName, String productDescription, String brand, UnitOfMeasure unitOfMeasure) {
         this.productId = productId;
         this.quotationId = quotationId;
         this.quantity = quantity;
@@ -25,6 +28,7 @@ public class ContainResponseDTO {
         this.productName = productName;
         this.productDescription = productDescription;
         this.brand = brand;
+        this.unitOfMeasure = unitOfMeasure;
     }
 
     public Long getProductId() {
@@ -89,5 +93,13 @@ public class ContainResponseDTO {
 
     public void setBrand(String brand) {
         this.brand = brand;
+    }
+
+    public UnitOfMeasure getUnitOfMeasure() {
+        return unitOfMeasure;
+    }
+
+    public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
+        this.unitOfMeasure = unitOfMeasure;
     }
 }

@@ -1,5 +1,8 @@
 package com.bakeryquotation.backend.Contain.DTO;
 
+import com.bakeryquotation.backend.Contain.UnitOfMeasure;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
@@ -23,15 +26,20 @@ public class ContainRequestDTO {
 
     private String brand;
 
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Unit of Measure is required")
+    private UnitOfMeasure unitOfMeasure;
+
     public ContainRequestDTO() {
     }
 
-    public ContainRequestDTO(Long productId, Long quotationId, BigDecimal quantity, BigDecimal bonusLimit, String brand) {
+    public ContainRequestDTO(Long productId, Long quotationId, BigDecimal quantity, BigDecimal bonusLimit, String brand, UnitOfMeasure unitOfMeasure) {
         this.productId = productId;
         this.quotationId = quotationId;
         this.quantity = quantity;
         this.bonusLimit = bonusLimit;
         this.brand = brand;
+        this.unitOfMeasure = unitOfMeasure;
     }
 
     public Long getProductId() {
@@ -72,5 +80,13 @@ public class ContainRequestDTO {
 
     public void setBrand(String brand) {
         this.brand = brand;
+    }
+
+    public UnitOfMeasure getUnitOfMeasure() {
+        return unitOfMeasure;
+    }
+
+    public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
+        this.unitOfMeasure = unitOfMeasure;
     }
 }

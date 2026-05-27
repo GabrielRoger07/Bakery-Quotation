@@ -7,7 +7,6 @@ import Alert from '@/components/Alert'
 import Input from '@/components/Input'
 import Modal from '@/components/Modal'
 import Pagination from '@/components/Pagination'
-import StatusTabFilter from '@/components/StatusTabFilter'
 import { X, Plus, Package, ChevronDown, Pencil, Check } from 'lucide-react'
 import { ENV } from '@/config/env'
 
@@ -93,10 +92,13 @@ const CreateProductModalForm = ({ onSuccess, onClose, request, departments = [],
     )
 }
 
+const UNIT_OPTIONS = ['L', 'bag', 'balde', 'CX', 'FD', 'KG', 'PCT', 'UND']
+
 /* ── Inner form — remounted via key when product changes, so state is always fresh ── */
 const ProductSheetForm = ({ product, onClose, onConfirm }) => {
     const [qty, setQty] = useState(product._existingQty != null ? String(product._existingQty) : "")
     const [brand, setBrand] = useState(product._existingBrand ?? "")
+    const [unitOfMeasure, setUnitOfMeasure] = useState(product._existingUnit ?? "UND")
     const qtyRef = useRef(null)
 
     useEffect(() => {
@@ -108,8 +110,10 @@ const ProductSheetForm = ({ product, onClose, onConfirm }) => {
 
     const handleConfirm = () => {
         if (!isValid) return
-        onConfirm({ qty: Math.max(1, Math.floor(Number(qty))), brand })
+        onConfirm({ qty: Math.max(1, Math.floor(Number(qty))), brand, unitOfMeasure })
     }
+
+    const selectCls = "psheet-input appearance-none"
 
     return (
         <>
@@ -123,22 +127,35 @@ const ProductSheetForm = ({ product, onClose, onConfirm }) => {
                 <button className="psheet-close" onClick={onClose} aria-label="Fechar"><X size={18} strokeWidth={2} /></button>
             </div>
             <div className="psheet-body">
-                <div className="psheet-field">
-                    <label className="psheet-label">Quantidade *</label>
-                    <input
-                        ref={qtyRef}
-                        type="number"
-                        className="psheet-input"
-                        value={qty}
-                        onChange={e => setQty(e.target.value)}
-                        onKeyDown={e => {
-                            if (['-','e','E'].includes(e.key)) e.preventDefault()
-                            if (e.key === 'Enter' && isValid) handleConfirm()
-                        }}
-                        onFocus={e => e.target.select()}
-                        placeholder="0"
-                        min="1"
-                    />
+                <div className="flex gap-3">
+                    <div className="psheet-field flex-1">
+                        <label className="psheet-label">Quantidade *</label>
+                        <input
+                            ref={qtyRef}
+                            type="number"
+                            className="psheet-input"
+                            value={qty}
+                            onChange={e => setQty(e.target.value)}
+                            onKeyDown={e => {
+                                if (['-','e','E'].includes(e.key)) e.preventDefault()
+                                if (e.key === 'Enter' && isValid) handleConfirm()
+                            }}
+                            onFocus={e => e.target.select()}
+                            placeholder="0"
+                            min="1"
+                        />
+                    </div>
+                    <div className="psheet-field flex-1">
+                        <label className="psheet-label">Unidade *</label>
+                        <div className="relative">
+                            <select className={selectCls} value={unitOfMeasure} onChange={e => setUnitOfMeasure(e.target.value)}>
+                                {UNIT_OPTIONS.map(u => <option key={u} value={u}>{u}</option>)}
+                            </select>
+                            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div className="psheet-field">
                     <label className="psheet-label">Marca <span style={{fontWeight:400,textTransform:'none',letterSpacing:0}}>(opcional)</span></label>
@@ -207,7 +224,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const [localSelected, setLocalSelected] = useState(() => {
         const map = {}
         selectedProducts.forEach(p => {
-            map[p.productId] = { quantity: p.quantity, brand: p.brand || "", _product: p }
+            map[p.productId] = { quantity: p.quantity, brand: p.brand || "", unitOfMeasure: p.unitOfMeasure || "UND", _product: p }
         })
         return map
     })
@@ -221,11 +238,13 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const [expandedId, setExpandedId] = useState(null)
     const [pendingQty, setPendingQty] = useState("")
     const [pendingBrand, setPendingBrand] = useState("")
+    const [pendingUnit, setPendingUnit] = useState("UND")
 
     // Desktop: inline table edit
     const [editingId, setEditingId] = useState(null)
     const [editQty, setEditQty] = useState("")
     const [editBrand, setEditBrand] = useState("")
+    const [editUnit, setEditUnit] = useState("UND")
 
     // Mobile: tab ("search" | "selected") + bottom sheet
     const [mobileTab, setMobileTab] = useState("search")
@@ -280,6 +299,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         setExpandedId(product.productId)
         setPendingQty(existing ? String(existing.quantity) : "")
         setPendingBrand(existing ? existing.brand : "")
+        setPendingUnit(existing ? existing.unitOfMeasure : "UND")
     }, [expandedId, localSelected])
 
     const handleAddProduct = useCallback((product) => {
@@ -287,18 +307,20 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         if (qty === 0) return
         setLocalSelected(prev => ({
             ...prev,
-            [product.productId]: { quantity: qty, brand: pendingBrand, _product: product }
+            [product.productId]: { quantity: qty, brand: pendingBrand, unitOfMeasure: pendingUnit, _product: product }
         }))
         setExpandedId(null)
         setPendingQty("")
         setPendingBrand("")
-    }, [pendingQty, pendingBrand])
+        setPendingUnit("UND")
+    }, [pendingQty, pendingBrand, pendingUnit])
 
     // Desktop table edit
     const handleStartEdit = useCallback((product) => {
         setEditingId(product.productId)
         setEditQty(String(product.quantity))
         setEditBrand(product.brand || "")
+        setEditUnit(product.unitOfMeasure || "UND")
     }, [])
 
     const handleConfirmEdit = useCallback((productId) => {
@@ -306,10 +328,10 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         setLocalSelected(prev => {
             const entry = prev[productId]
             if (!entry) return prev
-            return { ...prev, [productId]: { ...entry, quantity: qty, brand: editBrand } }
+            return { ...prev, [productId]: { ...entry, quantity: qty, brand: editBrand, unitOfMeasure: editUnit } }
         })
         setEditingId(null)
-    }, [editQty, editBrand])
+    }, [editQty, editBrand, editUnit])
 
     const handleCancelEdit = useCallback(() => setEditingId(null), [])
 
@@ -330,16 +352,18 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
             _raw: product,
             _existingQty: existing?.quantity ?? null,
             _existingBrand: existing?.brand ?? "",
+            _existingUnit: existing?.unitOfMeasure ?? "UND",
         })
     }, [])
 
-    const handleSheetConfirm = useCallback(({ qty, brand }) => {
+    const handleSheetConfirm = useCallback(({ qty, brand, unitOfMeasure }) => {
         if (!sheetProduct) return
         setLocalSelected(prev => ({
             ...prev,
             [sheetProduct.productId]: {
                 quantity: qty,
                 brand,
+                unitOfMeasure,
                 _product: sheetProduct._raw ?? prev[sheetProduct.productId]?._product,
             }
         }))
@@ -363,6 +387,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 _raw: newProduct,
                 _existingQty: null,
                 _existingBrand: "",
+                _existingUnit: "UND",
             })
         } else {
             setExpandedId(newProduct.productId)
@@ -379,7 +404,8 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 productName: product?.productName || "",
                 productDescription: product?.productDescription || "",
                 quantity: entry.quantity,
-                brand: entry.brand
+                brand: entry.brand,
+                unitOfMeasure: entry.unitOfMeasure || "UND",
             }
         }).sort((a, b) => a.productName.localeCompare(b.productName))
     }, [localSelected])
@@ -404,22 +430,26 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     /* ── Search panel (shared between desktop and mobile search tab) ── */
     const renderSearchPanel = () => (
         <>
-            {userDepts.length > 1 && (
-                <StatusTabFilter
-                    value={deptFilter === null ? 'all' : String(deptFilter)}
-                    onChange={val => {
-                        setDeptFilter(val === 'all' ? null : Number(val))
-                        setCurrentPage(0)
-                    }}
-                    tabs={[
-                        { value: 'all', label: 'Todos' },
-                        ...userDepts.map(d => ({ value: String(d.departmentId), label: d.departmentName })),
-                    ]}
-                />
-            )}
-
             {/* Search bar */}
             <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
+                {userDepts.length > 1 && (
+                    <div className="relative mb-2 max-sm:w-full w-fit">
+                        <select
+                            value={deptFilter === null ? 'all' : String(deptFilter)}
+                            onChange={e => { setDeptFilter(e.target.value === 'all' ? null : Number(e.target.value)); setCurrentPage(0) }}
+                            aria-label="Filtrar por departamento"
+                            className="w-full min-w-[12rem] max-w-[16rem] max-sm:max-w-full h-[2.375rem] pl-[0.75rem] pr-8 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] font-sans text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none cursor-pointer hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
+                        >
+                            <option value="all">Todos os departamentos</option>
+                            {userDepts.map(d => (
+                                <option key={d.departmentId} value={String(d.departmentId)}>{d.departmentName}</option>
+                            ))}
+                        </select>
+                        <span className="pointer-events-none absolute right-[0.625rem] top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        </span>
+                    </div>
+                )}
                 <div className="flex gap-2 items-center">
                     <input
                         type="text"
@@ -481,6 +511,17 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                                         <input type="number" className={`${smallInputCls} text-center [font-variant-numeric:tabular-nums] appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`} value={pendingQty} onChange={e => setPendingQty(e.target.value)} onKeyDown={e => { if (['-','e','E'].includes(e.key)) e.preventDefault(); if (e.key === "Enter") handleAddProduct(p) }} onFocus={e => e.target.select()} placeholder="0" min="0" autoFocus />
                                                     </div>
                                                     <div className="flex flex-col gap-[0.2rem] flex-1">
+                                                        <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Unidade</label>
+                                                        <div className="relative">
+                                                            <select className={`${smallInputCls} appearance-none pr-6`} value={pendingUnit} onChange={e => setPendingUnit(e.target.value)}>
+                                                                {UNIT_OPTIONS.map(u => <option key={u} value={u}>{u}</option>)}
+                                                            </select>
+                                                            <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                                                                <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-col gap-[0.2rem] flex-1">
                                                         <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Marca</label>
                                                         <input type="text" className={smallInputCls} value={pendingBrand} onChange={e => setPendingBrand(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleAddProduct(p) }} placeholder="Marca" />
                                                     </div>
@@ -524,7 +565,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                 <div className="sel-product-body">
                                     <p className="sel-product-name">{p.productName}</p>
                                     <div className="sel-product-meta">
-                                        <span className="sel-product-qty">{p.quantity} UN</span>
+                                        <span className="sel-product-qty">{p.quantity} {p.unitOfMeasure}</span>
                                         <span className="sel-product-dot" aria-hidden="true" />
                                         {p.brand
                                             ? <span className="sel-product-brand">{p.brand}</span>
@@ -558,8 +599,8 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                     <table className="w-full border-collapse">
                         <thead>
                             <tr>
-                                {["Nome do Produto", "Quantidade", "Marca", ""].map((h, i) => (
-                                    <th key={i} className={`bg-[var(--color-surface-2)] text-left px-3 py-2 text-[0.6875rem] font-bold text-[var(--color-text-muted)] uppercase tracking-[0.06em] border-b border-[var(--color-border-light)] ${i === 1 ? 'text-center' : ''}`}>{h}</th>
+                                {["Nome do Produto", "Quantidade", "Unidade", "Marca", ""].map((h, i) => (
+                                    <th key={i} className={`bg-[var(--color-surface-2)] text-left px-3 py-2 text-[0.6875rem] font-bold text-[var(--color-text-muted)] uppercase tracking-[0.06em] border-b border-[var(--color-border-light)] ${i === 1 || i === 2 ? 'text-center' : ''}`}>{h}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -572,7 +613,22 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                         <td className="px-3 py-2 border-b border-[var(--color-border-lighter)] text-[0.875rem] align-middle text-center">
                                             {isEditing
                                                 ? <input type="number" className={`w-[70px] ${smallInputCls} text-center [font-variant-numeric:tabular-nums] appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none`} value={editQty} onChange={e => setEditQty(e.target.value)} onKeyDown={e => { if (['-','e','E'].includes(e.key)) e.preventDefault(); if (e.key === "Enter") handleConfirmEdit(p.productId); if (e.key === "Escape") handleCancelEdit() }} onFocus={e => e.target.select()} min="1" autoFocus />
-                                                : <span className="font-bold [font-variant-numeric:tabular-nums] text-[var(--color-text-primary)]">{p.quantity} UN</span>
+                                                : <span className="font-bold [font-variant-numeric:tabular-nums] text-[var(--color-text-primary)]">{p.quantity}</span>
+                                            }
+                                        </td>
+                                        <td className="px-3 py-2 border-b border-[var(--color-border-lighter)] text-[0.875rem] align-middle text-center">
+                                            {isEditing
+                                                ? (
+                                                    <div className="relative w-[80px] mx-auto">
+                                                        <select className={`${smallInputCls} appearance-none pr-5`} value={editUnit} onChange={e => setEditUnit(e.target.value)}>
+                                                            {UNIT_OPTIONS.map(u => <option key={u} value={u}>{u}</option>)}
+                                                        </select>
+                                                        <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                                                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                                        </span>
+                                                    </div>
+                                                )
+                                                : <span className="font-medium text-[var(--color-text-secondary)] text-[0.8125rem]">{p.unitOfMeasure}</span>
                                             }
                                         </td>
                                         <td className="px-3 py-2 border-b border-[var(--color-border-lighter)] text-[0.875rem] align-middle">

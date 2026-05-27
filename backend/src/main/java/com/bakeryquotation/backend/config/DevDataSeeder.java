@@ -6,6 +6,7 @@ import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Company.CompanyRepository;
 import com.bakeryquotation.backend.Contain.Contain;
 import com.bakeryquotation.backend.Contain.ContainRepository;
+import com.bakeryquotation.backend.Contain.UnitOfMeasure;
 import com.bakeryquotation.backend.Department.Department;
 import com.bakeryquotation.backend.Department.DepartmentRepository;
 import com.bakeryquotation.backend.Participation.Participation;
@@ -87,11 +88,11 @@ public class DevDataSeeder {
             }
 
             List<Product> products = productRepository.findAll();
-            Contain contain1 = new Contain(quotation1, products.get(0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(0.0), "Brand 1");
-            Contain contain2 = new Contain(quotation1, products.get(1), BigDecimal.valueOf(5.0), BigDecimal.valueOf(3.0), "Brand 2");
-            Contain contain3 = new Contain(quotation1, products.get(2), BigDecimal.valueOf(7.0), BigDecimal.valueOf(2.0), "Brand 3");
-            Contain contain4 = new Contain(quotation1, products.get(3), BigDecimal.valueOf(25.0), BigDecimal.valueOf(1.0), null);
-            Contain contain5 = new Contain(quotation2, products.get(2), BigDecimal.valueOf(2.0), BigDecimal.valueOf(0.0), null);
+            Contain contain1 = new Contain(quotation1, products.get(0), BigDecimal.valueOf(10.0), BigDecimal.valueOf(0.0), "Brand 1", UnitOfMeasure.UND);
+            Contain contain2 = new Contain(quotation1, products.get(1), BigDecimal.valueOf(5.0), BigDecimal.valueOf(3.0), "Brand 2", UnitOfMeasure.CX);
+            Contain contain3 = new Contain(quotation1, products.get(2), BigDecimal.valueOf(7.0), BigDecimal.valueOf(2.0), "Brand 3", UnitOfMeasure.KG);
+            Contain contain4 = new Contain(quotation1, products.get(3), BigDecimal.valueOf(25.0), BigDecimal.valueOf(1.0), null, UnitOfMeasure.balde);
+            Contain contain5 = new Contain(quotation2, products.get(2), BigDecimal.valueOf(2.0), BigDecimal.valueOf(0.0), null, UnitOfMeasure.bag);
 
             containRepository.save(contain1);
             containRepository.save(contain2);

@@ -108,7 +108,8 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                 price: bid.price,
                 quantity: bid.quantity,
                 bonus: bid.bonus,
-                pricePerUnit
+                pricePerUnit,
+                unitOfMeasure: product?.unitOfMeasure || null
             }
         })
     }, [lowestBids, products, participationId])
@@ -296,8 +297,8 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                                             <td className={tdCls}>
                                                 {item.brand ? item.brand : <span className="text-[var(--color-text-muted)] italic">-</span>}
                                             </td>
-                                            <td className={tdNumCls}>{item.quantity} UN</td>
-                                            <td className={tdNumCls}>{formatMoney(item.pricePerUnit)}/UN</td>
+                                            <td className={tdNumCls}>{item.quantity} {item.unitOfMeasure}{['bag', 'balde'].includes(item.unitOfMeasure) && item.quantity > 1 ? 's' : ''}</td>
+                                            <td className={tdNumCls}>{formatMoney(item.pricePerUnit)}/{item.unitOfMeasure}</td>
                                             <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(item.price)}</td>
                                         </tr>
                                     ))}

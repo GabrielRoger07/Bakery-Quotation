@@ -15,6 +15,26 @@ import { useNavigate } from 'react-router-dom'
 
 const DRAFT_KEY_PREFIX = "draft_prices_"
 
+const UNIT_LABEL = {
+    L:     ['o', 'litro'],
+    KG:    ['o', 'quilo'],
+    FD:    ['o', 'fardo'],
+    PCT:   ['o', 'pacote'],
+    balde: ['o', 'balde'],
+    CX:    ['a', 'caixa'],
+    UND:   ['a', 'unidade'],
+    bag:   ['a', 'bag'],
+}
+
+const unitLabel = (u) => {
+    const [article, name] = UNIT_LABEL[u] ?? ['o', u]
+    return (
+        <span>
+            Preço d{article} <span className="font-bold text-[var(--color-accent)]">{name}</span>
+        </span>
+    )
+}
+
 const thCls = "text-left px-[0.6rem] py-2 text-[0.75rem] font-semibold uppercase tracking-[0.04em] text-[var(--color-text-muted)] border-b-2 border-[var(--color-border)]"
 const thNumCls = `${thCls} text-right`
 const tdCls = "px-[0.6rem] py-[0.55rem] text-[var(--color-text-default)] border-b border-[var(--color-border-lighter)] align-middle"
@@ -44,9 +64,6 @@ const MobileProductInputCard = ({ product, initialNumericValue, onNumericChange,
             style={{ animationDelay: `${index * 55}ms` }}
         >
             <div className="saqu-input-card-header">
-                <div className={`saqu-input-avatar ${hasPrice ? 'saqu-input-avatar--filled' : ''}`}>
-                    <Package size={17} strokeWidth={1.75} />
-                </div>
                 <div className="saqu-input-info">
                     <span className="saqu-input-name">{product.productName}</span>
                     {product.productDescription && (
@@ -59,14 +76,14 @@ const MobileProductInputCard = ({ product, initialNumericValue, onNumericChange,
                         </span>
                         <div className="saqu-input-qty-badge">
                             <span className="saqu-input-qty-label">Qtd</span>
-                            <span className="saqu-input-qty-value">{product.quantity} UN</span>
+                            <span className="saqu-input-qty-value">{product.quantity} {(product.unitOfMeasure).toUpperCase()}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 'S' : ''}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div className="saqu-input-field-row">
-                <span className="saqu-input-field-label">Preço da unidade</span>
+                <span className="saqu-input-field-label">{unitLabel(product.unitOfMeasure)}</span>
                 <input
                     type="text"
                     className={`saqu-price-input ${hasPrice ? 'saqu-price-input--filled' : ''}`}
@@ -90,9 +107,6 @@ const MobileSubmittedCard = ({ product, unitPrice, index }) => {
             style={{ animationDelay: `${index * 55}ms` }}
         >
             <div className="saqu-submitted-header">
-                <div className={`saqu-submitted-avatar ${hasPrice ? 'saqu-submitted-avatar--priced' : ''}`}>
-                    <Package size={17} strokeWidth={1.75} />
-                </div>
                 <div className="saqu-submitted-info">
                     <span className="saqu-submitted-name">{product.productName}</span>
                     <div className="saqu-submitted-meta-row">
@@ -102,7 +116,7 @@ const MobileSubmittedCard = ({ product, unitPrice, index }) => {
                         </span>
                         <div className="saqu-submitted-qty">
                             <span className="saqu-submitted-qty-label">Qtd</span>
-                            <span className="saqu-submitted-qty-value">{product.quantity} UN</span>
+                            <span className="saqu-submitted-qty-value">{product.quantity} {(product.unitOfMeasure).toUpperCase()}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 'S' : ''}</span>
                         </div>
                     </div>
                 </div>
@@ -112,7 +126,7 @@ const MobileSubmittedCard = ({ product, unitPrice, index }) => {
                 <div className="saqu-submitted-prices">
                     <div className="saqu-submitted-price-cell">
                         <span className="saqu-submitted-price-label">Unitário</span>
-                        <span className="saqu-submitted-price-value">{formatMoney(unitPrice)}</span>
+                        <span className="saqu-submitted-price-value">{formatMoney(unitPrice)}/{product.unitOfMeasure}</span>
                     </div>
                     <div className="saqu-submitted-price-cell saqu-submitted-price-cell--total">
                         <span className="saqu-submitted-price-label">Total</span>
@@ -170,13 +184,13 @@ const MobileConfirmSheet = ({
                                 </div>
                                 <div className="saqu-review-row-bottom">
                                     <span className="saqu-review-row-meta">
-                                        {product.quantity} UN
+                                        {product.quantity} {(product.unitOfMeasure)}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 's' : ''}
                                         {' · '}
                                         {product.brand || 'Marca não definida'}
                                     </span>
                                     {!isSkipped && (
                                         <span className="saqu-review-row-unit">
-                                            {formatMoney(unitPrice)}<span className="saqu-review-row-unit-label">/UN</span>
+                                            {formatMoney(unitPrice)}<span className="saqu-review-row-unit-label">/{product.unitOfMeasure}</span>
                                         </span>
                                     )}
                                 </div>
@@ -661,8 +675,8 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                             <tr key={product.productId}>
                                                 <td className={tdCls}>{product.productName}</td>
                                                 {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
-                                                <td className={tdNumCls}>{product.quantity} UN</td>
-                                                <td className={tdNumCls}>{formatMoney(unitPrice)}</td>
+                                                <td className={tdNumCls}>{product.quantity} {product.unitOfMeasure}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 's' : ''}</td>
+                                                <td className={tdNumCls}>{formatMoney(unitPrice)}/{product.unitOfMeasure}</td>
                                                 <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(total)}</td>
                                             </tr>
                                         )
@@ -675,7 +689,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                                 <span className="inline-flex items-center ml-[0.45rem] px-[0.45rem] py-[0.1rem] text-[0.75rem] font-semibold tracking-[0.02em] text-[var(--color-warning-strong)] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] rounded-full align-middle whitespace-nowrap leading-[1.4]">Sem preço</span>
                                             </td>
                                             {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
-                                            <td className={tdNumCls}>{product.quantity} UN</td>
+                                            <td className={tdNumCls}>{product.quantity} {product.unitOfMeasure}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 's' : ''}</td>
                                             <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td>
                                             <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td>
                                         </tr>
@@ -750,7 +764,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                                 <span className="inline-flex items-center ml-[0.45rem] px-[0.45rem] py-[0.1rem] text-[0.75rem] font-semibold tracking-[0.02em] text-[var(--color-warning-strong)] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] rounded-full align-middle whitespace-nowrap leading-[1.4]">Sem preço</span>
                                             </td>
                                             {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
-                                            <td className={tdNumCls}>{product.quantity} UN</td>
+                                            <td className={tdNumCls}>{product.quantity} {product.unitOfMeasure}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 's' : ''}</td>
                                             <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td>
                                             <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td>
                                         </tr>
@@ -761,8 +775,8 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                         <tr key={product.productId}>
                                             <td className={tdCls}>{product.productName}</td>
                                             {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
-                                            <td className={tdNumCls}>{product.quantity} UN</td>
-                                            <td className={tdNumCls}>{formatMoney(unitPrice)}</td>
+                                            <td className={tdNumCls}>{product.quantity} {product.unitOfMeasure}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 's' : ''}</td>
+                                            <td className={tdNumCls}>{formatMoney(unitPrice)}/{product.unitOfMeasure}</td>
                                             <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(total)}</td>
                                         </tr>
                                     )

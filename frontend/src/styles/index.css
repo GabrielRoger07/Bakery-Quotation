@@ -3283,7 +3283,7 @@ textarea {
     padding: 0 0.875rem 0.75rem;
   }
   .saqu-input-field-label {
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     color: var(--color-text-muted);
     letter-spacing: 0.02em;

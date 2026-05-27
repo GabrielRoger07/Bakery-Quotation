@@ -4,6 +4,26 @@ import { useCurrencyMask } from '@/hooks/useCurrencyMask'
 import { formatMoney } from '@/utils/formatMoney'
 import Input from '@/components/Input'
 
+const UNIT_LABEL = {
+    L:      ['o', 'litro'],
+    bag:    ['a', 'bag'],
+    balde:  ['o', 'balde'],
+    CX:     ['a', 'caixa'],
+    FD:     ['o', 'fardo'],
+    KG:     ['o', 'quilo'],
+    PCT:    ['o', 'pacote'],
+    UND:    ['a', 'unidade'],
+}
+
+const unitLabel = (u) => {
+    const [article, name] = UNIT_LABEL[u] ?? ['o', u]
+    return (
+        <span className="text-[0.9375rem]">
+            Preço d{article} <span className="font-bold text-[var(--color-accent)]">{name}</span>
+        </span>
+    )
+}
+
 const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNumericChange }) => {
     const { value, handleChange, getNumericValue, setValue } = useCurrencyMask()
 
@@ -30,7 +50,7 @@ const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNu
 
             <div className="flex flex-wrap gap-[0.4rem] mb-[0.55rem]">
                 <span className="text-[var(--color-text-secondary)]">Quantidade:</span>
-                <span className="inline-flex items-center gap-[0.3rem] px-[0.55rem] py-[0.18rem] text-[0.75rem] font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-3)] rounded-full whitespace-nowrap">{product.quantity} UN</span>
+                <span className="inline-flex items-center gap-[0.3rem] px-[0.55rem] py-[0.18rem] text-[0.75rem] font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-3)] rounded-full whitespace-nowrap">{product.quantity} {(product.unitOfMeasure).toUpperCase()}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 'S' : ''}</span>
                 <span className="inline-flex items-center gap-[0.3rem] px-[0.55rem] py-[0.18rem] text-[0.75rem] font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-3)] rounded-full whitespace-nowrap">
                     <Tag size={12} />
                     {product.brand || "Marca não definida"}
@@ -38,7 +58,7 @@ const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNu
             </div>
 
             <Input
-                label={"Preço da unidade" + `:`}
+                label={unitLabel(product.unitOfMeasure)}
                 type="text"
                 value={value}
                 onChange={(e) => handleChange(e)}

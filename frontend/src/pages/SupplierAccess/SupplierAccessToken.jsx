@@ -5,6 +5,8 @@ import useFetch from '@/hooks/useFetch'
 import Input from '@/components/Input'
 import Button from '@/components/Button'
 import Alert from '@/components/Alert'
+import PageContainer from '@/components/PageContainer'
+import PageHeader from '@/components/PageHeader'
 import { ENV } from '@/config/env'
 
 const SupplierAccessToken = () => {
@@ -51,31 +53,31 @@ const SupplierAccessToken = () => {
     if (!companyCnpj) return <p>URL de acesso inválida</p>
 
     return (
-        <div className="auth-bg">
-            <div className="auth-card">
-                <h1 className="text-[1.5rem] mb-1 text-[var(--color-text-strong)] font-extrabold tracking-[-0.03em] leading-[1.15]">Acesso do Fornecedor</h1>
-                <p className="text-[var(--color-text-muted)] text-[0.875rem] mb-4 mt-1">Entre com suas credenciais para acessar as cotações.</p>
-                <form onSubmit={handleLogin}>
-                    <Input
-                        label={"Whatsapp"}
-                        type="text"
-                        value={supplierWhatsappNumber}
-                        onChange={e => setSupplierWhatsappNumber(e.target.value)}
-                        placeholder={"Digite o Whatsapp do fornecedor"}
-                    />
-                    <Input
-                        label={"Senha"}
-                        type="password"
-                        value={supplierPassword}
-                        onChange={e => setSupplierPassword(e.target.value)}
-                        placeholder={"Digite sua senha"}
-                    />
-                    <Alert message={error} />
-                    {success && <div className="text-[var(--color-success)] font-medium mb-[0.875rem] text-[0.875rem]">{success}</div>}
-                    <Button type="submit" loading={loading}>Entrar</Button>
-                </form>
-            </div>
-        </div>
+        <PageContainer variant="auth">
+            <PageHeader
+                title="Acesso do Fornecedor"
+                subtitle="Entre com suas credenciais para acessar as cotações."
+            />
+            <form onSubmit={handleLogin}>
+                <Input
+                    label={"Whatsapp"}
+                    type="text"
+                    value={supplierWhatsappNumber}
+                    onChange={e => setSupplierWhatsappNumber(e.target.value)}
+                    placeholder={"Digite o Whatsapp do fornecedor"}
+                />
+                <Input
+                    label={"Senha"}
+                    type="password"
+                    value={supplierPassword}
+                    onChange={e => setSupplierPassword(e.target.value)}
+                    placeholder={"Digite sua senha"}
+                />
+                <Alert message={error} />
+                <Alert variant="success" message={success} />
+                <Button type="submit" loading={loading}>Entrar</Button>
+            </form>
+        </PageContainer>
     )
 }
 

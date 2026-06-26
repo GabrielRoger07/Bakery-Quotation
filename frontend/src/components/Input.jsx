@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
+import { cn } from '@/utils/cn'
+import FieldMessage from '@/components/FieldMessage'
 
 const inputBase = [
   'w-full min-h-[2.625rem] py-[0.5625rem] pl-[0.875rem] pr-10',
   'border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)]',
-  'text-[0.875rem] text-[var(--color-text-primary)] bg-[var(--color-surface-0)]',
+  'text-body text-[var(--color-text-primary)] bg-[var(--color-surface-0)]',
   'outline-none transition-[border-color,box-shadow] duration-[160ms] ease-[ease]',
   'placeholder:text-[var(--color-text-disabled)] placeholder:font-normal',
   'hover:border-[var(--color-accent)]',
@@ -16,14 +18,19 @@ const inputError = [
   'focus:!border-[var(--color-danger-dark)] focus:[box-shadow:var(--shadow-focus-danger)]',
 ].join(' ')
 
-const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, max, step, required, isInvalid, ...rest }) => {
+/**
+ * Campo de texto com label, validação (props `isInvalid`/`error` via FieldMessage)
+ * e toggle de visibilidade quando `type="password"`.
+ */
+const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, max, step, required, isInvalid, error, errorTone = 'error', ...rest }) => {
   const [showPassword, setShowPassword] = useState(false)
   const isPasswordField = type === 'password'
   const isEmpty = required && !value
+  const invalid = isInvalid || Boolean(error)
 
   return (
     <div className="flex flex-col mb-[1.125rem] relative">
-      <label className="mb-[0.375rem] font-semibold text-[var(--color-text-subtle)] text-[0.875rem] tracking-[0.005em] mr-auto">
+      <label className="mb-[0.375rem] font-semibold text-[var(--color-text-subtle)] text-body tracking-[0.005em] mr-auto">
         {label}
         {required && (
           <span className={`ml-[2px] font-bold ${isEmpty ? 'text-[var(--color-danger-strong)]' : 'text-[var(--color-text-disabled)]'}`}>*</span>
@@ -41,7 +48,7 @@ const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, m
           min={min}
           max={max}
           step={step}
-          className={[inputBase, isInvalid ? inputError : ''].join(' ')}
+          className={cn(inputBase, invalid && inputError)}
           {...rest}
         />
 
@@ -56,6 +63,8 @@ const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, m
           </button>
         )}
       </div>
+
+      {error && <FieldMessage tone={errorTone} className="mt-[0.375rem] mb-0">{error}</FieldMessage>}
     </div>
   )
 }

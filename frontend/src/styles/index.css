@@ -6,6 +6,20 @@
   --font-sans: "Outfit", "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", source-code-pro, Menlo, Monaco, Consolas, monospace;
 
+  /* ── Typography scale (semânticos → utilitários text-*) ── */
+  --text-title:   1.5rem;     /* títulos de página / auth (h1) */
+  --text-title--line-height: 1.15;
+  --text-heading: 1.0625rem;  /* títulos de seção / modal */
+  --text-heading--line-height: 1.3;
+  --text-body:    0.875rem;   /* texto padrão / labels / inputs */
+  --text-body--line-height: 1.5;
+  --text-caption: 0.75rem;    /* legendas, hints, tags */
+  --text-caption--line-height: 1.4;
+
+  /* ── Breakpoint mobile (fonte única; alinha com useIsMobile(640)) ── */
+  /* Tailwind v4 já usa sm = 40rem (640px) por padrão. Usar sm:/max-sm: e
+     useIsMobile() apontam para o mesmo limite — não redefinir aqui. */
+
   /* ── Brand colors ── */
   --color-brand:        #1a0f3a;
   --color-brand-mid:    #241550;
@@ -282,61 +296,6 @@ textarea {
   .toolbar-select:focus {
     border-color: var(--color-accent);
     box-shadow: var(--shadow-focus-accent);
-  }
-
-  /* Confirm dialog body used inside modals */
-  .confirm-body {
-    color: var(--color-text-secondary);
-    font-size: 0.875rem;
-    margin-bottom: 1.25rem;
-  }
-
-  /* Confirm dialog footer (action buttons row) */
-  .confirm-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-  }
-
-  /* Auth page background wrapper */
-  .auth-bg {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100dvh;
-    padding-inline: 1.5rem;
-    padding-top: max(1.5rem, env(safe-area-inset-top));
-    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
-    background-color: var(--color-brand);
-    background-image:
-      radial-gradient(ellipse 80% 60% at 20% -10%, rgba(91,33,182,0.25) 0%, transparent 55%),
-      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(91,33,182,0.15) 0%, transparent 55%);
-  }
-  @media (max-width: 640px) {
-    .auth-bg {
-      padding-inline: 0.75rem;
-      padding-top: max(1rem, env(safe-area-inset-top));
-      padding-bottom: max(1rem, env(safe-area-inset-bottom));
-    }
-  }
-
-  /* Auth card (login / register) */
-  .auth-card {
-    background-color: var(--color-surface-0);
-    padding: 2.5rem 2.25rem 2rem;
-    border-radius: var(--radius-2xl);
-    border: 1px solid var(--color-border);
-    width: 100%;
-    max-width: 420px;
-    text-align: center;
-    box-shadow: 0 24px 64px rgba(15,13,35,0.4); /* stronger than --shadow-xl intentionally */
-    animation: authIn 0.3s ease-out;
-  }
-  @media (max-width: 640px) {
-    .auth-card {
-      padding: 1.75rem 1.25rem 1.5rem;
-      border-radius: var(--radius-xl);
-    }
   }
 
   /* Landing page section card */

@@ -1,3 +1,5 @@
+import { cn } from '@/utils/cn'
+
 const variantClasses = {
   primary: [
     'bg-[var(--color-accent)] border-[var(--color-accent)] text-white',
@@ -35,7 +37,7 @@ const variantClasses = {
 
 const base = [
   'appearance-none border border-transparent',
-  'font-semibold text-[0.875rem] tracking-[0.01em]',
+  'font-semibold text-body tracking-[0.01em]',
   'px-[1.125rem] py-[0.5625rem] min-h-[2.375rem]',
   'rounded-[var(--radius-md)] cursor-pointer',
   'transition-[background-color,transform,box-shadow,border-color] duration-[160ms] ease-[ease]',
@@ -44,8 +46,11 @@ const base = [
   'max-sm:min-h-[2.75rem]',
 ].join(' ')
 
+/**
+ * Botão padrão com variantes (primary/success/danger/secondary/ghost) e estado de loading.
+ */
 const Button = ({ children, onClick, disabled, type = 'button', loading = false, className = '', variant = 'primary' }) => {
-  const cls = [base, variantClasses[variant] ?? variantClasses.primary, className].filter(Boolean).join(' ')
+  const cls = cn(base, variantClasses[variant] ?? variantClasses.primary, className)
 
   return (
     <button type={type} onClick={onClick} disabled={disabled || loading} className={cls}>

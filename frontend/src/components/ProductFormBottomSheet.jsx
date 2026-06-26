@@ -3,6 +3,9 @@ import { X } from 'lucide-react'
 import ProductCreate from '@/pages/Product/ProductCreate'
 import ProductEdit from '@/pages/Product/ProductEdit'
 
+/**
+ * Bottom sheet (mobile) com o formulário de criação/edição de produto.
+ */
 const ProductFormBottomSheet = ({ isOpen, onClose, mode, product, onSaveCreate, onSaveEdit, departments = [] }) => {
     useEffect(() => {
         if (!isOpen) return

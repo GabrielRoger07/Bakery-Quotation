@@ -4,6 +4,9 @@ const pageButtonBase = 'min-w-[2rem] h-8 px-2 text-[0.875rem] font-medium rounde
 const pageButtonActive = '!bg-[var(--color-accent)] !text-white !border-[var(--color-accent)] font-bold [box-shadow:var(--shadow-accent)]'
 const pageButtonInactive = 'hover:bg-[var(--color-highlight-lighter)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'
 
+/**
+ * Controles de paginação (desktop), com elipses quando há muitas páginas.
+ */
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
     if (totalPages <= 1) return null

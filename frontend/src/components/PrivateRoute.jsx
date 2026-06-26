@@ -11,6 +11,10 @@ const isTokenValid = (token) => {
     }
 }
 
+/**
+ * Protege rotas: valida a expiração do JWT (cookie accessToken) antes de renderizar
+ * e redireciona ao login quando ausente/expirado.
+ */
 const PrivateRoute = ({ children }) => {
     const accessToken = Cookies.get("accessToken")
 

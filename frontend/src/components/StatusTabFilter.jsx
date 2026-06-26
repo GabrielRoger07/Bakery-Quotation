@@ -10,6 +10,9 @@ const StatusDot = ({ color }) => {
     return <span className={`stf-dot stf-dot--${color}`} aria-hidden="true" />
 }
 
+/**
+ * Filtro de status em abas (com contadores e ponto colorido), em versões desktop e mobile.
+ */
 const StatusTabFilter = ({ value, onChange, mobile = false, counts = {} }) => (
     <div
         className={`stf-root ${mobile ? 'stf-root--mobile' : ''}`}

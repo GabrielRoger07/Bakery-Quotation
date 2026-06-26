@@ -1,3 +1,6 @@
+/**
+ * Modal genérico: overlay com blur + card centralizado, com título e botão de fechar.
+ */
 const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null
 

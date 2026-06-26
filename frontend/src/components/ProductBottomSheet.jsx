@@ -14,6 +14,9 @@ const DetailRow = ({ icon, label, value }) => {
     )
 }
 
+/**
+ * Bottom sheet (mobile) com os detalhes de um produto e ações de editar/remover.
+ */
 const ProductBottomSheet = ({ isOpen, onClose, product, onEdit, onDelete }) => {
     useEffect(() => {
         if (!isOpen) return

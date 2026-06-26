@@ -2,6 +2,9 @@ import { useEffect } from 'react'
 import { X, Pencil, Trash, BarChart2 } from 'lucide-react'
 import QuotationDetails from '@/pages/Quotation/QuotationDetails'
 
+/**
+ * Bottom sheet (mobile) com os detalhes de uma cotação e ações (editar/remover/monitorar).
+ */
 const QuotationBottomSheet = ({
     isOpen,
     onClose,

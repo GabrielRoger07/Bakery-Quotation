@@ -3,6 +3,9 @@ import { X } from 'lucide-react'
 import SupplierCreate from '@/pages/Supplier/SupplierCreate'
 import SupplierEdit from '@/pages/Supplier/SupplierEdit'
 
+/**
+ * Bottom sheet (mobile) com o formulário de criação/edição de fornecedor.
+ */
 const SupplierFormBottomSheet = ({ isOpen, onClose, mode, supplier, onSaveCreate, onSaveEdit }) => {
     useEffect(() => {
         if (!isOpen) return

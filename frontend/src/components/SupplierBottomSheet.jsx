@@ -14,6 +14,9 @@ const DetailRow = ({ icon, label, value }) => {
     )
 }
 
+/**
+ * Bottom sheet (mobile) com os detalhes de um fornecedor e ações de editar/remover.
+ */
 const SupplierBottomSheet = ({ isOpen, onClose, supplier, onEdit, onDelete }) => {
     useEffect(() => {
         if (!isOpen) return

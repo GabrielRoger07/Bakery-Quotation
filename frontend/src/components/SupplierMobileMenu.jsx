@@ -117,6 +117,9 @@ const SupplierConfigDrawer = ({ open, onClose, onLogout, supplierName, initial }
     return <SupplierConfigDrawerContent open={open} onClose={onClose} onLogout={onLogout} supplierName={supplierName} initial={initial} />
 }
 
+/**
+ * Drawer de navegação mobile do contexto fornecedor.
+ */
 const SupplierMobileMenu = ({ onLogout, supplierName, initial }) => {
     const [configOpen, setConfigOpen] = useState(false)
 

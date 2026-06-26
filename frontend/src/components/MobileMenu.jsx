@@ -46,6 +46,9 @@ const LogoutIcon = ({ active }) => (
     </svg>
 )
 
+/**
+ * Drawer de navegação mobile do contexto empresa.
+ */
 const MobileMenu = ({ onLogout }) => {
     const location = useLocation()
     const [logoutOpen, setLogoutOpen] = useState(false)

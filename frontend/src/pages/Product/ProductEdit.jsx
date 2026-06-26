@@ -3,7 +3,10 @@ import useFetch from '@/hooks/useFetch'
 import Input from '@/components/Input'
 import Button from '@/components/Button'
 import Alert from '@/components/Alert'
+import Select from '@/components/Select'
+import FormActions from '@/components/FormActions'
 import useCharLimit from '@/hooks/useCharLimit'
+import { charLimitMessage } from '@/utils/charLimitMessage'
 import { ENV } from '@/config/env'
 
 const ProductEdit = ({ product, onSave, onClose, departments = [] }) => {
@@ -29,8 +32,6 @@ const ProductEdit = ({ product, onSave, onClose, departments = [] }) => {
         nameWarning ||
         !productName ||
         (departments.length >= 2 && !departmentId)
-
-    const warningCls = "text-[var(--color-danger-strong)] text-[0.8125rem] font-medium [margin:-0.25rem_0_0.625rem]"
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -66,77 +67,29 @@ const ProductEdit = ({ product, onSave, onClose, departments = [] }) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            
-            <Input label={"Nome do Produto"} type="text" name="productName" value={productName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder={"Digite o nome do produto"} isInvalid={isNameInvalid} required />
-            {nameWarning && (
-                <div className={warningCls}>
-                    {nameWarning.type === "too_short" &&
-                        `É permitido ter no mínimo ${nameWarning.min} caracteres para ${nameWarning.fieldName}.`
-                    }
+            <Input label={"Nome do Produto"} type="text" name="productName" value={productName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder={"Digite o nome do produto"} isInvalid={isNameInvalid} error={charLimitMessage(nameWarning)} required />
 
-                    {nameWarning.type === "too_long" &&
-                        `É permitido ter no máximo ${nameWarning.max} caracteres para ${nameWarning.fieldName}.`
-                    }
-                </div>
-            )}
-            
-            <Input label={"Código do Produto"} type="text" name="productBarCodeNumber" value={productBarCodeNumber} onChange={handleBarCodeChange} onBlur={handleBarCodeBlur} placeholder={"Digite o código do produto"} isInvalid={isBarCodeInvalid} />
-            {barCodeWarning && (
-                <div className={warningCls}>
-                    {barCodeWarning.type === "too_short" &&
-                        `É permitido ter no mínimo ${barCodeWarning.min} caracteres para ${barCodeWarning.fieldName}.`
-                    }
+            <Input label={"Código do Produto"} type="text" name="productBarCodeNumber" value={productBarCodeNumber} onChange={handleBarCodeChange} onBlur={handleBarCodeBlur} placeholder={"Digite o código do produto"} isInvalid={isBarCodeInvalid} error={charLimitMessage(barCodeWarning)} />
 
-                    {barCodeWarning.type === "too_long" &&
-                        `É permitido ter no máximo ${barCodeWarning.max} caracteres para ${barCodeWarning.fieldName}.`
-                    }
-                </div>
-            )}
-
-            <Input label={"Descrição do Produto"} type="text" name="productDescription" value={productDescription} onChange={handleDescriptionChange} onBlur={handleDescriptionBlur} placeholder={"Digite a descrição do produto"} isInvalid={isDescriptionInvalid} />
-            {productDescription && descriptionWarning && (
-                <div className={warningCls}>
-                    {descriptionWarning.type === "too_short" &&
-                        `É permitido ter no mínimo ${descriptionWarning.min} caracteres para ${descriptionWarning.fieldName}.`
-                    }
-
-                    {descriptionWarning.type === "too_long" &&
-                        `É permitido ter no máximo ${descriptionWarning.max} caracteres para ${descriptionWarning.fieldName}.`
-                    }
-                </div>
-            )}
+            <Input label={"Descrição do Produto"} type="text" name="productDescription" value={productDescription} onChange={handleDescriptionChange} onBlur={handleDescriptionBlur} placeholder={"Digite a descrição do produto"} isInvalid={isDescriptionInvalid} error={productDescription ? charLimitMessage(descriptionWarning) : ''} />
 
             {departments.length >= 2 && (
-                <div className="flex flex-col mb-[1.125rem]">
-                    <label className="mb-[0.375rem] font-semibold text-[var(--color-text-subtle)] text-[0.875rem] tracking-[0.005em] mr-auto">
-                        Departamento <span className="ml-[2px] font-bold text-[var(--color-danger-strong)]">*</span>
-                    </label>
-                    <div className="relative">
-                        <select
-                            required
-                            value={departmentId}
-                            onChange={e => setDepartmentId(e.target.value)}
-                            className="w-full min-h-[2.625rem] py-[0.5625rem] pl-[0.875rem] pr-10 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
-                        >
-                            <option value="" disabled>Selecionar departamento</option>
-                            {departments.map(d => (
-                                <option key={d.departmentId} value={d.departmentId}>{d.departmentName}</option>
-                            ))}
-                        </select>
-                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        </span>
-                    </div>
-                </div>
+                <Select
+                    label="Departamento"
+                    required
+                    value={departmentId}
+                    onChange={e => setDepartmentId(e.target.value)}
+                    placeholder="Selecionar departamento"
+                    options={departments.map(d => ({ value: d.departmentId, label: d.departmentName }))}
+                />
             )}
 
             <Alert message={error} />
-            
-            {success && <div className="text-[var(--color-success)] font-medium mb-[0.875rem] text-[0.875rem]">{success}</div>}
+            <Alert variant="success" message={success} />
 
-            <div className="flex justify-center gap-3 mt-4">
+            <FormActions>
                 <Button type="submit" disabled={isDisabled}>Salvar</Button>
-            </div>
+            </FormActions>
         </form>
     )
 }

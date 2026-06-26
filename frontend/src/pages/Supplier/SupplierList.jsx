@@ -1,19 +1,24 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import useFetch from '@/hooks/useFetch'
+import { useCallback, useMemo, useState } from 'react'
 import Table from '@/components/Table'
 import MobileCardList from '@/components/MobileCardList'
 import SupplierBottomSheet from '@/components/SupplierBottomSheet'
 import SupplierFormBottomSheet from '@/components/SupplierFormBottomSheet'
 import Modal from '@/components/Modal'
 import Alert from '@/components/Alert'
+import ConfirmDialog from '@/components/ConfirmDialog'
+import PageContainer from '@/components/PageContainer'
+import Select from '@/components/Select'
+import MobileSearchInput from '@/components/MobileSearchInput'
+import ActiveFilterPill from '@/components/ActiveFilterPill'
 import SupplierCreate from '@/pages/Supplier/SupplierCreate'
 import SupplierEdit from '@/pages/Supplier/SupplierEdit'
 import Button from '@/components/Button'
 import Pagination from '@/components/Pagination'
-import { ENV } from '@/config/env'
 import { formatCnpj } from '@/utils/formatCnpj'
 import { formatPhone } from '@/utils/formatPhone'
+import { initials } from '@/utils/initials'
 import useIsMobile from '@/hooks/useIsMobile'
+import useResourceList from '@/hooks/useResourceList'
 
 const SUPPLIER_FILTER_OPTIONS = [
     { value: "supplierName",           label: "Nome" },
@@ -25,12 +30,20 @@ const SUPPLIER_FILTER_OPTIONS = [
 
 const SupplierList = () => {
 
-    const { request, loading } = useFetch(ENV.API_BASE_URL)
     const isMobile = useIsMobile()
 
-    const [suppliers, setSuppliers] = useState([])
-    const [error, setError] = useState("")
-    const [status, setStatus] = useState(null)
+    const {
+        items: suppliers, setItems: setSuppliers, loading, error, status,
+        currentPage, setCurrentPage, totalPages,
+        sortField, sortDirection, handleSort, clearSort,
+        appliedSearch, applySearch, clearSearch, refetch, confirm,
+    } = useResourceList({
+        endpoint: '/suppliers/company',
+        idKey: 'supplierId',
+        defaultSortField: 'supplierName',
+        deletePath: (s) => `/suppliers/${s.supplierId}`,
+        deleteErrorMessage: 'Erro ao remover fornecedor. Por favor tente novamente.',
+    })
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
@@ -42,18 +55,8 @@ const SupplierList = () => {
     const [sheetOpen, setSheetOpen] = useState(false)
     const [sheetSupplier, setSheetSupplier] = useState(null)
 
-    const [confirmOpen, setConfirmOpen] = useState(false)
-    const [supplierToRemove, setSupplierToRemove] = useState(null)
-
-    const [currentPage, setCurrentPage] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
-
-    const [sortField, setSortField] = useState(null)
-    const [sortDirection, setSortDirection] = useState("asc")
-
     const [searchField, setSearchField] = useState("")
     const [searchWord, setSearchWord] = useState("")
-    const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
 
     const columns = [
         { key: "supplierName", label: "Nome"},
@@ -102,99 +105,35 @@ const SupplierList = () => {
         setSupplierToEdit(null)
         setIsEditModalOpen(false)
         setIsCreateModalOpen(false)
-        setConfirmOpen(false)
-        setSupplierToRemove(null)
     }
 
     const handleSaveCreate = () => {
-        fetchSuppliers()
+        refetch()
     }
 
     const handleSaveEdit = (updatedSupplier) => {
         setSuppliers(prev => prev.map(s => s.supplierId === updatedSupplier.supplierId ? updatedSupplier : s))
     }
 
-    const requestRemove = (supplierId) => {
-        const supplier = suppliers.find(s => s.supplierId === supplierId)
-        setSupplierToRemove(supplier)
-        setConfirmOpen(true)
-    }
-
-    const confirmRemove = async () => {
-
-        if(!supplierToRemove) return
-
-        const res = await request("DELETE", `/suppliers/${supplierToRemove.supplierId}`)
-
-        if(res.ok){
-            fetchSuppliers();
-            setError("")
-        }else{
-            setError("Erro ao remover fornecedor. Por favor tente novamente.")
-        }
-        closeModals()
-    }
-
-    const fetchSuppliers = useCallback(async (page = 0) => {
-
-        let query = `?page=${page}`
-        sortField ? query += `&sort=${sortField},${sortDirection}` : query += `&sort=supplierName,${sortDirection}`
-        if(appliedSearch.field) query += `&field=${appliedSearch.field}`
-        if(appliedSearch.word) query += `&value=${appliedSearch.word}`
-
-        const res = await request("GET", `/suppliers/company${query}`)
-
-        if(res.ok){
-            setSuppliers(res.data.content);
-            setTotalPages(res.data.totalPages)
-            setError("")
-        }else{
-            setError(res.data?.message)
-        }
-        setStatus(res.status)
-    }, [request, sortField, sortDirection, appliedSearch])
-
     const handleSearch = useCallback(() => {
-        setCurrentPage(0)
-        setAppliedSearch({ field: searchField, word: searchWord })
-    }, [searchField, searchWord])
+        applySearch(searchField, searchWord)
+    }, [applySearch, searchField, searchWord])
 
-    const handleColumnSort = (columnKey) => {
-        if(sortField === columnKey){
-            setSortDirection(prev => prev === "asc" ? "desc" : "asc")
-        } else {
-            setSortField(columnKey)
-            setSortDirection("asc")
-        }
-
-        setCurrentPage(0)
-    }
-
-    const handleClearSort = () => {
-        setSortField(null)
-        setSortDirection("asc")
-        setCurrentPage(0)
-    }
-
-    useEffect(() => {
-        fetchSuppliers(currentPage);
-    }, [fetchSuppliers, currentPage])
+    const handleClearSearch = useCallback(() => {
+        setSearchField("")
+        setSearchWord("")
+        clearSearch()
+    }, [clearSearch])
 
     const filterToolbar = useMemo(() => (
         <>
-            <div className="relative">
-                <select value={searchField} onChange={(e) => setSearchField(e.target.value)} className="toolbar-select">
-                    <option value="">Selecione</option>
-                    <option value="supplierName">Nome</option>
-                    <option value="supplierEmail">E-mail</option>
-                    <option value="supplierWhatsappNumber">Whatsapp</option>
-                    <option value="employerName">Nome da Empresa</option>
-                    <option value="employerCnpj">CNPJ da Empresa</option>
-                </select>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </span>
-            </div>
+            <Select
+                bare
+                value={searchField}
+                onChange={(e) => setSearchField(e.target.value)}
+                placeholder="Selecione"
+                options={SUPPLIER_FILTER_OPTIONS.map(o => ({ value: o.value, label: o.label }))}
+            />
             <input
                 type="text"
                 className="toolbar-input"
@@ -206,13 +145,6 @@ const SupplierList = () => {
             <Button onClick={handleSearch} disabled={loading || !searchField}>Buscar</Button>
         </>
     ), [searchField, searchWord, handleSearch, loading])
-
-    const handleClearSearch = useCallback(() => {
-        setSearchField("")
-        setSearchWord("")
-        setAppliedSearch({ field: "", word: "" })
-        setCurrentPage(0)
-    }, [])
 
     const mobileFilterToolbar = useMemo(() => (
         <div className="mf-root">
@@ -229,48 +161,20 @@ const SupplierList = () => {
                     </button>
                 ))}
             </div>
-            <div className="mf-input-row">
-                <div className="mf-input-wrap">
-                    <svg className="mf-input-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
-                        <path d="M10.5 10.5L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                    </svg>
-                    <input
-                        type="text"
-                        className="mf-input"
-                        value={searchWord}
-                        onChange={e => setSearchWord(e.target.value)}
-                        placeholder={searchField ? `Buscar por ${SUPPLIER_FILTER_OPTIONS.find(o => o.value === searchField)?.label ?? '...'}` : "Selecione um campo acima"}
-                        onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
-                        disabled={!searchField}
-                    />
-                    {searchWord && (
-                        <button type="button" className="mf-input-clear" onClick={() => setSearchWord("")} aria-label="Limpar texto">
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/></svg>
-                        </button>
-                    )}
-                </div>
-                <button
-                    type="button"
-                    className="mf-search-btn"
-                    onClick={handleSearch}
-                    disabled={loading || !searchField}
-                >
-                    Buscar
-                </button>
-            </div>
-            {appliedSearch.word && (
-                <div className="mf-active-row">
-                    <span className="mf-active-pill">
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M4 6h4M6 4v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                        {SUPPLIER_FILTER_OPTIONS.find(o => o.value === appliedSearch.field)?.label}: <strong>{appliedSearch.word}</strong>
-                    </span>
-                    <button type="button" className="mf-clear-btn" onClick={handleClearSearch}>
-                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 1l9 9M10 1L1 10" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/></svg>
-                        Limpar
-                    </button>
-                </div>
-            )}
+            <MobileSearchInput
+                value={searchWord}
+                onChange={e => setSearchWord(e.target.value)}
+                onSearch={handleSearch}
+                onClear={() => setSearchWord("")}
+                placeholder={searchField ? `Buscar por ${SUPPLIER_FILTER_OPTIONS.find(o => o.value === searchField)?.label ?? '...'}` : "Selecione um campo acima"}
+                inputDisabled={!searchField}
+                searchDisabled={loading || !searchField}
+            />
+            <ActiveFilterPill
+                label={SUPPLIER_FILTER_OPTIONS.find(o => o.value === appliedSearch.field)?.label}
+                value={appliedSearch.word}
+                onClear={handleClearSearch}
+            />
         </div>
     ), [searchField, searchWord, handleSearch, handleClearSearch, loading, appliedSearch])
 
@@ -280,20 +184,14 @@ const SupplierList = () => {
         employerCnpj: supplier.employerCnpj ? formatCnpj(supplier.employerCnpj) : "-"
     }))
 
-    const renderSupplierCard = (supplier) => {
-        const initials = supplier.supplierName
-            ? supplier.supplierName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
-            : '?'
-
-        return {
-            avatar: initials,
-            title: supplier.supplierName,
-            subtitle: supplier.employerName || undefined,
-        }
-    }
+    const renderSupplierCard = (supplier) => ({
+        avatar: initials(supplier.supplierName),
+        title: supplier.supplierName,
+        subtitle: supplier.employerName || undefined,
+    })
 
     return (
-        <div className="page-wrapper">
+        <PageContainer variant="list">
             {error && <Alert message={error}/>}
             {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
@@ -305,7 +203,7 @@ const SupplierList = () => {
                         idKey="supplierId"
                         loading={loading}
                         emptyMessage="Nenhum fornecedor encontrado."
-                        onReload={() => fetchSuppliers(currentPage)}
+                        onReload={() => refetch(currentPage)}
                         onAdd={openCreateForm}
                         onCardClick={openSheet}
                         renderCard={renderSupplierCard}
@@ -314,8 +212,8 @@ const SupplierList = () => {
                         sortColumns={columns}
                         sortField={sortField}
                         sortDirection={sortDirection}
-                        onSort={handleColumnSort}
-                        onClearSort={handleClearSort}
+                        onSort={handleSort}
+                        onClearSort={clearSort}
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={setCurrentPage}
@@ -325,7 +223,7 @@ const SupplierList = () => {
                         onClose={closeSheet}
                         supplier={sheetSupplier}
                         onEdit={openEditModal}
-                        onDelete={requestRemove}
+                        onDelete={confirm.requestRemove}
                     />
                     <SupplierFormBottomSheet
                         isOpen={formSheetOpen}
@@ -345,10 +243,10 @@ const SupplierList = () => {
                         idKey="supplierId"
                         loading={loading}
                         onEdit={openEditModal}
-                        onDelete={requestRemove}
+                        onDelete={confirm.requestRemove}
                         onAdd={() => setIsCreateModalOpen(true)}
-                        onReload={() => fetchSuppliers(currentPage)}
-                        onSort={handleColumnSort}
+                        onReload={() => refetch(currentPage)}
+                        onSort={handleSort}
                         sortField={sortField}
                         sortDirection={sortDirection}
                         emptyMessage={"Nenhum fornecedor encontrado."}
@@ -374,18 +272,15 @@ const SupplierList = () => {
                 />
             </Modal>
 
-            <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>
-                <div>
-                    <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
-                        Tem certeza de que você deseja remover o fornecedor <strong>{supplierToRemove?.supplierName}</strong> da empresa <strong>{supplierToRemove?.employerName}</strong>?
-                    </p>
-                    <div className="flex justify-center gap-3 mt-4">
-                        <Button onClick={closeModals}>Cancelar</Button>
-                        <Button onClick={confirmRemove} disabled={loading}>Confirmar</Button>
-                    </div>
-                </div>
-            </Modal>
-        </div>
+            <ConfirmDialog
+                isOpen={confirm.isOpen}
+                onClose={confirm.cancel}
+                onConfirm={confirm.confirm}
+                loading={loading}
+            >
+                Tem certeza de que você deseja remover o fornecedor <strong>{confirm.item?.supplierName}</strong> da empresa <strong>{confirm.item?.employerName}</strong>?
+            </ConfirmDialog>
+        </PageContainer>
     )
 }
 

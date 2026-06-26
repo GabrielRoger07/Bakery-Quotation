@@ -8,6 +8,10 @@ import Modal from '@/components/Modal'
 import Alert from '@/components/Alert'
 import Button from '@/components/Button'
 import Input from '@/components/Input'
+import ConfirmDialog from '@/components/ConfirmDialog'
+import PageContainer from '@/components/PageContainer'
+import FormActions from '@/components/FormActions'
+import { initials } from '@/utils/initials'
 import { ENV } from '@/config/env'
 import { Pencil, Trash2, X } from 'lucide-react'
 
@@ -53,14 +57,12 @@ const DepartmentForm = ({ department, onSave, onClose }) => {
                 required
             />
             <Alert message={error} />
-            {success && (
-                <p className="text-[var(--color-success)] font-medium mb-[0.875rem] text-[0.875rem]">{success}</p>
-            )}
-            <div className="flex justify-center gap-3 mt-4">
+            <Alert variant="success" message={success} />
+            <FormActions>
                 <Button type="submit" disabled={loading || !name.trim()}>
                     {isEdit ? 'Salvar' : 'Criar'}
                 </Button>
-            </div>
+            </FormActions>
         </form>
     )
 }
@@ -261,12 +263,12 @@ const DepartmentList = () => {
     }
 
     const renderDepartmentCard = (dept) => ({
-        avatar: dept.departmentName?.[0]?.toUpperCase() ?? '?',
+        avatar: initials(dept.departmentName, 1),
         title: dept.departmentName,
     })
 
     return (
-        <div className="page-wrapper">
+        <PageContainer variant="list">
             {error && <Alert message={error} />}
 
             {isMobile ? (
@@ -322,21 +324,18 @@ const DepartmentList = () => {
                 <DepartmentForm department={departmentToEdit} onSave={handleSaveEdit} onClose={closeModals} />
             </Modal>
 
-            <Modal isOpen={confirmOpen} onClose={closeModals} title="Confirmar Remoção">
-                <div>
-                    <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
-                        Tem certeza de que deseja remover o departamento <strong>{departmentToRemove?.departmentName}</strong>?
-                        {departments.length === 1 && (
-                            <span> O departamento voltará ao estado padrão.</span>
-                        )}
-                    </p>
-                    <div className="flex justify-center gap-3 mt-4">
-                        <Button onClick={closeModals}>Cancelar</Button>
-                        <Button onClick={confirmRemove} disabled={loading}>Confirmar</Button>
-                    </div>
-                </div>
-            </Modal>
-        </div>
+            <ConfirmDialog
+                isOpen={confirmOpen}
+                onClose={closeModals}
+                onConfirm={confirmRemove}
+                loading={loading}
+            >
+                Tem certeza de que deseja remover o departamento <strong>{departmentToRemove?.departmentName}</strong>?
+                {departments.length === 1 && (
+                    <span> O departamento voltará ao estado padrão.</span>
+                )}
+            </ConfirmDialog>
+        </PageContainer>
     )
 }
 

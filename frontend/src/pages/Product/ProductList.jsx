@@ -6,21 +6,37 @@ import ProductBottomSheet from '@/components/ProductBottomSheet'
 import ProductFormBottomSheet from '@/components/ProductFormBottomSheet'
 import Modal from '@/components/Modal'
 import Alert from '@/components/Alert'
+import ConfirmDialog from '@/components/ConfirmDialog'
+import PageContainer from '@/components/PageContainer'
+import Select from '@/components/Select'
+import MobileSearchInput from '@/components/MobileSearchInput'
+import ActiveFilterPill from '@/components/ActiveFilterPill'
 import ProductCreate from '@/pages/Product/ProductCreate'
 import ProductEdit from '@/pages/Product/ProductEdit'
 import Button from '@/components/Button'
 import Pagination from '@/components/Pagination'
 import { ENV } from '@/config/env'
 import useIsMobile from '@/hooks/useIsMobile'
+import useResourceList from '@/hooks/useResourceList'
+import { initials } from '@/utils/initials'
 
 const ProductList = () => {
 
-    const { request, loading } = useFetch(ENV.API_BASE_URL)
+    const { request } = useFetch(ENV.API_BASE_URL)
     const isMobile = useIsMobile()
 
-    const [products, setProducts] = useState([])
-    const [error, setError] = useState("")
-    const [status, setStatus] = useState(null)
+    const {
+        items: products, setItems: setProducts, loading, error, status,
+        currentPage, setCurrentPage, totalPages,
+        sortField, sortDirection, handleSort, clearSort,
+        appliedSearch, applySearch, clearSearch, refetch, confirm,
+    } = useResourceList({
+        endpoint: '/products/company',
+        idKey: 'productId',
+        defaultSortField: 'productName',
+        deletePath: (p) => `/products/${p.productId}`,
+        deleteErrorMessage: 'Erro ao remover produto. Por favor tente novamente.',
+    })
 
     const [userDepts, setUserDepts] = useState([])
     const [deptFilter, setDeptFilter] = useState(null)
@@ -35,17 +51,7 @@ const ProductList = () => {
     const [sheetOpen, setSheetOpen] = useState(false)
     const [sheetProduct, setSheetProduct] = useState(null)
 
-    const [confirmOpen, setConfirmOpen] = useState(false)
-    const [productToRemove, setProductToRemove] = useState(null)
-
-    const [currentPage, setCurrentPage] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
-
-    const [sortField, setSortField] = useState(null)
-    const [sortDirection, setSortDirection] = useState("asc")
-
     const [searchWord, setSearchWord] = useState("")
-    const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
 
     const columns = [
         { key: "productBarCodeNumber", label: "Código do Produto" },
@@ -93,78 +99,24 @@ const ProductList = () => {
         setProductToEdit(null)
         setIsEditModalOpen(false)
         setIsCreateModalOpen(false)
-        setConfirmOpen(false)
-        setProductToRemove(null)
     }
 
     const handleSaveCreate = () => {
-        fetchProducts()
+        refetch()
     }
 
     const handleSaveEdit = (updatedProduct) => {
         setProducts(prev => prev.map(p => p.productId === updatedProduct.productId ? updatedProduct : p))
     }
 
-    const requestRemove = (productId) => {
-        const product = products.find(p => p.productId === productId)
-        setProductToRemove(product)
-        setConfirmOpen(true)
-    }
-
-    const confirmRemove = async () => {
-
-        if(!productToRemove) return
-
-        const res = await request("DELETE", `/products/${productToRemove.productId}`)
-        if(res.ok){
-            fetchProducts(currentPage)
-            setError("")
-        }else{
-            setError("Erro ao remover produto. Por favor tente novamente.")
-        }
-        closeModals()
-    }
-
-    const fetchProducts = useCallback(async (page = 0) => {
-
-        let query = `?page=${page}`
-        sortField ? query += `&sort=${sortField},${sortDirection}` : query += `&sort=productName,${sortDirection}`
-        if(appliedSearch.field) query += `&field=${appliedSearch.field}`
-        if(appliedSearch.word) query += `&value=${appliedSearch.word}`
-
-        const res = await request("GET", `/products/company${query}`)
-
-        if(res.ok){
-            setProducts(res.data.content);
-            setTotalPages(res.data.totalPages)
-            setError("")
-        }else{
-            setError(res.data?.message)
-        }
-        setStatus(res.status)
-    }, [request, sortField, sortDirection, appliedSearch])
-
     const handleSearch = useCallback(() => {
-        setCurrentPage(0)
-        setAppliedSearch({ field: "productName", word: searchWord })
-    }, [searchWord])
+        applySearch("productName", searchWord)
+    }, [applySearch, searchWord])
 
-    const handleColumnSort = (columnKey) => {
-        if(sortField === columnKey){
-            setSortDirection(prev => (prev === "asc" ? "desc" : "asc"))
-        } else {
-            setSortField(columnKey)
-            setSortDirection("asc")
-        }
-
-        setCurrentPage(0)
-    }
-
-    const handleClearSort = () => {
-        setSortField(null)
-        setSortDirection("asc")
-        setCurrentPage(0)
-    }
+    const handleClearSearch = useCallback(() => {
+        setSearchWord("")
+        clearSearch()
+    }, [clearSearch])
 
     const fetchDepartments = useCallback(async () => {
         const res = await request('GET', '/departments/company?size=50&sort=departmentName,asc')
@@ -178,34 +130,17 @@ const ProductList = () => {
         fetchDepartments()
     }, [fetchDepartments])
 
-    useEffect(() => {
-        fetchProducts(currentPage);
-    }, [fetchProducts, currentPage])
-
-    const handleClearSearch = useCallback(() => {
-        setSearchWord("")
-        setAppliedSearch({ field: "", word: "" })
-        setCurrentPage(0)
-    }, [])
-
     const filterToolbar = useMemo(() => (
         <>
             {userDepts.length >= 2 && (
-                <div className="relative">
-                    <select
-                        value={deptFilter === null ? '' : String(deptFilter)}
-                        onChange={e => { setDeptFilter(e.target.value === '' ? null : Number(e.target.value)); setCurrentPage(0) }}
-                        className="h-[2.25rem] pl-[0.75rem] pr-8 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
-                    >
-                        <option value="">Todos os setores</option>
-                        {userDepts.map(d => (
-                            <option key={d.departmentId} value={d.departmentId}>{d.departmentName}</option>
-                        ))}
-                    </select>
-                    <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </span>
-                </div>
+                <Select
+                    bare
+                    value={deptFilter === null ? '' : String(deptFilter)}
+                    onChange={e => { setDeptFilter(e.target.value === '' ? null : Number(e.target.value)); setCurrentPage(0) }}
+                    placeholder="Todos os setores"
+                    selectClassName="h-[2.25rem]"
+                    options={userDepts.map(d => ({ value: d.departmentId, label: d.departmentName }))}
+                />
             )}
             <input
                 type="text"
@@ -217,88 +152,43 @@ const ProductList = () => {
             />
             <Button onClick={handleSearch} disabled={loading}>Buscar</Button>
         </>
-    ), [userDepts, deptFilter, searchWord, handleSearch, loading])
+    ), [userDepts, deptFilter, searchWord, handleSearch, loading, setCurrentPage])
 
     const mobileFilterToolbar = useMemo(() => (
         <div className="mf-root">
             {userDepts.length >= 2 && (
                 <div className="mf-input-row mb-2">
-                    <div className="relative flex-1">
-                        <select
-                            value={deptFilter === null ? '' : String(deptFilter)}
-                            onChange={e => { setDeptFilter(e.target.value === '' ? null : Number(e.target.value)); setCurrentPage(0) }}
-                            className="w-full h-[2.375rem] pl-[0.75rem] pr-8 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
-                        >
-                            <option value="">Todos os setores</option>
-                            {userDepts.map(d => (
-                                <option key={d.departmentId} value={d.departmentId}>{d.departmentName}</option>
-                            ))}
-                        </select>
-                        <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        </span>
-                    </div>
-                </div>
-            )}
-            <div className="mf-input-row">
-                <div className="mf-input-wrap">
-                    <svg className="mf-input-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
-                        <path d="M10.5 10.5L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                    </svg>
-                    <input
-                        type="text"
-                        className="mf-input"
-                        value={searchWord}
-                        onChange={e => setSearchWord(e.target.value)}
-                        placeholder="Buscar por nome do produto"
-                        onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
+                    <Select
+                        bare
+                        className="flex-1"
+                        value={deptFilter === null ? '' : String(deptFilter)}
+                        onChange={e => { setDeptFilter(e.target.value === '' ? null : Number(e.target.value)); setCurrentPage(0) }}
+                        placeholder="Todos os setores"
+                        options={userDepts.map(d => ({ value: d.departmentId, label: d.departmentName }))}
                     />
-                    {searchWord && (
-                        <button type="button" className="mf-input-clear" onClick={() => setSearchWord("")} aria-label="Limpar texto">
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/></svg>
-                        </button>
-                    )}
-                </div>
-                <button
-                    type="button"
-                    className="mf-search-btn"
-                    onClick={handleSearch}
-                    disabled={loading}
-                >
-                    Buscar
-                </button>
-            </div>
-            {appliedSearch.word && (
-                <div className="mf-active-row">
-                    <span className="mf-active-pill">
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M4 6h4M6 4v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                        Nome: <strong>{appliedSearch.word}</strong>
-                    </span>
-                    <button type="button" className="mf-clear-btn" onClick={handleClearSearch}>
-                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 1l9 9M10 1L1 10" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/></svg>
-                        Limpar
-                    </button>
                 </div>
             )}
+            <MobileSearchInput
+                value={searchWord}
+                onChange={e => setSearchWord(e.target.value)}
+                onSearch={handleSearch}
+                onClear={() => setSearchWord("")}
+                placeholder="Buscar por nome do produto"
+                searchDisabled={loading}
+            />
+            <ActiveFilterPill label="Nome" value={appliedSearch.word} onClear={handleClearSearch} />
         </div>
-    ), [userDepts, deptFilter, searchWord, handleSearch, handleClearSearch, loading, appliedSearch])
+    ), [userDepts, deptFilter, searchWord, handleSearch, handleClearSearch, loading, appliedSearch, setCurrentPage])
 
-    const renderProductCard = (product) => {
-        const initials = product.productName
-            ? product.productName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
-            : '?'
-
-        return {
-            avatar: initials,
-            title: product.productName,
-            subtitle: product.productDescription || undefined,
-            ...(userDepts.length > 0 && product.departmentName ? { tags: [{ label: product.departmentName }] } : {}),
-        }
-    }
+    const renderProductCard = (product) => ({
+        avatar: initials(product.productName),
+        title: product.productName,
+        subtitle: product.productDescription || undefined,
+        ...(userDepts.length > 0 && product.departmentName ? { tags: [{ label: product.departmentName }] } : {}),
+    })
 
     return (
-        <div className="page-wrapper">
+        <PageContainer variant="list">
             {error && <Alert message={error}/>}
             {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
@@ -310,7 +200,7 @@ const ProductList = () => {
                         idKey="productId"
                         loading={loading}
                         emptyMessage="Nenhum produto encontrado."
-                        onReload={() => fetchProducts(currentPage)}
+                        onReload={() => refetch(currentPage)}
                         onAdd={openCreateForm}
                         onCardClick={openSheet}
                         renderCard={renderProductCard}
@@ -319,8 +209,8 @@ const ProductList = () => {
                         sortColumns={columns}
                         sortField={sortField}
                         sortDirection={sortDirection}
-                        onSort={handleColumnSort}
-                        onClearSort={handleClearSort}
+                        onSort={handleSort}
+                        onClearSort={clearSort}
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={setCurrentPage}
@@ -330,7 +220,7 @@ const ProductList = () => {
                         onClose={closeSheet}
                         product={sheetProduct}
                         onEdit={openEditModal}
-                        onDelete={requestRemove}
+                        onDelete={confirm.requestRemove}
                     />
                     <ProductFormBottomSheet
                         isOpen={formSheetOpen}
@@ -351,10 +241,10 @@ const ProductList = () => {
                         idKey="productId"
                         loading={loading}
                         onEdit={openEditModal}
-                        onDelete={requestRemove}
+                        onDelete={confirm.requestRemove}
                         onAdd={() => setIsCreateModalOpen(true)}
-                        onReload={() => fetchProducts(currentPage)}
-                        onSort={handleColumnSort}
+                        onReload={() => refetch(currentPage)}
+                        onSort={handleSort}
                         sortField={sortField}
                         sortDirection={sortDirection}
                         emptyMessage={"Nenhum produto encontrado."}
@@ -382,18 +272,15 @@ const ProductList = () => {
                 />
             </Modal>
 
-            <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>
-                <div>
-                    <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
-                        Tem certeza de que você deseja remover o produto <strong>{productToRemove?.productName}</strong>?
-                    </p>
-                    <div className="flex justify-center gap-3 mt-4">
-                        <Button onClick={closeModals}>Cancelar</Button>
-                        <Button onClick={confirmRemove} disabled={loading}>Confirmar</Button>
-                    </div>
-                </div>
-            </Modal>
-        </div>
+            <ConfirmDialog
+                isOpen={confirm.isOpen}
+                onClose={confirm.cancel}
+                onConfirm={confirm.confirm}
+                loading={loading}
+            >
+                Tem certeza de que você deseja remover o produto <strong>{confirm.item?.productName}</strong>?
+            </ConfirmDialog>
+        </PageContainer>
     )
 }
 

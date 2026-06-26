@@ -8,7 +8,8 @@ import QuotationBottomSheet from '@/components/QuotationBottomSheet'
 import QuotationDetails from '@/pages/Quotation/QuotationDetails'
 import StatusTabFilter from '@/components/StatusTabFilter'
 import Alert from '@/components/Alert'
-import Button from '@/components/Button'
+import ConfirmDialog from '@/components/ConfirmDialog'
+import PageContainer from '@/components/PageContainer'
 import Pagination from '@/components/Pagination'
 import { ENV } from '@/config/env'
 import { formatDateTime } from '@/utils/formatDateTime'
@@ -179,13 +180,10 @@ const QuotationList = () => {
     }
 
     return (
-        <div className="page-wrapper">
+        <PageContainer variant="list">
 
-            <div className='flex justify-center gap-3 mt-4'>
-                {error && <Alert message={error} />}
-                {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
-            </div>
-
+            {error && <Alert message={error} />}
+            {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
             {isMobile ? (
                 <>
@@ -254,22 +252,21 @@ const QuotationList = () => {
                 <QuotationDetails quotation={quotationToView} />
             </Modal>
 
-            <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>
-                {cannotDelete ? (
-                    <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-4">Você não pode remover uma cotação que já começou.</p>
-                ) : (
-                    <div>
-                        <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5">
-                            Tem certeza de que você deseja remover a cotação <strong>{quotationToRemove?.quotationId}</strong>?
-                        </p>
-                        <div className="flex justify-center gap-3 mt-4">
-                            <Button onClick={closeModals}>Cancelar</Button>
-                            <Button onClick={confirmRemove} disabled={loading}>Confirmar</Button>
-                        </div>
-                    </div>
-                )}
-            </Modal>
-        </div>
+            {cannotDelete ? (
+                <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>
+                    <p className="mb-4 text-body text-[var(--color-text-secondary)]">Você não pode remover uma cotação que já começou.</p>
+                </Modal>
+            ) : (
+                <ConfirmDialog
+                    isOpen={confirmOpen}
+                    onClose={closeModals}
+                    onConfirm={confirmRemove}
+                    loading={loading}
+                >
+                    Tem certeza de que você deseja remover a cotação <strong>{quotationToRemove?.quotationId}</strong>?
+                </ConfirmDialog>
+            )}
+        </PageContainer>
     )
 }
 

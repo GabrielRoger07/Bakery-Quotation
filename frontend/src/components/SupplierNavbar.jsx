@@ -5,6 +5,9 @@ import Button from '@/components/Button'
 import { decodeJwt } from '@/utils/decodeJwt'
 import LogoutConfirmModal from '@/components/LogoutConfirmModal'
 
+/**
+ * Barra de navegação do contexto fornecedor (acesso externo às cotações).
+ */
 const SupplierNavbar = () => {
     const navigate = useNavigate()
     const [confirmOpen, setConfirmOpen] = useState(false)
@@ -27,7 +30,7 @@ const SupplierNavbar = () => {
 
     return (
         <>
-            <nav className="flex justify-between items-center gap-4 px-6 h-[4.5rem] sm:h-[3.375rem] bg-[var(--color-brand)] border-b border-[var(--color-on-dark-border)] sticky top-0 z-[1000] [box-shadow:var(--shadow-md-strong)] max-[640px]:px-4">
+            <nav className="flex justify-between items-center gap-4 px-6 h-[4.5rem] sm:h-[3.375rem] bg-[var(--color-brand)] border-b border-[var(--color-on-dark-border)] sticky top-0 z-[1000] [box-shadow:var(--shadow-md-strong)] max-sm:px-4">
                 <div className="flex items-center">
                     {supplierName && (
                         <div className="flex items-center gap-[0.6rem] px-[0.75rem] py-[0.3rem] pl-[0.3rem] rounded-full bg-[var(--color-on-dark-bg)] border border-[var(--color-on-dark-border-soft)] [animation:supplierAppear_0.4s_ease_both]">

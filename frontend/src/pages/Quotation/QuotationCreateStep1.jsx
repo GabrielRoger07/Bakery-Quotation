@@ -96,7 +96,7 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
                     </div>
                 </div>
                 <div className="px-5 py-4">
-                    <div className="grid grid-cols-2 gap-4 max-[600px]:grid-cols-1">
+                    <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
                         {/* Início */}
                         <div className="flex flex-col gap-[0.375rem]">
                             <span className="text-[0.75rem] font-semibold text-[var(--color-text-secondary)] flex items-center gap-1.5">
@@ -182,7 +182,7 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
                     </div>
                 </div>
                 <div className="px-5 py-4">
-                    <div className="grid grid-cols-2 gap-3 max-[600px]:grid-cols-1">
+                    <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
                         {[
                             {
                                 value: true,
@@ -230,14 +230,10 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
                 </div>
             </div>
 
-            {localError &&
-                <div className='flex justify-center gap-3 mt-4'>
-                    <Alert message={localError} />
-                </div>
-            }
+            <Alert message={localError} />
 
-            <div className="flex justify-end mt-5 max-[768px]:justify-stretch">
-                <Button onClick={handleNextClick} disabled={loading} className="max-[768px]:w-full">
+            <div className="flex justify-end mt-5 max-md:justify-stretch">
+                <Button onClick={handleNextClick} disabled={loading} className="max-md:w-full">
                     {loading ? "Carregando..." : "Próximo"}
                 </Button>
             </div>

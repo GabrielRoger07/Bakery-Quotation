@@ -640,13 +640,13 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
             </h2>
 
             {quotation && (
-                <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] mt-[0.3rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-[0.4rem]">
+                <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] mt-[0.3rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.4rem]">
                     <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">Início:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
                     <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">Fim:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
                 </div>
             )}
 
-            <div className="flex items-center justify-between gap-4 w-full bg-[var(--color-surface-0)] px-4 py-[0.88rem] border border-[var(--color-border)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] mb-[1.1rem] max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-3">
+            <div className="flex items-center justify-between gap-4 w-full bg-[var(--color-surface-0)] px-4 py-[0.88rem] border border-[var(--color-border)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] mb-[1.1rem] max-md:flex-col max-md:items-start max-md:gap-3">
                 <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">Total de Produtos: <strong>{products.length}</strong></p>
                 {hasSubmittedBids && <span className="text-[0.875rem] font-semibold text-[var(--color-success-strong)]">Sua proposta já foi enviada para esta cotação.</span>}
                 {timeRemaining && <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">Tempo Restante: {timeRemaining}</p>}
@@ -724,8 +724,8 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                         {error && <p className="mt-2 mb-[0.45rem] pt-2 text-center text-[0.875rem] text-[var(--color-danger-strong)]">{error}</p>}
                         {success && <p className="mt-2 mb-[0.45rem] pt-2 text-center text-[0.875rem] text-[var(--color-success-strong)]">{success}</p>}
 
-                        <div className="mt-[0.8rem] flex justify-end max-[768px]:justify-stretch">
-                            <Button onClick={handleReview} disabled={submitting} className="max-[768px]:w-full">
+                        <div className="mt-[0.8rem] flex justify-end max-md:justify-stretch">
+                            <Button onClick={handleReview} disabled={submitting} className="max-md:w-full">
                                 {submitting ? "Enviando proposta..." : "Revisar e enviar proposta"}
                             </Button>
                         </div>
@@ -799,7 +799,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                         </p>
                     )}
 
-                    <div className="flex justify-end gap-[0.6rem] pt-1 max-[768px]:flex-col-reverse max-[768px]:[&>button]:w-full">
+                    <div className="flex justify-end gap-[0.6rem] pt-1 max-md:flex-col-reverse max-md:[&>button]:w-full">
                         <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
                             Cancelar
                         </Button>

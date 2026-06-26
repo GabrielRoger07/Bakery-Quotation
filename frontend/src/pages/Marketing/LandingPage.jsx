@@ -26,7 +26,7 @@ const LandingPage = () => {
                     <span className="w-[1.9rem] h-[1.9rem] rounded-[0.55rem] grid place-items-center text-white bg-gradient-to-br from-[var(--color-accent-strong)] to-[var(--color-accent)] text-[0.875rem]">BQ</span>
                     <span>Bakery Quotation</span>
                 </div>
-                <nav className="flex items-center gap-4 max-[1024px]:hidden">
+                <nav className="flex items-center gap-4 max-lg:hidden">
                     <a href="#problema" className="no-underline text-[var(--color-text-secondary)] text-[0.875rem] font-medium hover:text-[var(--color-text-strong)]">Problema</a>
                     <a href="#solucao" className="no-underline text-[var(--color-text-secondary)] text-[0.875rem] font-medium hover:text-[var(--color-text-strong)]">Solução</a>
                     <a href="#como-funciona" className="no-underline text-[var(--color-text-secondary)] text-[0.875rem] font-medium hover:text-[var(--color-text-strong)]">Como funciona</a>
@@ -39,11 +39,11 @@ const LandingPage = () => {
             </header>
 
             {/* Hero */}
-            <section className="max-w-[1180px] mx-auto mt-[3.1rem] mb-8 grid grid-cols-[1.1fr_1fr] gap-8 items-center max-[1024px]:grid-cols-1 max-sm:mt-[1.8rem]">
+            <section className="max-w-[1180px] mx-auto mt-[3.1rem] mb-8 grid grid-cols-[1.1fr_1fr] gap-8 items-center max-lg:grid-cols-1 max-sm:mt-[1.8rem]">
                 <div>
                     <p className="m-0 text-[var(--color-accent)] text-[0.875rem] font-bold tracking-[0.06em] uppercase">SaaS B2B para compras corporativas</p>
                     <h1 className="mt-[0.7rem] mb-4 text-[clamp(2rem,4.3vw,3.2rem)] leading-[1.1] text-[var(--color-text-strong)]">Centralize suas cotações e negocie com fornecedores em minutos</h1>
-                    <p className="m-0 text-[var(--color-text-secondary)] text-base max-w-[50ch] max-[1024px]:max-w-none">Substitua planilhas e processos manuais por um fluxo digital com comparação de propostas, histórico completo e mais velocidade para o time de compras.</p>
+                    <p className="m-0 text-[var(--color-text-secondary)] text-base max-w-[50ch] max-lg:max-w-none">Substitua planilhas e processos manuais por um fluxo digital com comparação de propostas, histórico completo e mais velocidade para o time de compras.</p>
                     <div className="mt-[1.3rem] flex items-center flex-wrap gap-[0.65rem]">
                         <Link to="/register" className="btn-landing-solid">Criar conta</Link>
                         <Link to="/login" className="btn-landing-ghost">Entrar</Link>
@@ -63,7 +63,7 @@ const LandingPage = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="border border-[var(--color-border)] bg-white rounded-[var(--radius-xl)] [box-shadow:var(--shadow-md-soft)] p-4 w-[190px] absolute right-0 -bottom-5 max-[1024px]:static max-[1024px]:mt-3 max-sm:hidden">
+                    <div className="border border-[var(--color-border)] bg-white rounded-[var(--radius-xl)] [box-shadow:var(--shadow-md-soft)] p-4 w-[190px] absolute right-0 -bottom-5 max-lg:static max-lg:mt-3 max-sm:hidden">
                         <p className="m-0 text-[var(--color-text-muted)] text-[0.8125rem]">Produtividade</p>
                         <strong className="block mt-[0.35rem] mb-[0.2rem] text-[1.5rem] text-[var(--color-text-strong)]">+38%</strong>
                         <span className="text-[var(--color-text-secondary)] text-[0.8125rem]">de ganho no ciclo de compra</span>
@@ -84,7 +84,7 @@ const LandingPage = () => {
 
             <section className="landing-section">
                 <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-strong)]">Benefícios que impactam direto o resultado da compra</h2>
-                <div className="mt-5 grid grid-cols-[repeat(5,minmax(0,1fr))] gap-[0.8rem] max-[1024px]:grid-cols-2 max-sm:grid-cols-1">
+                <div className="mt-5 grid grid-cols-[repeat(5,minmax(0,1fr))] gap-[0.8rem] max-lg:grid-cols-2 max-sm:grid-cols-1">
                     {benefits.map((b) => (
                         <article key={b.title} className="rounded-[var(--radius-lg)] border border-[var(--color-border-light)] p-[1rem_0.9rem] bg-white">
                             <h3 className="m-0 text-[0.9375rem] text-[var(--color-text-strong)]">{b.title}</h3>

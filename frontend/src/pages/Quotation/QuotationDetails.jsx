@@ -1,30 +1,12 @@
 import { useEffect, useState } from 'react'
 import useFetch from '@/hooks/useFetch'
 import Alert from '@/components/Alert'
+import MetaCard from '@/components/MetaCard'
+import SectionHeader from '@/components/SectionHeader'
+import EmptyState from '@/components/EmptyState'
 import { ENV } from '@/config/env'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { CalendarClock, CalendarCheck, Gavel, Package, Users, Tag } from 'lucide-react'
-
-const MetaCard = ({ icon, label, value, sub }) => (
-    <div className="flex items-start gap-[0.625rem] p-[0.75rem_0.875rem] bg-[var(--color-highlight-lighter)] border border-[var(--color-border-lighter)] rounded-[var(--radius-lg)]">
-        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--color-highlight-soft)] rounded-[var(--radius-md)] text-[var(--color-accent)]">
-            {icon}
-        </div>
-        <div className="flex flex-col gap-[0.1rem] min-w-0">
-            <span className="text-[0.625rem] font-semibold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">{label}</span>
-            <span className="text-[0.875rem] font-bold text-[var(--color-text-strong)] leading-[1.3]">{value}</span>
-            {sub && <span className="text-[0.875rem] text-[var(--color-text-primary)] font-semibold">{sub}</span>}
-        </div>
-    </div>
-)
-
-const SectionHeader = ({ icon, label, count }) => (
-    <div className="flex items-center gap-[0.4rem] mb-[0.625rem] text-[var(--color-text-muted)]">
-        {icon}
-        <h4 className="m-0 text-[var(--color-text-muted)] text-[0.75rem] font-bold uppercase tracking-[0.07em]">{label}</h4>
-        <span className="text-[0.625rem] font-bold text-[var(--color-accent)] bg-[var(--color-highlight-soft)] px-2 py-[0.125rem] rounded-full tracking-[0.02em]">{count}</span>
-    </div>
-)
 
 const QuotationDetails = ({ quotation }) => {
     const { request } = useFetch(ENV.API_BASE_URL)
@@ -69,7 +51,7 @@ const QuotationDetails = ({ quotation }) => {
         <div className="p-[0.125rem]">
             {error && <Alert message={error}/>}
 
-            <div className="grid grid-cols-3 gap-[0.625rem] mb-6 max-[560px]:grid-cols-1 max-[560px]:gap-2">
+            <div className="grid grid-cols-3 gap-[0.625rem] mb-6 max-sm:grid-cols-1 max-sm:gap-2">
                 <MetaCard icon={<CalendarClock size={18} />} label={"Início"} value={start ? start.date : "-"} sub={start?.time} />
                 <MetaCard icon={<CalendarCheck size={18} />} label={"Fim"} value={end ? end.date : "-"} sub={end?.time} />
                 <MetaCard icon={<Gavel size={18} />} label={"Modo da Cotação"} value={quotationMode} />
@@ -79,9 +61,7 @@ const QuotationDetails = ({ quotation }) => {
             <div className="mt-5">
                 <SectionHeader icon={<Package size={16} />} label={"Produtos"} count={products.length} />
                 {products.length === 0 ? (
-                    <p className="m-0 p-4 text-center text-[var(--color-text-muted)] text-[0.875rem] bg-[var(--color-surface-1)] border border-dashed border-[var(--color-border)] rounded-[var(--radius-lg)]">
-                        Nenhum produto atrelado a essa cotação.
-                    </p>
+                    <EmptyState>Nenhum produto atrelado a essa cotação.</EmptyState>
                 ) : (
                     <ul className="list-none m-0 pl-0 border border-[var(--color-border-light)] rounded-[var(--radius-lg)] overflow-hidden">
                         {products.map(p => (
@@ -108,9 +88,7 @@ const QuotationDetails = ({ quotation }) => {
             <div className="mt-5">
                 <SectionHeader icon={<Users size={16} />} label={"Fornecedores"} count={suppliers.length} />
                 {suppliers.length === 0 ? (
-                    <p className="m-0 p-4 text-center text-[var(--color-text-muted)] text-[0.875rem] bg-[var(--color-surface-1)] border border-dashed border-[var(--color-border)] rounded-[var(--radius-lg)]">
-                        Nenhum fornecedor atrelado a essa cotação.
-                    </p>
+                    <EmptyState>Nenhum fornecedor atrelado a essa cotação.</EmptyState>
                 ) : (
                     <ul className="list-none m-0 pl-0 border border-[var(--color-border-light)] rounded-[var(--radius-lg)] overflow-hidden">
                         {suppliers.map(s => (

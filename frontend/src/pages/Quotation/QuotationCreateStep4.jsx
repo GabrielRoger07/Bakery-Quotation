@@ -1,20 +1,10 @@
 import { useMemo } from 'react'
 import Button from '@/components/Button'
+import MetaCard from '@/components/MetaCard'
+import SectionHeader from '@/components/SectionHeader'
+import EmptyState from '@/components/EmptyState'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { CalendarClock, CalendarCheck, Gavel, Package, Users, Tag } from 'lucide-react'
-
-const MetaCard = ({ icon, label, value, sub }) => (
-    <div className="flex items-start gap-[0.625rem] p-[0.75rem_0.875rem] bg-[var(--color-highlight-lighter)] border border-[var(--color-border-lighter)] rounded-[var(--radius-lg)]">
-        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--color-highlight-soft)] rounded-[var(--radius-md)] text-[var(--color-accent)]">
-            {icon}
-        </div>
-        <div className="flex flex-col gap-[0.1rem] min-w-0">
-            <span className="text-[0.625rem] font-semibold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">{label}</span>
-            <span className="text-[0.875rem] font-bold text-[var(--color-text-strong)] leading-[1.3]">{value}</span>
-            {sub && <span className="text-[0.875rem] text-[var(--color-text-primary)] font-semibold">{sub}</span>}
-        </div>
-    </div>
-)
 
 const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => {
 
@@ -28,13 +18,13 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
     return (
         <div>
             <div className="mb-5">
-                <h2 className="m-0 text-[1.0625rem] font-bold text-[var(--color-text-strong)] tracking-[-0.015em]">Revisão</h2>
-                <p className="mt-1 mb-0 text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.5]">Revise os dados antes de salvar a cotação.</p>
+                <h2 className="m-0 text-heading font-bold text-[var(--color-text-strong)] tracking-[-0.015em]">Revisão</h2>
+                <p className="mt-1 mb-0 text-caption text-[var(--color-text-muted)] leading-[1.5]">Revise os dados antes de salvar a cotação.</p>
             </div>
 
             <div className="p-[0.125rem]">
                 {/* Meta grid */}
-                <div className="grid grid-cols-3 gap-[0.625rem] mb-6 max-[560px]:grid-cols-1 max-[560px]:gap-2">
+                <div className="grid grid-cols-3 gap-[0.625rem] mb-6 max-sm:grid-cols-1 max-sm:gap-2">
                     <MetaCard icon={<CalendarClock size={18} />} label={"Início"} value={start ? start.date : "-"} sub={start?.time} />
                     <MetaCard icon={<CalendarCheck size={18} />} label={"Fim"} value={end ? end.date : "-"} sub={end?.time} />
                     <MetaCard icon={<Gavel size={18} />} label={"Modo da Cotação"} value={modeLabel} />
@@ -42,17 +32,9 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
 
                 {/* Products section */}
                 <div className="mt-5">
-                    <div className="flex items-center gap-[0.4rem] mb-[0.625rem] text-[var(--color-text-muted)]">
-                        <Package size={16} />
-                        <h4 className="m-0 text-[var(--color-text-muted)] text-[0.75rem] font-bold uppercase tracking-[0.07em]">Produtos</h4>
-                        <span className="text-[0.625rem] font-bold text-[var(--color-accent)] bg-[var(--color-highlight-soft)] px-2 py-[0.125rem] rounded-full tracking-[0.02em]">
-                            {quotationData.products.length}
-                        </span>
-                    </div>
+                    <SectionHeader icon={<Package size={16} />} label="Produtos" count={quotationData.products.length} />
                     {quotationData.products.length === 0 ? (
-                        <p className="m-0 p-4 text-center text-[var(--color-text-muted)] text-[0.875rem] bg-[var(--color-surface-1)] border border-dashed border-[var(--color-border)] rounded-[var(--radius-lg)]">
-                            Nenhum produto adicionado
-                        </p>
+                        <EmptyState>Nenhum produto adicionado</EmptyState>
                     ) : (
                         <ul className="list-none m-0 pl-0 border border-[var(--color-border-light)] rounded-[var(--radius-lg)] overflow-hidden">
                             {quotationData.products.map(p => (
@@ -77,17 +59,9 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
 
                 {/* Suppliers section */}
                 <div className="mt-5">
-                    <div className="flex items-center gap-[0.4rem] mb-[0.625rem] text-[var(--color-text-muted)]">
-                        <Users size={16} />
-                        <h4 className="m-0 text-[var(--color-text-muted)] text-[0.75rem] font-bold uppercase tracking-[0.07em]">Fornecedores</h4>
-                        <span className="text-[0.625rem] font-bold text-[var(--color-accent)] bg-[var(--color-highlight-soft)] px-2 py-[0.125rem] rounded-full tracking-[0.02em]">
-                            {quotationData.suppliers.length}
-                        </span>
-                    </div>
+                    <SectionHeader icon={<Users size={16} />} label="Fornecedores" count={quotationData.suppliers.length} />
                     {quotationData.suppliers.length === 0 ? (
-                        <p className="m-0 p-4 text-center text-[var(--color-text-muted)] text-[0.875rem] bg-[var(--color-surface-1)] border border-dashed border-[var(--color-border)] rounded-[var(--radius-lg)]">
-                            Nenhum fornecedor adicionado
-                        </p>
+                        <EmptyState>Nenhum fornecedor adicionado</EmptyState>
                     ) : (
                         <ul className="list-none m-0 pl-0 border border-[var(--color-border-light)] rounded-[var(--radius-lg)] overflow-hidden">
                             {quotationData.suppliers.map(s => (
@@ -107,8 +81,8 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
             </div>
 
             <div className="flex justify-center gap-3 mt-5">
-                <Button onClick={onBack} disabled={loading} className="max-[768px]:w-full">Voltar</Button>
-                <Button onClick={onConfirm} disabled={loading} className="max-[768px]:w-full">
+                <Button onClick={onBack} disabled={loading} className="max-md:w-full">Voltar</Button>
+                <Button onClick={onConfirm} disabled={loading} className="max-md:w-full">
                     {loading ? "Salvando..." : "Salvar"}
                 </Button>
             </div>

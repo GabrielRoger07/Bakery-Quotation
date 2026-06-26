@@ -87,8 +87,8 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
     const renderAvailablePanel = () => (
         <>
             <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
-                <div className="flex gap-3 items-end max-[768px]:flex-col max-[768px]:items-stretch">
-                    <div className="flex-[0_0_220px] relative max-[768px]:flex-none max-[768px]:w-full">
+                <div className="flex gap-3 items-end max-md:flex-col max-md:items-stretch">
+                    <div className="flex-[0_0_220px] relative max-md:flex-none max-md:w-full">
                         <select
                             id="searchField"
                             name="searchField"
@@ -107,7 +107,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                         </span>
                     </div>
-                    <div className="flex-1 min-w-[200px] max-[768px]:min-w-0 [&_.input-container]:mb-0">
+                    <div className="flex-1 min-w-[200px] max-md:min-w-0 [&_.input-container]:mb-0">
                         <Input
                             type="text"
                             value={searchWord}
@@ -246,15 +246,11 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                 </>
             )}
 
-            {error &&
-                <div className='flex justify-center gap-3 mt-4'>
-                    <Alert message={error} />
-                </div>
-            }
+            <Alert message={error} />
 
             <div className="flex justify-center gap-3 mt-5">
-                <Button onClick={onBack} disabled={loading} className="max-[768px]:w-full">Voltar</Button>
-                <Button onClick={handleFinishClick} disabled={loading} className="max-[768px]:w-full">
+                <Button onClick={onBack} disabled={loading} className="max-md:w-full">Voltar</Button>
+                <Button onClick={handleFinishClick} disabled={loading} className="max-md:w-full">
                     {loading ? "Carregando..." : "Próximo"}
                 </Button>
             </div>

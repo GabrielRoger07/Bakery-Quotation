@@ -856,9 +856,9 @@ const QuotationMonitor = () => {
     return (
         <div className="page-wrapper text-[var(--color-text-primary)]">
             {/* Header */}
-            <div className={`grid items-center w-full mb-[1.125rem] ${countdown.status === 'Closed' ? 'grid-cols-[auto_1fr_auto] max-[768px]:grid-cols-[auto_1fr_auto] max-[768px]:grid-rows-[auto_auto] max-[768px]:gap-x-2 max-[768px]:gap-y-4' : 'grid-cols-[auto_1fr_auto]'}`}>
+            <div className={`grid items-center w-full mb-[1.125rem] ${countdown.status === 'Closed' ? 'grid-cols-[auto_1fr_auto] max-md:grid-cols-[auto_1fr_auto] max-md:grid-rows-[auto_auto] max-md:gap-x-2 max-md:gap-y-4' : 'grid-cols-[auto_1fr_auto]'}`}>
                 <Button onClick={() => navigate(-1)}>Voltar</Button>
-                <h2 className={`m-0 text-center text-[1.25rem] font-bold text-[var(--color-text-strong)] tracking-[-0.02em] max-[768px]:text-[1.125rem] ${countdown.status === 'Closed' ? 'max-[768px]:col-span-full max-[768px]:row-start-2' : ''}`}>
+                <h2 className={`m-0 text-center text-[1.25rem] font-bold text-[var(--color-text-strong)] tracking-[-0.02em] max-md:text-[1.125rem] ${countdown.status === 'Closed' ? 'max-md:col-span-full max-md:row-start-2' : ''}`}>
                     Monitoramento Cotação #{quotation.quotationId}
                 </h2>
                 <div className="flex justify-end min-w-0">
@@ -876,13 +876,13 @@ const QuotationMonitor = () => {
             </div>
 
             {/* Quotation info */}
-            <div className="flex justify-center items-center gap-6 bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[1.125rem] py-3 rounded-[var(--radius-lg)] mb-4 text-[0.875rem] text-[var(--color-text-neutral)] w-full max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-[0.375rem]">
+            <div className="flex justify-center items-center gap-6 bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[1.125rem] py-3 rounded-[var(--radius-lg)] mb-4 text-[0.875rem] text-[var(--color-text-neutral)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.375rem]">
                 <p className="m-0"><strong>Início:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
                 <p className="m-0"><strong>Fim:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
             </div>
 
             {/* Stats grid */}
-            <div className="grid grid-cols-6 gap-3 bg-[var(--color-surface-0)] w-full px-[1.125rem] py-[1.125rem] rounded-[var(--radius-xl)] border border-[var(--color-border)] [box-shadow:var(--shadow-card-soft)] mb-[1.375rem] text-center max-[1080px]:grid-cols-3 max-[768px]:grid-cols-2 max-[520px]:grid-cols-1">
+            <div className="grid grid-cols-6 gap-3 bg-[var(--color-surface-0)] w-full px-[1.125rem] py-[1.125rem] rounded-[var(--radius-xl)] border border-[var(--color-border)] [box-shadow:var(--shadow-card-soft)] mb-[1.375rem] text-center max-[1080px]:grid-cols-3 max-md:grid-cols-2 max-[520px]:grid-cols-1">
                 {[
                     { label: `Status: ${countdown.status === 'Active' ? "Ativo" : countdown.status === 'Scheduled' ? "Agendado" : "Fechado"}` },
                     ...(countdown.status === 'Active' || countdown.status === 'Scheduled' ? [{ label: `"Tempo Restante": ${countdown.timeRemaining}` }] : []),

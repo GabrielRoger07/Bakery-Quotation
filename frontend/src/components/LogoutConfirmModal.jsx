@@ -1,18 +1,20 @@
-import Modal from '@/components/Modal'
-import Button from '@/components/Button'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
+/**
+ * Diálogo de confirmação de logout (envolve ConfirmDialog com a ação de risco "Sair").
+ */
 const LogoutConfirmModal = ({ open, onConfirm, onCancel }) => (
-    <Modal isOpen={open} onClose={onCancel} title="Confirmar Saída">
-        <div>
-            <p className="text-[var(--color-text-secondary)] text-[0.875rem] mb-5 flex justify-center">
-                Tem certeza de que deseja sair da conta?
-            </p>
-            <div className="flex justify-center gap-3 mt-4">
-                <Button variant="secondary" className="bg-[var(--color-surface-2)]" onClick={onCancel}>Cancelar</Button>
-                <Button variant="danger" onClick={onConfirm}>Sair</Button>
-            </div>
-        </div>
-    </Modal>
+    <ConfirmDialog
+        isOpen={open}
+        onClose={onCancel}
+        onConfirm={onConfirm}
+        title="Confirmar Saída"
+        confirmLabel="Sair"
+        confirmVariant="danger"
+        cancelVariant="secondary"
+    >
+        Tem certeza de que deseja sair da conta?
+    </ConfirmDialog>
 )
 
 export default LogoutConfirmModal

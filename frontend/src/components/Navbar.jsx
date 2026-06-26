@@ -17,6 +17,10 @@ const navLinkClass = ({ isActive }) =>
             : 'text-[var(--color-on-dark-text)] hover:text-[var(--color-on-dark-text-hover)] hover:bg-[var(--color-on-dark-bg-soft)]',
     ].join(' ')
 
+/**
+ * Barra de navegação do contexto empresa (links no desktop;
+ * título da página + ações no mobile).
+ */
 const Navbar = () => {
     const navigate = useNavigate()
     const [confirmOpen, setConfirmOpen] = useState(false)
@@ -29,9 +33,9 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="flex justify-between items-center gap-4 px-6 h-[4.5rem] sm:h-[3.375rem] bg-[var(--color-brand)] border-b border-[var(--color-on-dark-border)] sticky top-0 z-[1000] [box-shadow:var(--shadow-md-strong)] max-[640px]:px-4">
+            <nav className="flex justify-between items-center gap-4 px-6 h-[4.5rem] sm:h-[3.375rem] bg-[var(--color-brand)] border-b border-[var(--color-on-dark-border)] sticky top-0 z-[1000] [box-shadow:var(--shadow-md-strong)] max-sm:px-4">
                 {/* Desktop: links centrados */}
-                <div className="absolute left-1/2 -translate-x-1/2 flex justify-center gap-1 whitespace-nowrap max-[640px]:hidden max-[860px]:gap-0.5">
+                <div className="absolute left-1/2 -translate-x-1/2 flex justify-center gap-1 whitespace-nowrap max-sm:hidden max-[860px]:gap-0.5">
                     <NavLink to="/suppliers" className={navLinkClass}>Fornecedores</NavLink>
                     <NavLink to="/products" className={navLinkClass}>Produtos</NavLink>
                     <NavLink to="/quotations" className={navLinkClass}>Cotações</NavLink>
@@ -40,13 +44,13 @@ const Navbar = () => {
 
                 {/* Mobile: título da página à esquerda */}
                 {pageTitle && (
-                    <span className="hidden max-[640px]:block text-[var(--color-on-dark-text)] font-semibold text-[1rem] tracking-[-0.01em] truncate">
+                    <span className="hidden max-sm:block text-[var(--color-on-dark-text)] font-semibold text-[1rem] tracking-[-0.01em] truncate">
                         {pageTitle}
                     </span>
                 )}
 
                 {/* Desktop: botão Sair */}
-                <div className="flex items-center justify-end gap-[0.625rem] ml-auto max-[640px]:hidden">
+                <div className="flex items-center justify-end gap-[0.625rem] ml-auto max-sm:hidden">
                     <Button onClick={() => setConfirmOpen(true)}>Sair</Button>
                 </div>
 
@@ -54,7 +58,7 @@ const Navbar = () => {
                 {reloadFn && (
                     <button
                         onClick={reloadFn}
-                        className="hidden max-[640px]:flex ml-auto items-center justify-center w-[2.25rem] h-[2.25rem] rounded-[var(--radius-md)] bg-[var(--color-on-dark-bg-soft)] border border-[var(--color-on-dark-border-light)] text-[var(--color-on-dark-text)] transition-[background-color,transform] duration-[160ms] active:scale-95 hover:bg-[var(--color-on-dark-bg-hover)]"
+                        className="hidden max-sm:flex ml-auto items-center justify-center w-[2.25rem] h-[2.25rem] rounded-[var(--radius-md)] bg-[var(--color-on-dark-bg-soft)] border border-[var(--color-on-dark-border-light)] text-[var(--color-on-dark-text)] transition-[background-color,transform] duration-[160ms] active:scale-95 hover:bg-[var(--color-on-dark-bg-hover)]"
                         aria-label="Atualizar"
                     >
                         <RotateCw size={17} strokeWidth={2} />

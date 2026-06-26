@@ -176,7 +176,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         <div className="min-h-[calc(100dvh-3.5rem)]">
             {/* ── Page header strip ── */}
             <div className="bg-[var(--color-surface-0)] border-b border-[var(--color-border)] [box-shadow:0_1px_0_var(--color-border-light)]">
-                <div className="max-w-[1200px] mx-auto px-6 h-14 flex items-center gap-3 max-[768px]:px-4 max-[768px]:h-12">
+                <div className="max-w-[1200px] mx-auto px-6 h-14 flex items-center gap-3 max-md:px-4 max-md:h-12">
                     <button
                         onClick={onClose}
                         className="flex items-center justify-center w-7 h-7 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-1)] text-[var(--color-text-muted)] cursor-pointer transition-[background,border-color,color] duration-[160ms] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-primary)] flex-shrink-0"
@@ -195,7 +195,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                     </div>
 
                     {/* Step pill — mobile only */}
-                    <div className="ml-auto [display:none] max-[768px]:[display:flex] items-center gap-1.5 bg-[var(--color-surface-2)] rounded-full px-3 py-1 flex-shrink-0">
+                    <div className="ml-auto [display:none] max-md:[display:flex] items-center gap-1.5 bg-[var(--color-surface-2)] rounded-full px-3 py-1 flex-shrink-0">
                         <span className="text-[0.6875rem] font-bold text-[var(--color-accent)] tabular-nums">{step}</span>
                         <span className="text-[0.6875rem] text-[var(--color-text-muted)]">/</span>
                         <span className="text-[0.6875rem] font-medium text-[var(--color-text-muted)] tabular-nums">{STEPS.length}</span>
@@ -205,7 +205,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             </div>
 
             {/* ── Mobile stepper bar ── */}
-            <div className="[display:none] max-[768px]:[display:block] bg-[var(--color-surface-0)] border-b border-[var(--color-border-light)] px-4 py-3">
+            <div className="[display:none] max-md:[display:block] bg-[var(--color-surface-0)] border-b border-[var(--color-border-light)] px-4 py-3">
                 <div className="flex items-center gap-0">
                     {STEPS.map((s, i) => {
                         const isActive = step === s.key
@@ -232,7 +232,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             </div>
 
             {/* ── Desktop layout ── */}
-            <div className="max-w-[1200px] mx-auto px-6 py-8 flex flex-col gap-8 max-[768px]:[display:none]">
+            <div className="max-w-[1200px] mx-auto px-6 py-8 flex flex-col gap-8 max-md:[display:none]">
 
                 {/* Top horizontal stepper */}
                 <div className="flex items-center">
@@ -269,18 +269,18 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                     {step === 3 && <QuotationCreateStep3 selectedSuppliers={quotationData.suppliers} onChange={handleSuppliersChange} onBack={prevStep} onFinish={nextStep} loading={loading} />}
                     {step === 4 && <QuotationCreateStep4 quotationData={quotationData} onBack={prevStep} onConfirm={() => handleSave()} loading={loading} />}
                     <Alert message={error} />
-                    {success && <p className="text-[var(--color-success)] font-medium text-[0.875rem]">{success}</p>}
+                    <Alert variant="success" message={success} />
                 </div>
             </div>
 
             {/* ── Mobile single-column layout ── */}
-            <div className="[display:none] max-[768px]:[display:block] px-4 py-5" style={{ paddingBottom: 'calc(4.25rem + env(safe-area-inset-bottom) + 1.5rem)' }}>
+            <div className="[display:none] max-md:[display:block] px-4 py-5" style={{ paddingBottom: 'calc(4.25rem + env(safe-area-inset-bottom) + 1.5rem)' }}>
                 {step === 1 && <QuotationCreateStep1 start={quotationData.start} end={quotationData.end} isAuction={quotationData.isAuction} onChange={handleStepChange} onNext={nextStep} loading={loading} />}
                 {step === 2 && <QuotationCreateStep2 selectedProducts={quotationData.products} onChange={handleProductsChange} onBack={prevStep} onNext={nextStep} loading={loading} />}
                 {step === 3 && <QuotationCreateStep3 selectedSuppliers={quotationData.suppliers} onChange={handleSuppliersChange} onBack={prevStep} onFinish={nextStep} loading={loading} />}
                 {step === 4 && <QuotationCreateStep4 quotationData={quotationData} onBack={prevStep} onConfirm={() => handleSave()} loading={loading} />}
                 <Alert message={error} />
-                {success && <p className="text-[var(--color-success)] font-medium text-[0.875rem]">{success}</p>}
+                <Alert variant="success" message={success} />
             </div>
         </div>
     )

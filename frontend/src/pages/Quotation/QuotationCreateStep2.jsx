@@ -82,7 +82,7 @@ const CreateProductModalForm = ({ onSuccess, onClose, request, departments = [],
 
             <Alert message={error} />
             
-            {success && <div className="text-[var(--color-success)] font-medium py-2 px-3 bg-[var(--color-success-soft-bg)] rounded-[var(--radius-md)] border border-[var(--color-success-soft-border)] text-center mt-1 text-[0.875rem]">{success}</div>}
+            {success && <div className="text-[var(--color-success)] font-medium py-2 px-3 bg-[var(--color-success-soft-bg)] rounded-[var(--radius-md)] border border-[var(--color-success-soft-border)] text-center mt-1 text-body">{success}</div>}
             
             <div className="flex justify-end gap-[0.625rem] mt-5 pt-4 border-t border-[var(--color-border)]">
                 <Button type="button" variant="secondary" onClick={onClose} disabled={submitting}>Cancelar</Button>
@@ -700,15 +700,11 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 </>
             )}
 
-            {error && 
-                <div className="flex justify-center gap-3 mt-4">
-                    <Alert message={error} />
-                </div>
-            }
+            <Alert message={error} />
 
             <div className="flex justify-center gap-3 mt-5">
-                <Button onClick={onBack} disabled={loading} className="max-[768px]:w-full">Voltar</Button>
-                <Button onClick={handleNextClick} disabled={loading} className="max-[768px]:w-full">{loading ? "Carregando..." : "Próximo"}</Button>
+                <Button onClick={onBack} disabled={loading} className="max-md:w-full">Voltar</Button>
+                <Button onClick={handleNextClick} disabled={loading} className="max-md:w-full">{loading ? "Carregando..." : "Próximo"}</Button>
             </div>
 
             {/* Create product modal */}

@@ -52,7 +52,7 @@ const SupplierQuotationScheduled = ({ quotation }) => {
             </h2>
             <h3 className="text-[var(--color-text-secondary)] mt-1 mb-4">Agendado</h3>
 
-            <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-[0.4rem]">
+            <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.4rem]">
                 <p className="m-0 text-[1rem]">
                     <strong className="text-[1.125rem] text-[var(--color-text-strong)]">Início:</strong>{" "}
                     {new Date(quotation.quotationStart).toLocaleString()}

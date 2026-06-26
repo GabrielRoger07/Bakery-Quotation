@@ -5,6 +5,8 @@ import useFetch from '@/hooks/useFetch'
 import Input from '@/components/Input'
 import Button from '@/components/Button'
 import Alert from '@/components/Alert'
+import PageContainer from '@/components/PageContainer'
+import PageHeader from '@/components/PageHeader'
 import { ENV } from '@/config/env'
 
 const Login = () => {
@@ -35,21 +37,19 @@ const Login = () => {
     }
 
     return (
-        <div className="auth-bg">
-            <div className="auth-card">
-                <h1 className="text-[1.5rem] mb-1 text-[var(--color-text-strong)] font-extrabold tracking-[-0.03em] leading-[1.15]">Entrar</h1>
-                <form onSubmit={handleLogin}>
-                    <Input label={"E-mail"} type="email" name="companyEmail" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} placeholder={"Digite seu e-mail"} />
-                    <Input label={"Senha"} type="password" name="companyPassword" value={companyPassword} onChange={(e) => setCompanyPassword(e.target.value)} placeholder={"Digite sua senha"} />
-                    <Alert message={error} />
-                    {success && <div className="text-[var(--color-success)] font-medium mb-[0.875rem] text-[0.875rem]">{success}</div>}
-                    <Button type="submit" loading={loading}>Entrar</Button>
-                </form>
-                <p className="mt-5 mb-0 text-[0.875rem] text-[var(--color-text-muted)]">
-                    <Link to="/register" className="text-[var(--color-accent)] no-underline font-semibold hover:underline">Nova empresa? Criar conta!</Link>
-                </p>
-            </div>
-        </div>
+        <PageContainer variant="auth">
+            <PageHeader title="Entrar" className="mb-1" />
+            <form onSubmit={handleLogin}>
+                <Input label={"E-mail"} type="email" name="companyEmail" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} placeholder={"Digite seu e-mail"} />
+                <Input label={"Senha"} type="password" name="companyPassword" value={companyPassword} onChange={(e) => setCompanyPassword(e.target.value)} placeholder={"Digite sua senha"} />
+                <Alert message={error} />
+                <Alert variant="success" message={success} />
+                <Button type="submit" loading={loading}>Entrar</Button>
+            </form>
+            <p className="mt-5 mb-0 text-body text-[var(--color-text-muted)]">
+                <Link to="/register" className="text-[var(--color-accent)] no-underline font-semibold hover:underline">Nova empresa? Criar conta!</Link>
+            </p>
+        </PageContainer>
     )
 }
 

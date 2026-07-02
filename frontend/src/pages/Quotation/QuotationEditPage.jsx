@@ -53,7 +53,7 @@ const QuotationEditPage = () => {
             mode="edit"
             initialData={quotation}
             onClose={() => navigate('/quotations')}
-            onSave={() => navigate('/quotations')}
+            onSave={() => navigate('/quotations', { state: { quotationSaved: 'edit' } })}
         />
     )
 }

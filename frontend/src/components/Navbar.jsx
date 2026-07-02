@@ -14,7 +14,7 @@ const navLinkClass = ({ isActive }) =>
         'transition-[color,background-color] duration-[160ms] ease-[ease]',
         isActive
             ? 'text-white bg-[var(--color-accent)] font-semibold [box-shadow:var(--shadow-accent)]'
-            : 'text-[var(--color-on-dark-text)] hover:text-[var(--color-on-dark-text-hover)] hover:bg-[var(--color-on-dark-bg-soft)]',
+            : 'text-[var(--color-on-dark-text)] hover:text-[var(--color-on-dark-text)] hover:bg-[var(--color-on-dark-bg)]',
     ].join(' ')
 
 /**
@@ -58,7 +58,7 @@ const Navbar = () => {
                 {reloadFn && (
                     <button
                         onClick={reloadFn}
-                        className="hidden max-sm:flex ml-auto items-center justify-center w-[2.25rem] h-[2.25rem] rounded-[var(--radius-md)] bg-[var(--color-on-dark-bg-soft)] border border-[var(--color-on-dark-border-light)] text-[var(--color-on-dark-text)] transition-[background-color,transform] duration-[160ms] active:scale-95 hover:bg-[var(--color-on-dark-bg-hover)]"
+                        className="hidden max-sm:flex ml-auto items-center justify-center w-[2.25rem] h-[2.25rem] rounded-[var(--radius-md)] bg-[var(--color-on-dark-bg)] border border-[var(--color-on-dark-border-strong)] text-[var(--color-on-dark-text)] transition-[background-color,transform] duration-[160ms] active:scale-95 hover:bg-[var(--color-on-dark-bg-hover)]"
                         aria-label="Atualizar"
                     >
                         <RotateCw size={17} strokeWidth={2} />

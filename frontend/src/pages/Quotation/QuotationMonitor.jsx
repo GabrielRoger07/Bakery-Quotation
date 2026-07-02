@@ -548,10 +548,10 @@ const QuotationMonitor = () => {
     }, [bids, filteredProducts, appliedBidSearch])
 
     const segBtnCls = (active) => [
-        'px-3 py-[0.4rem] text-[0.875rem] font-medium font-sans border-none cursor-pointer whitespace-nowrap transition-[background-color,color] duration-[160ms] not-last:border-r not-last:border-[var(--color-border)]',
+        'px-3 py-[0.4rem] text-[0.875rem] font-medium font-sans border-none cursor-pointer whitespace-nowrap transition-[background-color,color] duration-[160ms] not-last:border-r not-last:border-[var(--color-border-default)]',
         active
             ? 'bg-[var(--color-accent)] text-white'
-            : 'bg-[var(--color-surface-0)] text-[var(--color-text-neutral)] hover:bg-[var(--color-surface-1)]',
+            : 'bg-[var(--color-surface-card)] text-[var(--color-text-neutral)] hover:bg-[var(--color-surface-subtle)]',
     ].join(' ')
 
     const filterToolbar = useMemo(() => (
@@ -576,7 +576,7 @@ const QuotationMonitor = () => {
                 placeholder={"Digite o campo"}
                 onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
             />
-            <div className="flex border border-[var(--color-border)] rounded-[var(--radius-md)] overflow-hidden">
+            <div className="flex border border-[var(--color-border-default)] rounded-[var(--radius-md)] overflow-hidden">
                 <button className={segBtnCls(bidFilter === "all")} onClick={() => setBidFilter("all")}>Todos</button>
                 <button className={segBtnCls(bidFilter === "with")} onClick={() => setBidFilter("with")}>Com lance</button>
                 <button className={segBtnCls(bidFilter === "without")} onClick={() => setBidFilter("without")}>Sem lance</button>
@@ -854,11 +854,11 @@ const QuotationMonitor = () => {
 
     /* ── Desktop layout (unchanged) ─────────────────────────────── */
     return (
-        <div className="page-wrapper text-[var(--color-text-primary)]">
+        <div className="page-wrapper text-[var(--color-text-body)]">
             {/* Header */}
             <div className={`grid items-center w-full mb-[1.125rem] ${countdown.status === 'Closed' ? 'grid-cols-[auto_1fr_auto] max-md:grid-cols-[auto_1fr_auto] max-md:grid-rows-[auto_auto] max-md:gap-x-2 max-md:gap-y-4' : 'grid-cols-[auto_1fr_auto]'}`}>
                 <Button onClick={() => navigate(-1)}>Voltar</Button>
-                <h2 className={`m-0 text-center text-[1.25rem] font-bold text-[var(--color-text-strong)] tracking-[-0.02em] max-md:text-[1.125rem] ${countdown.status === 'Closed' ? 'max-md:col-span-full max-md:row-start-2' : ''}`}>
+                <h2 className={`m-0 text-center text-[1.25rem] font-bold text-[var(--color-text-heading)] tracking-[-0.02em] max-md:text-[1.125rem] ${countdown.status === 'Closed' ? 'max-md:col-span-full max-md:row-start-2' : ''}`}>
                     Monitoramento Cotação #{quotation.quotationId}
                 </h2>
                 <div className="flex justify-end min-w-0">
@@ -876,13 +876,13 @@ const QuotationMonitor = () => {
             </div>
 
             {/* Quotation info */}
-            <div className="flex justify-center items-center gap-6 bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[1.125rem] py-3 rounded-[var(--radius-lg)] mb-4 text-[0.875rem] text-[var(--color-text-neutral)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.375rem]">
+            <div className="flex justify-center items-center gap-6 bg-[var(--color-surface-card)] border border-[var(--color-border-default)] [box-shadow:var(--shadow-xs)] px-[1.125rem] py-3 rounded-[var(--radius-lg)] mb-4 text-[0.875rem] text-[var(--color-text-neutral)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.375rem]">
                 <p className="m-0"><strong>Início:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
                 <p className="m-0"><strong>Fim:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
             </div>
 
             {/* Stats grid */}
-            <div className="grid grid-cols-6 gap-3 bg-[var(--color-surface-0)] w-full px-[1.125rem] py-[1.125rem] rounded-[var(--radius-xl)] border border-[var(--color-border)] [box-shadow:var(--shadow-card-soft)] mb-[1.375rem] text-center max-[1080px]:grid-cols-3 max-md:grid-cols-2 max-[520px]:grid-cols-1">
+            <div className="grid grid-cols-6 gap-3 bg-[var(--color-surface-card)] w-full px-[1.125rem] py-[1.125rem] rounded-[var(--radius-xl)] border border-[var(--color-border-default)] [box-shadow:var(--shadow-card-soft)] mb-[1.375rem] text-center max-[1080px]:grid-cols-3 max-md:grid-cols-2 max-[520px]:grid-cols-1">
                 {[
                     { label: `Status: ${countdown.status === 'Active' ? "Ativo" : countdown.status === 'Scheduled' ? "Agendado" : "Fechado"}` },
                     ...(countdown.status === 'Active' || countdown.status === 'Scheduled' ? [{ label: `"Tempo Restante": ${countdown.timeRemaining}` }] : []),
@@ -894,7 +894,7 @@ const QuotationMonitor = () => {
                     <div
                         key={i}
                         onClick={item.clickable ? () => setShowSuppliersPanel(true) : undefined}
-                        className={`rounded-[var(--radius-lg)] border px-2 py-[0.875rem] text-[1rem] font-semibold flex items-center justify-center text-center min-h-[4.5rem] transition-[transform,box-shadow] duration-[160ms] hover:-translate-y-[2px] hover:[box-shadow:var(--shadow-sm)] ${item.highlight ? 'bg-[var(--color-highlight-lighter)] border-[var(--color-highlight-border)] text-[var(--color-accent)] font-bold text-[1.125rem]' : 'bg-[var(--color-surface-1)] border-[var(--color-border-lighter)] text-[var(--color-text-neutral-strong)]'} ${item.clickable ? 'cursor-pointer hover:border-[var(--color-accent)] hover:bg-[var(--color-highlight-lighter)] hover:text-[var(--color-accent)]' : ''}`}
+                        className={`rounded-[var(--radius-lg)] border px-2 py-[0.875rem] text-[1rem] font-semibold flex items-center justify-center text-center min-h-[4.5rem] transition-[transform,box-shadow] duration-[160ms] hover:-translate-y-[2px] hover:[box-shadow:var(--shadow-sm)] ${item.highlight ? 'bg-[var(--color-highlight-lighter)] border-[var(--color-highlight-border)] text-[var(--color-accent)] font-bold text-[1.125rem]' : 'bg-[var(--color-surface-subtle)] border-[var(--color-border-faint)] text-[var(--color-text-neutral)]'} ${item.clickable ? 'cursor-pointer hover:border-[var(--color-accent)] hover:bg-[var(--color-highlight-lighter)] hover:text-[var(--color-accent)]' : ''}`}
                     >
                         {item.label}
                     </div>

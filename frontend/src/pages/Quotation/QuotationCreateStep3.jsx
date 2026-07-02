@@ -1,11 +1,13 @@
 import { useEffect, useState, useCallback } from 'react'
 import useFetch from '@/hooks/useFetch'
 import useIsMobile from '@/hooks/useIsMobile'
-import Input from '@/components/Input'
 import Button from '@/components/Button'
 import Alert from '@/components/Alert'
-import Pagination from '@/components/Pagination'
-import { X } from 'lucide-react'
+import LoadMoreButton from '@/components/LoadMoreButton'
+import EmptyState from '@/components/EmptyState'
+import MobileSearchInput from '@/components/MobileSearchInput'
+import WizardActions from '@/components/WizardActions'
+import { X, UserRoundSearch, UserRoundPlus, ArrowRight } from 'lucide-react'
 import { ENV } from '@/config/env'
 
 const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, loading }) => {
@@ -20,7 +22,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
     const [searchField, setSearchField] = useState("")
     const [searchWord, setSearchWord] = useState("")
     const [currentPage, setCurrentPage] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
+    const [totalElements, setTotalElements] = useState(0)
 
     // Mobile tab
     const [mobileTab, setMobileTab] = useState("available")
@@ -29,7 +31,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
         onChange(localSelected)
     }, [localSelected, onChange])
 
-    const fetchSuppliers = useCallback(async (page = 0, field = searchField, word = searchWord) => {
+    const fetchSuppliers = useCallback(async (page = 0, field = searchField, word = searchWord, append = false) => {
         const excludedIds = localSelected.map(s => s.supplierId)
         let query = `?page=${page}&sort=supplierName,asc`
         if (field) query += `&field=${field}`
@@ -37,14 +39,16 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
         if (excludedIds.length > 0) query += `&excludedIds=${excludedIds.join(",")}`
         const res = await request("GET", `/suppliers/company${query}`)
         if (res.ok) {
-            setAvailableSuppliers(res.data.content)
+            setAvailableSuppliers(prev => append ? [...prev, ...res.data.content] : res.data.content)
             setCurrentPage(res.data.number)
-            setTotalPages(res.data.totalPages)
+            setTotalElements(res.data.totalElements ?? res.data.content.length)
             setError("")
         } else {
             setError(res.data?.message)
         }
     }, [request, localSelected, searchField, searchWord])
+
+    const handleLoadMoreSuppliers = () => fetchSuppliers(currentPage + 1, searchField, searchWord, true)
 
     useEffect(() => {
         fetchSuppliers(0, "", "") // eslint-disable-line react-hooks/set-state-in-effect
@@ -58,6 +62,12 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
     const handleSearchSuppliers = () => {
         setCurrentPage(0)
         fetchSuppliers(0)
+    }
+
+    const handleClearSupSearch = () => {
+        setSearchWord("")
+        setCurrentPage(0)
+        fetchSuppliers(0, searchField, "")
     }
 
     const handleAddSupplier = (supplier) => {
@@ -86,9 +96,9 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
     /* ── Search panel ── */
     const renderAvailablePanel = () => (
         <>
-            <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
-                <div className="flex gap-3 items-end max-md:flex-col max-md:items-stretch">
-                    <div className="flex-[0_0_220px] relative max-md:flex-none max-md:w-full">
+            <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
+                <div className="flex flex-col gap-2.5">
+                    <div className="relative w-full">
                         <select
                             id="searchField"
                             name="searchField"
@@ -96,7 +106,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                             onChange={e => setSearchField(e.target.value)}
                             className="toolbar-select w-full"
                         >
-                            <option value="" disabled>Selecione</option>
+                            <option value="" disabled>Buscar por…</option>
                             <option value="supplierName">Nome</option>
                             <option value="supplierEmail">E-mail</option>
                             <option value="supplierWhatsappNumber">Whatsapp</option>
@@ -107,24 +117,29 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                         </span>
                     </div>
-                    <div className="flex-1 min-w-[200px] max-md:min-w-0 [&_.input-container]:mb-0">
-                        <Input
-                            type="text"
-                            value={searchWord}
-                            onChange={e => setSearchWord(e.target.value)}
-                            placeholder="Digite o campo"
-                        />
-                    </div>
-                    <Button onClick={handleSearchSuppliers} disabled={loading} className="whitespace-nowrap">Buscar</Button>
+                    <MobileSearchInput
+                        value={searchWord}
+                        onChange={e => setSearchWord(e.target.value)}
+                        onSearch={handleSearchSuppliers}
+                        onClear={handleClearSupSearch}
+                        placeholder="Digite o termo de busca"
+                        searchDisabled={loading}
+                    />
                 </div>
             </div>
 
-            <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
-                {availableSuppliers.length === 0 ? (
-                    <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">Nenhum fornecedor disponível</p>
-                ) : isMobile ? (
-                    <>
-                        <ul className="list-none m-0 p-0 flex flex-col gap-[0.5rem] mb-2">
+            {availableSuppliers.length === 0 ? (
+                <EmptyState
+                    icon={<UserRoundSearch size={28} strokeWidth={1.75} />}
+                    title="Nenhum fornecedor encontrado"
+                    description={searchWord ? "Tente outro termo de busca." : "Nenhum fornecedor disponível."}
+                    className="mb-3"
+                />
+            ) : (
+                <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
+                    <div className="text-[0.75rem] font-semibold text-[var(--color-text-disabled)] mb-2.5 px-0.5">Mostrando {availableSuppliers.length} de {totalElements} fornecedores</div>
+                    {isMobile ? (
+                        <ul className="list-none m-0 p-0 flex flex-col gap-[0.5rem]">
                             {availableSuppliers.map(s => (
                                 <li key={s.supplierId} className="sup-row-card">
                                     <div className="sup-row-avatar">{s.supplierName.charAt(0).toUpperCase()}</div>
@@ -138,46 +153,52 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                                 </li>
                             ))}
                         </ul>
-                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={page => fetchSuppliers(page)} />
-                    </>
-                ) : (
-                    <>
-                        <div className="border border-[var(--color-border-light)] rounded-[var(--radius-md)] overflow-hidden bg-[var(--color-surface-0)] mb-[0.4rem]">
+                    ) : (
+                        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-md)] overflow-hidden bg-[var(--color-surface-card)] mb-[0.4rem]">
                             {availableSuppliers.map(s => (
                                 <div
                                     key={s.supplierId}
-                                    className="flex justify-between items-center px-[0.72rem] py-[0.55rem] bg-[var(--color-surface-0)] transition-[background-color] duration-[160ms] border-b border-[var(--color-border-lighter)] last:border-b-0 hover:bg-[var(--color-surface-1)]"
+                                    className="flex justify-between items-center px-[0.72rem] py-[0.55rem] bg-[var(--color-surface-card)] transition-[background-color] duration-[160ms] border-b border-[var(--color-border-faint)] last:border-b-0 hover:bg-[var(--color-surface-subtle)]"
                                 >
                                     <div className="flex flex-col">
-                                        <strong className="text-[0.875rem] text-[var(--color-text-strong)]">{s.supplierName}</strong>
-                                        <span className="text-[0.75rem] text-[var(--color-text-subtle)]">{s.employerName}</span>
+                                        <strong className="text-[0.875rem] text-[var(--color-text-heading)]">{s.supplierName}</strong>
+                                        <span className="text-[0.75rem] text-[var(--color-text-neutral)]">{s.employerName}</span>
                                     </div>
                                     <Button onClick={() => handleAddSupplier(s)} disabled={loading}>Adicionar</Button>
                                 </div>
                             ))}
                         </div>
-                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={page => fetchSuppliers(page)} />
-                    </>
-                )}
-            </div>
+                    )}
+                    <LoadMoreButton remaining={totalElements - availableSuppliers.length} onClick={handleLoadMoreSuppliers} />
+                </div>
+            )}
         </>
     )
 
     /* ── Selected suppliers panel ── */
-    const renderParticipatingPanel = () => (
-        <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
+    const renderParticipatingPanel = () => {
+        if (localSelected.length === 0) {
+            return (
+                <EmptyState
+                    icon={<UserRoundPlus size={28} strokeWidth={1.75} />}
+                    title="Nenhum fornecedor adicionado"
+                    description="Adicione fornecedores na aba Disponíveis."
+                    className="mb-3"
+                />
+            )
+        }
+        return (
+        <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
             {!isMobile && (
                 <h4 className="m-0 mb-[0.6rem] text-[var(--color-text-secondary)] text-[1rem] font-semibold">
                     Fornecedores Adicionados ({localSelected.length})
                 </h4>
             )}
-            {localSelected.length === 0 ? (
-                <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">Nenhum fornecedor adicionado</p>
-            ) : isMobile ? (
+            {isMobile ? (
                 <ul className="list-none m-0 p-0 flex flex-col gap-[0.5rem]">
                     {localSelected.map(s => (
                         <li key={s.supplierId} className="sup-row-card">
-                            <div className="sup-row-avatar">{s.supplierName.charAt(0).toUpperCase()}</div>
+                            <div className="sup-row-avatar" style={{ background: 'linear-gradient(150deg, var(--color-accent), var(--color-accent-strong))', color: '#fff' }}>{s.supplierName.charAt(0).toUpperCase()}</div>
                             <div className="sup-row-body">
                                 <p className="sup-row-name">{s.supplierName}</p>
                                 <p className="sup-row-company">{s.employerName}</p>
@@ -196,9 +217,9 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
             ) : (
                 <ul className="list-none p-0 m-0">
                     {localSelected.map(s => (
-                        <li key={s.supplierId} className="flex justify-between items-center py-2 border-b border-[var(--color-border-lighter)] last:border-b-0">
+                        <li key={s.supplierId} className="flex justify-between items-center py-2 border-b border-[var(--color-border-faint)] last:border-b-0">
                             <div>
-                                <strong className="text-[0.875rem] block text-[var(--color-text-strong)]">{s.supplierName}</strong>
+                                <strong className="text-[0.875rem] block text-[var(--color-text-heading)]">{s.supplierName}</strong>
                                 <span className="text-[0.75rem] text-[var(--color-text-muted)]">{s.employerName}</span>
                             </div>
                             <Button variant="danger" onClick={() => handleRemoveSupplier(s.supplierId)} disabled={loading}>Remover</Button>
@@ -207,13 +228,14 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                 </ul>
             )}
         </div>
-    )
+        )
+    }
 
     return (
         <div>
             <div className="mb-5">
-                <h2 className="m-0 text-[1.0625rem] font-bold text-[var(--color-text-strong)] tracking-[-0.015em]">Fornecedores</h2>
-                <p className="mt-1 mb-0 text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.5]">Adicione os fornecedores que irão participar desta cotação.</p>
+                <h2 className="m-0 text-[1.4375rem] font-bold text-[var(--color-text-body)] tracking-[-0.02em]">Fornecedores</h2>
+                <p className="mt-1 mb-0 text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.5]">Escolha quem vai participar da cotação.</p>
             </div>
 
             {isMobile ? (
@@ -248,12 +270,15 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
 
             <Alert message={error} />
 
-            <div className="flex justify-center gap-3 mt-5">
-                <Button onClick={onBack} disabled={loading} className="max-md:w-full">Voltar</Button>
-                <Button onClick={handleFinishClick} disabled={loading} className="max-md:w-full">
-                    {loading ? "Carregando..." : "Próximo"}
-                </Button>
-            </div>
+            <WizardActions
+                onBack={onBack}
+                onPrimary={handleFinishClick}
+                primaryLabel="Avançar"
+                primaryIcon={ArrowRight}
+                blocked={localSelected.length === 0}
+                hint="Adicione pelo menos um fornecedor para avançar."
+                loading={loading}
+            />
         </div>
     )
 }

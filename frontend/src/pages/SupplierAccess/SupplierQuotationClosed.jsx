@@ -8,9 +8,9 @@ import { formatMoney } from "@/utils/formatMoney"
 import Cookies from "js-cookie"
 import { ChevronLeft, FileDown, Package, Trophy, TrendingDown, CheckCircle2, XCircle } from "lucide-react"
 
-const thCls = "text-left px-[0.6rem] py-2 text-[0.75rem] font-semibold uppercase tracking-[0.04em] text-[var(--color-text-muted)] border-b-2 border-[var(--color-border)]"
+const thCls = "text-left px-[0.6rem] py-2 text-[0.75rem] font-semibold uppercase tracking-[0.04em] text-[var(--color-text-muted)] border-b-2 border-[var(--color-border-default)]"
 const thNumCls = `${thCls} text-right`
-const tdCls = "px-[0.6rem] py-[0.55rem] text-[var(--color-text-default)] border-b border-[var(--color-border-lighter)] align-middle"
+const tdCls = "px-[0.6rem] py-[0.55rem] text-[var(--color-text-body)] border-b border-[var(--color-border-faint)] align-middle"
 const tdNumCls = `${tdCls} text-right whitespace-nowrap`
 
 /* ── Mobile sub-components ──────────────────────────────────────── */
@@ -226,7 +226,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                                     <CheckCircle2 size={15} strokeWidth={2} />
                                 </span>
                                 <span className="qm-section-title">Lances Vencedores</span>
-                                <span className="qm-section-count" style={{ background: 'var(--color-success-soft-bg-2)', color: 'var(--color-success-strong)', borderColor: 'var(--color-success-soft-border)' }}>
+                                <span className="qm-section-count" style={{ background: 'var(--color-success-soft)', color: 'var(--color-success-strong)', borderColor: 'var(--color-success-soft-border)' }}>
                                     {winningItems.length}
                                 </span>
                             </div>
@@ -256,19 +256,19 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
     if (error) return <p>{error}</p>
 
     return (
-        <div className="page-wrapper text-[var(--color-text-primary)]">
-            <h2 className="text-[var(--color-text-strong)] text-[1.25rem] m-0">
+        <div className="page-wrapper text-[var(--color-text-body)]">
+            <h2 className="text-[var(--color-text-heading)] text-[1.25rem] m-0">
                 Cotação {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotation.quotationId}
             </h2>
             <h3 className="text-[var(--color-text-secondary)] mt-1 mb-4">Fechado</h3>
 
-            <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.4rem]">
+            <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-card)] border border-[var(--color-border-default)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.4rem]">
                 <p className="m-0 text-[1rem]">
-                    <strong className="text-[1.125rem] text-[var(--color-text-strong)]">Início:</strong>{" "}
+                    <strong className="text-[1.125rem] text-[var(--color-text-heading)]">Início:</strong>{" "}
                     {new Date(quotation.quotationStart).toLocaleString()}
                 </p>
                 <p className="m-0 text-[1rem]">
-                    <strong className="text-[1.125rem] text-[var(--color-text-strong)]">Fim:</strong>{" "}
+                    <strong className="text-[1.125rem] text-[var(--color-text-heading)]">Fim:</strong>{" "}
                     {new Date(quotation.quotationEnd).toLocaleString()}
                 </p>
             </div>
@@ -277,8 +277,8 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                 {winningItems.length === 0 ? (
                     <p className="text-[var(--color-text-secondary)]">Você não venceu nenhum lance</p>
                 ) : (
-                    <div className="w-full bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] p-4">
-                        <h4 className="m-0 mb-3 text-[var(--color-text-strong)]">Lances Vencedores</h4>
+                    <div className="w-full bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] p-4">
+                        <h4 className="m-0 mb-3 text-[var(--color-text-heading)]">Lances Vencedores</h4>
                         <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
                             <table className="w-full border-collapse text-[0.875rem]">
                                 <thead>
@@ -299,14 +299,14 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                                             </td>
                                             <td className={tdNumCls}>{item.quantity} {item.unitOfMeasure}{['bag', 'balde'].includes(item.unitOfMeasure) && item.quantity > 1 ? 's' : ''}</td>
                                             <td className={tdNumCls}>{formatMoney(item.pricePerUnit)}/{item.unitOfMeasure}</td>
-                                            <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(item.price)}</td>
+                                            <td className={`${tdNumCls} font-medium text-[var(--color-text-heading)]`}>{formatMoney(item.price)}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border)]">Valor Total</td>
-                                        <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border)]">{formatMoney(totalWinningValue)}</td>
+                                        <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border-default)]">Valor Total</td>
+                                        <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border-default)]">{formatMoney(totalWinningValue)}</td>
                                     </tr>
                                 </tfoot>
                             </table>

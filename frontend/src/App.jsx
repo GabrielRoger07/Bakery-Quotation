@@ -18,6 +18,7 @@ import SupplierAccessToken from '@/pages/SupplierAccess/SupplierAccessToken';
 import SupplierPage from '@/pages/SupplierAccess/SupplierPage';
 import SupplierQuotationPage from '@/pages/SupplierAccess/SupplierQuotationPage';
 import SupplierRoute from '@/pages/SupplierAccess/SupplierRoute';
+import DesignSystemPage from '@/pages/DesignSystem/DesignSystemPage';
 
 function App() {
 
@@ -54,6 +55,7 @@ function AppContent() {
           <Route path="/supplier/login/:companyCnpj" element={<SupplierAccessToken />}></Route>
           <Route path="/supplier/quotations/:companyCnpj" element={<SupplierRoute><SupplierPage /></SupplierRoute>}></Route>
           <Route path="/supplier/quotation" element={<SupplierRoute><SupplierQuotationPage /></SupplierRoute>}></Route>
+          <Route path="/design-system" element={<DesignSystemPage />}></Route>
 
           <Route path="*" element={<Navigate to="/login" />}></Route>
         </Routes>

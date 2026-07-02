@@ -20,97 +20,86 @@
   /* Tailwind v4 já usa sm = 40rem (640px) por padrão. Usar sm:/max-sm: e
      useIsMobile() apontam para o mesmo limite — não redefinir aqui. */
 
-  /* ── Brand colors ── */
-  --color-brand:        #1a0f3a;
-  --color-brand-mid:    #241550;
-  --color-accent:       #5b21b6;
-  --color-accent-hover: #4c1d95;
-  --color-accent-strong:#3b1278;
-  --color-accent-light: #ede9fe;
+  /* ═══════════════════════════════════════════════════════════════
+     CORES — escala de papéis. Cada token = UMA função (não a aparência).
+     Regra: escolha pelo "para que serve", não pelo tom.
+     Ver docs/design-system.md e a rota /design-system.
+     ═══════════════════════════════════════════════════════════════ */
 
-  /* ── Surfaces ── */
-  --color-surface-0:       #ffffff;
-  --color-surface-1:       #fafafa;
-  --color-surface-2:       #f3f4f6;
-  --color-surface-3:       #e9eaf0;
-  --color-surface-4:       #f0f1f8;
-  --color-surface-5:       #e4e5f0;
-  --color-surface-app:     #f5f6fa;
-  --color-surface-app-alt: #f0f1f8;
-  --color-surface-auth:    #f5f6fa;
+  /* ── Brand & Accent (marca, ação primária, foco) ── */
+  --color-brand:         #1a0f3a;              /* fundo escuro: navbar, auth, html */
+  --color-brand-mid:     #241550;              /* degradê do fundo escuro */
+  --color-accent:        #5b21b6;              /* ação primária, foco, destaque roxo */
+  --color-accent-hover:  #4c1d95;              /* hover da ação primária */
+  --color-accent-strong: #3b1278;              /* ênfase do accent (texto/borda forte) */
+  --color-accent-soft:        rgba(91,33,182,0.08);   /* fundo accent translúcido (hover suave) */
+  --color-accent-soft-strong: rgba(109,40,217,0.12);  /* fundo accent translúcido em foco */
+  --color-accent-soft-weak:   rgba(109,40,217,0.04);  /* fundo do card selecionado */
 
-  /* ── Highlights ── */
-  --color-highlight-soft:   #ede9fe;
-  --color-highlight:        #ddd6fe;
-  --color-highlight-lighter:#f5f3ff;
-  --color-highlight-border: #c4b5fd;
-  --color-info-soft:        #ede9fe;
-  --color-info-border:      #6d28d9;
+  /* ── Surfaces (fundos, do topo ao afundado) ── */
+  --color-surface-card:   #ffffff;   /* card, input, modal, tabela */
+  --color-surface-app:    #f5f6fa;   /* fundo da página/app */
+  --color-surface-subtle: #fafafa;   /* zebra de linha, fundo de empty-state */
+  --color-surface-muted:  #f3f4f6;   /* preenchimento levemente destacado */
+  --color-surface-sunken: #e9eaf0;   /* área interna "afundada" */
 
-  /* ── Text ── */
-  --color-text-primary:        #1e1b4b;
-  --color-text-secondary:      #312e81;
-  --color-text-strong:         #0f0d23;
-  --color-text-muted:          #6b7280;
-  --color-text-disabled:       #9ca3af;
-  --color-text-subtle:         #374151;
-  --color-text-default:        #2d2d44;
-  --color-text-inverse:        #ffffff;
-  --color-text-neutral:        #4b5563;
-  --color-text-neutral-strong: #374151;
-  --color-text-black:          #0f0d23;
+  /* ── Highlights (roxo suave: badges, ícones em caixa) ── */
+  --color-highlight-soft:    #ede9fe;  /* fundo de destaque roxo */
+  --color-highlight:         #ddd6fe;  /* destaque roxo médio */
+  --color-highlight-lighter: #f5f3ff;  /* fundo roxo levíssimo (hover de linha) */
+  --color-highlight-border:  #c4b5fd;  /* borda roxa de destaque */
+  --color-info-border:       #6d28d9;  /* borda de banner informativo */
 
-  /* ── Borders ── */
-  --color-border:         #e5e7eb;
-  --color-border-strong:  #d1d5db;
-  --color-border-muted:   #e0e2ec;
-  --color-border-light:   #e9ebf4;
-  --color-border-lighter: #f0f1f8;
-  --color-border-spinner: #a78bfa;
+  /* ── Text (hierarquia por função) ── */
+  --color-text-heading:   #0f0d23;   /* títulos, ênfase máxima */
+  --color-text-body:      #1e1b4b;   /* texto de leitura padrão / valores */
+  --color-text-secondary: #312e81;   /* apoio índigo (subtítulos, descrições) */
+  --color-text-neutral:   #374151;   /* texto de UI cinza (label de botão, célula) */
+  --color-text-muted:     #6b7280;   /* auxiliar, hints, labels, placeholders */
+  --color-text-disabled:  #9ca3af;   /* inativo, placeholder, asterisco opcional */
+  --color-text-inverse:   #ffffff;   /* texto sobre fundo claro pontual */
 
-  /* ── Semantic ── */
-  --color-success:         #059669;
-  --color-success-strong:  #047857;
-  --color-success-lighter: #f0fdf4;
-  --color-success-border:  #86efac;
-  --color-success-soft-bg:     rgba(5,150,105,0.08);
-  --color-success-soft-bg-2:   rgba(5,150,105,0.1);
-  --color-success-soft-border: rgba(5,150,105,0.2);
-  --color-danger-soft-bg:  rgba(220,38,38,0.08);
-  --color-accent-soft-bg:  rgba(91,33,182,0.08);
-  --color-accent-soft-bg-focus: rgba(109,40,217,0.12);
-  --color-danger:          #dc2626;
-  --color-danger-strong:   #b91c1c;
-  --color-danger-dark:     #7f1d1d;
-  --color-danger-border:   #ef4444;
-  --color-warning:         #d97706;
-  --color-warning-text:    #b45309;
-  --color-warning-strong:  #92400e;
-  --color-warning-lighter: #fffbeb;
-  --color-warning-border:  #fcd34d;
+  /* ── Borders (por proeminência) ── */
+  --color-border-default: #e5e7eb;   /* borda padrão */
+  --color-border-strong:  #d1d5db;   /* input, ênfase */
+  --color-border-subtle:  #e9ebf4;   /* divisória leve */
+  --color-border-faint:   #f0f1f8;   /* divisória interna quase invisível */
+  --color-border-spinner: #a78bfa;   /* spinner de loading */
 
-  /* ── Overlays ── */
-  --color-overlay-dark:    rgba(15,13,35,0.55);
-  --color-overlay-drawer:  rgba(15,13,35,0.4);
-  --color-overlay-navbar:  0 2px 16px rgba(15,13,35,0.3);
+  /* ── Semantic — Success ── */
+  --color-success:         #059669;              /* sucesso (base) */
+  --color-success-strong:  #047857;              /* sucesso enfático */
+  --color-success-lighter: #f0fdf4;              /* fundo de sucesso */
+  --color-success-border:  #86efac;              /* borda de sucesso */
+  --color-success-soft:        rgba(5,150,105,0.08);  /* fundo verde translúcido */
+  --color-success-soft-border: rgba(5,150,105,0.2);   /* borda verde translúcida */
 
-  /* ── Navbar / drawer on-dark surface ── */
-  --color-on-dark-border:       rgba(255,255,255,0.06);
-  --color-on-dark-border-soft:  rgba(255,255,255,0.08);
-  --color-on-dark-border-mid:   rgba(255,255,255,0.12);
-  --color-on-dark-border-light: rgba(255,255,255,0.15);
-  --color-on-dark-border-strong:rgba(255,255,255,0.25);
-  --color-on-dark-bg:           rgba(255,255,255,0.07);
-  --color-on-dark-bg-soft:      rgba(255,255,255,0.08);
-  --color-on-dark-bg-hover:     rgba(255,255,255,0.14);
-  --color-on-dark-bg-card:      rgba(255,255,255,0.06);
-  --color-on-dark-text:         rgba(255,255,255,0.92);
-  --color-on-dark-text-mid:     rgba(255,255,255,0.75);
-  --color-on-dark-text-soft:    rgba(255,255,255,0.6);
-  --color-on-dark-text-muted:   rgba(255,255,255,0.5);
-  --color-on-dark-text-faint:   rgba(255,255,255,0.45);
-  --color-on-dark-text-dim:     rgba(255,255,255,0.7);
-  --color-on-dark-text-hover:   rgba(255,255,255,0.95);
+  /* ── Semantic — Danger ── */
+  --color-danger:        #dc2626;              /* erro (base) */
+  --color-danger-strong: #b91c1c;              /* erro enfático (botão) */
+  --color-danger-dark:   #7f1d1d;              /* erro em foco/hover forte */
+  --color-danger-border: #ef4444;              /* borda de erro */
+  --color-danger-soft:   rgba(220,38,38,0.08);        /* fundo vermelho translúcido */
+
+  /* ── Semantic — Warning ── */
+  --color-warning:         #d97706;   /* aviso (base) */
+  --color-warning-text:    #b45309;   /* aviso legível em texto */
+  --color-warning-strong:  #92400e;   /* aviso enfático */
+  --color-warning-lighter: #fffbeb;   /* fundo de aviso */
+  --color-warning-border:  #fcd34d;   /* borda de aviso */
+
+  /* ── Overlays (backdrops) ── */
+  --color-overlay-dark:   rgba(15,13,35,0.55);  /* backdrop de modal/sheet */
+  --color-overlay-drawer: rgba(15,13,35,0.4);   /* backdrop de drawer/menu */
+
+  /* ── On-dark (navbar/drawer: branco translúcido) ── */
+  --color-on-dark-text:          rgba(255,255,255,0.92);  /* texto principal on-dark */
+  --color-on-dark-text-muted:    rgba(255,255,255,0.6);   /* texto secundário on-dark */
+  --color-on-dark-text-faint:    rgba(255,255,255,0.45);  /* texto terciário on-dark */
+  --color-on-dark-bg:            rgba(255,255,255,0.08);  /* preenchimento on-dark */
+  --color-on-dark-bg-hover:      rgba(255,255,255,0.14);  /* hover de item on-dark */
+  --color-on-dark-border:        rgba(255,255,255,0.12);  /* borda on-dark */
+  --color-on-dark-border-strong: rgba(255,255,255,0.2);   /* borda on-dark enfática */
 
   /* ── Avatar (supplier) ── */
   --color-avatar-from:   #f59e0b;
@@ -121,9 +110,6 @@
 
   /* ── Accent focus ring (inline for step indicator) ── */
   --shadow-step-active:  0 0 0 3px rgba(109,40,217,0.18);
-
-  /* ── Selected card (step1 mode card) ── */
-  --color-selected-card-bg: rgba(109,40,217,0.04);
 
   /* ── Radii ── */
   --radius-sm:  0.375rem;
@@ -174,7 +160,7 @@ html {
 body {
   margin: 0;
   font-family: var(--font-sans);
-  color: var(--color-text-primary);
+  color: var(--color-text-body);
   background-color: var(--color-surface-app);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -267,8 +253,8 @@ textarea {
     border-radius: var(--radius-md);
     font-family: var(--font-sans);
     font-size: 0.875rem;
-    color: var(--color-text-primary);
-    background-color: var(--color-surface-0);
+    color: var(--color-text-body);
+    background-color: var(--color-surface-card);
     outline: none;
     transition: border-color 160ms ease, box-shadow 160ms ease;
   }
@@ -286,8 +272,8 @@ textarea {
     border-radius: var(--radius-md);
     font-family: var(--font-sans);
     font-size: 0.875rem;
-    color: var(--color-text-primary);
-    background-color: var(--color-surface-0);
+    color: var(--color-text-body);
+    background-color: var(--color-surface-card);
     outline: none;
     appearance: none;
     cursor: pointer;
@@ -305,7 +291,7 @@ textarea {
     margin-top: 2.8rem;
     padding: 2rem 1.4rem;
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-default);
     background-color: white;
   }
   @media (max-width: 640px) {
@@ -376,7 +362,7 @@ textarea {
     padding: 0.45rem 0.875rem;
     border-radius: 2rem;
     border: 1.5px solid var(--color-border-strong);
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
     font-size: 0.8125rem;
@@ -398,7 +384,7 @@ textarea {
     height: 7px;
     border-radius: 50%;
     background: var(--color-accent);
-    border: 1.5px solid var(--color-surface-0);
+    border: 1.5px solid var(--color-surface-card);
   }
 
   /* Filter drawer */
@@ -446,9 +432,9 @@ textarea {
     align-items: center;
     gap: 0.875rem;
     padding: 1rem;
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-border-light);
+    border: 1px solid var(--color-border-subtle);
     animation: skeletonPulse 1.4s ease-in-out infinite;
   }
   .skel-avatar {
@@ -456,7 +442,7 @@ textarea {
     width: 2.75rem;
     height: 2.75rem;
     border-radius: 50%;
-    background: var(--color-surface-3);
+    background: var(--color-surface-sunken);
   }
   .skel-lines {
     flex: 1;
@@ -466,7 +452,7 @@ textarea {
   }
   .skel-line {
     border-radius: 0.25rem;
-    background: var(--color-surface-3);
+    background: var(--color-surface-sunken);
     height: 0.75rem;
   }
   .skel-line-title { width: 60%; }
@@ -486,7 +472,7 @@ textarea {
     width: 3.25rem;
     height: 3.25rem;
     border-radius: 50%;
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -550,8 +536,8 @@ textarea {
     align-items: center;
     gap: 0.875rem;
     padding: 0.875rem 1rem;
-    background: var(--color-surface-0);
-    border: 1px solid var(--color-border-light);
+    background: var(--color-surface-card);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-card-soft);
     transition: transform 0.22s cubic-bezier(0.32,0.72,0,1), box-shadow 0.22s ease;
@@ -570,7 +556,7 @@ textarea {
     width: 2.75rem;
     height: 2.75rem;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-highlight) 100%);
+    background: linear-gradient(135deg, var(--color-highlight-soft) 0%, var(--color-highlight) 100%);
     color: var(--color-accent);
     font-size: 1rem;
     font-weight: 700;
@@ -593,7 +579,7 @@ textarea {
   .card-title {
     font-size: 0.9375rem;
     font-weight: 600;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -632,9 +618,9 @@ textarea {
     font-size: 0.7rem;
     font-weight: 600;
     letter-spacing: 0.02em;
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
     color: var(--color-text-muted);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-default);
   }
   .card-tag.accent {
     background: var(--color-highlight-lighter);
@@ -665,8 +651,8 @@ textarea {
     width: 2rem;
     height: 2rem;
     border-radius: var(--radius-md);
-    border: 1.5px solid var(--color-border);
-    background: var(--color-surface-1);
+    border: 1.5px solid var(--color-border-default);
+    background: var(--color-surface-subtle);
     cursor: pointer;
     transition: background-color 160ms ease, border-color 160ms ease, transform 120ms ease;
     color: var(--color-text-muted);
@@ -678,9 +664,9 @@ textarea {
     color: #6366f1;
   }
   .card-action-btn.view:hover {
-    background: var(--color-surface-1);
-    border-color: var(--color-border);
-    color: var(--color-text-primary);
+    background: var(--color-surface-subtle);
+    border-color: var(--color-border-default);
+    color: var(--color-text-body);
   }
   .card-action-btn.edit:hover  {
     background: var(--color-highlight-lighter);
@@ -688,7 +674,7 @@ textarea {
     color: var(--color-accent);
   }
   .card-action-btn.delete:hover {
-    background: var(--color-danger-soft-bg);
+    background: var(--color-danger-soft);
     border-color: var(--color-danger-border);
     color: var(--color-danger);
   }
@@ -697,11 +683,11 @@ textarea {
   .stf-root {
     display: inline-flex;
     align-items: center;
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
     border-radius: var(--radius-xl);
     padding: 0.1875rem;
     gap: 0;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-default);
   }
   .stf-tab {
     position: relative;
@@ -724,14 +710,14 @@ textarea {
     user-select: none;
   }
   .stf-tab:hover:not(.stf-tab--active) {
-    color: var(--color-text-neutral-strong);
-    background: var(--color-surface-3);
+    color: var(--color-text-neutral);
+    background: var(--color-surface-sunken);
   }
   .stf-tab--active {
-    background: var(--color-surface-0);
-    color: var(--color-text-strong);
+    background: var(--color-surface-card);
+    color: var(--color-text-heading);
     font-weight: 600;
-    box-shadow: 0 1px 4px rgba(15,13,35,0.10), 0 0 0 1px var(--color-border);
+    box-shadow: 0 1px 4px rgba(15,13,35,0.10), 0 0 0 1px var(--color-border-default);
   }
   .stf-tab:active { transform: scale(0.96); }
   .stf-tab--active:active { transform: none; }
@@ -739,7 +725,7 @@ textarea {
   /* Colored accent on active tabs */
   .stf-tab--active.stf-tab--accent { color: var(--color-accent); }
   .stf-tab--active.stf-tab--success { color: var(--color-success); }
-  .stf-tab--active.stf-tab--neutral { color: var(--color-text-subtle); }
+  .stf-tab--active.stf-tab--neutral { color: var(--color-text-neutral); }
 
   /* Status dot inside tab */
   .stf-dot {
@@ -768,7 +754,7 @@ textarea {
     font-size: 0.6875rem;
     font-weight: 700;
     line-height: 1;
-    background: var(--color-surface-3);
+    background: var(--color-surface-sunken);
     color: var(--color-text-muted);
     transition: background 160ms ease, color 160ms ease;
   }
@@ -777,12 +763,12 @@ textarea {
     color: var(--color-accent);
   }
   .stf-tab--active.stf-tab--success .stf-badge--active {
-    background: var(--color-success-soft-bg-2);
+    background: var(--color-success-soft);
     color: var(--color-success);
   }
   .stf-tab--active.stf-tab--neutral .stf-badge--active {
-    background: var(--color-surface-3);
-    color: var(--color-text-subtle);
+    background: var(--color-surface-sunken);
+    color: var(--color-text-neutral);
   }
 
   /* Mobile: full-width strip */
@@ -828,7 +814,7 @@ textarea {
     padding: 0.3125rem 0.75rem;
     border-radius: 2rem;
     border: 1.5px solid var(--color-border-strong);
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
     font-size: 0.8125rem;
@@ -873,8 +859,8 @@ textarea {
     border-radius: var(--radius-lg);
     font-family: var(--font-sans);
     font-size: 0.9375rem;
-    color: var(--color-text-primary);
-    background: var(--color-surface-0);
+    color: var(--color-text-body);
+    background: var(--color-surface-card);
     outline: none;
     transition: border-color 160ms ease, box-shadow 160ms ease;
   }
@@ -884,7 +870,7 @@ textarea {
     box-shadow: var(--shadow-focus-accent-soft);
   }
   .mf-input:disabled {
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
     color: var(--color-text-disabled);
     cursor: not-allowed;
   }
@@ -900,13 +886,13 @@ textarea {
     height: 1.5rem;
     border-radius: 50%;
     border: none;
-    background: var(--color-surface-3);
+    background: var(--color-surface-sunken);
     color: var(--color-text-muted);
     cursor: pointer;
     transition: background 140ms ease;
     -webkit-tap-highlight-color: transparent;
   }
-  .mf-input-clear:active { background: var(--color-surface-5); }
+  .mf-input-clear:active { background: var(--color-surface-sunken); }
 
   .mf-select-wrap {
     position: relative;
@@ -935,8 +921,8 @@ textarea {
     border-radius: var(--radius-lg);
     font-family: var(--font-sans);
     font-size: 0.9375rem;
-    color: var(--color-text-primary);
-    background: var(--color-surface-0);
+    color: var(--color-text-body);
+    background: var(--color-surface-card);
     outline: none;
     appearance: none;
     cursor: pointer;
@@ -1002,7 +988,7 @@ textarea {
     padding: 0.25rem 0.625rem;
     border-radius: 2rem;
     border: 1.5px solid var(--color-highlight-border);
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     color: var(--color-accent);
     font-family: var(--font-sans);
     font-size: 0.75rem;
@@ -1041,7 +1027,7 @@ textarea {
     left: 0;
     right: 0;
     z-index: 1101;
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
     padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
     box-shadow: 0 -8px 40px rgba(15,13,35,0.18);
@@ -1068,13 +1054,13 @@ textarea {
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.25rem 0.75rem;
-    border-bottom: 1px solid var(--color-border-light);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
 
   .sort-sheet-title {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     letter-spacing: -0.01em;
   }
 
@@ -1086,13 +1072,13 @@ textarea {
     height: 2rem;
     border-radius: 50%;
     border: none;
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
     color: var(--color-text-muted);
     cursor: pointer;
     transition: background 140ms ease;
     -webkit-tap-highlight-color: transparent;
   }
-  .sort-sheet-close:active { background: var(--color-surface-3); }
+  .sort-sheet-close:active { background: var(--color-surface-sunken); }
 
   .sort-sheet-body {
     padding: 1.125rem 1.25rem 0.5rem;
@@ -1120,9 +1106,9 @@ textarea {
     width: 100%;
     padding: 0.8125rem 1rem;
     border-radius: var(--radius-lg);
-    border: 1.5px solid var(--color-border);
-    background: var(--color-surface-1);
-    color: var(--color-text-primary);
+    border: 1.5px solid var(--color-border-default);
+    background: var(--color-surface-subtle);
+    color: var(--color-text-body);
     font-family: var(--font-sans);
     font-size: 0.9375rem;
     font-weight: 500;
@@ -1160,8 +1146,8 @@ textarea {
     width: 100%;
     padding: 0.75rem 1rem;
     border-radius: var(--radius-lg);
-    border: 1.5px solid var(--color-border);
-    background: var(--color-surface-1);
+    border: 1.5px solid var(--color-border-default);
+    background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
     font-size: 0.875rem;
@@ -1209,7 +1195,7 @@ textarea {
     padding: 0.8125rem;
     border-radius: var(--radius-lg);
     border: 1.5px solid var(--color-border-strong);
-    background: var(--color-surface-1);
+    background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
     font-size: 0.9375rem;
@@ -1220,7 +1206,7 @@ textarea {
   }
   .sort-remove-btn:active {
     transform: scale(0.98);
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
   }
 
   .sort-clear-btn {
@@ -1317,7 +1303,7 @@ textarea {
     width: 100%;
     height: 3px;
     border-radius: 99px;
-    background: var(--color-border);
+    background: var(--color-border-default);
     overflow: hidden;
   }
   .mpag-progress-fill {
@@ -1354,8 +1340,8 @@ textarea {
     height: 2.875rem;
     border-radius: var(--radius-lg);
     border: 1.5px solid var(--color-border-strong);
-    background: var(--color-surface-0);
-    color: var(--color-text-neutral-strong);
+    background: var(--color-surface-card);
+    color: var(--color-text-neutral);
     font-family: var(--font-sans);
     font-size: 0.9375rem;
     font-weight: 600;
@@ -1367,7 +1353,7 @@ textarea {
   }
   .mpag-btn:not(:disabled):active {
     transform: scale(0.96);
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
   }
   .mpag-btn:not(:disabled):hover {
     border-color: var(--color-accent);
@@ -1397,9 +1383,9 @@ textarea {
     box-shadow: none;
   }
   .mpag-btn-next:disabled {
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     border-color: var(--color-border-strong);
-    color: var(--color-text-neutral-strong);
+    color: var(--color-text-neutral);
     box-shadow: none;
     opacity: 0.32;
   }
@@ -1431,7 +1417,7 @@ textarea {
   .step-tabs {
     display: flex;
     border-radius: var(--radius-lg);
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
     padding: 0.25rem;
     gap: 0.25rem;
   }
@@ -1457,7 +1443,7 @@ textarea {
   }
   .step-tab:active { transform: scale(0.97); }
   .step-tab.active {
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     color: var(--color-accent);
     font-weight: 600;
     box-shadow: var(--shadow-card-soft);
@@ -1487,7 +1473,7 @@ textarea {
     -webkit-tap-highlight-color: transparent;
   }
   .card-front-clickable:active {
-    background: var(--color-surface-1);
+    background: var(--color-surface-subtle);
     transform: scale(0.985);
   }
   .card-chevron {
@@ -1503,7 +1489,7 @@ textarea {
     left: 0;
     right: 0;
     z-index: 1101;
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
     padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
     box-shadow: 0 -8px 40px rgba(15,13,35,0.18);
@@ -1522,7 +1508,7 @@ textarea {
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.25rem 0.875rem;
-    border-bottom: 1px solid var(--color-border-light);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
   .qsheet-header-info {
     display: flex;
@@ -1532,7 +1518,7 @@ textarea {
   .qsheet-title {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     letter-spacing: -0.01em;
   }
 
@@ -1541,7 +1527,7 @@ textarea {
     grid-template-columns: repeat(auto-fit, minmax(4.5rem, 1fr));
     gap: 0.625rem;
     padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--color-border-light);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
   .qsheet-action-btn {
     display: flex;
@@ -1551,8 +1537,8 @@ textarea {
     gap: 0.375rem;
     padding: 0.75rem 0.5rem;
     border-radius: var(--radius-lg);
-    border: 1.5px solid var(--color-border-light);
-    background: var(--color-surface-1);
+    border: 1.5px solid var(--color-border-subtle);
+    background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
     font-size: 0.6875rem;
@@ -1565,7 +1551,7 @@ textarea {
   .qsheet-action-btn:active { filter: brightness(0.88); }
   .qsheet-monitor { color: #6366f1; border-color: rgba(99,102,241,0.25); background: rgba(99,102,241,0.06); }
   .qsheet-view    { color: var(--color-text-muted); }
-  .qsheet-edit    { color: var(--color-accent); border-color: var(--color-accent-light); background: var(--color-highlight-lighter); }
+  .qsheet-edit    { color: var(--color-accent); border-color: var(--color-highlight-soft); background: var(--color-highlight-lighter); }
   .qsheet-delete  { color: var(--color-danger); border-color: rgba(239,68,68,0.2); background: rgba(239,68,68,0.05); }
 
   .qsheet-body {
@@ -1579,7 +1565,7 @@ textarea {
     left: 0;
     right: 0;
     z-index: 1101;
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
     padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
     box-shadow: 0 -8px 40px rgba(15,13,35,0.18);
@@ -1599,17 +1585,17 @@ textarea {
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.25rem 0.875rem;
-    border-bottom: 1px solid var(--color-border-light);
+    border-bottom: 1px solid var(--color-border-subtle);
     position: sticky;
     top: 0;
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     z-index: 1;
   }
 
   .sform-sheet-title {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     letter-spacing: -0.01em;
   }
 
@@ -1638,7 +1624,7 @@ textarea {
     left: 0;
     right: 0;
     z-index: 1101;
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
     padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
     box-shadow: 0 -8px 40px rgba(15,13,35,0.18);
@@ -1664,13 +1650,13 @@ textarea {
     justify-content: space-between;
     gap: 0.75rem;
     padding: 1rem 1.25rem 0.75rem;
-    border-bottom: 1px solid var(--color-border-light);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
 
   .psheet-title {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     letter-spacing: -0.01em;
     line-height: 1.3;
     flex: 1;
@@ -1693,13 +1679,13 @@ textarea {
     height: 2rem;
     border-radius: 50%;
     border: none;
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
     color: var(--color-text-muted);
     cursor: pointer;
     transition: background 140ms ease;
     -webkit-tap-highlight-color: transparent;
   }
-  .psheet-close:active { background: var(--color-surface-3); }
+  .psheet-close:active { background: var(--color-surface-sunken); }
 
   .psheet-body {
     padding: 1.25rem 1.25rem 0.75rem;
@@ -1730,8 +1716,8 @@ textarea {
     border-radius: var(--radius-lg);
     font-family: var(--font-sans);
     font-size: 1rem;
-    color: var(--color-text-primary);
-    background: var(--color-surface-0);
+    color: var(--color-text-body);
+    background: var(--color-surface-card);
     outline: none;
     transition: border-color 160ms ease, box-shadow 160ms ease;
   }
@@ -1797,7 +1783,7 @@ textarea {
     height: 2.75rem;
     border-radius: var(--radius-lg);
     border: 1.5px solid var(--color-border-strong);
-    background: var(--color-surface-1);
+    background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
     font-size: 0.9375rem;
@@ -1808,7 +1794,7 @@ textarea {
   }
   .psheet-cancel-btn:active {
     transform: scale(0.98);
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
   }
 
   /* ── Selected product card (Step 2 mobile list) ── */
@@ -1817,8 +1803,8 @@ textarea {
     align-items: center;
     gap: 0.75rem;
     padding: 0.875rem 1rem;
-    background: var(--color-surface-0);
-    border: 1px solid var(--color-border-light);
+    background: var(--color-surface-card);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-card-soft);
     animation: cardAppear 0.22s ease-out both;
@@ -1842,7 +1828,7 @@ textarea {
   .sel-product-name {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1858,7 +1844,7 @@ textarea {
   .sel-product-qty {
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    color: var(--color-text-primary);
+    color: var(--color-text-body);
   }
   .sel-product-dot {
     width: 3px;
@@ -1891,8 +1877,8 @@ textarea {
     width: 2rem;
     height: 2rem;
     border-radius: var(--radius-md);
-    border: 1.5px solid var(--color-border);
-    background: var(--color-surface-1);
+    border: 1.5px solid var(--color-border-default);
+    background: var(--color-surface-subtle);
     cursor: pointer;
     transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 100ms ease;
     color: var(--color-text-muted);
@@ -1907,7 +1893,7 @@ textarea {
   }
   .sel-product-btn.remove:active,
   .sel-product-btn.remove:hover {
-    background: var(--color-danger-soft-bg);
+    background: var(--color-danger-soft);
     border-color: var(--color-danger-border);
     color: var(--color-danger);
   }
@@ -1918,8 +1904,8 @@ textarea {
     align-items: center;
     gap: 0.75rem;
     padding: 0.875rem 1rem;
-    background: var(--color-surface-0);
-    border: 1px solid var(--color-border-light);
+    background: var(--color-surface-card);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-card-soft);
     animation: cardAppear 0.22s ease-out both;
@@ -1929,7 +1915,7 @@ textarea {
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-highlight) 100%);
+    background: linear-gradient(135deg, var(--color-highlight-soft) 0%, var(--color-highlight) 100%);
     color: var(--color-accent);
     font-size: 1rem;
     font-weight: 700;
@@ -1946,7 +1932,7 @@ textarea {
   .sup-row-name {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1991,8 +1977,8 @@ textarea {
     gap: 0.5rem;
     padding: 0.75rem 1rem;
     padding-top: max(0.75rem, env(safe-area-inset-top));
-    background: var(--color-surface-0);
-    border-bottom: 1px solid var(--color-border-light);
+    background: var(--color-surface-card);
+    border-bottom: 1px solid var(--color-border-subtle);
     box-shadow: 0 1px 8px rgba(15,13,35,0.06);
   }
   .qm-mobile-back-btn {
@@ -2004,13 +1990,13 @@ textarea {
     height: 2.25rem;
     border-radius: 50%;
     border: 1.5px solid var(--color-border-strong);
-    background: var(--color-surface-1);
-    color: var(--color-text-neutral-strong);
+    background: var(--color-surface-subtle);
+    color: var(--color-text-neutral);
     cursor: pointer;
     transition: background 140ms ease, border-color 140ms ease;
     -webkit-tap-highlight-color: transparent;
   }
-  .qm-mobile-back-btn:active { background: var(--color-surface-2); }
+  .qm-mobile-back-btn:active { background: var(--color-surface-muted); }
 
   .qm-mobile-header-center {
     flex: 1;
@@ -2023,7 +2009,7 @@ textarea {
   .qm-mobile-title {
     font-size: 0.9375rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     letter-spacing: -0.01em;
     line-height: 1.2;
   }
@@ -2038,7 +2024,7 @@ textarea {
     text-transform: uppercase;
   }
   .qm-status--active {
-    background: var(--color-success-soft-bg-2);
+    background: var(--color-success-soft);
     color: var(--color-success-strong);
     border: 1px solid var(--color-success-soft-border);
   }
@@ -2048,9 +2034,9 @@ textarea {
     border: 1px solid var(--color-highlight-border);
   }
   .qm-status--closed {
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
     color: var(--color-text-muted);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-default);
   }
 
   .qm-mobile-export-btn {
@@ -2086,7 +2072,7 @@ textarea {
     font-weight: 600;
   }
   .qm-countdown-banner.qm-status--active {
-    background: var(--color-success-soft-bg);
+    background: var(--color-success-soft);
     color: var(--color-success-strong);
     border-bottom: 1px solid var(--color-success-soft-border);
     animation: qmPulse 2.4s ease-in-out infinite;
@@ -2108,8 +2094,8 @@ textarea {
     align-items: center;
     gap: 0;
     margin: 0.75rem 1rem 0;
-    background: var(--color-surface-0);
-    border: 1px solid var(--color-border-light);
+    background: var(--color-surface-card);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xs);
     overflow: hidden;
@@ -2134,14 +2120,14 @@ textarea {
   .qm-date-value {
     font-size: 0.8rem;
     font-weight: 500;
-    color: var(--color-text-neutral-strong);
+    color: var(--color-text-neutral);
     text-align: center;
     line-height: 1.3;
   }
   .qm-date-divider {
     width: 1px;
     align-self: stretch;
-    background: var(--color-border-light);
+    background: var(--color-border-subtle);
     flex-shrink: 0;
   }
 
@@ -2160,8 +2146,8 @@ textarea {
     align-items: flex-start;
     gap: 0.2rem;
     padding: 0.875rem 1rem;
-    background: var(--color-surface-0);
-    border: 1px solid var(--color-border-light);
+    background: var(--color-surface-card);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xs);
   }
@@ -2196,14 +2182,14 @@ textarea {
     width: 2rem;
     height: 2rem;
     border-radius: var(--radius-md);
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border-default);
     color: var(--color-text-muted);
   }
   .qm-stat-value {
     font-size: 1.125rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
     line-height: 1.1;
@@ -2226,8 +2212,8 @@ textarea {
   /* ── Sections ── */
   .qm-section {
     margin: 0.875rem 1rem 0;
-    background: var(--color-surface-0);
-    border: 1px solid var(--color-border-light);
+    background: var(--color-surface-card);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-card-soft);
     overflow: hidden;
@@ -2247,7 +2233,7 @@ textarea {
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
-  .qm-section-header:active { background: var(--color-surface-1); }
+  .qm-section-header:active { background: var(--color-surface-subtle); }
   .qm-section-header-left {
     display: flex;
     align-items: center;
@@ -2261,7 +2247,7 @@ textarea {
   .qm-section-title {
     font-size: 0.9375rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     letter-spacing: -0.01em;
   }
   .qm-section-count {
@@ -2285,7 +2271,7 @@ textarea {
   }
 
   .qm-section-body {
-    border-top: 1px solid var(--color-border-light);
+    border-top: 1px solid var(--color-border-subtle);
   }
   .qm-section-filter-bar {
     padding: 0.75rem 1rem 0;
@@ -2307,8 +2293,8 @@ textarea {
 
   /* ── Product card ── */
   .qm-product-card {
-    background: var(--color-surface-1);
-    border: 1px solid var(--color-border-light);
+    background: var(--color-surface-subtle);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-lg);
     overflow: hidden;
     animation: cardAppear 0.22s ease-out both;
@@ -2341,7 +2327,7 @@ textarea {
   .qm-product-name {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2361,8 +2347,8 @@ textarea {
     align-items: center;
     gap: 0.05rem;
     padding: 0.3rem 0.5rem;
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border-default);
     border-radius: var(--radius-md);
     min-width: 2.5rem;
   }
@@ -2376,14 +2362,14 @@ textarea {
   .qm-product-qty-value {
     font-size: 0.875rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
   }
 
   .qm-product-bid-section {
     padding: 0.625rem 0.875rem 0.75rem;
-    border-top: 1px solid var(--color-border-light);
-    background: var(--color-surface-0);
+    border-top: 1px solid var(--color-border-subtle);
+    background: var(--color-surface-card);
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -2408,7 +2394,7 @@ textarea {
   .qm-bid-metric-value {
     font-size: 0.9375rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
   }
@@ -2424,7 +2410,7 @@ textarea {
   .qm-product-supplier-name {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--color-text-neutral-strong);
+    color: var(--color-text-neutral);
   }
   .qm-product-employer-name {
     font-size: 0.75rem;
@@ -2438,8 +2424,8 @@ textarea {
 
   .qm-product-no-bid {
     padding: 0.5rem 0.875rem 0.625rem;
-    border-top: 1px solid var(--color-border-lighter);
-    background: var(--color-surface-1);
+    border-top: 1px solid var(--color-border-faint);
+    background: var(--color-surface-subtle);
   }
   .qm-product-no-bid span {
     font-size: 0.75rem;
@@ -2450,15 +2436,15 @@ textarea {
 
   /* ── Bid card ── */
   .qm-bid-card {
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     border-radius: var(--radius-lg);
     overflow: hidden;
     animation: cardAppear 0.22s ease-out both;
     border-left-width: 3px;
     border-left-style: solid;
-    border-top: 1px solid var(--color-border-light);
-    border-right: 1px solid var(--color-border-light);
-    border-bottom: 1px solid var(--color-border-light);
+    border-top: 1px solid var(--color-border-subtle);
+    border-right: 1px solid var(--color-border-subtle);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
   .qm-bid-card--winning {
     border-left-color: var(--color-success);
@@ -2485,7 +2471,7 @@ textarea {
   .qm-bid-product-name {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2506,12 +2492,12 @@ textarea {
     letter-spacing: 0.03em;
   }
   .qm-bid-status-badge.winning {
-    background: var(--color-success-soft-bg-2);
+    background: var(--color-success-soft);
     color: var(--color-success-strong);
     border: 1px solid var(--color-success-soft-border);
   }
   .qm-bid-status-badge.losing {
-    background: var(--color-danger-soft-bg);
+    background: var(--color-danger-soft);
     color: var(--color-danger);
     border: 1px solid rgba(239,68,68,0.2);
   }
@@ -2537,7 +2523,7 @@ textarea {
   .qm-bid-price-value {
     font-size: 0.9375rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
   }
   .qm-bid-price-value--winning {
@@ -2554,7 +2540,7 @@ textarea {
   .qm-bid-supplier-name {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--color-text-neutral-strong);
+    color: var(--color-text-neutral);
   }
   .qm-bid-employer {
     font-size: 0.75rem;
@@ -2572,7 +2558,7 @@ textarea {
     font-size: 0.6875rem;
     color: var(--color-text-disabled);
     font-variant-numeric: tabular-nums;
-    border-top: 1px solid var(--color-border-lighter);
+    border-top: 1px solid var(--color-border-faint);
     margin-top: 0.125rem;
   }
 
@@ -2600,7 +2586,7 @@ textarea {
     left: 0; right: 0;
     bottom: calc(4.25rem + env(safe-area-inset-bottom));
     z-index: 201;
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
     box-shadow: 0 -4px 32px rgba(0,0,0,0.14);
     max-height: calc(80dvh - 4.25rem - env(safe-area-inset-bottom));
@@ -2632,7 +2618,7 @@ textarea {
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     z-index: 201;
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     border-radius: var(--radius-xl);
     box-shadow: 0 8px 48px rgba(0,0,0,0.18);
     width: min(480px, calc(100vw - 2rem));
@@ -2640,7 +2626,7 @@ textarea {
     display: flex;
     flex-direction: column;
     animation: modalIn 0.22s cubic-bezier(0.34,1.56,0.64,1) both;
-    border: 1px solid var(--color-border-light);
+    border: 1px solid var(--color-border-subtle);
   }
 
   /* Shared header */
@@ -2650,19 +2636,19 @@ textarea {
     align-items: center;
     justify-content: space-between;
     padding: 0.875rem 1.125rem 0.75rem;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border-default);
     flex-shrink: 0;
   }
   .sqm-sheet-title-row {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
   }
   .sqm-sheet-title {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
   }
   .sqm-sheet-count {
     display: inline-flex;
@@ -2671,8 +2657,8 @@ textarea {
     min-width: 1.375rem;
     height: 1.375rem;
     padding: 0 0.35rem;
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border-default);
     border-radius: 99px;
     font-size: 0.75rem;
     font-weight: 700;
@@ -2685,17 +2671,17 @@ textarea {
     width: 2rem;
     height: 2rem;
     border-radius: var(--radius-md);
-    border: 1.5px solid var(--color-border);
-    background: var(--color-surface-1);
+    border: 1.5px solid var(--color-border-default);
+    background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     cursor: pointer;
     transition: background 120ms, border-color 120ms, color 120ms;
     flex-shrink: 0;
   }
   .sqm-close-btn:hover {
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
     border-color: var(--color-border-strong);
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
   }
 
   /* Scrollable body */
@@ -2725,11 +2711,11 @@ textarea {
   }
   .sqm-group-header--active {
     color: var(--color-success-strong);
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
   }
   .sqm-group-header--pending {
     color: var(--color-text-muted);
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
   }
   .sqm-group-count {
     margin-left: auto;
@@ -2745,7 +2731,7 @@ textarea {
     align-items: center;
     gap: 0.75rem;
     padding: 0.6rem 1.125rem;
-    border-bottom: 1px solid var(--color-border-lighter);
+    border-bottom: 1px solid var(--color-border-faint);
     animation: cardAppear 0.2s ease-out both;
   }
   .sqm-row:last-child { border-bottom: none; }
@@ -2758,12 +2744,12 @@ textarea {
     width: 2rem;
     height: 2rem;
     border-radius: var(--radius-md);
-    background: var(--color-surface-2);
-    border: 1.5px solid var(--color-border);
+    background: var(--color-surface-muted);
+    border: 1.5px solid var(--color-border-default);
     color: var(--color-text-muted);
   }
   .sqm-row-avatar--active {
-    background: var(--color-success-soft-bg);
+    background: var(--color-success-soft);
     border-color: var(--color-success-border);
     color: var(--color-success-strong);
   }
@@ -2777,7 +2763,7 @@ textarea {
   .sqm-row-name {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     word-break: break-word;
     line-height: 1.3;
   }
@@ -2801,13 +2787,13 @@ textarea {
   }
   .sqm-row-badge--active {
     color: var(--color-success-strong);
-    background: var(--color-success-soft-bg-2);
+    background: var(--color-success-soft);
     border: 1px solid var(--color-success-soft-border);
   }
   .sqm-row-badge--pending {
     color: var(--color-text-muted);
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border-default);
   }
 
   /* Clickable stat card variant */
@@ -2816,7 +2802,7 @@ textarea {
     font: inherit;
     color: inherit;
     text-align: center;
-    border: 1px solid var(--color-border-light);
+    border: 1px solid var(--color-border-subtle);
     transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
   }
   .qm-stat-card--clickable:hover,
@@ -2847,7 +2833,7 @@ textarea {
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
-    border: 2.5px solid var(--color-border);
+    border: 2.5px solid var(--color-border-default);
     border-top-color: var(--color-accent);
     animation: spin 0.8s linear infinite;
   }
@@ -2864,8 +2850,8 @@ textarea {
     align-items: center;
     gap: 0.75rem;
     padding: 0.875rem 1rem;
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border-default);
     border-radius: var(--radius-lg);
     color: var(--color-text-muted);
     font-size: 0.875rem;
@@ -2896,7 +2882,7 @@ textarea {
     width: 2.375rem;
     height: 2.375rem;
     border-radius: var(--radius-md);
-    background: var(--color-success-soft-bg-2);
+    background: var(--color-success-soft);
     border: 1.5px solid var(--color-success-soft-border);
     color: var(--color-success-strong);
   }
@@ -2910,7 +2896,7 @@ textarea {
   .sqc-win-name {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2930,7 +2916,7 @@ textarea {
     align-items: center;
     gap: 0.05rem;
     padding: 0.3rem 0.5rem;
-    background: var(--color-success-soft-bg);
+    background: var(--color-success-soft);
     border: 1px solid var(--color-success-soft-border);
     border-radius: var(--radius-md);
     min-width: 3.5rem;
@@ -2967,7 +2953,7 @@ textarea {
   }
   .sqc-win-price-metric--total {
     border-left: 1px solid var(--color-success-soft-border);
-    background: var(--color-success-soft-bg);
+    background: var(--color-success-soft);
   }
   .sqc-win-price-label {
     font-size: 0.6rem;
@@ -2980,7 +2966,7 @@ textarea {
   .sqc-win-price-value {
     font-size: 0.9375rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
   }
@@ -2999,7 +2985,7 @@ textarea {
     align-items: center;
     padding: 0.2rem 0.6rem;
     border-radius: 2rem;
-    background: var(--color-success-soft-bg-2);
+    background: var(--color-success-soft);
     border: 1px solid var(--color-success-soft-border);
     color: var(--color-success-strong);
     font-size: 0.6875rem;
@@ -3051,7 +3037,7 @@ textarea {
     animation-delay: 0.08s;
   }
   .saqu-status-banner--sent {
-    background: var(--color-info-soft);
+    background: var(--color-highlight-soft);
     border-color: var(--color-info-border);
   }
   .saqu-status-banner--pending {
@@ -3071,7 +3057,7 @@ textarea {
     color: var(--color-accent);
   }
   .saqu-status-banner-icon--pending {
-    background: var(--color-accent-soft-bg);
+    background: var(--color-accent-soft);
     border-color: var(--color-highlight-border);
     color: var(--color-accent);
   }
@@ -3085,7 +3071,7 @@ textarea {
   .saqu-status-banner-title {
     font-size: 0.9rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     line-height: 1.2;
   }
   .saqu-status-banner-sub {
@@ -3106,8 +3092,8 @@ textarea {
     width: 1.75rem;
     height: 1.75rem;
     border-radius: 50%;
-    border: 1.5px solid var(--color-border);
-    background: var(--color-surface-1);
+    border: 1.5px solid var(--color-border-default);
+    background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     cursor: pointer;
     transition: color 120ms, background 120ms, border-color 120ms;
@@ -3136,8 +3122,8 @@ textarea {
 
   /* Product input card (preenchimento) */
   .saqu-input-card {
-    background: var(--color-surface-0);
-    border: 1.5px solid var(--color-border-light);
+    background: var(--color-surface-card);
+    border: 1.5px solid var(--color-border-subtle);
     border-radius: var(--radius-lg);
     overflow: hidden;
     animation: cardAppear 0.22s ease-out both;
@@ -3161,8 +3147,8 @@ textarea {
     width: 2.375rem;
     height: 2.375rem;
     border-radius: var(--radius-md);
-    background: var(--color-surface-2);
-    border: 1.5px solid var(--color-border);
+    background: var(--color-surface-muted);
+    border: 1.5px solid var(--color-border-default);
     color: var(--color-text-muted);
     transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
     margin-top: 0.1rem;
@@ -3182,7 +3168,7 @@ textarea {
   .saqu-input-name {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     line-height: 1.35;
     word-break: break-word;
   }
@@ -3214,8 +3200,8 @@ textarea {
     align-items: center;
     gap: 0.05rem;
     padding: 0.25rem 0.45rem;
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border-default);
     border-radius: var(--radius-md);
     min-width: 2.75rem;
   }
@@ -3229,7 +3215,7 @@ textarea {
   .saqu-input-qty-value {
     font-size: 0.8125rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
@@ -3260,8 +3246,8 @@ textarea {
     font-size: 1rem;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
-    color: var(--color-text-primary);
-    background: var(--color-surface-1);
+    color: var(--color-text-body);
+    background: var(--color-surface-subtle);
     outline: none;
     text-align: right;
     transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
@@ -3274,7 +3260,7 @@ textarea {
   .saqu-price-input:focus {
     border-color: var(--color-accent);
     box-shadow: var(--shadow-focus-accent-soft);
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
   }
   .saqu-price-input--filled {
     border-color: var(--color-accent);
@@ -3288,7 +3274,7 @@ textarea {
     align-items: center;
     justify-content: space-between;
     padding: 0.5rem 0.875rem 0.625rem;
-    border-top: 1px solid var(--color-border-lighter);
+    border-top: 1px solid var(--color-border-faint);
     background: var(--color-highlight-lighter);
   }
   .saqu-input-total-label {
@@ -3346,13 +3332,13 @@ textarea {
     width: 2.25rem;
     height: 2.25rem;
     border-radius: var(--radius-md);
-    background: var(--color-surface-2);
-    border: 1.5px solid var(--color-border);
+    background: var(--color-surface-muted);
+    border: 1.5px solid var(--color-border-default);
     color: var(--color-text-muted);
     margin-top: 0.1rem;
   }
   .saqu-submitted-avatar--priced {
-    background: var(--color-accent-soft-bg);
+    background: var(--color-accent-soft);
     border-color: var(--color-highlight-border);
     color: var(--color-accent);
   }
@@ -3366,7 +3352,7 @@ textarea {
   .saqu-submitted-name {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     line-height: 1.35;
     word-break: break-word;
   }
@@ -3392,8 +3378,8 @@ textarea {
     align-items: center;
     gap: 0.05rem;
     padding: 0.25rem 0.45rem;
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border-default);
     border-radius: var(--radius-md);
     min-width: 2.75rem;
   }
@@ -3407,7 +3393,7 @@ textarea {
   .saqu-submitted-qty-value {
     font-size: 0.8125rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
@@ -3425,7 +3411,7 @@ textarea {
   }
   .saqu-submitted-price-cell--total {
     border-left: 1px solid var(--color-highlight-border);
-    background: var(--color-accent-soft-bg);
+    background: var(--color-accent-soft);
   }
   .saqu-submitted-price-label {
     font-size: 0.6rem;
@@ -3438,7 +3424,7 @@ textarea {
   .saqu-submitted-price-value {
     font-size: 0.9375rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
   }
@@ -3477,7 +3463,7 @@ textarea {
     color: var(--color-danger-strong);
   }
   .saqu-alert--success {
-    background: var(--color-success-soft-bg);
+    background: var(--color-success-soft);
     border: 1px solid var(--color-success-soft-border);
     color: var(--color-success-strong);
   }
@@ -3561,7 +3547,7 @@ textarea {
     left: 0;
     right: 0;
     z-index: 1101;
-    background: var(--color-surface-0);
+    background: var(--color-surface-card);
     border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
     padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
     box-shadow: 0 -8px 40px rgba(15,13,35,0.18);
@@ -3587,12 +3573,12 @@ textarea {
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.25rem 0.875rem;
-    border-bottom: 1px solid var(--color-border-light);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
   .saqu-sheet-title {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     letter-spacing: -0.01em;
   }
   .saqu-sheet-close {
@@ -3603,13 +3589,13 @@ textarea {
     height: 2rem;
     border-radius: 50%;
     border: none;
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
     color: var(--color-text-muted);
     cursor: pointer;
     transition: background 140ms ease;
     -webkit-tap-highlight-color: transparent;
   }
-  .saqu-sheet-close:active { background: var(--color-surface-3); }
+  .saqu-sheet-close:active { background: var(--color-surface-sunken); }
   .saqu-sheet-body {
     padding: 1rem 1.25rem 0.5rem;
     display: flex;
@@ -3632,8 +3618,8 @@ textarea {
     flex-direction: column;
     gap: 0.3rem;
     padding: 0.625rem 0.875rem;
-    background: var(--color-surface-1);
-    border: 1px solid var(--color-border-light);
+    background: var(--color-surface-subtle);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-md);
   }
   .saqu-review-row--skipped {
@@ -3654,7 +3640,7 @@ textarea {
   .saqu-review-row-name {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-text-strong);
+    color: var(--color-text-heading);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -3782,7 +3768,7 @@ textarea {
     height: 2.875rem;
     border-radius: var(--radius-lg);
     border: 1.5px solid var(--color-border-strong);
-    background: var(--color-surface-1);
+    background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
     font-size: 0.9375rem;
@@ -3794,7 +3780,7 @@ textarea {
   }
   .saqu-sheet-cancel-btn:active {
     transform: scale(0.98);
-    background: var(--color-surface-2);
+    background: var(--color-surface-muted);
   }
   .saqu-btn-spinner {
     display: inline-block;

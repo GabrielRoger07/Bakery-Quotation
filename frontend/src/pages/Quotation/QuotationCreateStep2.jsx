@@ -6,8 +6,12 @@ import Button from '@/components/Button'
 import Alert from '@/components/Alert'
 import Input from '@/components/Input'
 import Modal from '@/components/Modal'
-import Pagination from '@/components/Pagination'
-import { X, Plus, Package, ChevronDown, Pencil, Check } from 'lucide-react'
+import LoadMoreButton from '@/components/LoadMoreButton'
+import EmptyState from '@/components/EmptyState'
+import MobileSearchInput from '@/components/MobileSearchInput'
+import ActiveFilterPill from '@/components/ActiveFilterPill'
+import WizardActions from '@/components/WizardActions'
+import { X, Plus, Minus, Package, ChevronDown, Pencil, Check, SearchX, ShoppingCart, ArrowRight } from 'lucide-react'
 import { ENV } from '@/config/env'
 
 /* ── Create product inline form (used inside Modal on desktop, Modal on mobile too) ── */
@@ -58,7 +62,7 @@ const CreateProductModalForm = ({ onSuccess, onClose, request, departments = [],
 
             {departments.length >= 2 && (
                 <div className="flex flex-col mb-[1.125rem]">
-                    <label className="mb-[0.375rem] font-semibold text-[var(--color-text-subtle)] text-[0.875rem] tracking-[0.005em] mr-auto">
+                    <label className="mb-[0.375rem] font-semibold text-[var(--color-text-neutral)] text-[0.875rem] tracking-[0.005em] mr-auto">
                         Departamento <span className="ml-[2px] font-bold text-[var(--color-danger-strong)]">*</span>
                     </label>
                     <div className="relative">
@@ -66,7 +70,7 @@ const CreateProductModalForm = ({ onSuccess, onClose, request, departments = [],
                             required
                             value={departmentId}
                             onChange={e => setDepartmentId(e.target.value)}
-                            className="w-full min-h-[2.625rem] py-[0.5625rem] pl-[0.875rem] pr-10 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
+                            className="w-full min-h-[2.625rem] py-[0.5625rem] pl-[0.875rem] pr-10 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] text-[var(--color-text-body)] bg-[var(--color-surface-card)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
                         >
                             <option value="" disabled>Selecionar departamento</option>
                             {departments.map(d => (
@@ -82,9 +86,9 @@ const CreateProductModalForm = ({ onSuccess, onClose, request, departments = [],
 
             <Alert message={error} />
             
-            {success && <div className="text-[var(--color-success)] font-medium py-2 px-3 bg-[var(--color-success-soft-bg)] rounded-[var(--radius-md)] border border-[var(--color-success-soft-border)] text-center mt-1 text-body">{success}</div>}
+            {success && <div className="text-[var(--color-success)] font-medium py-2 px-3 bg-[var(--color-success-soft)] rounded-[var(--radius-md)] border border-[var(--color-success-soft-border)] text-center mt-1 text-body">{success}</div>}
             
-            <div className="flex justify-end gap-[0.625rem] mt-5 pt-4 border-t border-[var(--color-border)]">
+            <div className="flex justify-end gap-[0.625rem] mt-5 pt-4 border-t border-[var(--color-border-default)]">
                 <Button type="button" variant="secondary" onClick={onClose} disabled={submitting}>Cancelar</Button>
                 <Button type="submit" disabled={isDisabled}>{submitting ? "Carregando..." : "Criar"}</Button>
             </div>
@@ -108,6 +112,9 @@ const ProductSheetForm = ({ product, onClose, onConfirm }) => {
 
     const isValid = qty !== "" && Number(qty) > 0
 
+    const incQty = () => setQty(q => String((parseInt(q) || 0) + 1))
+    const decQty = () => setQty(q => String(Math.max(1, (parseInt(q) || 1) - 1)))
+
     const handleConfirm = () => {
         if (!isValid) return
         onConfirm({ qty: Math.max(1, Math.floor(Number(qty))), brand, unitOfMeasure })
@@ -130,20 +137,28 @@ const ProductSheetForm = ({ product, onClose, onConfirm }) => {
                 <div className="flex gap-3">
                     <div className="psheet-field flex-1">
                         <label className="psheet-label">Quantidade *</label>
-                        <input
-                            ref={qtyRef}
-                            type="number"
-                            className="psheet-input"
-                            value={qty}
-                            onChange={e => setQty(e.target.value)}
-                            onKeyDown={e => {
-                                if (['-','e','E'].includes(e.key)) e.preventDefault()
-                                if (e.key === 'Enter' && isValid) handleConfirm()
-                            }}
-                            onFocus={e => e.target.select()}
-                            placeholder="0"
-                            min="1"
-                        />
+                        <div className="flex items-center bg-[var(--color-highlight-lighter)] border-[1.5px] border-[var(--color-highlight-border)] rounded-[var(--radius-lg)] overflow-hidden transition-shadow duration-[160ms] focus-within:[box-shadow:var(--shadow-focus-accent)]">
+                            <button type="button" onClick={decQty} aria-label="Diminuir" className="w-11 h-12 flex items-center justify-center text-[var(--color-accent)] cursor-pointer transition-colors duration-[120ms] hover:bg-[var(--color-highlight-soft)] active:bg-[var(--color-highlight-soft)]">
+                                <Minus size={18} strokeWidth={2.5} />
+                            </button>
+                            <input
+                                ref={qtyRef}
+                                type="number"
+                                className="flex-1 min-w-0 w-full text-center py-3 border-none bg-transparent text-[1rem] font-bold text-[var(--color-text-body)] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                value={qty}
+                                onChange={e => setQty(e.target.value)}
+                                onKeyDown={e => {
+                                    if (['-','e','E'].includes(e.key)) e.preventDefault()
+                                    if (e.key === 'Enter' && isValid) handleConfirm()
+                                }}
+                                onFocus={e => e.target.select()}
+                                placeholder="0"
+                                min="1"
+                            />
+                            <button type="button" onClick={incQty} aria-label="Aumentar" className="w-11 h-12 flex items-center justify-center text-[var(--color-accent)] cursor-pointer transition-colors duration-[120ms] hover:bg-[var(--color-highlight-soft)] active:bg-[var(--color-highlight-soft)]">
+                                <Plus size={18} strokeWidth={2.5} />
+                            </button>
+                        </div>
                     </div>
                     <div className="psheet-field flex-1">
                         <label className="psheet-label">Unidade *</label>
@@ -232,7 +247,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const [searchWord, setSearchWord] = useState("")
     const [appliedSearch, setAppliedSearch] = useState("")
     const [currentPage, setCurrentPage] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
+    const [totalElements, setTotalElements] = useState(0)
 
     // Desktop: inline expand
     const [expandedId, setExpandedId] = useState(null)
@@ -254,21 +269,23 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
 
     const excludedIds = useMemo(() => Object.keys(localSelected), [localSelected])
 
-    const fetchProducts = useCallback(async (page = 0) => {
+    const fetchProducts = useCallback(async (page = 0, append = false) => {
         let query = `?page=${page}&sort=productName,asc`
         if (appliedSearch) query += `&field=productName&value=${appliedSearch}`
         if (excludedIds.length > 0) query += `&excludedIds=${excludedIds.join(",")}`
         if (deptFilter !== null) query += `&departmentId=${deptFilter}`
         const res = await request("GET", `/products/company${query}`)
         if (res.ok) {
-            setAvailableProducts(res.data.content)
+            setAvailableProducts(prev => append ? [...prev, ...res.data.content] : res.data.content)
             setCurrentPage(res.data.number)
-            setTotalPages(res.data.totalPages)
+            setTotalElements(res.data.totalElements ?? res.data.content.length)
         }
     }, [request, appliedSearch, excludedIds, deptFilter])
 
+    const handleLoadMoreProducts = () => fetchProducts(currentPage + 1, true)
+
     useEffect(() => {
-        fetchProducts(0)
+        fetchProducts(0) // eslint-disable-line react-hooks/set-state-in-effect
     }, [appliedSearch, excludedIds, deptFilter]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const fetchDepartments = useCallback(async () => {
@@ -280,7 +297,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     }, [request])
 
     useEffect(() => {
-        fetchDepartments()
+        fetchDepartments() // eslint-disable-line react-hooks/set-state-in-effect
     }, [fetchDepartments])
 
     const handleSearch = useCallback(() => {
@@ -422,24 +439,24 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     }
 
     // shared small input class (desktop table)
-    const smallInputCls = 'w-full h-[2.125rem] border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] font-sans px-2 text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] focus:border-[var(--color-accent)] focus:[box-shadow:0_0_0_2px_var(--color-accent-soft-bg-focus)] placeholder:text-[var(--color-text-disabled)]'
+    const smallInputCls = 'w-full h-[2.125rem] border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] font-sans px-2 text-[var(--color-text-body)] bg-[var(--color-surface-card)] outline-none transition-[border-color,box-shadow] duration-[160ms] focus:border-[var(--color-accent)] focus:[box-shadow:0_0_0_2px_var(--color-accent-soft-strong)] placeholder:text-[var(--color-text-disabled)]'
     const iconBtnBase = 'flex-shrink-0 w-[26px] h-[26px] border-none bg-transparent text-[var(--color-text-muted)] cursor-pointer rounded-[var(--radius-sm)] inline-grid place-items-center transition-[background-color,color] duration-[160ms]'
-    const iconBtnAccent  = `${iconBtnBase} hover:bg-[var(--color-accent-soft-bg)] hover:text-[var(--color-accent)]`
-    const iconBtnDanger  = `${iconBtnBase} hover:bg-[var(--color-danger-soft-bg)] hover:text-[var(--color-danger)]`
-    const iconBtnSuccess = `${iconBtnBase} text-[var(--color-success)] hover:bg-[var(--color-success-soft-bg-2)] hover:text-[var(--color-success-strong)]`
+    const iconBtnAccent  = `${iconBtnBase} hover:bg-[var(--color-accent-soft)] hover:text-[var(--color-accent)]`
+    const iconBtnDanger  = `${iconBtnBase} hover:bg-[var(--color-danger-soft)] hover:text-[var(--color-danger)]`
+    const iconBtnSuccess = `${iconBtnBase} text-[var(--color-success)] hover:bg-[var(--color-success-soft)] hover:text-[var(--color-success-strong)]`
 
     /* ── Search panel (shared between desktop and mobile search tab) ── */
     const renderSearchPanel = () => (
         <>
             {/* Search bar */}
-            <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
+            <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
                 {userDepts.length > 1 && (
-                    <div className="relative mb-2 max-sm:w-full w-fit">
+                    <div className="relative mb-2.5 max-sm:w-full w-fit">
                         <select
                             value={deptFilter === null ? 'all' : String(deptFilter)}
                             onChange={e => { setDeptFilter(e.target.value === 'all' ? null : Number(e.target.value)); setCurrentPage(0) }}
                             aria-label="Filtrar por departamento"
-                            className="w-full min-w-[12rem] max-w-[16rem] max-sm:max-w-full h-[2.375rem] pl-[0.75rem] pr-8 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] font-sans text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none cursor-pointer hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
+                            className="w-full min-w-[12rem] max-w-[16rem] max-sm:max-w-full h-[2.375rem] pl-[0.75rem] pr-8 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] font-sans text-[var(--color-text-body)] bg-[var(--color-surface-card)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none cursor-pointer hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
                         >
                             <option value="all">Todos os departamentos</option>
                             {userDepts.map(d => (
@@ -451,50 +468,69 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                         </span>
                     </div>
                 )}
-                <div className="flex gap-2 items-center">
-                    <input
-                        type="text"
-                        value={searchWord}
-                        onChange={e => setSearchWord(e.target.value)}
-                        placeholder="Nome do Produto"
-                        onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
-                        className="flex-1 min-w-0 min-h-[2.375rem] px-[0.875rem] py-[0.4375rem] border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] font-sans text-[var(--color-text-primary)] bg-[var(--color-surface-0)] outline-none transition-[border-color,box-shadow] duration-[160ms] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)] placeholder:text-[var(--color-text-disabled)]"
-                    />
-                    <Button onClick={handleSearch}>Buscar</Button>
-                    {appliedSearch && <Button variant="danger" onClick={handleClearSearch}><X size={16} /></Button>}
-                    <div className="w-px h-6 bg-[var(--color-border)] flex-shrink-0 mx-[0.125rem]" />
-                    <Button variant="secondary" onClick={() => setShowCreateModal(true)} className="whitespace-nowrap !inline-flex items-center gap-[0.3rem] flex-shrink-0">
-                        <Plus size={15} />Novo
-                    </Button>
-                </div>
+
+                <MobileSearchInput
+                    value={searchWord}
+                    onChange={e => setSearchWord(e.target.value)}
+                    onSearch={handleSearch}
+                    onClear={handleClearSearch}
+                    placeholder="Nome do Produto"
+                />
+                <ActiveFilterPill label="Busca" value={appliedSearch} onClear={handleClearSearch} />
+
+                <button
+                    type="button"
+                    onClick={() => setShowCreateModal(true)}
+                    className="mt-3 w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-[var(--radius-md)] border-[1.5px] border-dashed border-[var(--color-highlight-border)] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] text-[0.8125rem] font-semibold cursor-pointer transition-[background-color,border-color] duration-[160ms] hover:bg-[var(--color-highlight-soft)] active:scale-[0.99]"
+                >
+                    <Plus size={16} strokeWidth={2.25} />Cadastrar novo produto
+                </button>
             </div>
 
             {/* Results */}
-            <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
-                {availableProducts.length === 0 ? (
-                    <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">
-                        {appliedSearch ? (
-                            <>Produto não encontrado.{' '}
-                                <button className="bg-none border-none p-0 text-[0.875rem] font-sans font-medium text-[var(--color-accent)] cursor-pointer underline underline-offset-[2px] transition-opacity duration-[160ms] hover:opacity-75" onClick={() => setShowCreateModal(true)}>Criar agora</button>
-                            </>
-                        ) : "Nenhum produto disponível"}
-                    </p>
-                ) : (
-                    <>
-                        <div className="border border-[var(--color-border-light)] rounded-[var(--radius-md)] overflow-hidden mb-1">
+            {availableProducts.length === 0 ? (
+                <EmptyState
+                    icon={<SearchX size={28} strokeWidth={1.75} />}
+                    title="Nenhum produto encontrado"
+                    description={appliedSearch ? "Tente outro termo de busca ou cadastre um novo produto." : "Nenhum produto disponível no catálogo."}
+                    action={appliedSearch ? <Button onClick={() => setShowCreateModal(true)}>Cadastrar produto</Button> : null}
+                    className="mb-3"
+                />
+            ) : (
+                <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
+                    <div className="text-[0.75rem] font-semibold text-[var(--color-text-disabled)] mb-2.5 px-0.5">Mostrando {availableProducts.length} de {totalElements} produtos</div>
+                    {isMobile ? (
+                        <ul className="list-none m-0 p-0 flex flex-col gap-2.5">
+                            {availableProducts.map(p => (
+                                <li key={p.productId} className="flex items-center gap-3 p-3 bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-md-soft)]">
+                                    <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] flex items-center justify-center flex-shrink-0 text-[var(--color-highlight-border)]">
+                                        <Package size={20} strokeWidth={2} />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-bold text-[0.875rem] text-[var(--color-text-body)] truncate">{p.productName}</div>
+                                        {p.productDescription && <div className="text-[0.75rem] text-[var(--color-text-disabled)] mt-px truncate">{p.productDescription}</div>}
+                                    </div>
+                                    <button type="button" onClick={() => handleOpenSheet(p, null)} aria-label="Adicionar" className="w-9 h-9 rounded-[11px] bg-[var(--color-accent)] text-white flex items-center justify-center flex-shrink-0 cursor-pointer transition-transform duration-[120ms] active:scale-90">
+                                        <Plus size={20} strokeWidth={2.5} />
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-md)] overflow-hidden mb-1">
                             {availableProducts.map(p => {
                                 const isExpanded = !isMobile && expandedId === p.productId
                                 return (
-                                    <div key={p.productId} className="border-b border-[var(--color-border-lighter)] last:border-b-0">
+                                    <div key={p.productId} className="border-b border-[var(--color-border-faint)] last:border-b-0">
                                         <div
                                             onClick={() => isMobile
                                                 ? handleOpenSheet(p, null)
                                                 : handleExpandProduct(p)
                                             }
-                                            className={`flex items-center justify-between px-3 py-[0.6rem] cursor-pointer gap-2 transition-[background-color] duration-[160ms] ${isExpanded ? 'bg-[var(--color-highlight-lighter)]' : 'hover:bg-[var(--color-surface-1)]'}`}
+                                            className={`flex items-center justify-between px-3 py-[0.6rem] cursor-pointer gap-2 transition-[background-color] duration-[160ms] ${isExpanded ? 'bg-[var(--color-highlight-lighter)]' : 'hover:bg-[var(--color-surface-subtle)]'}`}
                                         >
                                             <div className="flex flex-col min-w-0 flex-1">
-                                                <span className="font-medium text-[0.875rem] text-[var(--color-text-strong)] overflow-hidden text-ellipsis whitespace-nowrap">{p.productName}</span>
+                                                <span className="font-medium text-[0.875rem] text-[var(--color-text-heading)] overflow-hidden text-ellipsis whitespace-nowrap">{p.productName}</span>
                                                 {p.productDescription && <span className="text-[0.8125rem] text-[var(--color-text-muted)] mt-px">{p.productDescription}</span>}
                                             </div>
                                             {isMobile ? (
@@ -505,7 +541,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                         </div>
                                         {/* Desktop inline expand */}
                                         {!isMobile && isExpanded && (
-                                            <div className="px-3 py-2 pb-3 bg-[var(--color-highlight-lighter)] border-t border-[var(--color-border-lighter)] flex items-end gap-[0.625rem] [animation:step2ExpandIn_0.15s_ease]">
+                                            <div className="px-3 py-2 pb-3 bg-[var(--color-highlight-lighter)] border-t border-[var(--color-border-faint)] flex items-end gap-[0.625rem] [animation:step2ExpandIn_0.15s_ease]">
                                                 <div className="flex gap-2 flex-1">
                                                     <div className="flex flex-col gap-[0.2rem] flex-1">
                                                         <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Quantidade *</label>
@@ -536,24 +572,34 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                 )
                             })}
                         </div>
-                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => fetchProducts(page)} />
-                    </>
-                )}
-            </div>
+                    )}
+                    <LoadMoreButton remaining={totalElements - availableProducts.length} onClick={handleLoadMoreProducts} />
+                </div>
+            )}
         </>
     )
 
     /* ── Selected products panel ── */
-    const renderSelectedPanel = () => (
-        <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
+    const renderSelectedPanel = () => {
+        if (selectedList.length === 0) {
+            return (
+                <EmptyState
+                    icon={<ShoppingCart size={28} strokeWidth={1.75} />}
+                    title="Nenhum produto selecionado"
+                    description="Use a busca para adicionar produtos à cotação."
+                    action={isMobile ? <Button onClick={() => setMobileTab('search')}>Buscar produtos</Button> : null}
+                    className="mb-3"
+                />
+            )
+        }
+        return (
+        <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
             {!isMobile && (
                 <h4 className="m-0 mb-[0.6rem] text-[var(--color-text-secondary)] text-[0.9375rem] flex items-center gap-[0.4rem]">
                     <Package size={16} />Produtos Adicionados ({selectedList.length})
                 </h4>
             )}
-            {selectedList.length === 0 ? (
-                <p className="text-[0.875rem] text-[var(--color-text-muted)] mt-[0.2rem]">Nenhum produto adicionado</p>
-            ) : isMobile ? (
+            {isMobile ? (
                 /* Mobile card list */
                 <ul className="list-none m-0 p-0 flex flex-col gap-[0.5rem]">
                     {selectedList.map(p => {
@@ -596,12 +642,12 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 </ul>
             ) : (
                 /* Desktop table */
-                <div className="overflow-x-auto border border-[var(--color-border-light)] rounded-[var(--radius-md)]">
+                <div className="overflow-x-auto border border-[var(--color-border-subtle)] rounded-[var(--radius-md)]">
                     <table className="w-full border-collapse">
                         <thead>
                             <tr>
                                 {["Nome do Produto", "Quantidade", "Unidade", "Marca", ""].map((h, i) => (
-                                    <th key={i} className={`bg-[var(--color-surface-2)] text-left px-3 py-2 text-[0.6875rem] font-bold text-[var(--color-text-muted)] uppercase tracking-[0.06em] border-b border-[var(--color-border-light)] ${i === 1 || i === 2 ? 'text-center' : ''}`}>{h}</th>
+                                    <th key={i} className={`bg-[var(--color-surface-muted)] text-left px-3 py-2 text-[0.6875rem] font-bold text-[var(--color-text-muted)] uppercase tracking-[0.06em] border-b border-[var(--color-border-subtle)] ${i === 1 || i === 2 ? 'text-center' : ''}`}>{h}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -610,14 +656,14 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                 const isEditing = editingId === p.productId
                                 return (
                                     <tr key={p.productId} className={isEditing ? '[&>td]:bg-[var(--color-highlight-lighter)]' : ''}>
-                                        <td className="px-3 py-2 border-b border-[var(--color-border-lighter)] text-[0.875rem] text-[var(--color-text-neutral-strong)] align-middle last:border-b-0"><span className="font-medium text-[var(--color-text-strong)]">{p.productName}</span></td>
-                                        <td className="px-3 py-2 border-b border-[var(--color-border-lighter)] text-[0.875rem] align-middle text-center">
+                                        <td className="px-3 py-2 border-b border-[var(--color-border-faint)] text-[0.875rem] text-[var(--color-text-neutral)] align-middle last:border-b-0"><span className="font-medium text-[var(--color-text-heading)]">{p.productName}</span></td>
+                                        <td className="px-3 py-2 border-b border-[var(--color-border-faint)] text-[0.875rem] align-middle text-center">
                                             {isEditing
                                                 ? <input type="number" className={`w-[70px] ${smallInputCls} text-center [font-variant-numeric:tabular-nums] appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none`} value={editQty} onChange={e => setEditQty(e.target.value)} onKeyDown={e => { if (['-','e','E'].includes(e.key)) e.preventDefault(); if (e.key === "Enter") handleConfirmEdit(p.productId); if (e.key === "Escape") handleCancelEdit() }} onFocus={e => e.target.select()} min="1" autoFocus />
-                                                : <span className="font-bold [font-variant-numeric:tabular-nums] text-[var(--color-text-primary)]">{p.quantity}</span>
+                                                : <span className="font-bold [font-variant-numeric:tabular-nums] text-[var(--color-text-body)]">{p.quantity}</span>
                                             }
                                         </td>
-                                        <td className="px-3 py-2 border-b border-[var(--color-border-lighter)] text-[0.875rem] align-middle text-center">
+                                        <td className="px-3 py-2 border-b border-[var(--color-border-faint)] text-[0.875rem] align-middle text-center">
                                             {isEditing
                                                 ? (
                                                     <div className="relative w-[80px] mx-auto">
@@ -632,13 +678,13 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                                 : <span className="font-medium text-[var(--color-text-secondary)] text-[0.8125rem]">{p.unitOfMeasure}</span>
                                             }
                                         </td>
-                                        <td className="px-3 py-2 border-b border-[var(--color-border-lighter)] text-[0.875rem] align-middle">
+                                        <td className="px-3 py-2 border-b border-[var(--color-border-faint)] text-[0.875rem] align-middle">
                                             {isEditing
                                                 ? <input type="text" className={smallInputCls} value={editBrand} onChange={e => setEditBrand(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleConfirmEdit(p.productId); if (e.key === "Escape") handleCancelEdit() }} placeholder="Marca" />
-                                                : p.brand ? <span className="text-[var(--color-text-strong)] font-light text-[0.8125rem]">{p.brand}</span> : <span className="text-[var(--color-text-disabled)]">—</span>
+                                                : p.brand ? <span className="text-[var(--color-text-heading)] font-light text-[0.8125rem]">{p.brand}</span> : <span className="text-[var(--color-text-disabled)]">—</span>
                                             }
                                         </td>
-                                        <td className="w-9 px-3 py-2 border-b border-[var(--color-border-lighter)] text-center align-middle">
+                                        <td className="w-9 px-3 py-2 border-b border-[var(--color-border-faint)] text-center align-middle">
                                             {isEditing ? (
                                                 <div className="flex items-center gap-[0.2rem]">
                                                     <button onClick={() => handleConfirmEdit(p.productId)} title="Confirmar" className={iconBtnSuccess}><Check size={14} /></button>
@@ -659,13 +705,14 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 </div>
             )}
         </div>
-    )
+        )
+    }
 
     return (
         <div>
             <div className="mb-5">
-                <h2 className="m-0 text-[1.0625rem] font-bold text-[var(--color-text-strong)] tracking-[-0.015em]">Produtos</h2>
-                <p className="mt-1 mb-0 text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.5]">Selecione os produtos que serão cotados e defina as quantidades.</p>
+                <h2 className="m-0 text-[1.4375rem] font-bold text-[var(--color-text-body)] tracking-[-0.02em]">Produtos</h2>
+                <p className="mt-1 mb-0 text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.5]">Selecione os itens e defina as quantidades.</p>
             </div>
 
             {isMobile ? (
@@ -702,10 +749,15 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
 
             <Alert message={error} />
 
-            <div className="flex justify-center gap-3 mt-5">
-                <Button onClick={onBack} disabled={loading} className="max-md:w-full">Voltar</Button>
-                <Button onClick={handleNextClick} disabled={loading} className="max-md:w-full">{loading ? "Carregando..." : "Próximo"}</Button>
-            </div>
+            <WizardActions
+                onBack={onBack}
+                onPrimary={handleNextClick}
+                primaryLabel="Avançar"
+                primaryIcon={ArrowRight}
+                blocked={selectedList.length === 0}
+                hint="Adicione pelo menos um produto para avançar."
+                loading={loading}
+            />
 
             {/* Create product modal */}
             <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Criar Novo Produto">

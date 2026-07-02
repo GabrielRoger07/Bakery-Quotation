@@ -23,6 +23,8 @@ React 19 · Vite · Tailwind CSS v4 · React Router v6
 └── utils/               ← funções utilitárias - VERIFICAR ANTES de criar algo novo
 ```
 
+> **Design System:** catálogo de tokens + primitivos em `docs/design-system.md`. Catálogo vivo na rota `/design-system`.
+
 ### Primitivos disponíveis (verificar antes de criar)
 - **Layout:** `PageContainer` (variantes `list`/`auth`/`detail`/`form`), `PageHeader`
 - **Formulário:** `Input` (prop `error`), `Select` (prop `bare` p/ toolbars), `FieldMessage`, `FormActions`, `Alert` (variantes `error`/`success`/`warning`/`info`)

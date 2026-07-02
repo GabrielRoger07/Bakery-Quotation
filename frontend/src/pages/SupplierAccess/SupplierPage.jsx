@@ -35,32 +35,32 @@ const DesktopCard = ({ p, onClick, idx }) => {
     const pillCls = {
         accent:  'inline-flex items-center gap-[0.3rem] px-[0.7rem] py-[0.25rem] text-[0.8125rem] font-semibold tracking-[0.03em] rounded-full text-[var(--color-accent-strong)] bg-[var(--color-highlight-lighter)] border border-[var(--color-highlight-border)]',
         success: 'inline-flex items-center gap-[0.3rem] px-[0.7rem] py-[0.25rem] text-[0.8125rem] font-semibold tracking-[0.03em] rounded-full text-[var(--color-success-strong)] bg-[var(--color-success-lighter)] border border-[var(--color-success-border)]',
-        '':      'inline-flex items-center gap-[0.3rem] px-[0.7rem] py-[0.25rem] text-[0.8125rem] font-semibold tracking-[0.03em] rounded-full text-[var(--color-text-muted)] bg-[var(--color-surface-2)] border border-[var(--color-border)]',
+        '':      'inline-flex items-center gap-[0.3rem] px-[0.7rem] py-[0.25rem] text-[0.8125rem] font-semibold tracking-[0.03em] rounded-full text-[var(--color-text-muted)] bg-[var(--color-surface-muted)] border border-[var(--color-border-default)]',
     }[variant]
 
     return (
         <div
-            className="group bg-[var(--color-surface-0)] border border-[var(--color-border-light)] rounded-[var(--radius-xl)] [box-shadow:var(--shadow-card-soft)] px-6 py-5 cursor-pointer transition-[transform,box-shadow,border-color] duration-[180ms] hover:-translate-y-[2px] hover:[box-shadow:var(--shadow-sm)] hover:border-[var(--color-highlight-border)] animate-[cardAppear_0.28s_ease-out_both]"
+            className="group bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] rounded-[var(--radius-xl)] [box-shadow:var(--shadow-card-soft)] px-6 py-5 cursor-pointer transition-[transform,box-shadow,border-color] duration-[180ms] hover:-translate-y-[2px] hover:[box-shadow:var(--shadow-sm)] hover:border-[var(--color-highlight-border)] animate-[cardAppear_0.28s_ease-out_both]"
             style={{ animationDelay: `${idx * 40}ms` }}
             onClick={onClick}
         >
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4 min-w-0">
-                    <div className="shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-[var(--color-accent-light)] to-[var(--color-highlight)] border border-[var(--color-highlight-border)] flex items-center justify-center text-[var(--color-accent)]">
+                    <div className="shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-[var(--color-highlight-soft)] to-[var(--color-highlight)] border border-[var(--color-highlight-border)] flex items-center justify-center text-[var(--color-accent)]">
                         <CalendarRange size={22} strokeWidth={1.75} />
                     </div>
                     <div className="min-w-0">
-                        <p className="m-0 font-bold text-[var(--color-text-strong)] text-[1.0625rem] leading-[1.3] truncate">
+                        <p className="m-0 font-bold text-[var(--color-text-heading)] text-[1.0625rem] leading-[1.3] truncate">
                             Cotação #{p.quotationId}
                         </p>
                         <div className="flex items-center gap-4 mt-[0.35rem] flex-wrap">
                             <span className="text-[0.9375rem] text-[var(--color-text-muted)]">
-                                <strong className="font-semibold text-[var(--color-text-subtle)]">Início:</strong>{' '}
+                                <strong className="font-semibold text-[var(--color-text-neutral)]">Início:</strong>{' '}
                                 {formatDate(p.quotationStart)}
                             </span>
                             <span className="text-[var(--color-border-strong)] select-none text-[0.9375rem]">·</span>
                             <span className="text-[0.9375rem] text-[var(--color-text-muted)]">
-                                <strong className="font-semibold text-[var(--color-text-subtle)]">Fim:</strong>{' '}
+                                <strong className="font-semibold text-[var(--color-text-neutral)]">Fim:</strong>{' '}
                                 {formatDate(p.quotationEnd)}
                             </span>
                         </div>
@@ -166,10 +166,10 @@ const SupplierPage = () => {
 
     /* ── Desktop layout ── */
     return (
-        <div className="page-wrapper text-[var(--color-text-primary)]">
+        <div className="page-wrapper text-[var(--color-text-body)]">
             <div className="w-full max-w-[680px] mx-auto">
                 <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
-                    <h2 className="text-[var(--color-text-strong)] text-[1.25rem] font-semibold m-0">
+                    <h2 className="text-[var(--color-text-heading)] text-[1.25rem] font-semibold m-0">
                         Suas Cotações
                     </h2>
                     <StatusTabFilter
@@ -197,7 +197,7 @@ const SupplierPage = () => {
                         {[0, 1, 2, 3].map((i) => (
                             <div
                                 key={i}
-                                className="h-[5.5rem] rounded-[var(--radius-xl)] bg-[var(--color-surface-3)] animate-[skeletonPulse_1.4s_ease-in-out_infinite]"
+                                className="h-[5.5rem] rounded-[var(--radius-xl)] bg-[var(--color-surface-sunken)] animate-[skeletonPulse_1.4s_ease-in-out_infinite]"
                                 style={{ animationDelay: `${i * 80}ms` }}
                             />
                         ))}

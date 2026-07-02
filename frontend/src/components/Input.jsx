@@ -6,7 +6,7 @@ import FieldMessage from '@/components/FieldMessage'
 const inputBase = [
   'w-full min-h-[2.625rem] py-[0.5625rem] pl-[0.875rem] pr-10',
   'border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)]',
-  'text-body text-[var(--color-text-primary)] bg-[var(--color-surface-0)]',
+  'text-body text-[var(--color-text-body)] bg-[var(--color-surface-card)]',
   'outline-none transition-[border-color,box-shadow] duration-[160ms] ease-[ease]',
   'placeholder:text-[var(--color-text-disabled)] placeholder:font-normal',
   'hover:border-[var(--color-accent)]',
@@ -30,7 +30,7 @@ const Input = ({ label, type, name, value, onChange, onBlur, placeholder, min, m
 
   return (
     <div className="flex flex-col mb-[1.125rem] relative">
-      <label className="mb-[0.375rem] font-semibold text-[var(--color-text-subtle)] text-body tracking-[0.005em] mr-auto">
+      <label className="mb-[0.375rem] font-semibold text-[var(--color-text-neutral)] text-body tracking-[0.005em] mr-auto">
         {label}
         {required && (
           <span className={`ml-[2px] font-bold ${isEmpty ? 'text-[var(--color-danger-strong)]' : 'text-[var(--color-text-disabled)]'}`}>*</span>

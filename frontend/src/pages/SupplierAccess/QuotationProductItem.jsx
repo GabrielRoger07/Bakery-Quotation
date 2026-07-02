@@ -133,9 +133,9 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
     }
 
     return (
-        <div className="bg-[var(--color-surface-0)] px-4 pt-4 pb-[0.7rem] rounded-[var(--radius-lg)] border border-[var(--color-border)] [box-shadow:var(--shadow-card-soft)] transition-[transform,box-shadow] duration-[160ms] h-full flex flex-col hover:-translate-y-[2px] hover:[box-shadow:var(--shadow-sm)]">
+        <div className="bg-[var(--color-surface-card)] px-4 pt-4 pb-[0.7rem] rounded-[var(--radius-lg)] border border-[var(--color-border-default)] [box-shadow:var(--shadow-card-soft)] transition-[transform,box-shadow] duration-[160ms] h-full flex flex-col hover:-translate-y-[2px] hover:[box-shadow:var(--shadow-sm)]">
             <div>
-                <h3 className="text-[var(--color-text-strong)] m-0 mb-[0.7rem] text-base text-center">{product.productName}</h3>
+                <h3 className="text-[var(--color-text-heading)] m-0 mb-[0.7rem] text-base text-center">{product.productName}</h3>
                 <p className="text-[var(--color-text-secondary)] m-0 mb-[0.25rem] text-[0.875rem] font-medium">Quantidade: {product.quantity}</p>
                 <p className="text-[var(--color-text-secondary)] m-0 mb-[0.7rem] text-[0.875rem] font-medium">Bônus máximo permitido (unidades): {product.bonusLimit}</p>
                 <div className="mt-0 px-[0.65rem] py-[0.58rem] border border-[var(--color-highlight-border)] bg-[var(--color-highlight-lighter)] rounded-[var(--radius-md)] flex flex-col justify-center items-center text-center min-h-[4.5rem]">
@@ -176,7 +176,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
                 )}
 
                 {product.bonusLimit <= 0 && (
-                    <div className="m-0 mb-[0.85rem] min-h-[4.1rem] flex items-center justify-center border border-dashed border-[var(--color-border-strong)] rounded-[var(--radius-md)] bg-[var(--color-surface-1)]">
+                    <div className="m-0 mb-[0.85rem] min-h-[4.1rem] flex items-center justify-center border border-dashed border-[var(--color-border-strong)] rounded-[var(--radius-md)] bg-[var(--color-surface-subtle)]">
                         <p className="m-0 text-center text-[var(--color-text-muted)] text-[0.75rem]">Bônus não disponível para este item.</p>
                     </div>
                 )}
@@ -205,8 +205,8 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
                 {!confirming ? (
                     <Button type="submit" disabled={loading || Boolean(bonusError)} className="block mt-auto mb-0">{loading ? "Enviando..." : "Enviar Lance"}</Button>
                 ) : (
-                    <div className="mt-[0.55rem] p-[0.65rem] bg-[var(--color-surface-4)] rounded-[var(--radius-md)] border border-[var(--color-border-light)] text-center">
-                        <p className="text-[0.875rem] mb-2 text-[var(--color-text-default)]">
+                    <div className="mt-[0.55rem] p-[0.65rem] bg-[var(--color-border-faint)] rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] text-center">
+                        <p className="text-[0.875rem] mb-2 text-[var(--color-text-body)]">
                             Confirmar lance de <strong>R$ ${formatDecimal(pendingBidValue)}/UN</strong> para <strong>${product.productName}</strong>?",
                         </p>
                         <div className="flex justify-center gap-[0.55rem]">

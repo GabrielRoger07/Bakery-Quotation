@@ -40,9 +40,9 @@ const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNu
     }, [value])
 
     return (
-        <div className="border border-[var(--color-border-light)] rounded-[var(--radius-md)] p-3 bg-[var(--color-surface-1)]">
+        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-md)] p-3 bg-[var(--color-surface-subtle)]">
             <div className="flex flex-col gap-[0.15rem] mb-[0.45rem]">
-                <strong className="text-[var(--color-text-strong)] text-[1rem] leading-[1.3]">{product.productName}</strong>
+                <strong className="text-[var(--color-text-heading)] text-[1rem] leading-[1.3]">{product.productName}</strong>
                 {product.productDescription && (
                     <span className="text-[var(--color-text-muted)] text-[0.875rem] leading-[1.35]">{product.productDescription}</span>
                 )}
@@ -50,8 +50,8 @@ const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNu
 
             <div className="flex flex-wrap gap-[0.4rem] mb-[0.55rem]">
                 <span className="text-[var(--color-text-secondary)]">Quantidade:</span>
-                <span className="inline-flex items-center gap-[0.3rem] px-[0.55rem] py-[0.18rem] text-[0.75rem] font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-3)] rounded-full whitespace-nowrap">{product.quantity} {(product.unitOfMeasure).toUpperCase()}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 'S' : ''}</span>
-                <span className="inline-flex items-center gap-[0.3rem] px-[0.55rem] py-[0.18rem] text-[0.75rem] font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-3)] rounded-full whitespace-nowrap">
+                <span className="inline-flex items-center gap-[0.3rem] px-[0.55rem] py-[0.18rem] text-[0.75rem] font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-sunken)] rounded-full whitespace-nowrap">{product.quantity} {(product.unitOfMeasure).toUpperCase()}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 'S' : ''}</span>
+                <span className="inline-flex items-center gap-[0.3rem] px-[0.55rem] py-[0.18rem] text-[0.75rem] font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-sunken)] rounded-full whitespace-nowrap">
                     <Tag size={12} />
                     {product.brand || "Marca não definida"}
                 </span>

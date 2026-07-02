@@ -35,9 +35,9 @@ const unitLabel = (u) => {
     )
 }
 
-const thCls = "text-left px-[0.6rem] py-2 text-[0.75rem] font-semibold uppercase tracking-[0.04em] text-[var(--color-text-muted)] border-b-2 border-[var(--color-border)]"
+const thCls = "text-left px-[0.6rem] py-2 text-[0.75rem] font-semibold uppercase tracking-[0.04em] text-[var(--color-text-muted)] border-b-2 border-[var(--color-border-default)]"
 const thNumCls = `${thCls} text-right`
-const tdCls = "px-[0.6rem] py-[0.55rem] text-[var(--color-text-default)] border-b border-[var(--color-border-lighter)] align-middle"
+const tdCls = "px-[0.6rem] py-[0.55rem] text-[var(--color-text-body)] border-b border-[var(--color-border-faint)] align-middle"
 const tdNumCls = `${tdCls} text-right whitespace-nowrap`
 
 /* ── Mobile sub-components ──────────────────────────────────────── */
@@ -634,25 +634,25 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
     if(!products.length) return <p>Nenhum produto encontrado para essa cotação</p>
 
     return (
-        <div className="page-wrapper text-[var(--color-text-primary)]">
-            <h2 className="text-[var(--color-text-strong)] text-[1.25rem] m-0">
+        <div className="page-wrapper text-[var(--color-text-body)]">
+            <h2 className="text-[var(--color-text-heading)] text-[1.25rem] m-0">
                 Cotação {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotationId}
             </h2>
 
             {quotation && (
-                <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-0)] border border-[var(--color-border)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] mt-[0.3rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.4rem]">
-                    <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">Início:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
-                    <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-strong)]">Fim:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
+                <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-card)] border border-[var(--color-border-default)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] mt-[0.3rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.4rem]">
+                    <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-heading)]">Início:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
+                    <p className="m-0 text-[1rem]"><strong className="text-[1.125rem] text-[var(--color-text-heading)]">Fim:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
                 </div>
             )}
 
-            <div className="flex items-center justify-between gap-4 w-full bg-[var(--color-surface-0)] px-4 py-[0.88rem] border border-[var(--color-border)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] mb-[1.1rem] max-md:flex-col max-md:items-start max-md:gap-3">
+            <div className="flex items-center justify-between gap-4 w-full bg-[var(--color-surface-card)] px-4 py-[0.88rem] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] mb-[1.1rem] max-md:flex-col max-md:items-start max-md:gap-3">
                 <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">Total de Produtos: <strong>{products.length}</strong></p>
                 {hasSubmittedBids && <span className="text-[0.875rem] font-semibold text-[var(--color-success-strong)]">Sua proposta já foi enviada para esta cotação.</span>}
                 {timeRemaining && <p className="m-0 text-[1rem] font-medium text-[var(--color-text-secondary)]">Tempo Restante: {timeRemaining}</p>}
             </div>
 
-            <div className="w-full bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] p-4">
+            <div className="w-full bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] p-4">
                 {hasSubmittedBids ? (
                     <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
                         <table className="w-full border-collapse text-[0.875rem]">
@@ -677,13 +677,13 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                                 {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
                                                 <td className={tdNumCls}>{product.quantity} {product.unitOfMeasure}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 's' : ''}</td>
                                                 <td className={tdNumCls}>{formatMoney(unitPrice)}/{product.unitOfMeasure}</td>
-                                                <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(total)}</td>
+                                                <td className={`${tdNumCls} font-medium text-[var(--color-text-heading)]`}>{formatMoney(total)}</td>
                                             </tr>
                                         )
                                     }
 
                                     return (
-                                        <tr key={product.productId} className="opacity-50 [&>td]:bg-[var(--color-surface-1)]">
+                                        <tr key={product.productId} className="opacity-50 [&>td]:bg-[var(--color-surface-subtle)]">
                                             <td className={tdCls}>
                                                 <span>{product.productName}</span>
                                                 <span className="inline-flex items-center ml-[0.45rem] px-[0.45rem] py-[0.1rem] text-[0.75rem] font-semibold tracking-[0.02em] text-[var(--color-warning-strong)] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] rounded-full align-middle whitespace-nowrap leading-[1.4]">Sem preço</span>
@@ -698,8 +698,8 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border)]">Valor Potencial</td>
-                                    <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border)]">{formatMoney(submittedGrandTotal)}</td>
+                                    <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border-default)]">Valor Potencial</td>
+                                    <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border-default)]">{formatMoney(submittedGrandTotal)}</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -758,7 +758,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                     const isSkipped = unitPrice <= 0
 
                                     if(isSkipped) return (
-                                        <tr key={product.productId} className="opacity-50 [&>td]:bg-[var(--color-surface-1)]">
+                                        <tr key={product.productId} className="opacity-50 [&>td]:bg-[var(--color-surface-subtle)]">
                                             <td className={tdCls}>
                                                 <span>{product.productName}</span>
                                                 <span className="inline-flex items-center ml-[0.45rem] px-[0.45rem] py-[0.1rem] text-[0.75rem] font-semibold tracking-[0.02em] text-[var(--color-warning-strong)] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] rounded-full align-middle whitespace-nowrap leading-[1.4]">Sem preço</span>
@@ -777,15 +777,15 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                                             {product.brand === null || product.brand === "" ? <td className={`${tdNumCls} text-[var(--color-text-muted)]`}>—</td> : <td className={tdNumCls}>{product.brand}</td>}
                                             <td className={tdNumCls}>{product.quantity} {product.unitOfMeasure}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 's' : ''}</td>
                                             <td className={tdNumCls}>{formatMoney(unitPrice)}/{product.unitOfMeasure}</td>
-                                            <td className={`${tdNumCls} font-medium text-[var(--color-text-strong)]`}>{formatMoney(total)}</td>
+                                            <td className={`${tdNumCls} font-medium text-[var(--color-text-heading)]`}>{formatMoney(total)}</td>
                                         </tr>
                                     )
                                 })}
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border)]">Valor Potencial</td>
-                                    <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border)]">{formatMoney(grandTotal)}</td>
+                                    <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border-default)]">Valor Potencial</td>
+                                    <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border-default)]">{formatMoney(grandTotal)}</td>
                                 </tr>
                             </tfoot>
                         </table>

@@ -36,7 +36,7 @@ const PageContainer = ({ variant = 'list', children, className }) => {
         <div
           className={cn(
             'w-full max-w-[420px] text-center',
-            'bg-[var(--color-surface-0)] border border-[var(--color-border)]',
+            'bg-[var(--color-surface-card)] border border-[var(--color-border-default)]',
             'rounded-[var(--radius-2xl)] max-sm:rounded-[var(--radius-xl)]',
             'p-[2.5rem_2.25rem_2rem] max-sm:p-[1.75rem_1.25rem_1.5rem]',
             '[box-shadow:0_24px_64px_rgba(15,13,35,0.4)] [animation:authIn_0.3s_ease-out]',

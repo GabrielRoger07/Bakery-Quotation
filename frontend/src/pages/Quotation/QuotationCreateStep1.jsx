@@ -1,12 +1,10 @@
-import { useState, useEffect } from 'react'
-import Button from '@/components/Button'
-import Alert from '@/components/Alert'
-import { Gavel, FileText, Check, Calendar, Clock } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import WizardActions from '@/components/WizardActions'
+import { Gavel, FileText, Check, CirclePlay, CircleStop, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
 
 const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading }) => {
 
     const [localIsAuction, setLocalIsAuction] = useState(typeof isAuction === "boolean" ? isAuction : false)
-    const [localError, setLocalError] = useState("")
 
     // Decompõe "YYYY-MM-DDTHH:mm" → { date: "YYYY-MM-DD", time: "HH:mm" }
     const splitDateTimeLocal = (dateTimeLocal) => {
@@ -40,203 +38,149 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
 
     const today = new Date().toISOString().split('T')[0]
 
-    const handleNextClick = () => {
-        onChange("isAuction", localIsAuction)
+    // ── Validação ao vivo do período ──
+    const period = useMemo(() => {
+        const allFilled = startDateValue && startTimeValue && endDateValue && endTimeValue
+        if (!allFilled) return { ok: false, tone: null, message: '' }
 
-        if (!startDateValue || !startTimeValue || !endDateValue || !endTimeValue) {
-            setLocalError("Todos os campos são obrigatórios")
-            return
-        }
-
+        const sStart = new Date(`${startDateValue}T${startTimeValue}`)
+        const sEnd = new Date(`${endDateValue}T${endTimeValue}`)
         const now = new Date()
-        const s = new Date(start)
-        const e = new Date(end)
 
-        if (s <= now) {
-            setLocalError("Data de início deve ser posterior à data atual")
-            return
-        } else if (e <= now) {
-            setLocalError("Data de fim deve ser posterior à data atual")
-            return
-        } else if (e <= s) {
-            setLocalError("Data de fim deve ser posterior à data de início")
-            return
-        }
+        if (!(sStart.getTime() > now.getTime()))
+            return { ok: false, tone: 'error', message: 'A data de início precisa estar no futuro.' }
+        if (!(sEnd.getTime() > sStart.getTime()))
+            return { ok: false, tone: 'error', message: 'O fim deve ser depois do início.' }
 
-        setLocalError("")
+        return { ok: true, tone: 'success', message: 'Período válido. Tudo certo para avançar.' }
+    }, [startDateValue, startTimeValue, endDateValue, endTimeValue])
+
+    const handleNext = () => {
+        if (!period.ok) return
+        onChange("isAuction", localIsAuction)
         onNext()
     }
 
-    const inputCls = (hasError) => [
-        'w-full h-[2.5rem] border-[1.5px] rounded-[var(--radius-md)] px-3 font-sans text-[0.875rem] text-[var(--color-text-primary)] bg-transparent outline-none transition-[border-color,box-shadow] duration-[160ms]',
-        hasError
-            ? 'border-[var(--color-danger)] focus:[box-shadow:var(--shadow-focus-danger)]'
-            : 'border-[var(--color-border-strong)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]',
-    ].join(' ')
+    const inputCls = 'w-full h-11 border-[1.5px] border-[var(--color-border-default)] rounded-[var(--radius-lg)] px-3 font-sans text-[0.875rem] font-semibold text-[var(--color-text-body)] bg-[var(--color-surface-subtle)] outline-none transition-[border-color,box-shadow] duration-[160ms] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]'
+    const sectionLabelCls = 'block text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-[var(--color-text-disabled)] mb-2.5 px-0.5'
+    const fieldLabelCls = 'block text-[0.6875rem] font-semibold text-[var(--color-text-disabled)] mb-1.5'
+
+    const modes = [
+        { value: true, icon: <Gavel size={22} strokeWidth={1.75} />, title: "Leilão", desc: "Fornecedores competem em tempo real enviando lances pelo menor preço." },
+        { value: false, icon: <FileText size={22} strokeWidth={1.75} />, title: "Proposta única", desc: "Fornecedores enviam apenas uma proposta por item, sem acompanhar lances." },
+    ]
 
     return (
         <div>
-            {/* Section label */}
             <div className="mb-5">
-                <h2 className="m-0 text-[1.0625rem] font-bold text-[var(--color-text-strong)] tracking-[-0.015em]">Período e modo</h2>
+                <h2 className="m-0 text-[1.4375rem] font-bold text-[var(--color-text-body)] tracking-[-0.02em]">Período e modo</h2>
                 <p className="mt-1 mb-0 text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.5]">
-                    Defina quando a cotação estará aberta e como os fornecedores irão participar.
+                    Defina quando a cotação abre e como os fornecedores vão participar.
                 </p>
             </div>
 
-            {/* Dates card */}
-            <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-xl)] mb-4 [box-shadow:var(--shadow-xs)] overflow-hidden">
-                <div className="px-5 pt-4 pb-3 flex items-center gap-2.5 border-b border-[var(--color-border-light)]">
-                    <div className="w-7 h-7 rounded-[var(--radius-md)] bg-[var(--color-highlight-lighter)] border border-[var(--color-highlight-border)] flex items-center justify-center flex-shrink-0 text-[var(--color-accent)]">
-                        <Calendar size={14} strokeWidth={2} />
+            {/* ── Período da cotação ── */}
+            <span className={sectionLabelCls}>Período da cotação</span>
+            <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] rounded-[var(--radius-xl)] mb-6 [box-shadow:var(--shadow-md-soft)] p-4">
+                {/* Início */}
+                <div className="flex items-center gap-2 text-[var(--color-success)] font-bold text-[0.8125rem] mb-2.5">
+                    <CirclePlay size={18} strokeWidth={2} />Início
+                </div>
+                <div className="flex gap-2.5">
+                    <div className="flex-[1.3] min-w-0">
+                        <label className={fieldLabelCls}>Data</label>
+                        <input type="date" min={today} className={inputCls} value={startDateValue}
+                            onChange={e => { setStartDateValue(e.target.value); handleDateTimeChange("start", e.target.value, startTimeValue) }} />
                     </div>
-                    <div>
-                        <p className="m-0 text-[0.875rem] font-semibold text-[var(--color-text-strong)] leading-tight">Período da cotação</p>
-                        <p className="m-0 text-[0.75rem] text-[var(--color-text-muted)] leading-tight mt-0.5">As datas precisam estar no futuro</p>
+                    <div className="flex-1 min-w-0">
+                        <label className={fieldLabelCls}>Hora</label>
+                        <input type="time" className={inputCls} value={startTimeValue}
+                            onChange={e => { setStartTimeValue(e.target.value); handleDateTimeChange("start", startDateValue, e.target.value) }} />
                     </div>
                 </div>
-                <div className="px-5 py-4">
-                    <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
-                        {/* Início */}
-                        <div className="flex flex-col gap-[0.375rem]">
-                            <span className="text-[0.75rem] font-semibold text-[var(--color-text-secondary)] flex items-center gap-1.5">
-                                <Calendar size={11} strokeWidth={2.5} />
-                                Início
-                            </span>
-                            <div className="flex gap-2">
-                                <div className="flex flex-col gap-[0.375rem] flex-1 min-w-0">
-                                    <span className="text-[0.6875rem] font-medium text-[var(--color-text-muted)]">Data</span>
-                                    <input
-                                        type="date"
-                                        min={today}
-                                        className={inputCls(localError && !startDateValue)}
-                                        value={startDateValue}
-                                        onChange={e => {
-                                            setStartDateValue(e.target.value)
-                                            handleDateTimeChange("start", e.target.value, startTimeValue)
-                                        }}
-                                    />
+
+                <div className="h-px bg-[var(--color-border-faint)] my-4" />
+
+                {/* Fim */}
+                <div className="flex items-center gap-2 text-[var(--color-danger)] font-bold text-[0.8125rem] mb-2.5">
+                    <CircleStop size={18} strokeWidth={2} />Fim
+                </div>
+                <div className="flex gap-2.5">
+                    <div className="flex-[1.3] min-w-0">
+                        <label className={fieldLabelCls}>Data</label>
+                        <input type="date" min={today} className={inputCls} value={endDateValue}
+                            onChange={e => { setEndDateValue(e.target.value); handleDateTimeChange("end", e.target.value, endTimeValue) }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <label className={fieldLabelCls}>Hora</label>
+                        <input type="time" className={inputCls} value={endTimeValue}
+                            onChange={e => { setEndTimeValue(e.target.value); handleDateTimeChange("end", endDateValue, e.target.value) }} />
+                    </div>
+                </div>
+
+                {/* Mensagem de validação ao vivo */}
+                {period.message && (
+                    <div className={[
+                        'flex items-center gap-2 mt-3.5 px-3 py-2.5 rounded-[var(--radius-md)] text-[0.75rem] font-semibold',
+                        period.tone === 'success'
+                            ? 'bg-[var(--color-success-soft)] text-[var(--color-success)]'
+                            : 'bg-[var(--color-danger-soft)] text-[var(--color-danger)]',
+                    ].join(' ')}>
+                        {period.tone === 'success'
+                            ? <CheckCircle size={16} strokeWidth={2} className="flex-shrink-0" />
+                            : <AlertCircle size={16} strokeWidth={2} className="flex-shrink-0" />}
+                        {period.message}
+                    </div>
+                )}
+            </div>
+
+            {/* ── Modo da cotação ── */}
+            <span className={sectionLabelCls}>Modo da cotação</span>
+            <div className="flex flex-col gap-2.5 mb-2">
+                {modes.map(({ value, icon, title, desc }) => {
+                    const selected = localIsAuction === value
+                    return (
+                        <button
+                            key={title}
+                            type="button"
+                            onClick={() => setLocalIsAuction(value)}
+                            className={[
+                                'w-full text-left rounded-[var(--radius-xl)] p-4 cursor-pointer transition-[background-color,border-color,box-shadow] duration-[160ms] active:scale-[0.99]',
+                                selected
+                                    ? 'border-2 border-[var(--color-accent)] bg-[var(--color-highlight-lighter)] [box-shadow:0_8px_20px_-12px_rgba(91,33,182,0.5)]'
+                                    : 'border-[1.5px] border-[var(--color-border-default)] bg-[var(--color-surface-card)] hover:border-[var(--color-border-strong)]',
+                            ].join(' ')}
+                        >
+                            <div className="flex items-start gap-3">
+                                <div className={[
+                                    'w-[42px] h-[42px] rounded-[13px] flex items-center justify-center flex-shrink-0 transition-colors duration-[160ms]',
+                                    selected ? 'bg-[var(--color-highlight-soft)] text-[var(--color-accent)]' : 'bg-[var(--color-surface-muted)] text-[var(--color-text-disabled)]',
+                                ].join(' ')}>
+                                    {icon}
                                 </div>
-                                <div className="flex flex-col gap-[0.375rem] flex-1 min-w-0">
-                                    <span className="text-[0.6875rem] font-medium text-[var(--color-text-muted)]">Hora</span>
-                                    <input
-                                        type="time"
-                                        className={inputCls(localError && !startTimeValue)}
-                                        value={startTimeValue}
-                                        onChange={e => {
-                                            setStartTimeValue(e.target.value)
-                                            handleDateTimeChange("start", startDateValue, e.target.value)
-                                        }}
-                                    />
+                                <div className="flex-1 min-w-0">
+                                    <div className="font-bold text-[1rem] text-[var(--color-text-body)] leading-tight mb-0.5">{title}</div>
+                                    <div className="text-[0.78125rem] text-[var(--color-text-muted)] leading-[1.45]">{desc}</div>
+                                </div>
+                                <div className={[
+                                    'w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-[background-color,border-color] duration-[160ms]',
+                                    selected ? 'bg-[var(--color-accent)] border-2 border-[var(--color-accent)] text-white' : 'border-2 border-[var(--color-border-strong)] text-transparent',
+                                ].join(' ')}>
+                                    <Check size={14} strokeWidth={3} />
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Fim */}
-                        <div className="flex flex-col gap-[0.375rem]">
-                            <span className="text-[0.75rem] font-semibold text-[var(--color-text-secondary)] flex items-center gap-1.5">
-                                <Clock size={11} strokeWidth={2.5} />
-                                Fim
-                            </span>
-                            <div className="flex gap-2">
-                                <div className="flex flex-col gap-[0.375rem] flex-1 min-w-0">
-                                    <span className="text-[0.6875rem] font-medium text-[var(--color-text-muted)]">Data</span>
-                                    <input
-                                        type="date"
-                                        min={today}
-                                        className={inputCls(localError && !endDateValue)}
-                                        value={endDateValue}
-                                        onChange={e => {
-                                            setEndDateValue(e.target.value)
-                                            handleDateTimeChange("end", e.target.value, endTimeValue)
-                                        }}
-                                    />
-                                </div>
-                                <div className="flex flex-col gap-[0.375rem] flex-1 min-w-0">
-                                    <span className="text-[0.6875rem] font-medium text-[var(--color-text-muted)]">Hora</span>
-                                    <input
-                                        type="time"
-                                        className={inputCls(localError && !endTimeValue)}
-                                        value={endTimeValue}
-                                        onChange={e => {
-                                            setEndTimeValue(e.target.value)
-                                            handleDateTimeChange("end", endDateValue, e.target.value)
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        </button>
+                    )
+                })}
             </div>
 
-            {/* Mode selector card */}
-            <div className="bg-[var(--color-surface-0)] border border-[var(--color-border)] rounded-[var(--radius-xl)] mb-4 [box-shadow:var(--shadow-xs)] overflow-hidden">
-                <div className="px-5 pt-4 pb-3 flex items-center gap-2.5 border-b border-[var(--color-border-light)]">
-                    <div className="w-7 h-7 rounded-[var(--radius-md)] bg-[var(--color-highlight-lighter)] border border-[var(--color-highlight-border)] flex items-center justify-center flex-shrink-0 text-[var(--color-accent)]">
-                        <Gavel size={14} strokeWidth={2} />
-                    </div>
-                    <div>
-                        <p className="m-0 text-[0.875rem] font-semibold text-[var(--color-text-strong)] leading-tight">Modo da cotação</p>
-                        <p className="m-0 text-[0.75rem] text-[var(--color-text-muted)] leading-tight mt-0.5">Como os fornecedores enviarão suas propostas</p>
-                    </div>
-                </div>
-                <div className="px-5 py-4">
-                    <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
-                        {[
-                            {
-                                value: true,
-                                icon: <Gavel size={20} strokeWidth={1.75} />,
-                                title: "Leilão",
-                                desc: "Fornecedores competem em tempo real enviando lances pelo menor preço"
-                            },
-                            {
-                                value: false,
-                                icon: <FileText size={20} strokeWidth={1.75} />,
-                                title: "Proposta única",
-                                desc: "Fornecedores enviam apenas uma proposta por item, sem acompanhar lances"
-                            }
-                        ].map(({ value, icon, title, desc }) => {
-                            const selected = localIsAuction === value
-                            return (
-                                <button
-                                    key={title}
-                                    type="button"
-                                    onClick={() => setLocalIsAuction(value)}
-                                    className={[
-                                        'relative text-left border-[1.5px] rounded-[var(--radius-lg)] p-4 cursor-pointer transition-[background-color,border-color,box-shadow] duration-[160ms] w-full',
-                                        selected
-                                            ? 'border-[var(--color-accent)] bg-[var(--color-selected-card-bg)] [box-shadow:0_0_0_1px_var(--color-accent)]'
-                                            : 'border-[var(--color-border)] hover:border-[var(--color-border-strong)] hover:bg-[var(--color-surface-1)]',
-                                    ].join(' ')}
-                                >
-                                    {/* check indicator */}
-                                    <span className={[
-                                        'absolute top-3 right-3 w-[18px] h-[18px] border-[1.5px] rounded-full grid place-items-center transition-[background-color,border-color] duration-[160ms] flex-shrink-0',
-                                        selected ? 'bg-[var(--color-accent)] border-[var(--color-accent)] text-white' : 'border-[var(--color-border-strong)] text-transparent',
-                                    ].join(' ')}>
-                                        <Check size={10} strokeWidth={3} />
-                                    </span>
-
-                                    <span className={`block mb-2.5 ${selected ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'}`}>
-                                        {icon}
-                                    </span>
-                                    <span className="font-semibold text-[0.875rem] text-[var(--color-text-strong)] block mb-1 leading-tight pr-5">{title}</span>
-                                    <span className="text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.45] block">{desc}</span>
-                                </button>
-                            )
-                        })}
-                    </div>
-                </div>
-            </div>
-
-            <Alert message={localError} />
-
-            <div className="flex justify-end mt-5 max-md:justify-stretch">
-                <Button onClick={handleNextClick} disabled={loading} className="max-md:w-full">
-                    {loading ? "Carregando..." : "Próximo"}
-                </Button>
-            </div>
+            <WizardActions
+                onPrimary={handleNext}
+                primaryLabel="Avançar"
+                primaryIcon={ArrowRight}
+                blocked={!period.ok}
+                loading={loading}
+            />
         </div>
     )
 }

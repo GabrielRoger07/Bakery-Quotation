@@ -21,14 +21,14 @@ const variantClasses = {
   ].join(' '),
 
   secondary: [
-    'bg-[var(--color-surface-0)] border-[var(--color-border-strong)] text-[var(--color-text-neutral-strong)]',
+    'bg-[var(--color-surface-card)] border-[var(--color-border-strong)] text-[var(--color-text-neutral)]',
     '[box-shadow:var(--shadow-xs)]',
-    'hover:[&:not(:disabled)]:bg-[var(--color-surface-2)] hover:[&:not(:disabled)]:text-[var(--color-text-primary)]',
+    'hover:[&:not(:disabled)]:bg-[var(--color-surface-muted)] hover:[&:not(:disabled)]:text-[var(--color-text-body)]',
     'hover:[&:not(:disabled)]:-translate-y-px hover:[&:not(:disabled)]:[box-shadow:var(--shadow-sm)]',
   ].join(' '),
 
   ghost: [
-    'bg-[var(--color-on-dark-bg-soft)] border-[var(--color-on-dark-border-light)] text-[var(--color-on-dark-text-mid)]',
+    'bg-[var(--color-on-dark-bg)] border-[var(--color-on-dark-border-strong)] text-[var(--color-on-dark-text-muted)]',
     '[box-shadow:none]',
     'hover:[&:not(:disabled)]:bg-[var(--color-on-dark-bg-hover)] hover:[&:not(:disabled)]:border-[var(--color-on-dark-border-strong)] hover:[&:not(:disabled)]:text-white',
     'hover:[&:not(:disabled)]:[translate:none] hover:[&:not(:disabled)]:[box-shadow:none]',

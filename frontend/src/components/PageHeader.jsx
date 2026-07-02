@@ -7,7 +7,7 @@ import { cn } from '@/utils/cn'
 const PageHeader = ({ title, subtitle, actions, className }) => (
   <div className={cn('mb-4', actions && 'flex items-start gap-3', className)}>
     <div>
-      <h1 className="m-0 text-title font-extrabold tracking-[-0.03em] text-[var(--color-text-strong)]">
+      <h1 className="m-0 text-title font-extrabold tracking-[-0.03em] text-[var(--color-text-heading)]">
         {title}
       </h1>
       {subtitle && (

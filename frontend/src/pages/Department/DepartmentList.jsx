@@ -128,14 +128,14 @@ const DepartmentDetailSheet = ({ isOpen, onClose, department, onEdit, onDelete }
                 <div className="sform-sheet-body">
                     <div className="flex flex-col gap-3 pt-1">
                         <button
-                            className="flex items-center gap-3 w-full px-4 py-3 rounded-[var(--radius-md)] text-[0.9375rem] font-medium text-[var(--color-text-primary)] bg-[var(--color-surface-1)] hover:bg-[var(--color-surface-2)] transition-colors duration-[160ms] text-left"
+                            className="flex items-center gap-3 w-full px-4 py-3 rounded-[var(--radius-md)] text-[0.9375rem] font-medium text-[var(--color-text-body)] bg-[var(--color-surface-subtle)] hover:bg-[var(--color-surface-muted)] transition-colors duration-[160ms] text-left"
                             onClick={() => { onClose(); setTimeout(() => onEdit(department), 200) }}
                         >
                             <Pencil size={18} strokeWidth={2} className="text-[var(--color-accent)]" />
                             Editar
                         </button>
                         <button
-                            className="flex items-center gap-3 w-full px-4 py-3 rounded-[var(--radius-md)] text-[0.9375rem] font-medium text-[var(--color-danger)] bg-[var(--color-danger-soft-bg)] hover:bg-[var(--color-danger-soft-bg-hover,var(--color-danger-soft-bg))] transition-colors duration-[160ms] text-left"
+                            className="flex items-center gap-3 w-full px-4 py-3 rounded-[var(--radius-md)] text-[0.9375rem] font-medium text-[var(--color-danger)] bg-[var(--color-danger-soft)] hover:bg-[var(--color-danger-soft-bg-hover,var(--color-danger-soft))] transition-colors duration-[160ms] text-left"
                             onClick={() => { onClose(); setTimeout(() => onDelete(department.departmentId), 200) }}
                         >
                             <Trash2 size={18} strokeWidth={2} />

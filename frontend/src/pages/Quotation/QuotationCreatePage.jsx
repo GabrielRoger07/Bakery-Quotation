@@ -16,7 +16,7 @@ const QuotationCreatePage = () => {
         <QuotationForm
             mode="create"
             onClose={() => navigate('/quotations')}
-            onSave={() => navigate('/quotations')}
+            onSave={() => navigate('/quotations', { state: { quotationSaved: 'create' } })}
         />
     )
 }

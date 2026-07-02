@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import useFetch from '@/hooks/useFetch'
 import Modal from '@/components/Modal'
 import Table from '@/components/Table'
@@ -14,13 +14,23 @@ import Pagination from '@/components/Pagination'
 import { ENV } from '@/config/env'
 import { formatDateTime } from '@/utils/formatDateTime'
 import useIsMobile from '@/hooks/useIsMobile'
-import { CalendarRange } from 'lucide-react'
+import { CalendarRange, CheckCircle, X } from 'lucide-react'
 
 const QuotationList = () => {
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate()
+    const location = useLocation()
     const isMobile = useIsMobile()
+
+    const [savedNotice, setSavedNotice] = useState(location.state?.quotationSaved ?? null)
+
+    // Limpa o state de navegação para o banner não reaparecer ao recarregar/voltar
+    useEffect(() => {
+        if (location.state?.quotationSaved) {
+            navigate(location.pathname, { replace: true, state: {} })
+        }
+    }, [location.state, location.pathname, navigate])
 
     const [quotations, setQuotations] = useState([])
     const [error, setError] = useState("")
@@ -181,6 +191,22 @@ const QuotationList = () => {
 
     return (
         <PageContainer variant="list">
+
+            {savedNotice && (
+                <div className="mx-4 mt-4 flex items-center gap-2.5 rounded-[var(--radius-lg)] border border-[var(--color-success-border)] bg-[var(--color-success-lighter)] px-3.5 py-3">
+                    <CheckCircle size={20} strokeWidth={2} className="flex-shrink-0 text-[var(--color-success)]" />
+                    <span className="flex-1 text-[0.875rem] font-semibold text-[var(--color-success-strong)]">
+                        {savedNotice === 'edit' ? 'Cotação atualizada com sucesso!' : 'Cotação criada com sucesso!'}
+                    </span>
+                    <button
+                        onClick={() => setSavedNotice(null)}
+                        aria-label="Dispensar"
+                        className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-[var(--radius-sm)] text-[var(--color-success)] cursor-pointer transition-colors duration-[160ms] hover:bg-[var(--color-success-soft)]"
+                    >
+                        <X size={16} strokeWidth={2.5} />
+                    </button>
+                </div>
+            )}
 
             {error && <Alert message={error} />}
             {status === 0 && <Alert message={"Erro Interno do Servidor"} />}

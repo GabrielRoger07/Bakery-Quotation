@@ -26,6 +26,7 @@ import SortBottomSheet from '@/components/SortBottomSheet'
  *   sortField      string | null
  *   sortDirection  "asc" | "desc"
  *   onSort         fn(columnKey)
+ *   showCount      bool          — exibe o chip "N registros" (default true; desative se a tela já tem seu próprio indicador de contagem/página)
  */
 const MobilePagination = ({ currentPage, totalPages, onPageChange }) => {
     if (totalPages <= 1) return null
@@ -115,6 +116,7 @@ const MobileCardList = ({
     currentPage,
     totalPages,
     onPageChange,
+    showCount = true,
 }) => {
     const { registerPage, unregisterPage } = useMobilePage()
     const [filterOpen, setFilterOpen] = useState(false)
@@ -206,7 +208,7 @@ const MobileCardList = ({
             )}
 
             {/* ── Count chip ── */}
-            {!loading && items.length > 0 && (
+            {showCount && !loading && items.length > 0 && (
                 <div className="count-chip-row">
                     <span className="count-chip">{items.length} {items.length === 1 ? 'registro' : 'registros'}</span>
                 </div>

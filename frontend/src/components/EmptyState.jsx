@@ -1,13 +1,18 @@
 import { cn } from '@/utils/cn'
 
+const ICON_TONES = {
+  accent: 'bg-[var(--color-highlight-lighter)] text-[var(--color-accent)]',
+  danger: 'bg-[var(--color-danger-soft)] text-[var(--color-danger)]',
+}
+
 /**
  * Estado vazio padrão (caixa tracejada centralizada).
  *
  * Uso simples (texto): <EmptyState>Nenhum item</EmptyState>
  * Uso rico (design do wizard): passar `icon`, `title`, `description` e/ou `action`
- * para renderizar o card com ícone lavanda, título e CTA.
+ * para renderizar o card com ícone colorido (`tone`: 'accent'/'danger'), título e CTA.
  */
-const EmptyState = ({ icon, title, description, action, children, className }) => {
+const EmptyState = ({ icon, title, description, action, tone = 'accent', children, className }) => {
   // Variante rica — usada quando há ícone ou título
   if (icon || title) {
     return (
@@ -17,7 +22,7 @@ const EmptyState = ({ icon, title, description, action, children, className }) =
         className,
       )}>
         {icon && (
-          <div className="w-14 h-14 rounded-[var(--radius-lg)] bg-[var(--color-highlight-lighter)] flex items-center justify-center mb-3.5 text-[var(--color-highlight)]">
+          <div className={cn('w-14 h-14 rounded-[var(--radius-lg)] flex items-center justify-center mb-3.5', ICON_TONES[tone] ?? ICON_TONES.accent)}>
             {icon}
           </div>
         )}

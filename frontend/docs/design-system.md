@@ -122,7 +122,7 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 | `Modal` | `isOpen`, `onClose`, `title`, `children` | overlay + card centralizado |
 | `MetaCard` | `icon`, `label`, `value`, `sub`, `tone` (`default`/`success`/`danger`) | metadado (card branco, rótulo colorido por `tone`) em detalhe/revisão |
 | `SectionHeader` | `icon`, `label`, `count` | cabeçalho de seção |
-| `EmptyState` | `children` | estado vazio (caixa tracejada) |
+| `EmptyState` | `children` ou `icon`/`title`/`description`/`action`/`tone` (`accent`/`danger`) | estado vazio simples (texto) ou rico (ícone + título + CTA, ex.: erro de carregamento) |
 
 ### Utils
 `cn` (merge seguro de className), `initials`, `charLimitMessage`.

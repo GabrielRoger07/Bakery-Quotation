@@ -11,17 +11,25 @@ import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import PageContainer from '@/components/PageContainer'
 import Pagination from '@/components/Pagination'
+import EmptyState from '@/components/EmptyState'
+import Button from '@/components/Button'
+import SortBottomSheet from '@/components/SortBottomSheet'
 import { ENV } from '@/config/env'
 import { formatDateTime } from '@/utils/formatDateTime'
 import useIsMobile from '@/hooks/useIsMobile'
-import { CalendarRange, CheckCircle, X } from 'lucide-react'
+import { useMobilePage } from '@/contexts/MobilePageContext'
+import { ArrowUpDown, CalendarRange, CheckCircle, CloudOff, RotateCw, X } from 'lucide-react'
+
+const PAGE_SIZE = 10
 
 const QuotationList = () => {
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
+    const { request: requestCounts } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate()
     const location = useLocation()
     const isMobile = useIsMobile()
+    const { registerPage, unregisterPage } = useMobilePage()
 
     const [savedNotice, setSavedNotice] = useState(location.state?.quotationSaved ?? null)
 
@@ -42,24 +50,28 @@ const QuotationList = () => {
     const [sheetOpen, setSheetOpen] = useState(false)
     const [sheetQuotation, setSheetQuotation] = useState(null)
 
+    const [sortOpen, setSortOpen] = useState(false)
+
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [quotationToRemove, setQuotationToRemove] = useState(null)
     const [cannotDelete, setCannotDelete] = useState(false)
 
     const [currentPage, setCurrentPage] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
+    const [totalElements, setTotalElements] = useState(0)
+    const [pageElementCount, setPageElementCount] = useState(0)
 
     const [sortField, setSortField] = useState(null)
     const [sortDirection, setSortDirection] = useState("asc")
 
     const [statusFilter, setStatusFilter] = useState("")
 
-    const columns = [
+    const columns = useMemo(() => [
         { key: "quotationId", label: "ID" },
         { key: "quotationStartFormatted", label: "Data de Início" },
         { key: "quotationEndFormatted", label: "Data de Fim" },
         { key: "status", label: "Status" }
-    ]
+    ], [])
 
     const sortMap = useMemo(() => ({
         quotationId: "id",
@@ -127,26 +139,34 @@ const QuotationList = () => {
 
         const res = await request("GET", `/quotations/company?page=${page}${sortQuery}`)
         if (res.ok) {
-            const mapped = res.data.content.map((q) => {
+            const mapped = await Promise.all(res.data.content.map(async (q) => {
                 const start = formatDateTime(q.quotationStart)
                 const end = formatDateTime(q.quotationEnd)
+                const [productsRes, suppliersRes] = await Promise.all([
+                    requestCounts("GET", `/contains/${q.quotationId}`),
+                    requestCounts("GET", `/participations/quotations/${q.quotationId}`),
+                ])
                 return {
                     ...q,
                     quotationStartFormatted: start ? `${start.date} • ${start.time}` : "-",
                     quotationEndFormatted: end ? `${end.date} • ${end.time}` : "-",
                     status: new Date(q.quotationStart) > new Date() ? "Agendado"
                           : new Date(q.quotationEnd) < new Date() ? "Fechado"
-                          : "Ativo"
+                          : "Ativo",
+                    productCount: productsRes.ok ? productsRes.data.length : 0,
+                    supplierCount: suppliersRes.ok ? suppliersRes.data.length : 0,
                 }
-            })
+            }))
             setQuotations(mapped)
             setTotalPages(res.data.totalPages)
+            setTotalElements(res.data.totalElements)
+            setPageElementCount(res.data.numberOfElements)
             setError("")
         } else {
             setError(res.data?.message)
         }
         setStatus(res.status)
-    }, [request, sortField, sortDirection, sortMap])
+    }, [request, requestCounts, sortField, sortDirection, sortMap])
 
     const handleColumnSort = (columnKey) => {
         if (!sortMap[columnKey]) return
@@ -159,9 +179,30 @@ const QuotationList = () => {
         setCurrentPage(0)
     }
 
+    const handleClearSort = () => {
+        setSortField(null)
+        setSortDirection("asc")
+        setCurrentPage(0)
+    }
+
+    const sortableColumns = useMemo(() => columns.filter(c => sortMap[c.key]), [columns, sortMap])
+
     useEffect(() => {
         fetchQuotations(currentPage)
     }, [fetchQuotations, currentPage])
+
+    // Mantém o título/reload do header mobile registrados mesmo quando o
+    // MobileCardList é desmontado (ex.: card de erro no lugar da lista).
+    useEffect(() => {
+        if (!isMobile) return
+        registerPage("Cotações", () => fetchQuotations(currentPage))
+        return () => unregisterPage()
+    }, [isMobile, registerPage, unregisterPage, fetchQuotations, currentPage])
+
+    const pageLabel = totalElements === 0 ? "" : `Página ${currentPage + 1} de ${totalPages}`
+    const rangeLabel = totalElements === 0
+        ? "Nenhuma cotação encontrada"
+        : `Mostrando ${currentPage * PAGE_SIZE + 1}–${currentPage * PAGE_SIZE + pageElementCount} de ${totalElements}`
 
     const statusCounts = useMemo(() => {
         const counts = { "": quotations.length, agendado: 0, ativo: 0, fechado: 0 }
@@ -181,10 +222,12 @@ const QuotationList = () => {
         const statusVariant =
             quotation.status === 'Ativo' ? 'success' :
             quotation.status === 'Agendado' ? 'accent' : ''
+        const startDate = formatDateTime(quotation.quotationStart)?.date
         return {
             avatar: <CalendarRange size={20} strokeWidth={1.75} />,
-            title: `Cotação #${quotation.quotationId}`,
+            title: `Cotação · ${startDate ?? '-'}`,
             subtitle: `${quotation.quotationStartFormatted} → ${quotation.quotationEndFormatted}`,
+            meta: `${quotation.productCount} itens · ${quotation.supplierCount} fornecedores`,
             tags: [{ label: quotation.status, variant: statusVariant }],
         }
     }
@@ -208,7 +251,7 @@ const QuotationList = () => {
                 </div>
             )}
 
-            {error && <Alert message={error} />}
+            {error && !(isMobile && quotations.length === 0) && <Alert message={error} />}
             {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
             {isMobile ? (
@@ -221,20 +264,66 @@ const QuotationList = () => {
                             counts={statusCounts}
                         />
                     </div>
-                    <MobileCardList
-                        title="Cotações"
-                        items={filteredQuotations}
-                        idKey="quotationId"
-                        loading={loading}
-                        emptyMessage="Nenhuma cotação encontrada."
-                        onReload={() => fetchQuotations(currentPage)}
-                        onAdd={() => navigate('/quotations/new')}
-                        onCardClick={openSheet}
-                        renderCard={renderQuotationCard}
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={setCurrentPage}
-                    />
+                    {error && quotations.length === 0 ? (
+                        <div className="px-4 pt-6">
+                            <EmptyState
+                                tone="danger"
+                                icon={<CloudOff size={28} strokeWidth={1.75} />}
+                                title="Não foi possível carregar"
+                                description="Verifique sua conexão e tente novamente."
+                                action={
+                                    <Button onClick={() => fetchQuotations(currentPage)}>
+                                        <span className="inline-flex items-center gap-2">
+                                            <RotateCw size={16} strokeWidth={2} /> Tentar novamente
+                                        </span>
+                                    </Button>
+                                }
+                            />
+                        </div>
+                    ) : (
+                        <MobileCardList
+                            title="Cotações"
+                            items={filteredQuotations}
+                            idKey="quotationId"
+                            loading={loading}
+                            emptyMessage="Nenhuma cotação encontrada."
+                            onReload={() => fetchQuotations(currentPage)}
+                            onAdd={() => navigate('/quotations/new')}
+                            onCardClick={openSheet}
+                            renderCard={renderQuotationCard}
+                            showCount={false}
+                            inlineToolbar={
+                                <div className="flex items-center justify-between gap-2">
+                                    <div className="flex flex-col gap-0.5 min-w-0">
+                                        <span className="text-caption font-bold text-[var(--color-text-heading)]">{pageLabel}</span>
+                                        <span className="text-label text-[var(--color-text-muted)] truncate">{rangeLabel}</span>
+                                    </div>
+                                    {sortableColumns.length > 0 && (
+                                        <button
+                                            className={`filter-toggle-btn flex-shrink-0 ${sortField ? 'active' : ''}`}
+                                            onClick={e => { e.stopPropagation(); setSortOpen(true) }}
+                                        >
+                                            <ArrowUpDown size={15} strokeWidth={2} />
+                                            <span>Ordenar</span>
+                                            {sortField && (
+                                                <span
+                                                    className="filter-clear-sort"
+                                                    role="button"
+                                                    aria-label="Limpar ordenação"
+                                                    onClick={e => { e.stopPropagation(); handleClearSort() }}
+                                                >
+                                                    <X size={12} strokeWidth={2.5} />
+                                                </span>
+                                            )}
+                                        </button>
+                                    )}
+                                </div>
+                            }
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                        />
+                    )}
                     <QuotationBottomSheet
                         isOpen={sheetOpen}
                         onClose={closeSheet}
@@ -242,6 +331,15 @@ const QuotationList = () => {
                         onEdit={(q) => navigate(`/quotations/${q.quotationId}/edit`)}
                         onDelete={requestRemove}
                         onMonitor={handleMonitor}
+                    />
+                    <SortBottomSheet
+                        isOpen={sortOpen}
+                        onClose={() => setSortOpen(false)}
+                        columns={sortableColumns}
+                        sortField={sortField}
+                        sortDirection={sortDirection}
+                        onSort={handleColumnSort}
+                        onClearSort={handleClearSort}
                     />
                 </>
             ) : (

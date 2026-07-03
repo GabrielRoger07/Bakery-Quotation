@@ -18,7 +18,7 @@ const UNIT_LABEL = {
 const unitLabel = (u) => {
     const [article, name] = UNIT_LABEL[u] ?? ['o', u]
     return (
-        <span className="text-[0.9375rem]">
+        <span className="text-body">
             Preço d{article} <span className="font-bold text-[var(--color-accent)]">{name}</span>
         </span>
     )

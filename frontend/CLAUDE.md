@@ -5,7 +5,7 @@ React 19 · Vite · Tailwind CSS v4 · React Router v6
 ## Ressalvas
 
 - **`useFetch` é o único cliente HTTP** — não usar `fetch` diretamente, exceto download de blob (exige leitura manual do cookie)
-- **Tokens em `@theme` (`src/styles/index.css`):** Nunca hardcodear cores/sombras — usar `var(--nome)`. Tipografia via tokens semânticos (`text-title`, `text-heading`, `text-body`, `text-caption`) em vez de `text-[0.875rem]` etc.
+- **Tokens em `@theme` (`src/styles/index.css`):** Nunca hardcodear cores/sombras — usar `var(--nome)`. Tipografia via tokens semânticos (`text-title`, `text-heading`, `text-body`, `text-caption`, `text-label`) em vez de `text-[0.875rem]` etc.
 - **Estilização = colocation:** o estilo vive **no componente**, organizado em mapas de variante + helper `cn()` (`@/utils/cn`) — ver `Button.jsx`/`Input.jsx` como molde. **Não** adicionar classes de tela novas no `index.css` (que guarda só tokens, base global e `@keyframes`).
 - **Ícones:** Lucide React — sempre com `size` e `strokeWidth` explícitos
 - **Imports:** Usar path alias `@/*` para imports dentro de src
@@ -36,8 +36,9 @@ React 19 · Vite · Tailwind CSS v4 · React Router v6
 
 1. **Antes de criar qualquer componente novo, verificar se já existe em `components/`**
 2. **Antes de criar qualquer hook novo, verificar se já existe em `hooks/`**
-3. Estilo de tela vem dos primitivos (`PageContainer`/`PageHeader`/`Input`+`error`/`Select`/`Alert`), não de markup ad-hoc por tela
-4. **Nunca reinventar modal/sheet/confirmação do zero** — usar `Modal`/`ConfirmDialog`
+3. **Ao alterar um componente existente ou criar um novo, atualizar o design system também**
+4. Estilo de tela vem dos primitivos (`PageContainer`/`PageHeader`/`Input`+`error`/`Select`/`Alert`), não de markup ad-hoc por tela
+5. **Nunca reinventar modal/sheet/confirmação do zero** — usar `Modal`/`ConfirmDialog`
 
 ## Responsividade (híbrido disciplinado)
 - Breakpoint mobile único: `640px` = `sm` do Tailwind = `useIsMobile(640)`. Não usar `max-[560px]`/`max-[768px]`.

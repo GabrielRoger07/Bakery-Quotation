@@ -6,11 +6,12 @@ import QuotationCreateStep2 from '@/pages/Quotation/QuotationCreateStep2'
 import QuotationCreateStep3 from '@/pages/Quotation/QuotationCreateStep3'
 import QuotationCreateStep4 from '@/pages/Quotation/QuotationCreateStep4'
 import ConfirmDialog from '@/components/ConfirmDialog'
-import { Check, X } from 'lucide-react'
+import { useMobilePage } from '@/contexts/MobilePageContext'
+import { Check, X, OctagonAlert } from 'lucide-react'
 import { ENV } from '@/config/env'
 
 const STEPS = [
-    { key: 1, labelKey: "Datas" },
+    { key: 1, labelKey: "Período" },
     { key: 2, labelKey: "Produtos" },
     { key: 3, labelKey: "Fornecedores" },
     { key: 4, labelKey: "Revisão" }
@@ -31,6 +32,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
     const [confirmExit, setConfirmExit] = useState(false)
 
     const { request } = useFetch(ENV.API_BASE_URL)
+    const { registerPage, unregisterPage } = useMobilePage()
 
     const [quotationData, setQuotationData] = useState({
         start: "",
@@ -65,6 +67,27 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
     useEffect(() => {
         fetchEditData() // eslint-disable-line react-hooks/set-state-in-effect
     }, [fetchEditData])
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' })
+    }, [step])
+
+    // Usa a mesma barra superior do app (Navbar) no mobile: X para descartar + pílula de etapa
+    useEffect(() => {
+        registerPage(
+            mode === "create" ? "Criar cotação" : "Editar cotação",
+            null,
+            {
+                leftAction: { icon: X, onClick: () => setConfirmExit(true), ariaLabel: "Fechar" },
+                rightSlot: (
+                    <span className="flex items-center gap-0.5 bg-[var(--color-on-dark-bg)] border border-[var(--color-on-dark-border)] rounded-full px-2.5 py-1 text-white text-[0.75rem] font-bold tabular-nums">
+                        {step}<span className="text-[var(--color-on-dark-text-faint)]">/{STEPS.length}</span>
+                    </span>
+                ),
+            }
+        )
+        return unregisterPage
+    }, [mode, step, registerPage, unregisterPage])
 
     const handleStepChange = useCallback((field, value) => {
         setQuotationData(prev => ({...prev, [field]: value}))
@@ -193,32 +216,11 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
 
                     {/* breadcrumb */}
                     <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-[0.8125rem] text-[var(--color-text-muted)] whitespace-nowrap">Cotações</span>
+                        <span className="text-caption text-[var(--color-text-muted)] whitespace-nowrap">Cotações</span>
                         <span className="text-[var(--color-border-strong)] text-[0.75rem]">/</span>
-                        <span className="text-[0.8125rem] font-semibold text-[var(--color-text-heading)] truncate">
+                        <span className="text-caption font-semibold text-[var(--color-text-heading)] truncate">
                             {mode === "create" ? "Nova Cotação" : `Editar Cotação${initialData ? ` #${initialData.quotationId}` : ''}`}
                         </span>
-                    </div>
-                </div>
-            </div>
-
-            {/* ── Mobile navy header ── */}
-            <div className="md:hidden bg-[var(--color-brand)]">
-                <div className="px-4 pb-3.5 flex items-center gap-3" style={{ paddingTop: 'max(0.875rem, env(safe-area-inset-top))' }}>
-                    <button
-                        onClick={() => setConfirmExit(true)}
-                        aria-label="Fechar"
-                        className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-lg)] border border-[var(--color-on-dark-border)] bg-[var(--color-on-dark-bg)] text-white flex-shrink-0 transition-[background-color] duration-[160ms] active:scale-95"
-                    >
-                        <X size={20} strokeWidth={2.5} />
-                    </button>
-                    <div className="flex-1 min-w-0">
-                        <div className="text-[1.125rem] font-bold text-white leading-tight truncate">
-                            {mode === "create" ? "Criar cotação" : "Editar cotação"}
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-0.5 bg-[var(--color-on-dark-bg)] border border-[var(--color-on-dark-border)] rounded-full px-2.5 py-1 text-white text-[0.75rem] font-bold tabular-nums flex-shrink-0">
-                        {step}<span className="text-[var(--color-on-dark-text-faint)]">/{STEPS.length}</span>
                     </div>
                 </div>
             </div>
@@ -244,7 +246,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                                 disabled={!isVisited}
                                 className={`relative z-10 flex flex-col items-center gap-1.5 flex-1 bg-transparent border-none p-0 ${isVisited ? 'cursor-pointer' : 'cursor-default'}`}
                             >
-                                <div className={`relative w-[30px] h-[30px] rounded-full grid place-items-center text-[0.8125rem] font-bold flex-shrink-0 transition-[background-color,color,box-shadow] duration-300 ${isDone ? 'bg-[var(--color-success)] text-white [box-shadow:0_4px_10px_-3px_rgba(5,150,105,0.5)]' : isActive ? 'bg-[var(--color-accent)] text-white [box-shadow:0_4px_12px_-3px_rgba(91,33,182,0.6)]' : 'bg-[var(--color-surface-sunken)] text-[var(--color-text-disabled)]'}`}>
+                                <div className={`relative w-[30px] h-[30px] rounded-full grid place-items-center text-caption font-bold flex-shrink-0 transition-[background-color,color,box-shadow] duration-300 ${isDone ? 'bg-[var(--color-success)] text-white [box-shadow:0_4px_10px_-3px_rgba(5,150,105,0.5)]' : isActive ? 'bg-[var(--color-accent)] text-white [box-shadow:0_4px_12px_-3px_rgba(91,33,182,0.6)]' : 'bg-[var(--color-surface-sunken)] text-[var(--color-text-disabled)]'}`}>
                                     {isDone ? <Check size={13} strokeWidth={3} /> : s.key}
                                     {badges[s.key] && (
                                         <span className="absolute -top-[5px] -right-[7px] bg-[var(--color-text-body)] text-white text-[0.625rem] min-w-[18px] h-[18px] rounded-full grid place-items-center font-bold px-[3px] leading-none border-2 border-[var(--color-surface-card)]">
@@ -252,7 +254,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                                         </span>
                                     )}
                                 </div>
-                                <span className={`text-[0.6875rem] leading-tight transition-colors duration-200 ${isActive ? 'text-[var(--color-text-body)] font-bold' : 'text-[var(--color-text-disabled)] font-semibold'}`}>
+                                <span className={`text-label leading-tight transition-colors duration-200 ${isActive ? 'text-[var(--color-text-body)] font-bold' : 'text-[var(--color-text-disabled)] font-semibold'}`}>
                                     {s.labelKey}
                                 </span>
                             </button>
@@ -280,7 +282,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                                             </span>
                                         )}
                                     </div>
-                                    <span className={`text-[0.8125rem] font-semibold leading-tight transition-colors duration-200 ${isActive ? 'text-[var(--color-accent)]' : isDone ? 'text-[var(--color-text-heading)]' : 'text-[var(--color-text-disabled)]'}`}>
+                                    <span className={`text-caption font-semibold leading-tight transition-colors duration-200 ${isActive ? 'text-[var(--color-accent)]' : isDone ? 'text-[var(--color-text-heading)]' : 'text-[var(--color-text-disabled)]'}`}>
                                         {s.labelKey}
                                     </span>
                                 </div>
@@ -303,7 +305,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             </div>
 
             {/* ── Mobile single-column layout ── */}
-            <div className="[display:none] max-md:[display:block] px-4 py-5" style={{ paddingBottom: 'calc(4.25rem + env(safe-area-inset-bottom) + 7rem)' }}>
+            <div className="[display:none] max-md:[display:block] px-4 py-5" style={{ paddingBottom: 'calc(4.25rem + env(safe-area-inset-bottom))' }}>
                 {step === 1 && <QuotationCreateStep1 start={quotationData.start} end={quotationData.end} isAuction={quotationData.isAuction} onChange={handleStepChange} onNext={nextStep} loading={loading} />}
                 {step === 2 && <QuotationCreateStep2 selectedProducts={quotationData.products} onChange={handleProductsChange} onBack={prevStep} onNext={nextStep} loading={loading} />}
                 {step === 3 && <QuotationCreateStep3 selectedSuppliers={quotationData.suppliers} onChange={handleSuppliersChange} onBack={prevStep} onFinish={nextStep} loading={loading} />}
@@ -316,6 +318,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                 isOpen={confirmExit}
                 onClose={() => setConfirmExit(false)}
                 onConfirm={onClose}
+                icon={<OctagonAlert size={28} strokeWidth={2} />}
                 title={mode === "edit" ? "Descartar alterações?" : "Descartar cotação?"}
                 confirmLabel="Descartar"
                 cancelLabel="Continuar editando"

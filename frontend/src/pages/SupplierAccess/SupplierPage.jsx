@@ -33,9 +33,9 @@ const DesktopCard = ({ p, onClick, idx }) => {
     const labelMap = { agendado: 'Agendado', ativo: 'Ativo', fechado: 'Fechado' }
 
     const pillCls = {
-        accent:  'inline-flex items-center gap-[0.3rem] px-[0.7rem] py-[0.25rem] text-[0.8125rem] font-semibold tracking-[0.03em] rounded-full text-[var(--color-accent-strong)] bg-[var(--color-highlight-lighter)] border border-[var(--color-highlight-border)]',
-        success: 'inline-flex items-center gap-[0.3rem] px-[0.7rem] py-[0.25rem] text-[0.8125rem] font-semibold tracking-[0.03em] rounded-full text-[var(--color-success-strong)] bg-[var(--color-success-lighter)] border border-[var(--color-success-border)]',
-        '':      'inline-flex items-center gap-[0.3rem] px-[0.7rem] py-[0.25rem] text-[0.8125rem] font-semibold tracking-[0.03em] rounded-full text-[var(--color-text-muted)] bg-[var(--color-surface-muted)] border border-[var(--color-border-default)]',
+        accent:  'inline-flex items-center gap-[0.3rem] px-[0.7rem] py-[0.25rem] text-caption font-semibold tracking-[0.03em] rounded-full text-[var(--color-accent-strong)] bg-[var(--color-highlight-lighter)] border border-[var(--color-highlight-border)]',
+        success: 'inline-flex items-center gap-[0.3rem] px-[0.7rem] py-[0.25rem] text-caption font-semibold tracking-[0.03em] rounded-full text-[var(--color-success-strong)] bg-[var(--color-success-lighter)] border border-[var(--color-success-border)]',
+        '':      'inline-flex items-center gap-[0.3rem] px-[0.7rem] py-[0.25rem] text-caption font-semibold tracking-[0.03em] rounded-full text-[var(--color-text-muted)] bg-[var(--color-surface-muted)] border border-[var(--color-border-default)]',
     }[variant]
 
     return (
@@ -54,12 +54,12 @@ const DesktopCard = ({ p, onClick, idx }) => {
                             Cotação #{p.quotationId}
                         </p>
                         <div className="flex items-center gap-4 mt-[0.35rem] flex-wrap">
-                            <span className="text-[0.9375rem] text-[var(--color-text-muted)]">
+                            <span className="text-body text-[var(--color-text-muted)]">
                                 <strong className="font-semibold text-[var(--color-text-neutral)]">Início:</strong>{' '}
                                 {formatDate(p.quotationStart)}
                             </span>
-                            <span className="text-[var(--color-border-strong)] select-none text-[0.9375rem]">·</span>
-                            <span className="text-[0.9375rem] text-[var(--color-text-muted)]">
+                            <span className="text-[var(--color-border-strong)] select-none text-body">·</span>
+                            <span className="text-body text-[var(--color-text-muted)]">
                                 <strong className="font-semibold text-[var(--color-text-neutral)]">Fim:</strong>{' '}
                                 {formatDate(p.quotationEnd)}
                             </span>

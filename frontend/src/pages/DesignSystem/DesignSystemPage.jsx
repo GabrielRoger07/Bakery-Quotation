@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Calendar, Gavel, Package, Building2, Search } from 'lucide-react'
+import { Calendar, Gavel, Package, Building2, Search, Trash2, CirclePlay, CircleStop } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
 import PageContainer from '@/components/PageContainer'
@@ -144,6 +144,7 @@ const TYPOGRAPHY = [
   { cls: 'text-heading', token: '--text-heading', sample: 'Título de seção / modal' },
   { cls: 'text-body', token: '--text-body', sample: 'Texto padrão, labels e inputs' },
   { cls: 'text-caption', token: '--text-caption', sample: 'Legendas, hints e tags' },
+  { cls: 'text-label', token: '--text-label', sample: 'Rótulo micro / eyebrow' },
 ]
 
 /* ── Lê o valor computado de um token CSS no :root ── */
@@ -175,7 +176,7 @@ const Subsection = ({ title, children }) => (
 )
 
 const TokenName = ({ children }) => (
-  <code className="text-[0.6875rem] font-mono text-[var(--color-text-muted)] break-all">{children}</code>
+  <code className="text-label font-mono text-[var(--color-text-muted)] break-all">{children}</code>
 )
 
 const ColorSwatch = ({ token, use }) => {
@@ -188,7 +189,7 @@ const ColorSwatch = ({ token, use }) => {
       />
       <TokenName>{token}</TokenName>
       <span className="text-[0.625rem] font-mono uppercase text-[var(--color-text-disabled)]">{value || '—'}</span>
-      {use && <span className="text-[0.6875rem] leading-tight text-[var(--color-text-neutral)]">{use}</span>}
+      {use && <span className="text-label leading-tight text-[var(--color-text-neutral)]">{use}</span>}
     </div>
   )
 }
@@ -214,7 +215,7 @@ const TokensSection = () => (
           <div key={name} className="flex flex-col gap-1.5">
             <div className="h-14 w-full rounded-[var(--radius-md)] border border-[var(--color-on-dark-border)]" style={{ background: `var(${name})` }} />
             <code className="text-[0.625rem] font-mono text-[var(--color-on-dark-text)] break-all">{name}</code>
-            <span className="text-[0.6875rem] leading-tight text-[var(--color-on-dark-text-muted)]">{use}</span>
+            <span className="text-label leading-tight text-[var(--color-on-dark-text-muted)]">{use}</span>
           </div>
         ))}
       </div>
@@ -226,7 +227,7 @@ const TokensSection = () => (
           <div key={cls} className="flex items-baseline justify-between gap-4 border-b border-[var(--color-border-faint)] pb-3 last:border-b-0 last:pb-0">
             <span className={cn(cls, 'font-semibold text-[var(--color-text-heading)]')}>{sample}</span>
             <span className="flex flex-col items-end text-right">
-              <code className="text-[0.6875rem] font-mono text-[var(--color-accent)]">{cls}</code>
+              <code className="text-label font-mono text-[var(--color-accent)]">{cls}</code>
               <TokenName>{token}</TokenName>
             </span>
           </div>
@@ -365,8 +366,9 @@ const PrimitivesSection = () => {
       </Primitive>
 
       <Primitive name="MetaCard">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <MetaCard icon={<Calendar size={16} />} label="Abertura" value="27/06/2026" sub="08:00" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <MetaCard tone="success" icon={<CirclePlay size={16} strokeWidth={2} />} label="Início" value="27/06/2026" sub="08:00" />
+          <MetaCard tone="danger" icon={<CircleStop size={16} strokeWidth={2} />} label="Fim" value="30/06/2026" sub="18:00" />
           <MetaCard icon={<Gavel size={16} />} label="Modo" value="Leilão reverso" />
         </div>
       </Primitive>
@@ -407,9 +409,12 @@ const PrimitivesSection = () => {
           isOpen={confirmOpen}
           onClose={() => setConfirmOpen(false)}
           onConfirm={() => setConfirmOpen(false)}
+          title="Remover item?"
+          confirmLabel="Remover"
           confirmVariant="danger"
+          icon={<Trash2 size={28} strokeWidth={2} />}
         >
-          Tem certeza de que deseja remover este item?
+          Tem certeza de que deseja remover este item? Esta ação não pode ser desfeita.
         </ConfirmDialog>
       </Primitive>
 

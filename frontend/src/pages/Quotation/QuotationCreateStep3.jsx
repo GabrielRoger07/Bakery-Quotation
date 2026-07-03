@@ -7,7 +7,7 @@ import LoadMoreButton from '@/components/LoadMoreButton'
 import EmptyState from '@/components/EmptyState'
 import MobileSearchInput from '@/components/MobileSearchInput'
 import WizardActions from '@/components/WizardActions'
-import { X, UserRoundSearch, UserRoundPlus, ArrowRight } from 'lucide-react'
+import { X, Plus, UserRoundSearch, UserRoundPlus, ArrowRight } from 'lucide-react'
 import { ENV } from '@/config/env'
 
 const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, loading }) => {
@@ -77,7 +77,6 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
         }
         setLocalSelected([...localSelected, supplier].sort((a, b) => a.supplierName.localeCompare(b.supplierName)))
         setError("")
-        if (isMobile) setMobileTab("participating")
     }
 
     const handleRemoveSupplier = (supplierId) => {
@@ -136,23 +135,30 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                     className="mb-3"
                 />
             ) : (
-                <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
-                    <div className="text-[0.75rem] font-semibold text-[var(--color-text-disabled)] mb-2.5 px-0.5">Mostrando {availableSuppliers.length} de {totalElements} fornecedores</div>
+                <>
+                <div className="text-[0.75rem] font-semibold text-[var(--color-text-disabled)] mb-2.5 px-0.5">Mostrando {availableSuppliers.length} de {totalElements} fornecedores</div>
+                <div className="mb-3">
                     {isMobile ? (
-                        <ul className="list-none m-0 p-0 flex flex-col gap-[0.5rem]">
+                        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-md)] overflow-hidden bg-[var(--color-surface-card)] mb-1">
                             {availableSuppliers.map(s => (
-                                <li key={s.supplierId} className="sup-row-card">
+                                <div key={s.supplierId} className="flex items-center gap-3 px-3 py-2.5 border-b border-[var(--color-border-faint)] last:border-b-0">
                                     <div className="sup-row-avatar">{s.supplierName.charAt(0).toUpperCase()}</div>
                                     <div className="sup-row-body">
                                         <p className="sup-row-name">{s.supplierName}</p>
                                         <p className="sup-row-company">{s.employerName}</p>
                                     </div>
-                                    <Button onClick={() => handleAddSupplier(s)} disabled={loading}>
-                                        Adicionar
-                                    </Button>
-                                </li>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleAddSupplier(s)}
+                                        disabled={loading}
+                                        aria-label="Adicionar"
+                                        className="w-9 h-9 rounded-[11px] bg-[var(--color-accent)] text-white flex items-center justify-center flex-shrink-0 cursor-pointer transition-transform duration-[120ms] active:scale-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <Plus size={20} strokeWidth={2.5} />
+                                    </button>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     ) : (
                         <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-md)] overflow-hidden bg-[var(--color-surface-card)] mb-[0.4rem]">
                             {availableSuppliers.map(s => (
@@ -164,13 +170,22 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                                         <strong className="text-[0.875rem] text-[var(--color-text-heading)]">{s.supplierName}</strong>
                                         <span className="text-[0.75rem] text-[var(--color-text-neutral)]">{s.employerName}</span>
                                     </div>
-                                    <Button onClick={() => handleAddSupplier(s)} disabled={loading}>Adicionar</Button>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleAddSupplier(s)}
+                                        disabled={loading}
+                                        aria-label="Adicionar"
+                                        className="w-9 h-9 rounded-[11px] bg-[var(--color-accent)] text-white flex items-center justify-center flex-shrink-0 cursor-pointer transition-transform duration-[120ms] active:scale-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <Plus size={20} strokeWidth={2.5} />
+                                    </button>
                                 </div>
                             ))}
                         </div>
                     )}
                     <LoadMoreButton remaining={totalElements - availableSuppliers.length} onClick={handleLoadMoreSuppliers} />
                 </div>
+                </>
             )}
         </>
     )
@@ -234,8 +249,8 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
     return (
         <div>
             <div className="mb-5">
-                <h2 className="m-0 text-[1.4375rem] font-bold text-[var(--color-text-body)] tracking-[-0.02em]">Fornecedores</h2>
-                <p className="mt-1 mb-0 text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.5]">Escolha quem vai participar da cotação.</p>
+                <h2 className="m-0 text-title font-bold text-[var(--color-text-body)] tracking-[-0.02em]">Fornecedores</h2>
+                <p className="mt-1 mb-0 text-caption text-[var(--color-text-muted)] leading-[1.5]">Escolha quem vai participar da cotação.</p>
             </div>
 
             {isMobile ? (

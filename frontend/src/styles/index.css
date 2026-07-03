@@ -15,6 +15,8 @@
   --text-body--line-height: 1.5;
   --text-caption: 0.75rem;    /* legendas, hints, tags */
   --text-caption--line-height: 1.4;
+  --text-label:   0.6875rem;  /* rótulo micro/uppercase — eyebrow labels, badges, cabeçalhos de tabela */
+  --text-label--line-height: 1.3;
 
   /* ── Breakpoint mobile (fonte única; alinha com useIsMobile(640)) ── */
   /* Tailwind v4 já usa sm = 40rem (640px) por padrão. Usar sm:/max-sm: e
@@ -54,7 +56,7 @@
   --color-text-heading:   #0f0d23;   /* títulos, ênfase máxima */
   --color-text-body:      #1e1b4b;   /* texto de leitura padrão / valores */
   --color-text-secondary: #312e81;   /* apoio índigo (subtítulos, descrições) */
-  --color-text-neutral:   #374151;   /* texto de UI cinza (label de botão, célula) */
+  --color-text-neutral:   #374151;   /* texto de UI cinza (label de campo, célula) */
   --color-text-muted:     #6b7280;   /* auxiliar, hints, labels, placeholders */
   --color-text-disabled:  #9ca3af;   /* inativo, placeholder, asterisco opcional */
   --color-text-inverse:   #ffffff;   /* texto sobre fundo claro pontual */
@@ -365,7 +367,7 @@ textarea {
     background: var(--color-surface-card);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 500;
     cursor: pointer;
     transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease;
@@ -577,7 +579,7 @@ textarea {
     gap: 0.15rem;
   }
   .card-title {
-    font-size: 0.9375rem;
+    font-size: var(--text-heading);
     font-weight: 600;
     color: var(--color-text-heading);
     white-space: nowrap;
@@ -586,7 +588,7 @@ textarea {
     line-height: 1.3;
   }
   .card-subtitle {
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     color: var(--color-text-muted);
     white-space: nowrap;
     overflow: hidden;
@@ -701,7 +703,7 @@ textarea {
     background: transparent;
     color: var(--color-text-muted);
     font-family: var(--font-sans);
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 500;
     cursor: pointer;
     transition: color 160ms ease, background 160ms ease, box-shadow 160ms ease;
@@ -751,7 +753,7 @@ textarea {
     height: 1.125rem;
     padding-inline: 0.3rem;
     border-radius: 2rem;
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 700;
     line-height: 1;
     background: var(--color-surface-sunken);
@@ -780,7 +782,7 @@ textarea {
   .stf-root--mobile .stf-tab {
     flex: 1;
     border-radius: calc(var(--radius-lg) - 0.1875rem);
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     padding: 0.4375rem 0.25rem;
     gap: 0.275rem;
   }
@@ -797,7 +799,7 @@ textarea {
 
   .mf-label {
     margin: 0;
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 700;
     letter-spacing: 0.07em;
     text-transform: uppercase;
@@ -817,7 +819,7 @@ textarea {
     background: var(--color-surface-card);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 500;
     cursor: pointer;
     transition: border-color 140ms ease, background 140ms ease, color 140ms ease, transform 100ms ease;
@@ -858,7 +860,7 @@ textarea {
     border: 1.5px solid var(--color-border-strong);
     border-radius: var(--radius-lg);
     font-family: var(--font-sans);
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     color: var(--color-text-body);
     background: var(--color-surface-card);
     outline: none;
@@ -920,7 +922,7 @@ textarea {
     border: 1.5px solid var(--color-border-strong);
     border-radius: var(--radius-lg);
     font-family: var(--font-sans);
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     color: var(--color-text-body);
     background: var(--color-surface-card);
     outline: none;
@@ -942,7 +944,7 @@ textarea {
     background: var(--color-accent);
     color: white;
     font-family: var(--font-sans);
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 600;
     cursor: pointer;
     transition: background 140ms ease, transform 100ms ease, box-shadow 140ms ease;
@@ -972,7 +974,7 @@ textarea {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     color: var(--color-accent);
     min-width: 0;
     overflow: hidden;
@@ -1086,7 +1088,7 @@ textarea {
 
   .sort-section-label {
     margin: 0 0 0.625rem;
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 700;
     letter-spacing: 0.07em;
     text-transform: uppercase;
@@ -1110,7 +1112,7 @@ textarea {
     background: var(--color-surface-subtle);
     color: var(--color-text-body);
     font-family: var(--font-sans);
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 500;
     cursor: pointer;
     text-align: left;
@@ -1198,7 +1200,7 @@ textarea {
     background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 600;
     cursor: pointer;
     transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 100ms ease;
@@ -1218,7 +1220,7 @@ textarea {
     background: var(--color-accent);
     color: white;
     font-family: var(--font-sans);
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 700;
     cursor: pointer;
     transition: background 140ms ease, transform 100ms ease, box-shadow 140ms ease;
@@ -1315,7 +1317,7 @@ textarea {
   }
   .mpag-page-label {
     font-family: var(--font-sans);
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 600;
     color: var(--color-text-muted);
     letter-spacing: 0.01em;
@@ -1343,7 +1345,7 @@ textarea {
     background: var(--color-surface-card);
     color: var(--color-text-neutral);
     font-family: var(--font-sans);
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 600;
     cursor: pointer;
     transition: border-color 160ms ease, background 160ms ease, color 160ms ease,
@@ -1416,10 +1418,10 @@ textarea {
   /* ── Step Tabs (mobile tab switcher for Steps 2 & 3) ── */
   .step-tabs {
     display: flex;
-    border-radius: var(--radius-lg);
-    background: var(--color-surface-muted);
-    padding: 0.25rem;
-    gap: 0.25rem;
+    border-radius: 999px;
+    background: var(--color-surface-sunken);
+    padding: 0.375rem;
+    gap: 0.375rem;
   }
   .step-tab {
     flex: 1;
@@ -1427,8 +1429,8 @@ textarea {
     align-items: center;
     justify-content: center;
     gap: 0.375rem;
-    height: 2.375rem;
-    border-radius: var(--radius-md);
+    height: 2.25rem;
+    border-radius: var(--radius-lg);
     border: none;
     background: transparent;
     font-family: var(--font-sans);
@@ -1458,7 +1460,7 @@ textarea {
     border-radius: 2rem;
     background: var(--color-highlight-soft);
     color: var(--color-accent);
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 700;
     line-height: 1;
   }
@@ -1541,7 +1543,7 @@ textarea {
     background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 600;
     letter-spacing: 0.02em;
     cursor: pointer;
@@ -1664,7 +1666,7 @@ textarea {
   }
 
   .psheet-subtitle {
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     color: var(--color-text-muted);
     font-weight: 400;
     margin-top: 0.125rem;
@@ -1701,7 +1703,7 @@ textarea {
   }
 
   .psheet-label {
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 700;
     letter-spacing: 0.07em;
     text-transform: uppercase;
@@ -1786,7 +1788,7 @@ textarea {
     background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 600;
     cursor: pointer;
     transition: background 140ms ease, border-color 140ms ease, transform 100ms ease;
@@ -2007,7 +2009,7 @@ textarea {
     gap: 0.25rem;
   }
   .qm-mobile-title {
-    font-size: 0.9375rem;
+    font-size: var(--text-heading);
     font-weight: 700;
     color: var(--color-text-heading);
     letter-spacing: -0.01em;
@@ -2018,7 +2020,7 @@ textarea {
     align-items: center;
     padding: 0.1875rem 0.625rem;
     border-radius: 2rem;
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -2068,7 +2070,7 @@ textarea {
     justify-content: center;
     gap: 0.5rem;
     padding: 0.625rem 1rem;
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 600;
   }
   .qm-countdown-banner.qm-status--active {
@@ -2111,7 +2113,7 @@ textarea {
     padding: 0.75rem 0.5rem;
   }
   .qm-date-label {
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -2202,7 +2204,7 @@ textarea {
     letter-spacing: 0;
   }
   .qm-stat-label {
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 600;
     color: var(--color-text-muted);
     letter-spacing: 0.03em;
@@ -2245,7 +2247,7 @@ textarea {
     color: var(--color-accent);
   }
   .qm-section-title {
-    font-size: 0.9375rem;
+    font-size: var(--text-heading);
     font-weight: 700;
     color: var(--color-text-heading);
     letter-spacing: -0.01em;
@@ -2261,7 +2263,7 @@ textarea {
     background: var(--color-highlight-lighter);
     color: var(--color-accent);
     border: 1px solid var(--color-highlight-border);
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 700;
   }
   .qm-section-chevron {
@@ -2392,7 +2394,7 @@ textarea {
     color: var(--color-text-muted);
   }
   .qm-bid-metric-value {
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 700;
     color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
@@ -2408,7 +2410,7 @@ textarea {
     flex-wrap: wrap;
   }
   .qm-product-supplier-name {
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 600;
     color: var(--color-text-neutral);
   }
@@ -2487,7 +2489,7 @@ textarea {
     align-items: center;
     padding: 0.2rem 0.55rem;
     border-radius: 2rem;
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 700;
     letter-spacing: 0.03em;
   }
@@ -2521,7 +2523,7 @@ textarea {
     color: var(--color-text-muted);
   }
   .qm-bid-price-value {
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 700;
     color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
@@ -2538,7 +2540,7 @@ textarea {
     flex-wrap: wrap;
   }
   .qm-bid-supplier-name {
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 600;
     color: var(--color-text-neutral);
   }
@@ -2555,7 +2557,7 @@ textarea {
   .qm-bid-timestamp {
     display: block;
     padding: 0.375rem 0.875rem 0.75rem;
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     color: var(--color-text-disabled);
     font-variant-numeric: tabular-nums;
     border-top: 1px solid var(--color-border-faint);
@@ -2930,7 +2932,7 @@ textarea {
     opacity: 0.75;
   }
   .sqc-win-qty-value {
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 700;
     color: var(--color-success-strong);
     font-variant-numeric: tabular-nums;
@@ -2964,7 +2966,7 @@ textarea {
     opacity: 0.7;
   }
   .sqc-win-price-value {
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 700;
     color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
@@ -2988,7 +2990,7 @@ textarea {
     background: var(--color-success-soft);
     border: 1px solid var(--color-success-soft-border);
     color: var(--color-success-strong);
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 700;
     letter-spacing: 0.02em;
   }
@@ -3006,7 +3008,7 @@ textarea {
     border-radius: var(--radius-lg);
   }
   .sqc-total-label {
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 600;
     color: var(--color-accent);
     line-height: 1.3;
@@ -3075,7 +3077,7 @@ textarea {
     line-height: 1.2;
   }
   .saqu-status-banner-sub {
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     color: var(--color-text-muted);
     font-variant-numeric: tabular-nums;
   }
@@ -3114,7 +3116,7 @@ textarea {
     background: var(--color-highlight-lighter);
     border: 1px solid var(--color-highlight-border);
     border-radius: var(--radius-md);
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     color: var(--color-accent-strong);
     line-height: 1.55;
     animation: qmFadeUp 0.18s ease-out both;
@@ -3213,7 +3215,7 @@ textarea {
     color: var(--color-text-muted);
   }
   .saqu-input-qty-value {
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 700;
     color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
@@ -3228,7 +3230,7 @@ textarea {
     padding: 0 0.875rem 0.75rem;
   }
   .saqu-input-field-label {
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 600;
     color: var(--color-text-muted);
     letter-spacing: 0.02em;
@@ -3278,7 +3280,7 @@ textarea {
     background: var(--color-highlight-lighter);
   }
   .saqu-input-total-label {
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -3286,7 +3288,7 @@ textarea {
     opacity: 0.75;
   }
   .saqu-input-total-value {
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 700;
     color: var(--color-accent-strong);
     font-variant-numeric: tabular-nums;
@@ -3391,7 +3393,7 @@ textarea {
     color: var(--color-text-muted);
   }
   .saqu-submitted-qty-value {
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 700;
     color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
@@ -3422,7 +3424,7 @@ textarea {
     opacity: 0.7;
   }
   .saqu-submitted-price-value {
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 700;
     color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
@@ -3439,7 +3441,7 @@ textarea {
     border-top: 1px solid var(--color-warning-border);
   }
   .saqu-submitted-no-price span {
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     color: var(--color-warning-strong);
     font-weight: 600;
   }
@@ -3488,7 +3490,7 @@ textarea {
   }
   .saqu-bottom-cta-meta {
     text-align: center;
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     color: var(--color-text-muted);
     font-variant-numeric: tabular-nums;
   }
@@ -3664,11 +3666,11 @@ textarea {
   }
   .saqu-review-row-unit-label {
     font-weight: 400;
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     opacity: 0.75;
   }
   .saqu-review-total {
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 700;
     color: var(--color-accent-strong);
     font-variant-numeric: tabular-nums;
@@ -3680,7 +3682,7 @@ textarea {
     align-items: center;
     padding: 0.2rem 0.55rem;
     border-radius: 2rem;
-    font-size: 0.6875rem;
+    font-size: var(--text-label);
     font-weight: 700;
     background: var(--color-warning-lighter);
     color: var(--color-warning-strong);
@@ -3696,7 +3698,7 @@ textarea {
     background: var(--color-warning-lighter);
     border: 1px solid var(--color-warning-border);
     border-radius: var(--radius-md);
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     color: var(--color-warning-strong);
     line-height: 1.45;
   }
@@ -3712,7 +3714,7 @@ textarea {
     border-radius: var(--radius-lg);
   }
   .saqu-sheet-total-label {
-    font-size: 0.8125rem;
+    font-size: var(--text-caption);
     font-weight: 600;
     color: var(--color-accent);
     line-height: 1.3;
@@ -3771,7 +3773,7 @@ textarea {
     background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     font-family: var(--font-sans);
-    font-size: 0.9375rem;
+    font-size: var(--text-body);
     font-weight: 600;
     cursor: pointer;
     transition: background 140ms ease, border-color 140ms ease, transform 100ms ease;

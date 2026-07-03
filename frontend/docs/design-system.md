@@ -10,7 +10,7 @@ Referência de tokens e primitivos para padronizar telas. **Catálogo vivo:** ab
 
 ## 1. Filosofia
 
-1. **Tokens primeiro** — nunca hardcodear cor/sombra/raio. Usar `var(--token)`; tipografia via tokens semânticos (`text-title`/`text-heading`/`text-body`/`text-caption`), não `text-[0.875rem]`.
+1. **Tokens primeiro** — nunca hardcodear cor/sombra/raio. Usar `var(--token)`; tipografia via tokens semânticos (`text-title`/`text-heading`/`text-body`/`text-caption`/`text-label`), não `text-[0.875rem]`.
 2. **Colocation** — o estilo vive no componente, em mapas de variante + helper `cn()` (`@/utils/cn`). Molde: `Button.jsx`, `Input.jsx`. **Não** adicionar classes de tela novas em `index.css` (que guarda só tokens, base global e `@keyframes`).
 3. **Primitivo-first** — antes de criar componente/hook novo, verificar `components/` e `hooks/`. Estilo de tela vem dos primitivos, não de markup ad-hoc.
 4. **Nunca reinventar** modal/sheet/confirmação — usar `Modal`/`ConfirmDialog`.
@@ -30,6 +30,7 @@ Referência de tokens e primitivos para padronizar telas. **Catálogo vivo:** ab
 | `--text-heading` | `text-heading` | 1.0625rem | Título de seção / modal |
 | `--text-body` | `text-body` | 0.875rem | Texto padrão, labels, inputs |
 | `--text-caption` | `text-caption` | 0.75rem | Legendas, hints, tags |
+| `--text-label` | `text-label` | 0.6875rem | Rótulo micro/uppercase (eyebrow, badge, cabeçalho de tabela) |
 
 Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 
@@ -44,7 +45,7 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 | `--color-text-heading` | Títulos, ênfase máxima |
 | `--color-text-body` | Texto de leitura padrão / valores |
 | `--color-text-secondary` | Apoio índigo (subtítulos, descrições) |
-| `--color-text-neutral` | Texto de UI cinza (label de botão, célula de tabela) |
+| `--color-text-neutral` | Texto de UI cinza (label de campo, célula de tabela) |
 | `--color-text-muted` | Auxiliar, hints, labels, placeholders |
 | `--color-text-disabled` | Inativo, placeholder, asterisco opcional |
 | `--color-text-inverse` | Texto sobre fundo claro pontual (use `on-dark-*` na navbar) |
@@ -95,7 +96,7 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 ### Formulário
 | Componente | Props principais | Variantes / notas |
 |---|---|---|
-| `Button` | `variant`, `onClick`, `loading`, `disabled`, `type` | `primary` / `success` / `danger` / `secondary` / `ghost` |
+| `Button` | `variant`, `onClick`, `loading`, `disabled`, `type` | `primary` / `success` / `danger` / `secondary` (texto roxo, fundo card) / `ghost` |
 | `Input` | `label`, `type`, `value`, `onChange`, `error`, `isInvalid`, `required` | toggle de senha quando `type="password"` |
 | `Select` | `label`, `value`, `onChange`, `options`, `placeholder`, `bare` | `bare` para toolbars (sem label/margem) |
 | `FieldMessage` | `tone`, `children` | `error` / `warning` — mensagem sob o campo |
@@ -113,13 +114,13 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 | `MobileSearchInput` | `value`, `onChange`, `onSearch`, `onClear` | toolbar mobile |
 | `ActiveFilterPill` | `label`, `value`, `onClear` | pill de busca ativa (mobile) |
 | `StatusTabFilter` | `value`, `onChange`, `counts`, `mobile` | abas de status (Todas/Agendado/Ativo/Fechado) |
-| `ConfirmDialog` | `isOpen`, `onConfirm`, `confirmVariant`, `children` | confirmação de remoção |
+| `ConfirmDialog` | `isOpen`, `onConfirm`, `confirmVariant`, `icon`, `title`, `confirmLabel`, `children` | alerta de confirmação centralizado (ícone + título + ação destrutiva; botões empilhados) |
 
 ### Detalhe / feedback
 | Componente | Props principais | Notas |
 |---|---|---|
 | `Modal` | `isOpen`, `onClose`, `title`, `children` | overlay + card centralizado |
-| `MetaCard` | `icon`, `label`, `value`, `sub` | metadado em telas de detalhe |
+| `MetaCard` | `icon`, `label`, `value`, `sub`, `tone` (`default`/`success`/`danger`) | metadado (card branco, rótulo colorido por `tone`) em detalhe/revisão |
 | `SectionHeader` | `icon`, `label`, `count` | cabeçalho de seção |
 | `EmptyState` | `children` | estado vazio (caixa tracejada) |
 

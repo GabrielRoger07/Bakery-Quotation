@@ -100,7 +100,7 @@ const SupplierConfigDrawerContent = ({ open, onClose, onLogout, supplierName, in
                         style={{ color: '#f87171' }}
                     >
                         <LogoutIcon />
-                        <span className="text-[0.9375rem] font-medium">Sair</span>
+                        <span className="text-body font-medium">Sair</span>
                     </button>
                 </div>
             </div>

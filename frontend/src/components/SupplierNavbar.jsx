@@ -34,12 +34,12 @@ const SupplierNavbar = () => {
                 <div className="flex items-center">
                     {supplierName && (
                         <div className="flex items-center gap-[0.6rem] px-[0.75rem] py-[0.3rem] pl-[0.3rem] rounded-full bg-[var(--color-on-dark-bg)] border border-[var(--color-on-dark-border)] [animation:supplierAppear_0.4s_ease_both]">
-                            <div className="w-[1.875rem] h-[1.875rem] rounded-full bg-gradient-to-br from-[var(--color-avatar-from)] to-[var(--color-avatar-to)] [box-shadow:0_0_0_2px_var(--color-avatar-ring)] flex items-center justify-center text-[0.8125rem] font-bold text-[var(--color-avatar-text)] flex-shrink-0 select-none" aria-hidden="true">
+                            <div className="w-[1.875rem] h-[1.875rem] rounded-full bg-gradient-to-br from-[var(--color-avatar-from)] to-[var(--color-avatar-to)] [box-shadow:0_0_0_2px_var(--color-avatar-ring)] flex items-center justify-center text-caption font-bold text-[var(--color-avatar-text)] flex-shrink-0 select-none" aria-hidden="true">
                                 {initial}
                             </div>
                             <div className="flex flex-col leading-[1.2]">
                                 <span className="text-[0.625rem] font-medium tracking-[0.06em] uppercase text-[var(--color-on-dark-text-faint)]">Conectado como</span>
-                                <span className="text-[0.8125rem] font-semibold text-[var(--color-on-dark-text)] max-w-[14rem] overflow-hidden text-ellipsis whitespace-nowrap">{supplierName}</span>
+                                <span className="text-caption font-semibold text-[var(--color-on-dark-text)] max-w-[14rem] overflow-hidden text-ellipsis whitespace-nowrap">{supplierName}</span>
                             </div>
                         </div>
                     )}

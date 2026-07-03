@@ -62,8 +62,8 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
     }
 
     const inputCls = 'w-full h-11 border-[1.5px] border-[var(--color-border-default)] rounded-[var(--radius-lg)] px-3 font-sans text-[0.875rem] font-semibold text-[var(--color-text-body)] bg-[var(--color-surface-subtle)] outline-none transition-[border-color,box-shadow] duration-[160ms] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]'
-    const sectionLabelCls = 'block text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-[var(--color-text-disabled)] mb-2.5 px-0.5'
-    const fieldLabelCls = 'block text-[0.6875rem] font-semibold text-[var(--color-text-disabled)] mb-1.5'
+    const sectionLabelCls = 'block text-label font-bold uppercase tracking-[0.1em] text-[var(--color-text-disabled)] mb-2.5 px-0.5'
+    const fieldLabelCls = 'block text-label font-semibold text-[var(--color-text-disabled)] mb-1.5'
 
     const modes = [
         { value: true, icon: <Gavel size={22} strokeWidth={1.75} />, title: "Leilão", desc: "Fornecedores competem em tempo real enviando lances pelo menor preço." },
@@ -73,8 +73,8 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
     return (
         <div>
             <div className="mb-5">
-                <h2 className="m-0 text-[1.4375rem] font-bold text-[var(--color-text-body)] tracking-[-0.02em]">Período e modo</h2>
-                <p className="mt-1 mb-0 text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.5]">
+                <h2 className="m-0 text-title font-bold text-[var(--color-text-body)] tracking-[-0.02em]">Período e modo</h2>
+                <p className="mt-1 mb-0 text-caption text-[var(--color-text-muted)] leading-[1.5]">
                     Defina quando a cotação abre e como os fornecedores vão participar.
                 </p>
             </div>
@@ -83,7 +83,7 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
             <span className={sectionLabelCls}>Período da cotação</span>
             <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] rounded-[var(--radius-xl)] mb-6 [box-shadow:var(--shadow-md-soft)] p-4">
                 {/* Início */}
-                <div className="flex items-center gap-2 text-[var(--color-success)] font-bold text-[0.8125rem] mb-2.5">
+                <div className="flex items-center gap-2 text-[var(--color-success)] font-bold text-caption mb-2.5">
                     <CirclePlay size={18} strokeWidth={2} />Início
                 </div>
                 <div className="flex gap-2.5">
@@ -102,7 +102,7 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
                 <div className="h-px bg-[var(--color-border-faint)] my-4" />
 
                 {/* Fim */}
-                <div className="flex items-center gap-2 text-[var(--color-danger)] font-bold text-[0.8125rem] mb-2.5">
+                <div className="flex items-center gap-2 text-[var(--color-danger)] font-bold text-caption mb-2.5">
                     <CircleStop size={18} strokeWidth={2} />Fim
                 </div>
                 <div className="flex gap-2.5">

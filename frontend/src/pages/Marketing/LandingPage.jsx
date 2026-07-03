@@ -64,9 +64,9 @@ const LandingPage = () => {
                         ))}
                     </div>
                     <div className="border border-[var(--color-border-default)] bg-white rounded-[var(--radius-xl)] [box-shadow:var(--shadow-md-soft)] p-4 w-[190px] absolute right-0 -bottom-5 max-lg:static max-lg:mt-3 max-sm:hidden">
-                        <p className="m-0 text-[var(--color-text-muted)] text-[0.8125rem]">Produtividade</p>
+                        <p className="m-0 text-[var(--color-text-muted)] text-caption">Produtividade</p>
                         <strong className="block mt-[0.35rem] mb-[0.2rem] text-[1.5rem] text-[var(--color-text-heading)]">+38%</strong>
-                        <span className="text-[var(--color-text-secondary)] text-[0.8125rem]">de ganho no ciclo de compra</span>
+                        <span className="text-[var(--color-text-secondary)] text-caption">de ganho no ciclo de compra</span>
                     </div>
                 </div>
             </section>
@@ -87,7 +87,7 @@ const LandingPage = () => {
                 <div className="mt-5 grid grid-cols-[repeat(5,minmax(0,1fr))] gap-[0.8rem] max-lg:grid-cols-2 max-sm:grid-cols-1">
                     {benefits.map((b) => (
                         <article key={b.title} className="rounded-[var(--radius-lg)] border border-[var(--color-border-subtle)] p-[1rem_0.9rem] bg-white">
-                            <h3 className="m-0 text-[0.9375rem] text-[var(--color-text-heading)]">{b.title}</h3>
+                            <h3 className="m-0 text-heading text-[var(--color-text-heading)]">{b.title}</h3>
                             <p className="mt-[0.45rem] text-[0.875rem] text-[var(--color-text-secondary)]">{b.text}</p>
                         </article>
                     ))}
@@ -98,7 +98,7 @@ const LandingPage = () => {
                 <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-heading)]">Como funciona</h2>
                 <ol className="mt-4 mb-0 pl-[1.1rem] grid gap-[0.8rem]">
                     {steps.map((step) => (
-                        <li key={step} className="text-[0.9375rem] text-[var(--color-text-secondary)]">{step}</li>
+                        <li key={step} className="text-body text-[var(--color-text-secondary)]">{step}</li>
                     ))}
                 </ol>
             </section>

@@ -21,9 +21,9 @@ const variantClasses = {
   ].join(' '),
 
   secondary: [
-    'bg-[var(--color-surface-card)] border-[var(--color-border-strong)] text-[var(--color-text-neutral)]',
+    'bg-[var(--color-surface-card)] border-[var(--color-border-strong)] text-[var(--color-accent)]',
     '[box-shadow:var(--shadow-xs)]',
-    'hover:[&:not(:disabled)]:bg-[var(--color-surface-muted)] hover:[&:not(:disabled)]:text-[var(--color-text-body)]',
+    'hover:[&:not(:disabled)]:bg-[var(--color-surface-muted)] hover:[&:not(:disabled)]:text-[var(--color-accent-hover)]',
     'hover:[&:not(:disabled)]:-translate-y-px hover:[&:not(:disabled)]:[box-shadow:var(--shadow-sm)]',
   ].join(' '),
 

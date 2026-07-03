@@ -99,16 +99,16 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                                     <th
                                         key={col.key}
                                         onClick={() => onSort && onSort(col.key)}
-                                        className="sticky top-0 z-[1] bg-[var(--color-accent)] text-[var(--color-on-dark-text)] text-left px-4 py-3 font-semibold text-[0.8125rem] uppercase tracking-[0.07em] border-r border-[var(--color-on-dark-border-strong)] whitespace-nowrap cursor-pointer select-none transition-[background-color,color] duration-[160ms] hover:bg-[var(--color-accent-hover)] hover:text-[var(--color-on-dark-text)] last:border-r-0 max-md:px-3 max-md:py-[0.625rem] max-md:text-[0.8125rem]"
+                                        className="sticky top-0 z-[1] bg-[var(--color-accent)] text-[var(--color-on-dark-text)] text-left px-4 py-3 font-semibold text-caption uppercase tracking-[0.07em] border-r border-[var(--color-on-dark-border-strong)] whitespace-nowrap cursor-pointer select-none transition-[background-color,color] duration-[160ms] hover:bg-[var(--color-accent-hover)] hover:text-[var(--color-on-dark-text)] last:border-r-0 max-md:px-3 max-md:py-[0.625rem] max-md:text-caption"
                                     >
                                         {col.label}
                                         {sortField === col.key && (
-                                            <span className="ml-[5px] text-[0.6875rem] opacity-70">{sortDirection === "asc" ? "▲" : "▼"}</span>
+                                            <span className="ml-[5px] text-label opacity-70">{sortDirection === "asc" ? "▲" : "▼"}</span>
                                         )}
                                     </th>
                                 ))}
                                 {(onEdit || onDelete || onView || onMonitor) && (
-                                    <th className="sticky top-0 z-[1] bg-[var(--color-accent)] text-[var(--color-on-dark-text)] text-left px-4 py-3 font-semibold text-[0.8125rem] uppercase tracking-[0.07em]">
+                                    <th className="sticky top-0 z-[1] bg-[var(--color-accent)] text-[var(--color-on-dark-text)] text-left px-4 py-3 font-semibold text-caption uppercase tracking-[0.07em]">
                                         <span className="block text-center">Ações</span>
                                     </th>
                                 )}
@@ -118,7 +118,7 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                             {data.map((item, index) => (
                                 <tr key={item[idKey] || index} className="even:[&>td]:bg-[var(--color-surface-subtle)] hover:[&>td]:bg-[var(--color-highlight-lighter)] hover:[&>td]:transition-[background-color] hover:[&>td]:duration-[160ms]">
                                     {columns.map((col) => (
-                                        <td key={col.key} className="px-4 py-[0.875rem] border-b border-r border-[var(--color-border-faint)] text-[var(--color-text-neutral)] text-[0.875rem] leading-[1.4] bg-[var(--color-surface-card)] last:border-r-0 max-md:px-3 max-md:py-[0.625rem] max-md:text-[0.8125rem]">
+                                        <td key={col.key} className="px-4 py-[0.875rem] border-b border-r border-[var(--color-border-faint)] text-[var(--color-text-neutral)] text-[0.875rem] leading-[1.4] bg-[var(--color-surface-card)] last:border-r-0 max-md:px-3 max-md:py-[0.625rem] max-md:text-caption">
                                             {item[col.key] ? item[col.key] : "-"}
                                         </td>
                                     ))}

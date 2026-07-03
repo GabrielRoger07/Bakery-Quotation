@@ -14,7 +14,7 @@ import WizardActions from '@/components/WizardActions'
 import { X, Plus, Minus, Package, ChevronDown, Pencil, Check, SearchX, ShoppingCart, ArrowRight } from 'lucide-react'
 import { ENV } from '@/config/env'
 
-/* ── Create product inline form (used inside Modal on desktop, Modal on mobile too) ── */
+/* ── Create product inline form (rendered inside Modal on desktop, bottom sheet on mobile) ── */
 const CreateProductModalForm = ({ onSuccess, onClose, request, departments = [], initialDepartmentId = '' }) => {
     const { value: barcode, onChange: handleBarcodeChange, onBlur: handleBarcodeBlur, warning: barcodeWarning, isInvalid: isBarcodeInvalid } = useCharLimit(13, "Código do Produto")
     const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "Nome do Produto")
@@ -47,7 +47,7 @@ const CreateProductModalForm = ({ onSuccess, onClose, request, departments = [],
         }
     }
 
-    const warnCls = "text-[var(--color-warning-text)] text-[0.8125rem] -mt-2 mb-1 px-[0.125rem]"
+    const warnCls = "text-[var(--color-warning-text)] text-caption -mt-2 mb-1 px-[0.125rem]"
 
     return (
         <form className="flex flex-col" onSubmit={handleSubmit}>
@@ -137,14 +137,14 @@ const ProductSheetForm = ({ product, onClose, onConfirm }) => {
                 <div className="flex gap-3">
                     <div className="psheet-field flex-1">
                         <label className="psheet-label">Quantidade *</label>
-                        <div className="flex items-center bg-[var(--color-highlight-lighter)] border-[1.5px] border-[var(--color-highlight-border)] rounded-[var(--radius-lg)] overflow-hidden transition-shadow duration-[160ms] focus-within:[box-shadow:var(--shadow-focus-accent)]">
-                            <button type="button" onClick={decQty} aria-label="Diminuir" className="w-11 h-12 flex items-center justify-center text-[var(--color-accent)] cursor-pointer transition-colors duration-[120ms] hover:bg-[var(--color-highlight-soft)] active:bg-[var(--color-highlight-soft)]">
+                        <div className="flex items-center h-[2.875rem] bg-[var(--color-highlight-lighter)] border-[1.5px] border-[var(--color-highlight-border)] rounded-[var(--radius-lg)] overflow-hidden transition-shadow duration-[160ms] focus-within:[box-shadow:var(--shadow-focus-accent)]">
+                            <button type="button" onClick={decQty} aria-label="Diminuir" className="w-11 h-full flex items-center justify-center text-[var(--color-accent)] cursor-pointer transition-colors duration-[120ms] hover:bg-[var(--color-highlight-soft)] active:bg-[var(--color-highlight-soft)]">
                                 <Minus size={18} strokeWidth={2.5} />
                             </button>
                             <input
                                 ref={qtyRef}
                                 type="number"
-                                className="flex-1 min-w-0 w-full text-center py-3 border-none bg-transparent text-[1rem] font-bold text-[var(--color-text-body)] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                className="flex-1 min-w-0 w-full h-full text-center border-none bg-transparent text-[1rem] font-bold text-[var(--color-text-body)] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                                 value={qty}
                                 onChange={e => setQty(e.target.value)}
                                 onKeyDown={e => {
@@ -155,7 +155,7 @@ const ProductSheetForm = ({ product, onClose, onConfirm }) => {
                                 placeholder="0"
                                 min="1"
                             />
-                            <button type="button" onClick={incQty} aria-label="Aumentar" className="w-11 h-12 flex items-center justify-center text-[var(--color-accent)] cursor-pointer transition-colors duration-[120ms] hover:bg-[var(--color-highlight-soft)] active:bg-[var(--color-highlight-soft)]">
+                            <button type="button" onClick={incQty} aria-label="Aumentar" className="w-11 h-full flex items-center justify-center text-[var(--color-accent)] cursor-pointer transition-colors duration-[120ms] hover:bg-[var(--color-highlight-soft)] active:bg-[var(--color-highlight-soft)]">
                                 <Plus size={18} strokeWidth={2.5} />
                             </button>
                         </div>
@@ -222,6 +222,37 @@ const ProductBottomSheet = ({ isOpen, product, onClose, onConfirm }) => {
                         onConfirm={onConfirm}
                     />
                 )}
+            </div>
+        </>
+    )
+}
+
+/* ── Form sheet shell (mobile) — wraps the create-product form in a bottom sheet ── */
+const CreateProductSheet = ({ isOpen, onClose, title, children }) => {
+    useEffect(() => {
+        document.body.style.overflow = isOpen ? 'hidden' : ''
+        return () => { document.body.style.overflow = '' }
+    }, [isOpen])
+
+    useEffect(() => {
+        if (!isOpen) return
+        const handleKey = (e) => { if (e.key === 'Escape') onClose() }
+        document.addEventListener('keydown', handleKey)
+        return () => document.removeEventListener('keydown', handleKey)
+    }, [isOpen, onClose])
+
+    return (
+        <>
+            <div className={`sort-sheet-backdrop ${isOpen ? 'open' : ''}`} onClick={onClose} aria-hidden="true" />
+            <div className={`sform-sheet ${isOpen ? 'open' : ''}`} role="dialog" aria-modal="true" aria-label={title}>
+                <div className="sort-sheet-handle" />
+                <div className="sform-sheet-header">
+                    <span className="sform-sheet-title">{title}</span>
+                    <button className="sort-sheet-close" onClick={onClose} aria-label="Fechar"><X size={18} strokeWidth={2} /></button>
+                </div>
+                <div className="sform-sheet-body">
+                    {isOpen && children}
+                </div>
             </div>
         </>
     )
@@ -481,7 +512,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 <button
                     type="button"
                     onClick={() => setShowCreateModal(true)}
-                    className="mt-3 w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-[var(--radius-md)] border-[1.5px] border-dashed border-[var(--color-highlight-border)] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] text-[0.8125rem] font-semibold cursor-pointer transition-[background-color,border-color] duration-[160ms] hover:bg-[var(--color-highlight-soft)] active:scale-[0.99]"
+                    className="mt-3 w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-[var(--radius-md)] border-[1.5px] border-dashed border-[var(--color-highlight-border)] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] text-caption font-semibold cursor-pointer transition-[background-color,border-color] duration-[160ms] hover:bg-[var(--color-highlight-soft)] active:scale-[0.99]"
                 >
                     <Plus size={16} strokeWidth={2.25} />Cadastrar novo produto
                 </button>
@@ -497,12 +528,13 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                     className="mb-3"
                 />
             ) : (
-                <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
-                    <div className="text-[0.75rem] font-semibold text-[var(--color-text-disabled)] mb-2.5 px-0.5">Mostrando {availableProducts.length} de {totalElements} produtos</div>
+                <>
+                <div className="text-[0.75rem] font-semibold text-[var(--color-text-disabled)] mb-2.5 px-0.5">Mostrando {availableProducts.length} de {totalElements} produtos</div>
+                <div className="mb-3">
                     {isMobile ? (
-                        <ul className="list-none m-0 p-0 flex flex-col gap-2.5">
+                        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-md)] overflow-hidden bg-[var(--color-surface-card)] mb-1">
                             {availableProducts.map(p => (
-                                <li key={p.productId} className="flex items-center gap-3 p-3 bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-md-soft)]">
+                                <div key={p.productId} className="flex items-center gap-3 px-3 py-2.5 border-b border-[var(--color-border-faint)] last:border-b-0">
                                     <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] flex items-center justify-center flex-shrink-0 text-[var(--color-highlight-border)]">
                                         <Package size={20} strokeWidth={2} />
                                     </div>
@@ -513,11 +545,11 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                     <button type="button" onClick={() => handleOpenSheet(p, null)} aria-label="Adicionar" className="w-9 h-9 rounded-[11px] bg-[var(--color-accent)] text-white flex items-center justify-center flex-shrink-0 cursor-pointer transition-transform duration-[120ms] active:scale-90">
                                         <Plus size={20} strokeWidth={2.5} />
                                     </button>
-                                </li>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     ) : (
-                        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-md)] overflow-hidden mb-1">
+                        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-md)] overflow-hidden bg-[var(--color-surface-card)] mb-1">
                             {availableProducts.map(p => {
                                 const isExpanded = !isMobile && expandedId === p.productId
                                 return (
@@ -531,7 +563,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                         >
                                             <div className="flex flex-col min-w-0 flex-1">
                                                 <span className="font-medium text-[0.875rem] text-[var(--color-text-heading)] overflow-hidden text-ellipsis whitespace-nowrap">{p.productName}</span>
-                                                {p.productDescription && <span className="text-[0.8125rem] text-[var(--color-text-muted)] mt-px">{p.productDescription}</span>}
+                                                {p.productDescription && <span className="text-caption text-[var(--color-text-muted)] mt-px">{p.productDescription}</span>}
                                             </div>
                                             {isMobile ? (
                                                 <Plus size={16} className="text-[var(--color-accent)] flex-shrink-0" />
@@ -544,11 +576,11 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                             <div className="px-3 py-2 pb-3 bg-[var(--color-highlight-lighter)] border-t border-[var(--color-border-faint)] flex items-end gap-[0.625rem] [animation:step2ExpandIn_0.15s_ease]">
                                                 <div className="flex gap-2 flex-1">
                                                     <div className="flex flex-col gap-[0.2rem] flex-1">
-                                                        <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Quantidade *</label>
+                                                        <label className="text-label font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Quantidade *</label>
                                                         <input type="number" className={`${smallInputCls} text-center [font-variant-numeric:tabular-nums] appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`} value={pendingQty} onChange={e => setPendingQty(e.target.value)} onKeyDown={e => { if (['-','e','E'].includes(e.key)) e.preventDefault(); if (e.key === "Enter") handleAddProduct(p) }} onFocus={e => e.target.select()} placeholder="0" min="0" autoFocus />
                                                     </div>
                                                     <div className="flex flex-col gap-[0.2rem] flex-1">
-                                                        <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Unidade</label>
+                                                        <label className="text-label font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Unidade</label>
                                                         <div className="relative">
                                                             <select className={`${smallInputCls} appearance-none pr-6`} value={pendingUnit} onChange={e => setPendingUnit(e.target.value)}>
                                                                 {UNIT_OPTIONS.map(u => <option key={u} value={u}>{u}</option>)}
@@ -559,7 +591,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                                         </div>
                                                     </div>
                                                     <div className="flex flex-col gap-[0.2rem] flex-1">
-                                                        <label className="text-[0.6875rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Marca</label>
+                                                        <label className="text-label font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.05em]">Marca</label>
                                                         <input type="text" className={smallInputCls} value={pendingBrand} onChange={e => setPendingBrand(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleAddProduct(p) }} placeholder="Marca" />
                                                     </div>
                                                 </div>
@@ -575,6 +607,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                     )}
                     <LoadMoreButton remaining={totalElements - availableProducts.length} onClick={handleLoadMoreProducts} />
                 </div>
+                </>
             )}
         </>
     )
@@ -595,7 +628,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         return (
         <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
             {!isMobile && (
-                <h4 className="m-0 mb-[0.6rem] text-[var(--color-text-secondary)] text-[0.9375rem] flex items-center gap-[0.4rem]">
+                <h4 className="m-0 mb-[0.6rem] text-[var(--color-text-secondary)] text-heading flex items-center gap-[0.4rem]">
                     <Package size={16} />Produtos Adicionados ({selectedList.length})
                 </h4>
             )}
@@ -647,7 +680,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                         <thead>
                             <tr>
                                 {["Nome do Produto", "Quantidade", "Unidade", "Marca", ""].map((h, i) => (
-                                    <th key={i} className={`bg-[var(--color-surface-muted)] text-left px-3 py-2 text-[0.6875rem] font-bold text-[var(--color-text-muted)] uppercase tracking-[0.06em] border-b border-[var(--color-border-subtle)] ${i === 1 || i === 2 ? 'text-center' : ''}`}>{h}</th>
+                                    <th key={i} className={`bg-[var(--color-surface-muted)] text-left px-3 py-2 text-label font-bold text-[var(--color-text-muted)] uppercase tracking-[0.06em] border-b border-[var(--color-border-subtle)] ${i === 1 || i === 2 ? 'text-center' : ''}`}>{h}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -675,13 +708,13 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                                                         </span>
                                                     </div>
                                                 )
-                                                : <span className="font-medium text-[var(--color-text-secondary)] text-[0.8125rem]">{p.unitOfMeasure}</span>
+                                                : <span className="font-medium text-[var(--color-text-secondary)] text-caption">{p.unitOfMeasure}</span>
                                             }
                                         </td>
                                         <td className="px-3 py-2 border-b border-[var(--color-border-faint)] text-[0.875rem] align-middle">
                                             {isEditing
                                                 ? <input type="text" className={smallInputCls} value={editBrand} onChange={e => setEditBrand(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleConfirmEdit(p.productId); if (e.key === "Escape") handleCancelEdit() }} placeholder="Marca" />
-                                                : p.brand ? <span className="text-[var(--color-text-heading)] font-light text-[0.8125rem]">{p.brand}</span> : <span className="text-[var(--color-text-disabled)]">—</span>
+                                                : p.brand ? <span className="text-[var(--color-text-heading)] font-light text-caption">{p.brand}</span> : <span className="text-[var(--color-text-disabled)]">—</span>
                                             }
                                         </td>
                                         <td className="w-9 px-3 py-2 border-b border-[var(--color-border-faint)] text-center align-middle">
@@ -711,8 +744,8 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     return (
         <div>
             <div className="mb-5">
-                <h2 className="m-0 text-[1.4375rem] font-bold text-[var(--color-text-body)] tracking-[-0.02em]">Produtos</h2>
-                <p className="mt-1 mb-0 text-[0.8125rem] text-[var(--color-text-muted)] leading-[1.5]">Selecione os itens e defina as quantidades.</p>
+                <h2 className="m-0 text-title font-bold text-[var(--color-text-body)] tracking-[-0.02em]">Produtos</h2>
+                <p className="mt-1 mb-0 text-caption text-[var(--color-text-muted)] leading-[1.5]">Selecione os itens e defina as quantidades.</p>
             </div>
 
             {isMobile ? (
@@ -759,16 +792,27 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 loading={loading}
             />
 
-            {/* Create product modal */}
-            <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Criar Novo Produto">
-                <CreateProductModalForm
-                    onSuccess={handleNewProductCreated}
-                    onClose={() => setShowCreateModal(false)}
-                    request={request}
-                    departments={userDepts}
-                    initialDepartmentId={deptFilter !== null ? String(deptFilter) : ''}
-                />
-            </Modal>
+            {/* Create product — bottom sheet on mobile, modal on desktop */}
+            {(() => {
+                const createProductForm = (
+                    <CreateProductModalForm
+                        onSuccess={handleNewProductCreated}
+                        onClose={() => setShowCreateModal(false)}
+                        request={request}
+                        departments={userDepts}
+                        initialDepartmentId={deptFilter !== null ? String(deptFilter) : ''}
+                    />
+                )
+                return isMobile ? (
+                    <CreateProductSheet isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Criar Novo Produto">
+                        {createProductForm}
+                    </CreateProductSheet>
+                ) : (
+                    <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Criar Novo Produto">
+                        {createProductForm}
+                    </Modal>
+                )
+            })()}
 
             {/* Mobile product bottom sheet */}
             <ProductBottomSheet

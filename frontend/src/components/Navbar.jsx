@@ -24,7 +24,7 @@ const navLinkClass = ({ isActive }) =>
 const Navbar = () => {
     const navigate = useNavigate()
     const [confirmOpen, setConfirmOpen] = useState(false)
-    const { pageTitle, reloadFn } = useMobilePage()
+    const { pageTitle, reloadFn, leftAction, rightSlot } = useMobilePage()
 
     const doLogout = () => {
         Cookies.remove("accessToken")
@@ -42,6 +42,17 @@ const Navbar = () => {
                     <NavLink to="/departments" className={navLinkClass}>Departamentos</NavLink>
                 </div>
 
+                {/* Mobile: botão de ação à esquerda (opcional, ex.: fechar wizard) */}
+                {leftAction && (
+                    <button
+                        onClick={leftAction.onClick}
+                        aria-label={leftAction.ariaLabel}
+                        className="hidden max-sm:flex items-center justify-center w-[2.25rem] h-[2.25rem] rounded-[var(--radius-md)] bg-[var(--color-on-dark-bg)] border border-[var(--color-on-dark-border-strong)] text-[var(--color-on-dark-text)] transition-[background-color,transform] duration-[160ms] active:scale-95 hover:bg-[var(--color-on-dark-bg-hover)] flex-shrink-0"
+                    >
+                        <leftAction.icon size={18} strokeWidth={2.5} />
+                    </button>
+                )}
+
                 {/* Mobile: título da página à esquerda */}
                 {pageTitle && (
                     <span className="hidden max-sm:block text-[var(--color-on-dark-text)] font-semibold text-[1rem] tracking-[-0.01em] truncate">
@@ -54,8 +65,10 @@ const Navbar = () => {
                     <Button onClick={() => setConfirmOpen(true)}>Sair</Button>
                 </div>
 
-                {/* Mobile: botão reload à direita */}
-                {reloadFn && (
+                {/* Mobile: slot customizado à direita, ou botão reload */}
+                {rightSlot ? (
+                    <div className="hidden max-sm:flex items-center ml-auto flex-shrink-0">{rightSlot}</div>
+                ) : reloadFn && (
                     <button
                         onClick={reloadFn}
                         className="hidden max-sm:flex ml-auto items-center justify-center w-[2.25rem] h-[2.25rem] rounded-[var(--radius-md)] bg-[var(--color-on-dark-bg)] border border-[var(--color-on-dark-border-strong)] text-[var(--color-on-dark-text)] transition-[background-color,transform] duration-[160ms] active:scale-95 hover:bg-[var(--color-on-dark-bg-hover)]"

@@ -107,10 +107,12 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 ### Listas
 | Componente | Props principais | Notas |
 |---|---|---|
-| hook `useResourceList` | `{ endpoint, idKey, defaultSortField, deletePath }` | fetch + paginação + sort + busca + remoção |
+| hook `useResourceList` | `{ endpoint, idKey, defaultSortField, deletePath }` | fetch + paginação + sort + busca + remoção; expõe também `totalElements`/`pageSize` |
 | `Table` | `columns`, `data`, `idKey`, `onEdit/onDelete/onView/onMonitor`, `onSort`, `toolbar` | desktop |
-| `MobileCardList` | `items`, `renderCard`, `onEdit/...`, `sortColumns` | mobile (par do `Table`) |
+| `MobileCardList` | `items`, `renderCard`, `onEdit/...`, `sortColumns`, `onSort`, `onClearSort`, `inlineToolbar` | mobile (par do `Table`); se `sortColumns`+`onSort` forem passados, renderiza `SortButton` ao lado do `inlineToolbar` |
+| `SortButton` | `active`, `onOpen`, `onClear` | botão "Ordenar" usado internamente pelo `MobileCardList` (ao lado do `PaginationSummary`); normalmente não é usado direto pelas páginas |
 | `Pagination` | `currentPage`, `totalPages`, `onPageChange` | desktop, com elipses |
+| `PaginationSummary` | `pageLabel`, `rangeLabel` | texto "Página X de Y" / "Mostrando W–Z de Total" / "N registros"; usar com `getPaginationSummary` (`@/utils/paginationSummary`); no mobile, passar como `inlineToolbar` do `MobileCardList` para ficar ao lado do `SortButton` |
 | `MobileSearchInput` | `value`, `onChange`, `onSearch`, `onClear` | toolbar mobile |
 | `ActiveFilterPill` | `label`, `value`, `onClear` | pill de busca ativa (mobile) |
 | `StatusTabFilter` | `value`, `onChange`, `counts`, `mobile` | abas de status (Todas/Agendado/Ativo/Fechado) |
@@ -125,7 +127,7 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 | `EmptyState` | `children` ou `icon`/`title`/`description`/`action`/`tone` (`accent`/`danger`) | estado vazio simples (texto) ou rico (ícone + título + CTA, ex.: erro de carregamento) |
 
 ### Utils
-`cn` (merge seguro de className), `initials`, `charLimitMessage`.
+`cn` (merge seguro de className), `initials`, `charLimitMessage`, `getPaginationSummary` (calcula `pageLabel`/`rangeLabel` p/ `PaginationSummary`).
 
 ---
 

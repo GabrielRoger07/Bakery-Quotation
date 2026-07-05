@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { Pencil, Trash, Search, X, SlidersHorizontal, Plus, Eye, BarChart2, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Pencil, Trash, Search, SlidersHorizontal, Plus, Eye, BarChart2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useMobilePage } from '@/contexts/MobilePageContext'
 import SortBottomSheet from '@/components/SortBottomSheet'
+import SortButton from '@/components/SortButton'
 
 /**
  * MobileCardList — padrão mobile-native para listas de Fornecedores e Produtos.
@@ -21,8 +22,8 @@ import SortBottomSheet from '@/components/SortBottomSheet'
  *   renderCard     fn(item)      — retorna { avatar, title, subtitle, tags[] }
  *   toolbar        ReactNode     — conteúdo da barra de filtro
  *   filterActive   bool
- *   searchBar      ReactNode     — input de busca rápida (opcional, exibido acima dos cards)
- *   sortColumns    [{ key, label }]  — colunas ordenáveis (ativa o botão de sort)
+ *   searchBar      ReactNode     — input de busca rápida (opcional, fixo/sticky logo abaixo do navbar)
+ *   sortColumns    [{ key, label }]  — colunas ordenáveis (ativa o botão de sort, exibido ao lado do inlineToolbar)
  *   sortField      string | null
  *   sortDirection  "asc" | "desc"
  *   onSort         fn(columnKey)
@@ -151,59 +152,45 @@ const MobileCardList = ({
 
     return (
         <div className="mobile-card-list-root" onClick={closeSwipe}>
-            {/* ── Inline toolbar (always visible, no drawer) ── */}
-            {inlineToolbar && (
-                <div className="px-4 pt-3 pb-1">
-                    {inlineToolbar}
+            {/* ── Sticky search bar (fixa logo abaixo do navbar) ── */}
+            {searchBar && (
+                <div className="sticky-search-bar">
+                    {searchBar}
                 </div>
             )}
 
-            {/* ── Search / filter bar ── */}
-            {(searchBar || toolbar || sortColumns) && (
+            {/* ── Inline toolbar (always visible, no drawer) + botão de sort ── */}
+            {(inlineToolbar || (sortColumns && onSort)) && (
+                <div className="px-4 pt-3 pb-1 flex items-center justify-between gap-2">
+                    {inlineToolbar}
+                    {sortColumns && onSort && (
+                        <SortButton
+                            active={!!sortField}
+                            onOpen={() => setSortOpen(true)}
+                            onClear={onClearSort}
+                        />
+                    )}
+                </div>
+            )}
+
+            {/* ── Filter bar ── */}
+            {toolbar && (
                 <div className="px-4 pt-3 pb-1 flex flex-col gap-2">
-                    {searchBar && (
-                        <div className="search-bar-wrap">
-                            {searchBar}
-                        </div>
-                    )}
                     <div className="filter-sort-row">
-                        {toolbar && (
-                            <button
-                                className={`filter-toggle-btn ${filterOpen ? 'active' : ''} ${filterActive ? 'has-dot' : ''}`}
-                                onClick={e => { e.stopPropagation(); setFilterOpen(p => !p) }}
-                            >
-                                <SlidersHorizontal size={15} strokeWidth={2} />
-                                <span>Filtros</span>
-                                {filterActive && <span className="filter-dot" />}
-                            </button>
-                        )}
-                        {sortColumns && onSort && (
-                            <button
-                                className={`filter-toggle-btn ${sortField ? 'active' : ''}`}
-                                onClick={e => { e.stopPropagation(); setSortOpen(true) }}
-                            >
-                                <ArrowUpDown size={15} strokeWidth={2} />
-                                <span>Ordenar</span>
-                                {sortField && onClearSort && (
-                                    <span
-                                        className="filter-clear-sort"
-                                        role="button"
-                                        aria-label="Limpar ordenação"
-                                        onClick={e => { e.stopPropagation(); onClearSort() }}
-                                    >
-                                        <X size={12} strokeWidth={2.5} />
-                                    </span>
-                                )}
-                            </button>
-                        )}
+                        <button
+                            className={`filter-toggle-btn ${filterOpen ? 'active' : ''} ${filterActive ? 'has-dot' : ''}`}
+                            onClick={e => { e.stopPropagation(); setFilterOpen(p => !p) }}
+                        >
+                            <SlidersHorizontal size={15} strokeWidth={2} />
+                            <span>Filtros</span>
+                            {filterActive && <span className="filter-dot" />}
+                        </button>
                     </div>
-                    {toolbar && (
-                        <div className={`filter-drawer ${filterOpen ? 'open' : ''}`}>
-                            <div className="filter-drawer-inner">
-                                {toolbar}
-                            </div>
+                    <div className={`filter-drawer ${filterOpen ? 'open' : ''}`}>
+                        <div className="filter-drawer-inner">
+                            {toolbar}
                         </div>
-                    )}
+                    </div>
                 </div>
             )}
 

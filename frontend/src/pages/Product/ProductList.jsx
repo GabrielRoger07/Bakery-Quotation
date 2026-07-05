@@ -15,10 +15,12 @@ import ProductCreate from '@/pages/Product/ProductCreate'
 import ProductEdit from '@/pages/Product/ProductEdit'
 import Button from '@/components/Button'
 import Pagination from '@/components/Pagination'
+import PaginationSummary from '@/components/PaginationSummary'
 import { ENV } from '@/config/env'
 import useIsMobile from '@/hooks/useIsMobile'
 import useResourceList from '@/hooks/useResourceList'
 import { initials } from '@/utils/initials'
+import { getPaginationSummary } from '@/utils/paginationSummary'
 
 const ProductList = () => {
 
@@ -27,7 +29,7 @@ const ProductList = () => {
 
     const {
         items: products, setItems: setProducts, loading, error, status,
-        currentPage, setCurrentPage, totalPages,
+        currentPage, setCurrentPage, totalPages, totalElements, pageSize,
         sortField, sortDirection, handleSort, clearSort,
         appliedSearch, applySearch, clearSearch, refetch, confirm,
     } = useResourceList({
@@ -105,6 +107,8 @@ const ProductList = () => {
         refetch()
     }
 
+    const reloadCurrentPage = useCallback(() => refetch(currentPage), [refetch, currentPage])
+
     const handleSaveEdit = (updatedProduct) => {
         setProducts(prev => prev.map(p => p.productId === updatedProduct.productId ? updatedProduct : p))
     }
@@ -154,20 +158,8 @@ const ProductList = () => {
         </>
     ), [userDepts, deptFilter, searchWord, handleSearch, loading, setCurrentPage])
 
-    const mobileFilterToolbar = useMemo(() => (
-        <div className="mf-root">
-            {userDepts.length >= 2 && (
-                <div className="mf-input-row mb-2">
-                    <Select
-                        bare
-                        className="flex-1"
-                        value={deptFilter === null ? '' : String(deptFilter)}
-                        onChange={e => { setDeptFilter(e.target.value === '' ? null : Number(e.target.value)); setCurrentPage(0) }}
-                        placeholder="Todos os setores"
-                        options={userDepts.map(d => ({ value: d.departmentId, label: d.departmentName }))}
-                    />
-                </div>
-            )}
+    const mobileSearchBar = useMemo(() => (
+        <>
             <MobileSearchInput
                 value={searchWord}
                 onChange={e => setSearchWord(e.target.value)}
@@ -177,8 +169,29 @@ const ProductList = () => {
                 searchDisabled={loading}
             />
             <ActiveFilterPill label="Nome" value={appliedSearch.word} onClear={handleClearSearch} />
-        </div>
-    ), [userDepts, deptFilter, searchWord, handleSearch, handleClearSearch, loading, appliedSearch, setCurrentPage])
+        </>
+    ), [searchWord, handleSearch, handleClearSearch, loading, appliedSearch])
+
+    const mobileFilterToolbar = useMemo(() => (
+        userDepts.length >= 2 ? (
+            <div className="mf-root">
+                <Select
+                    bare
+                    className="flex-1"
+                    value={deptFilter === null ? '' : String(deptFilter)}
+                    onChange={e => { setDeptFilter(e.target.value === '' ? null : Number(e.target.value)); setCurrentPage(0) }}
+                    placeholder="Todos os setores"
+                    options={userDepts.map(d => ({ value: d.departmentId, label: d.departmentName }))}
+                />
+            </div>
+        ) : null
+    ), [userDepts, deptFilter, setCurrentPage])
+
+    const { pageLabel, rangeLabel } = getPaginationSummary({
+        currentPage, totalPages, totalElements, pageSize,
+        pageItemCount: products.length,
+        emptyLabel: "Nenhum produto encontrado.",
+    })
 
     const renderProductCard = (product) => ({
         avatar: initials(product.productName),
@@ -200,17 +213,20 @@ const ProductList = () => {
                         idKey="productId"
                         loading={loading}
                         emptyMessage="Nenhum produto encontrado."
-                        onReload={() => refetch(currentPage)}
+                        onReload={reloadCurrentPage}
                         onAdd={openCreateForm}
                         onCardClick={openSheet}
                         renderCard={renderProductCard}
                         toolbar={mobileFilterToolbar}
-                        filterActive={appliedSearch.word !== "" || deptFilter !== null}
+                        searchBar={mobileSearchBar}
+                        filterActive={deptFilter !== null}
                         sortColumns={columns}
                         sortField={sortField}
                         sortDirection={sortDirection}
                         onSort={handleSort}
                         onClearSort={clearSort}
+                        showCount={false}
+                        inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={setCurrentPage}
@@ -243,7 +259,7 @@ const ProductList = () => {
                         onEdit={openEditModal}
                         onDelete={confirm.requestRemove}
                         onAdd={() => setIsCreateModalOpen(true)}
-                        onReload={() => refetch(currentPage)}
+                        onReload={reloadCurrentPage}
                         onSort={handleSort}
                         sortField={sortField}
                         sortDirection={sortDirection}
@@ -251,7 +267,10 @@ const ProductList = () => {
                         toolbar={filterToolbar}
                         filterActive={appliedSearch.word !== ""}
                     />
-                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                    <div className="flex items-center justify-between gap-2 px-1">
+                        <PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />
+                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                    </div>
                 </>
             )}
 

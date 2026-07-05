@@ -25,6 +25,8 @@ export default function useResourceList({ endpoint, idKey, defaultSortField, del
 
   const [currentPage, setCurrentPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
+  const [totalElements, setTotalElements] = useState(0)
+  const [pageSize, setPageSize] = useState(0)
 
   const [sortField, setSortField] = useState(null)
   const [sortDirection, setSortDirection] = useState('asc')
@@ -46,6 +48,8 @@ export default function useResourceList({ endpoint, idKey, defaultSortField, del
     if (res.ok) {
       setItems(res.data.content)
       setTotalPages(res.data.totalPages)
+      setTotalElements(res.data.totalElements)
+      setPageSize(res.data.size)
       setError('')
     } else {
       setError(res.data?.message)
@@ -109,7 +113,7 @@ export default function useResourceList({ endpoint, idKey, defaultSortField, del
 
   return {
     items, setItems, loading, error, setError, status,
-    currentPage, setCurrentPage, totalPages,
+    currentPage, setCurrentPage, totalPages, totalElements, pageSize,
     sortField, sortDirection, handleSort, clearSort,
     appliedSearch, applySearch, clearSearch,
     refetch: fetchItems,

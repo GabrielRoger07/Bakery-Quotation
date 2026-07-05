@@ -14,9 +14,11 @@ import SupplierCreate from '@/pages/Supplier/SupplierCreate'
 import SupplierEdit from '@/pages/Supplier/SupplierEdit'
 import Button from '@/components/Button'
 import Pagination from '@/components/Pagination'
+import PaginationSummary from '@/components/PaginationSummary'
 import { formatCnpj } from '@/utils/formatCnpj'
 import { formatPhone } from '@/utils/formatPhone'
 import { initials } from '@/utils/initials'
+import { getPaginationSummary } from '@/utils/paginationSummary'
 import useIsMobile from '@/hooks/useIsMobile'
 import useResourceList from '@/hooks/useResourceList'
 
@@ -34,7 +36,7 @@ const SupplierList = () => {
 
     const {
         items: suppliers, setItems: setSuppliers, loading, error, status,
-        currentPage, setCurrentPage, totalPages,
+        currentPage, setCurrentPage, totalPages, totalElements, pageSize,
         sortField, sortDirection, handleSort, clearSort,
         appliedSearch, applySearch, clearSearch, refetch, confirm,
     } = useResourceList({
@@ -111,6 +113,8 @@ const SupplierList = () => {
         refetch()
     }
 
+    const reloadCurrentPage = useCallback(() => refetch(currentPage), [refetch, currentPage])
+
     const handleSaveEdit = (updatedSupplier) => {
         setSuppliers(prev => prev.map(s => s.supplierId === updatedSupplier.supplierId ? updatedSupplier : s))
     }
@@ -146,10 +150,10 @@ const SupplierList = () => {
         </>
     ), [searchField, searchWord, handleSearch, loading])
 
-    const mobileFilterToolbar = useMemo(() => (
-        <div className="mf-root">
+    const mobileSearchBar = useMemo(() => (
+        <>
             <p className="mf-label">Filtrar por</p>
-            <div className="mf-chips">
+            <div className="mf-chips mf-chips--scroll">
                 {SUPPLIER_FILTER_OPTIONS.map(opt => (
                     <button
                         key={opt.value}
@@ -175,7 +179,7 @@ const SupplierList = () => {
                 value={appliedSearch.word}
                 onClear={handleClearSearch}
             />
-        </div>
+        </>
     ), [searchField, searchWord, handleSearch, handleClearSearch, loading, appliedSearch])
 
     const formattedSuppliers = suppliers.map((supplier) => ({
@@ -183,6 +187,12 @@ const SupplierList = () => {
         supplierWhatsappNumber: supplier.supplierWhatsappNumber ? formatPhone(supplier.supplierWhatsappNumber) : "-",
         employerCnpj: supplier.employerCnpj ? formatCnpj(supplier.employerCnpj) : "-"
     }))
+
+    const { pageLabel, rangeLabel } = getPaginationSummary({
+        currentPage, totalPages, totalElements, pageSize,
+        pageItemCount: suppliers.length,
+        emptyLabel: "Nenhum fornecedor encontrado.",
+    })
 
     const renderSupplierCard = (supplier) => ({
         avatar: initials(supplier.supplierName),
@@ -203,17 +213,18 @@ const SupplierList = () => {
                         idKey="supplierId"
                         loading={loading}
                         emptyMessage="Nenhum fornecedor encontrado."
-                        onReload={() => refetch(currentPage)}
+                        onReload={reloadCurrentPage}
                         onAdd={openCreateForm}
                         onCardClick={openSheet}
                         renderCard={renderSupplierCard}
-                        toolbar={mobileFilterToolbar}
-                        filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
+                        searchBar={mobileSearchBar}
                         sortColumns={columns}
                         sortField={sortField}
                         sortDirection={sortDirection}
                         onSort={handleSort}
                         onClearSort={clearSort}
+                        showCount={false}
+                        inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={setCurrentPage}
@@ -245,7 +256,7 @@ const SupplierList = () => {
                         onEdit={openEditModal}
                         onDelete={confirm.requestRemove}
                         onAdd={() => setIsCreateModalOpen(true)}
-                        onReload={() => refetch(currentPage)}
+                        onReload={reloadCurrentPage}
                         onSort={handleSort}
                         sortField={sortField}
                         sortDirection={sortDirection}
@@ -253,7 +264,10 @@ const SupplierList = () => {
                         toolbar={filterToolbar}
                         filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
                     />
-                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                    <div className="flex items-center justify-between gap-2 px-1">
+                        <PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />
+                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                    </div>
                 </>
             )}
 

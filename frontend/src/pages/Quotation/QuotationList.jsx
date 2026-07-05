@@ -11,16 +11,15 @@ import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import PageContainer from '@/components/PageContainer'
 import Pagination from '@/components/Pagination'
+import PaginationSummary from '@/components/PaginationSummary'
 import EmptyState from '@/components/EmptyState'
 import Button from '@/components/Button'
-import SortBottomSheet from '@/components/SortBottomSheet'
 import { ENV } from '@/config/env'
 import { formatDateTime } from '@/utils/formatDateTime'
+import { getPaginationSummary } from '@/utils/paginationSummary'
 import useIsMobile from '@/hooks/useIsMobile'
 import { useMobilePage } from '@/contexts/MobilePageContext'
-import { ArrowUpDown, CalendarRange, CheckCircle, CloudOff, RotateCw, X } from 'lucide-react'
-
-const PAGE_SIZE = 10
+import { CalendarRange, CheckCircle, CloudOff, RotateCw, X } from 'lucide-react'
 
 const QuotationList = () => {
 
@@ -50,8 +49,6 @@ const QuotationList = () => {
     const [sheetOpen, setSheetOpen] = useState(false)
     const [sheetQuotation, setSheetQuotation] = useState(null)
 
-    const [sortOpen, setSortOpen] = useState(false)
-
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [quotationToRemove, setQuotationToRemove] = useState(null)
     const [cannotDelete, setCannotDelete] = useState(false)
@@ -59,7 +56,7 @@ const QuotationList = () => {
     const [currentPage, setCurrentPage] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
     const [totalElements, setTotalElements] = useState(0)
-    const [pageElementCount, setPageElementCount] = useState(0)
+    const [pageSize, setPageSize] = useState(0)
 
     const [sortField, setSortField] = useState(null)
     const [sortDirection, setSortDirection] = useState("asc")
@@ -160,13 +157,15 @@ const QuotationList = () => {
             setQuotations(mapped)
             setTotalPages(res.data.totalPages)
             setTotalElements(res.data.totalElements)
-            setPageElementCount(res.data.numberOfElements)
+            setPageSize(res.data.size)
             setError("")
         } else {
             setError(res.data?.message)
         }
         setStatus(res.status)
     }, [request, requestCounts, sortField, sortDirection, sortMap])
+
+    const reloadCurrentPage = useCallback(() => fetchQuotations(currentPage), [fetchQuotations, currentPage])
 
     const handleColumnSort = (columnKey) => {
         if (!sortMap[columnKey]) return
@@ -195,14 +194,15 @@ const QuotationList = () => {
     // MobileCardList é desmontado (ex.: card de erro no lugar da lista).
     useEffect(() => {
         if (!isMobile) return
-        registerPage("Cotações", () => fetchQuotations(currentPage))
+        registerPage("Cotações", reloadCurrentPage)
         return () => unregisterPage()
-    }, [isMobile, registerPage, unregisterPage, fetchQuotations, currentPage])
+    }, [isMobile, registerPage, unregisterPage, reloadCurrentPage])
 
-    const pageLabel = totalElements === 0 ? "" : `Página ${currentPage + 1} de ${totalPages}`
-    const rangeLabel = totalElements === 0
-        ? "Nenhuma cotação encontrada"
-        : `Mostrando ${currentPage * PAGE_SIZE + 1}–${currentPage * PAGE_SIZE + pageElementCount} de ${totalElements}`
+    const { pageLabel, rangeLabel } = getPaginationSummary({
+        currentPage, totalPages, totalElements, pageSize,
+        pageItemCount: quotations.length,
+        emptyLabel: "Nenhuma cotação encontrada",
+    })
 
     const statusCounts = useMemo(() => {
         const counts = { "": quotations.length, agendado: 0, ativo: 0, fechado: 0 }
@@ -287,38 +287,17 @@ const QuotationList = () => {
                             idKey="quotationId"
                             loading={loading}
                             emptyMessage="Nenhuma cotação encontrada."
-                            onReload={() => fetchQuotations(currentPage)}
+                            onReload={reloadCurrentPage}
                             onAdd={() => navigate('/quotations/new')}
                             onCardClick={openSheet}
                             renderCard={renderQuotationCard}
                             showCount={false}
-                            inlineToolbar={
-                                <div className="flex items-center justify-between gap-2">
-                                    <div className="flex flex-col gap-0.5 min-w-0">
-                                        <span className="text-caption font-bold text-[var(--color-text-heading)]">{pageLabel}</span>
-                                        <span className="text-label text-[var(--color-text-muted)] truncate">{rangeLabel}</span>
-                                    </div>
-                                    {sortableColumns.length > 0 && (
-                                        <button
-                                            className={`filter-toggle-btn flex-shrink-0 ${sortField ? 'active' : ''}`}
-                                            onClick={e => { e.stopPropagation(); setSortOpen(true) }}
-                                        >
-                                            <ArrowUpDown size={15} strokeWidth={2} />
-                                            <span>Ordenar</span>
-                                            {sortField && (
-                                                <span
-                                                    className="filter-clear-sort"
-                                                    role="button"
-                                                    aria-label="Limpar ordenação"
-                                                    onClick={e => { e.stopPropagation(); handleClearSort() }}
-                                                >
-                                                    <X size={12} strokeWidth={2.5} />
-                                                </span>
-                                            )}
-                                        </button>
-                                    )}
-                                </div>
-                            }
+                            inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
+                            sortColumns={sortableColumns}
+                            sortField={sortField}
+                            sortDirection={sortDirection}
+                            onSort={handleColumnSort}
+                            onClearSort={handleClearSort}
                             currentPage={currentPage}
                             totalPages={totalPages}
                             onPageChange={setCurrentPage}
@@ -332,15 +311,6 @@ const QuotationList = () => {
                         onDelete={requestRemove}
                         onMonitor={handleMonitor}
                     />
-                    <SortBottomSheet
-                        isOpen={sortOpen}
-                        onClose={() => setSortOpen(false)}
-                        columns={sortableColumns}
-                        sortField={sortField}
-                        sortDirection={sortDirection}
-                        onSort={handleColumnSort}
-                        onClearSort={handleClearSort}
-                    />
                 </>
             ) : (
                 <>
@@ -353,7 +323,7 @@ const QuotationList = () => {
                         onEdit={(q) => navigate(`/quotations/${q.quotationId}/edit`)}
                         onDelete={requestRemove}
                         onAdd={() => navigate('/quotations/new')}
-                        onReload={() => fetchQuotations(currentPage)}
+                        onReload={reloadCurrentPage}
                         onSort={handleColumnSort}
                         sortField={sortField}
                         sortDirection={sortDirection}
@@ -368,7 +338,10 @@ const QuotationList = () => {
                             />
                         }
                     />
-                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                    <div className="flex items-center justify-between gap-2 px-1">
+                        <PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />
+                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                    </div>
                 </>
             )}
 

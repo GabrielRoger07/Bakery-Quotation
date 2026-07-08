@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,11 +50,23 @@ public class QuotationService {
         return ResponseEntity.status(HttpStatus.OK).body(quotationResponseDTOS);
     }
 
-    public ResponseEntity<Page<QuotationResponseDTO>> getQuotationsByCompanyEmail(Pageable pageable){
+    public ResponseEntity<Page<QuotationResponseDTO>> getQuotationsByCompanyEmail(Pageable pageable, String field, String value){
         String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
+        Page<Quotation> quotationsByCompany;
 
-        Page<Quotation> quotationsByCompany = quotationRepository.findByCompany_CompanyEmail(companyEmail, safePageable);
+        boolean applyFilter = field != null && value != null && !value.isBlank();
+
+        if(applyFilter){
+            if(field.equals("status")){
+                quotationsByCompany = quotationRepository.findByCompanyEmailAndStatus(companyEmail, value, Instant.now(), safePageable);
+            } else {
+                throw new ResourceNotFoundException("Invalid field");
+            }
+        } else {
+            quotationsByCompany = quotationRepository.findByCompany_CompanyEmail(companyEmail, safePageable);
+        }
+
         Page<QuotationResponseDTO> quotationsResponseDTOByCompany = quotationsByCompany.map(quotationMapper::toDto);
         return ResponseEntity.status(HttpStatus.OK).body(quotationsResponseDTOByCompany);
     }

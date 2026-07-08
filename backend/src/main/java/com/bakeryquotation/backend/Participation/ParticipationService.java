@@ -22,6 +22,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -83,11 +84,23 @@ public class ParticipationService {
         return ResponseEntity.status(HttpStatus.OK).body(participationMapper.toDto(participation));
     }
 
-    public ResponseEntity<Page<SupplierParticipationResponseDTO>> getParticipationsBySupplierId(Pageable pageable){
+    public ResponseEntity<Page<SupplierParticipationResponseDTO>> getParticipationsBySupplierId(Pageable pageable, String field, String value){
         String supplierId = SecurityContextHolder.getContext().getAuthentication().getName();
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
+        Page<Participation> participationsBySupplierId;
 
-        Page<Participation> participationsBySupplierId = participationRepository.findBySupplier_Id(Long.parseLong(supplierId), safePageable);
+        boolean applyFilter = field != null && value != null && !value.isBlank();
+
+        if(applyFilter){
+            if(field.equals("status")){
+                participationsBySupplierId = participationRepository.findBySupplierIdAndStatus(Long.parseLong(supplierId), value, Instant.now(), safePageable);
+            } else {
+                throw new ResourceNotFoundException("Invalid field");
+            }
+        } else {
+            participationsBySupplierId = participationRepository.findBySupplier_Id(Long.parseLong(supplierId), safePageable);
+        }
+
         Page<SupplierParticipationResponseDTO> participationsResponseDTOBySupplierId = participationsBySupplierId.map(participationMapper::toSupplierParticipationDto);
         return ResponseEntity.status(HttpStatus.OK).body(participationsResponseDTOBySupplierId);
     }

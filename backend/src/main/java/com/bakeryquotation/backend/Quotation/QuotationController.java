@@ -46,8 +46,12 @@ public class QuotationController {
     }
 
     @GetMapping("/company")
-    public ResponseEntity<Page<QuotationResponseDTO>> getQuotationsByCompanyEmail(@PageableDefault(size = 10) Pageable pageable){
-        return quotationService.getQuotationsByCompanyEmail(pageable);
+    public ResponseEntity<Page<QuotationResponseDTO>> getQuotationsByCompanyEmail(
+            @PageableDefault(size = 10) Pageable pageable,
+            @RequestParam(value = "field", required = false) String field,
+            @RequestParam(value = "value", required = false) String value
+    ){
+        return quotationService.getQuotationsByCompanyEmail(pageable, field, value);
     }
 
     @PostMapping

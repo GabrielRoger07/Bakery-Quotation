@@ -57,8 +57,12 @@ public class ParticipationController {
     }
 
     @GetMapping("/supplier")
-    public ResponseEntity<Page<SupplierParticipationResponseDTO>> getParticipationsBySupplierId(@PageableDefault(size = 10) Pageable pageable){
-        return participationService.getParticipationsBySupplierId(pageable);
+    public ResponseEntity<Page<SupplierParticipationResponseDTO>> getParticipationsBySupplierId(
+            @PageableDefault(size = 10) Pageable pageable,
+            @RequestParam(value = "field", required = false) String field,
+            @RequestParam(value = "value", required = false) String value
+    ){
+        return participationService.getParticipationsBySupplierId(pageable, field, value);
     }
 
     @PostMapping

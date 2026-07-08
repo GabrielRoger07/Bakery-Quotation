@@ -62,10 +62,26 @@ public class DevDataSeeder {
             Quotation quotation1 = new Quotation(Instant.parse("2025-12-10T08:00:00Z"), Instant.parse("2026-12-31T10:00:00Z"), false, company1);
             Quotation quotation2 = new Quotation(Instant.parse("2025-12-25T16:00:00Z"), Instant.parse("2025-12-25T18:00:00Z"), true, company1);
             Quotation quotation3 = new Quotation(Instant.parse("2025-11-21T08:00:00Z"), Instant.parse("2025-11-21T10:00:00Z"), false, company1);
+            Quotation quotation4 = new Quotation(Instant.parse("2026-01-21T08:00:00Z"), Instant.parse("2026-11-21T10:00:00Z"), false, company1);
+            Quotation quotation5 = new Quotation(Instant.parse("2026-02-21T08:00:00Z"), Instant.parse("2026-12-21T10:00:00Z"), false, company1);
+            Quotation quotation6 = new Quotation(Instant.parse("2026-03-21T08:00:00Z"), Instant.parse("2026-03-21T10:00:00Z"), false, company1);
+            Quotation quotation7 = new Quotation(Instant.parse("2026-04-21T08:00:00Z"), Instant.parse("2026-04-21T10:00:00Z"), false, company1);
+            Quotation quotation8 = new Quotation(Instant.parse("2026-05-21T08:00:00Z"), Instant.parse("2026-05-21T10:00:00Z"), false, company1);
+            Quotation quotation9 = new Quotation(Instant.parse("2026-10-21T08:00:00Z"), Instant.parse("2026-10-21T10:00:00Z"), false, company1);
+            Quotation quotation10 = new Quotation(Instant.parse("2026-11-21T08:00:00Z"), Instant.parse("2026-11-21T10:00:00Z"), false, company1);
+            Quotation quotation11 = new Quotation(Instant.parse("2025-11-21T08:00:00Z"), Instant.parse("2026-08-21T10:00:00Z"), false, company1);
 
             quotationRepository.save(quotation1);
             quotationRepository.save(quotation2);
             quotationRepository.save(quotation3);
+            quotationRepository.save(quotation4);
+            quotationRepository.save(quotation5);
+            quotationRepository.save(quotation6);
+            quotationRepository.save(quotation7);
+            quotationRepository.save(quotation8);
+            quotationRepository.save(quotation9);
+            quotationRepository.save(quotation10);
+            quotationRepository.save(quotation11);
 
             Department department1 = departmentRepository.findByCompany_CompanyEmail(company1.getCompanyEmail()).getFirst();
             Department department2 = departmentRepository.findByCompany_CompanyEmail(company2.getCompanyEmail()).getFirst();

@@ -10,7 +10,7 @@ import { X, Check } from 'lucide-react'
  * Props:
  *   isOpen        bool
  *   onClose       fn()
- *   options       [{ key, label, field, direction }]
+ *   options       [{ key, label, field, direction, icon? }]
  *   sortField     string | null
  *   sortDirection "asc" | "desc"
  *   onSelectSort  fn(option)
@@ -68,6 +68,7 @@ const SortBottomSheet = ({ isOpen, onClose, options = [], sortField, sortDirecti
                                     className={`sort-option-btn ${active ? 'active' : ''}`}
                                     onClick={() => handleSelect(opt)}
                                 >
+                                    {opt.icon && <span className="sort-option-icon">{opt.icon}</span>}
                                     <span className="sort-option-label">{opt.label}</span>
                                     {active && <Check size={17} strokeWidth={2.5} />}
                                 </button>

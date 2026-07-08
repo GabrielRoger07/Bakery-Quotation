@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ArrowDownAZ, ArrowUpAZ } from 'lucide-react'
 import useFetch from '@/hooks/useFetch'
 import Table from '@/components/Table'
 import MobileCardList from '@/components/MobileCardList'
@@ -63,8 +64,8 @@ const ProductList = () => {
     ]
 
     const sortOptions = [
-        { key: "name-asc", label: "Nome (A → Z)", shortLabel: "A-Z", field: "productName", direction: "asc" },
-        { key: "name-desc", label: "Nome (Z → A)", shortLabel: "Z-A", field: "productName", direction: "desc" },
+        { key: "name-asc", label: "Nome (A → Z)", shortLabel: "A-Z", field: "productName", direction: "asc", icon: <ArrowDownAZ size={18} strokeWidth={2} /> },
+        { key: "name-desc", label: "Nome (Z → A)", shortLabel: "Z-A", field: "productName", direction: "desc", icon: <ArrowUpAZ size={18} strokeWidth={2} /> },
     ]
 
     const openSheet = (product) => {
@@ -158,10 +159,11 @@ const ProductList = () => {
                 onChange={e => setSearchWord(e.target.value)}
                 placeholder={"Nome do Produto"}
                 onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
+                disabled={products.length === 0}
             />
-            <Button onClick={handleSearch} disabled={loading}>Buscar</Button>
+            <Button onClick={handleSearch} disabled={loading || products.length === 0}>Buscar</Button>
         </>
-    ), [userDepts, deptFilter, searchWord, handleSearch, loading, setCurrentPage])
+    ), [userDepts, deptFilter, searchWord, handleSearch, loading, setCurrentPage, products.length])
 
     const mobileSearchBar = useMemo(() => (
         <>
@@ -171,11 +173,12 @@ const ProductList = () => {
                 onSearch={handleSearch}
                 onClear={handleClearSearch}
                 placeholder="Buscar por nome do produto"
-                searchDisabled={loading}
+                inputDisabled={products.length === 0}
+                searchDisabled={loading || products.length === 0}
             />
             <ActiveFilterPill label="Nome" value={appliedSearch.word} onClear={handleClearSearch} />
         </>
-    ), [searchWord, handleSearch, handleClearSearch, loading, appliedSearch])
+    ), [searchWord, handleSearch, handleClearSearch, loading, appliedSearch, products.length])
 
     const mobileFilterToolbar = useMemo(() => (
         userDepts.length >= 2 ? (

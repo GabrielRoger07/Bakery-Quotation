@@ -53,7 +53,7 @@ const SingleProposalProductRow = ({ product, disabled, initialNumericValue, onNu
                 <span className="inline-flex items-center gap-[0.3rem] px-[0.55rem] py-[0.18rem] text-[0.75rem] font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-sunken)] rounded-full whitespace-nowrap">{product.quantity} {(product.unitOfMeasure).toUpperCase()}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 'S' : ''}</span>
                 <span className="inline-flex items-center gap-[0.3rem] px-[0.55rem] py-[0.18rem] text-[0.75rem] font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-sunken)] rounded-full whitespace-nowrap">
                     <Tag size={12} />
-                    {product.brand || "Marca não definida"}
+                    {product.brand || <span className="italic">Marca não definida</span>}
                 </span>
             </div>
 

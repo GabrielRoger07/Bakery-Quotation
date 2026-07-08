@@ -2,14 +2,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import useFetch from '@/hooks/useFetch'
 import useIsMobile from '@/hooks/useIsMobile'
 import { formatMoney } from '@/utils/formatMoney'
+import { formatDateTime } from '@/utils/formatDateTime'
 import { useCurrencyMask } from '@/hooks/useCurrencyMask'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
+import MetaCard from '@/components/MetaCard'
 import SingleProposalProductRow from '@/pages/SupplierAccess/SingleProposalProductRow'
 import { ENV } from '@/config/env'
 import {
     ChevronLeft, Clock, Package, Tag, CheckCircle2,
-    AlertCircle, Send, FileCheck2, X, MinusCircle, Hourglass, Info
+    AlertCircle, Send, FileCheck2, X, MinusCircle, Hourglass, Info, Flag, Calendar
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -72,7 +74,7 @@ const MobileProductInputCard = ({ product, initialNumericValue, onNumericChange,
                     <div className="saqu-input-meta-row">
                         <span className="saqu-input-brand-inline">
                             <Tag size={10} strokeWidth={2} />
-                            {product.brand || "Marca não definida"}
+                            {product.brand || <span className="italic">Marca não definida</span>}
                         </span>
                         <div className="saqu-input-qty-badge">
                             <span className="saqu-input-qty-label">Qtd</span>
@@ -112,7 +114,7 @@ const MobileSubmittedCard = ({ product, unitPrice, index }) => {
                     <div className="saqu-submitted-meta-row">
                         <span className="saqu-submitted-brand">
                             <Tag size={10} strokeWidth={2} />
-                            {product.brand || "Marca não definida"}
+                            {product.brand || <span className="italic">Marca não definida</span>}
                         </span>
                         <div className="saqu-submitted-qty">
                             <span className="saqu-submitted-qty-label">Qtd</span>
@@ -186,7 +188,7 @@ const MobileConfirmSheet = ({
                                     <span className="saqu-review-row-meta">
                                         {product.quantity} {(product.unitOfMeasure)}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 's' : ''}
                                         {' · '}
-                                        {product.brand || 'Marca não definida'}
+                                        {product.brand || <span className="italic">Marca não definida</span>}
                                     </span>
                                     {!isSkipped && (
                                         <span className="saqu-review-row-unit">
@@ -408,6 +410,9 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
 
     /* ── Mobile layout ──────────────────────────────────────────── */
     if (isMobile) {
+        const quotationStartFormatted = quotation ? formatDateTime(quotation.quotationStart) : null
+        const quotationEndFormatted = quotation ? formatDateTime(quotation.quotationEnd) : null
+
         if (loading) return (
             <div className="qm-mobile-root">
                 <div className="qm-mobile-header">
@@ -470,18 +475,21 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                     </div>
                 )}
 
-                {/* Dates row */}
+                {/* Dates info */}
                 {quotation && (
-                    <div className="qm-dates-row">
-                        <div className="qm-date-item">
-                            <span className="qm-date-label">Início</span>
-                            <span className="qm-date-value">{new Date(quotation.quotationStart).toLocaleString()}</span>
-                        </div>
-                        <div className="qm-date-divider" />
-                        <div className="qm-date-item">
-                            <span className="qm-date-label">Encerra em</span>
-                            <span className="qm-date-value">{new Date(quotation.quotationEnd).toLocaleString()}</span>
-                        </div>
+                    <div className="grid grid-cols-2 gap-2 mx-4 mt-3">
+                        <MetaCard
+                            tone="success"
+                            icon={<Flag size={16} strokeWidth={2} />}
+                            label="Início"
+                            value={quotationStartFormatted ? `${quotationStartFormatted.date}, ${quotationStartFormatted.time}` : "-"}
+                        />
+                        <MetaCard
+                            tone="danger"
+                            icon={<Calendar size={16} strokeWidth={2} />}
+                            label="Fim"
+                            value={quotationEndFormatted ? `${quotationEndFormatted.date}, ${quotationEndFormatted.time}` : "-"}
+                        />
                     </div>
                 )}
 

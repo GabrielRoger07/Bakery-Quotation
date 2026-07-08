@@ -4,9 +4,11 @@ import useFetch from "@/hooks/useFetch"
 import useIsMobile from "@/hooks/useIsMobile"
 import { ENV } from "@/config/env"
 import Button from "@/components/Button"
+import MetaCard from "@/components/MetaCard"
 import { formatMoney } from "@/utils/formatMoney"
+import { formatDateTime } from "@/utils/formatDateTime"
 import Cookies from "js-cookie"
-import { ChevronLeft, FileDown, Package, Trophy, TrendingDown, CheckCircle2, XCircle } from "lucide-react"
+import { ChevronLeft, FileDown, Package, Trophy, TrendingDown, CheckCircle2, XCircle, Flag, Calendar } from "lucide-react"
 
 const thCls = "text-left px-[0.6rem] py-2 text-[0.75rem] font-semibold uppercase tracking-[0.04em] text-[var(--color-text-muted)] border-b-2 border-[var(--color-border-default)]"
 const thNumCls = `${thCls} text-right`
@@ -26,28 +28,33 @@ const MobileWinningCard = ({ item, index }) => (
             </div>
             <div className="sqc-win-info">
                 <span className="sqc-win-name">{item.productName}</span>
-                <span className="sqc-win-brand">{item.brand || "Marca não definida"}</span>
-            </div>
-            <div className="sqc-win-qty-badge">
-                <span className="sqc-win-qty-label">Qtd</span>
-                <span className="sqc-win-qty-value">{item.quantity} UN</span>
+                <span className={`sqc-win-brand ${!item.brand ? 'sqc-win-brand--empty' : ''}`}>{item.brand || "Marca não definida"}</span>
+                <div className="qm-bid-qty-row">
+                    <span className="qm-bid-qty-label">Qtd</span>
+                    <span className="qm-bid-qty-badge">
+                        {item.quantity}
+                        {item.unitOfMeasure && (
+                            <span className="qm-bid-qty-unit">
+                                {' '}{item.unitOfMeasure.toUpperCase()}{['bag', 'balde'].includes(item.unitOfMeasure) && item.quantity > 1 ? 'S' : ''}
+                            </span>
+                        )}
+                    </span>
+                    {item.bonus > 0 && (
+                        <span className="qm-bid-bonus-badge">+{item.bonus} bônus</span>
+                    )}
+                </div>
             </div>
         </div>
         <div className="sqc-win-prices">
             <div className="sqc-win-price-metric">
-                <span className="sqc-win-price-label">Preço Unitário</span>
-                <span className="sqc-win-price-value">{formatMoney(item.pricePerUnit)}</span>
+                <span className="sqc-win-price-label">Unitário</span>
+                <span className="sqc-win-price-value">{formatMoney(item.pricePerUnit)}/{item.unitOfMeasure}</span>
             </div>
             <div className="sqc-win-price-metric sqc-win-price-metric--total">
-                <span className="sqc-win-price-label">Valor Total</span>
+                <span className="sqc-win-price-label">Total</span>
                 <span className="sqc-win-price-value sqc-win-price-value--total">{formatMoney(item.price)}</span>
             </div>
         </div>
-        {item.bonus > 0 && (
-            <div className="sqc-win-bonus-row">
-                <span className="sqc-win-bonus-pill">+{item.bonus} bônus</span>
-            </div>
-        )}
     </div>
 )
 
@@ -133,6 +140,9 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
     /* ── Mobile layout ──────────────────────────────────────────── */
     if (isMobile) {
+        const quotationStartFormatted = quotation ? formatDateTime(quotation.quotationStart) : null
+        const quotationEndFormatted = quotation ? formatDateTime(quotation.quotationEnd) : null
+
         if (loading) return (
             <div className="qm-mobile-root">
                 <div className="qm-mobile-header">
@@ -183,22 +193,23 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                         <span className="qm-mobile-title">Cotação #{quotation.quotationId}</span>
                         <span className="qm-mobile-status-pill qm-status--closed">Fechado</span>
                     </div>
-                    <button className="qm-mobile-export-btn" onClick={handleDownloadReport} aria-label="Exportar relatório">
-                        <FileDown size={18} strokeWidth={2} />
-                    </button>
+                    <div style={{ width: '2.25rem' }} />
                 </div>
 
-                {/* Dates row */}
-                <div className="qm-dates-row">
-                    <div className="qm-date-item">
-                        <span className="qm-date-label">Início</span>
-                        <span className="qm-date-value">{new Date(quotation.quotationStart).toLocaleString()}</span>
-                    </div>
-                    <div className="qm-date-divider" />
-                    <div className="qm-date-item">
-                        <span className="qm-date-label">Fim</span>
-                        <span className="qm-date-value">{new Date(quotation.quotationEnd).toLocaleString()}</span>
-                    </div>
+                {/* Dates info */}
+                <div className="grid grid-cols-2 gap-2 mx-4 mt-3">
+                    <MetaCard
+                        tone="success"
+                        icon={<Flag size={16} strokeWidth={2} />}
+                        label="Início"
+                        value={quotationStartFormatted ? `${quotationStartFormatted.date}, ${quotationStartFormatted.time}` : "-"}
+                    />
+                    <MetaCard
+                        tone="danger"
+                        icon={<Calendar size={16} strokeWidth={2} />}
+                        label="Fim"
+                        value={quotationEndFormatted ? `${quotationEndFormatted.date}, ${quotationEndFormatted.time}` : "-"}
+                    />
                 </div>
 
                 {/* Result summary stat cards */}
@@ -206,8 +217,10 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                     {didWin ? (
                         <div className="qm-stat-card qm-stat-card--total">
                             <div className="qm-stat-icon"><TrendingDown size={16} strokeWidth={2} /></div>
-                            <span className="qm-stat-value">{formatMoney(totalWinningValue)}</span>
-                            <span className="qm-stat-label">Valor Total</span>
+                            <div className="qm-stat-total-text">
+                                <span className="qm-stat-label">Valor Total</span>
+                                <span className="qm-stat-value">{formatMoney(totalWinningValue)}</span>
+                            </div>
                         </div>
                     ) : (
                         <div className="sqc-no-win-banner">
@@ -215,6 +228,14 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                             <span>Você não venceu nenhum lance nesta cotação.</span>
                         </div>
                     )}
+                    <button
+                        type="button"
+                        className="qm-download-pdf-btn"
+                        onClick={handleDownloadReport}
+                    >
+                        <FileDown size={18} strokeWidth={2} />
+                        Baixar relatório (PDF)
+                    </button>
                 </div>
 
                 {/* Winning items section */}
@@ -236,11 +257,6 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                                 {winningItems.map((item, i) => (
                                     <MobileWinningCard key={i} item={item} index={i} />
                                 ))}
-                            </div>
-                            {/* Total footer */}
-                            <div className="sqc-total-footer">
-                                <span className="sqc-total-label">Valor Total dos Lances Vencedores</span>
-                                <span className="sqc-total-value">{formatMoney(totalWinningValue)}</span>
                             </div>
                         </div>
                     </div>

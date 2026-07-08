@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CalendarRange, CloudOff, RotateCw } from 'lucide-react'
+import { CalendarRange, Clock, CloudOff, History, RotateCw } from 'lucide-react'
 import useResourceList from '@/hooks/useResourceList'
 import useIsMobile from '@/hooks/useIsMobile'
 import { useMobilePage } from '@/contexts/MobilePageContext'
@@ -39,8 +39,8 @@ const columns = [
 ]
 
 const sortOptions = [
-    { key: 'date-asc', label: 'Data de início (mais antiga primeiro)', field: 'quotation.quotationStart', direction: 'asc' },
-    { key: 'date-desc', label: 'Data de início (mais recente primeiro)', field: 'quotation.quotationStart', direction: 'desc' },
+    { key: 'date-desc', label: 'Mais recentes primeiro', shortLabel: 'Recentes', field: 'quotation.quotationEnd', direction: 'desc', icon: <Clock size={18} strokeWidth={2} /> },
+    { key: 'date-asc', label: 'Mais antigas primeiro', shortLabel: 'Antigas', field: 'quotation.quotationEnd', direction: 'asc', icon: <History size={18} strokeWidth={2} /> },
 ]
 
 const SupplierPage = () => {
@@ -56,7 +56,7 @@ const SupplierPage = () => {
     } = useResourceList({
         endpoint: '/participations/supplier',
         idKey: 'quotationId',
-        defaultSortField: 'quotation.quotationStart',
+        defaultSortField: 'quotation.quotationEnd',
     })
 
     const statusFilter = appliedSearch.field === 'status' ? appliedSearch.word : ''
@@ -94,11 +94,10 @@ const SupplierPage = () => {
         const { variant } = STATUS_TAG[getStatusKey(p.quotationStart, p.quotationEnd)]
         const startDate = formatDateTime(p.quotationStart)?.date
         return {
-            avatar: <CalendarRange size={20} strokeWidth={1.75} />,
+            avatar: <CalendarRange size={13} strokeWidth={1.75} />,
             title: `Cotação · ${startDate ?? '-'}`,
-            subtitle: `${p['quotation.quotationStart']} → ${p['quotation.quotationEnd']}`,
-            meta: `Cotação #${p.quotationId}`,
-            tags: [{ label: p.status, variant }],
+            subtitle: [`Início: ${p['quotation.quotationStart']}`, `Fim: ${p['quotation.quotationEnd']}`],
+            titleTag: { label: p.status, variant },
         }
     }
 
@@ -141,8 +140,8 @@ const SupplierPage = () => {
                             showCount={false}
                             inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
                             sortOptions={sortOptions}
-                            sortField={sortField}
-                            sortDirection={sortDirection}
+                            sortField={sortField ?? 'quotation.quotationEnd'}
+                            sortDirection={sortField ? sortDirection : 'desc'}
                             onSelectSort={(opt) => setSort(opt.field, opt.direction)}
                             currentPage={currentPage}
                             totalPages={totalPages}
@@ -161,8 +160,8 @@ const SupplierPage = () => {
                         onView={handleSelect}
                         onReload={reloadCurrentPage}
                         onSort={handleSort}
-                        sortField={sortField}
-                        sortDirection={sortDirection}
+                        sortField={sortField ?? 'quotation.quotationEnd'}
+                        sortDirection={sortField ? sortDirection : 'desc'}
                         emptyMessage="Nenhuma cotação encontrada."
                         filterSlot={
                             <StatusTabFilter value={statusFilter} onChange={handleStatusFilterChange} />

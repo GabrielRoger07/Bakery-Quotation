@@ -19,11 +19,11 @@ import SortButton from '@/components/SortButton'
  *   onDelete       fn(id)
  *   onView         fn(item)      — abre modal de detalhes
  *   onMonitor      fn(item)      — navega para monitoramento
- *   renderCard     fn(item)      — retorna { avatar, title, subtitle, tags[] }
+ *   renderCard     fn(item)      — retorna { avatar, title, subtitle, meta, tags[], titleTag? }; titleTag ({ label, variant, icon? }) exibe um único badge na própria linha do título em vez da linha de tags abaixo; subtitle aceita string ou string[] (cada item vira sua própria linha, útil p/ intervalos de data que não cabem em uma linha só no mobile)
  *   toolbar        ReactNode     — conteúdo da barra de filtro
  *   filterActive   bool
  *   searchBar      ReactNode     — input de busca rápida (opcional, fixo/sticky logo abaixo do navbar)
- *   sortOptions    [{ key, label, shortLabel, field, direction }]  — opções de ordenação (ativa o botão de sort, exibido ao lado do inlineToolbar); shortLabel é o texto exibido no próprio botão quando a opção está ativa
+ *   sortOptions    [{ key, label, shortLabel, field, direction, icon? }]  — opções de ordenação (ativa o botão de sort, exibido ao lado do inlineToolbar); shortLabel é o texto exibido no próprio botão quando a opção está ativa; icon (ReactNode) opcional é exibido à esquerda do label no sheet
  *   sortField      string | null
  *   sortDirection  "asc" | "desc"
  *   onSelectSort   fn(option)
@@ -161,7 +161,7 @@ const MobileCardList = ({
             )}
 
             {/* ── Inline toolbar (always visible, no drawer) + botão de sort ── */}
-            {(inlineToolbar || (sortOptions && onSelectSort)) && (
+            {(loading || items.length > 0) && (inlineToolbar || (sortOptions && onSelectSort)) && (
                 <div className="px-4 pt-3 pb-1 flex items-center justify-between gap-2">
                     {inlineToolbar}
                     {sortOptions && onSelectSort && (
@@ -230,7 +230,7 @@ const MobileCardList = ({
                         const id = item[idKey]
                         const swiped = swipedId === id
                         const card = renderCard ? renderCard(item) : {}
-                        const { avatar, title: cardTitle, subtitle, meta, tags = [] } = card
+                        const { avatar, title: cardTitle, subtitle, meta, tags = [], titleTag } = card
                         const clickable = !!onCardClick
                         const actionCount = [onMonitor, onView, onEdit, onDelete].filter(Boolean).length
                         const swipeOffset = `${actionCount * 4}rem`
@@ -295,8 +295,22 @@ const MobileCardList = ({
 
                                     {/* Content */}
                                     <div className="card-body">
-                                        <span className="card-title">{cardTitle}</span>
-                                        {subtitle && <span className="card-subtitle">{subtitle}</span>}
+                                        <div className="card-title-row">
+                                            <span className="card-title">{cardTitle}</span>
+                                            {titleTag && (
+                                                <span className={`card-tag ${titleTag.variant ?? ''}`}>
+                                                    {titleTag.icon && <span className="tag-icon">{titleTag.icon}</span>}
+                                                    {titleTag.label}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {subtitle && (
+                                            Array.isArray(subtitle)
+                                                ? subtitle.map((line, i) => (
+                                                    <span key={i} className="card-subtitle">{line}</span>
+                                                ))
+                                                : <span className="card-subtitle">{subtitle}</span>
+                                        )}
                                         {meta && <span className="card-meta">{meta}</span>}
                                         {tags.length > 0 && (
                                             <div className="card-tags">

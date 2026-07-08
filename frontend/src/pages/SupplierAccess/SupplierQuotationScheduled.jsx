@@ -1,4 +1,9 @@
 import { useEffect, useMemo, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import useIsMobile from "@/hooks/useIsMobile"
+import { formatDateTime } from "@/utils/formatDateTime"
+import MetaCard from "@/components/MetaCard"
+import { ChevronLeft, Clock, Flag, Calendar } from "lucide-react"
 
 const pad2 = (n) => String(n).padStart(2, "0")
 
@@ -14,6 +19,9 @@ const formatRemaining = (ms) => {
 }
 
 const SupplierQuotationScheduled = ({ quotation }) => {
+
+    const navigate = useNavigate()
+    const isMobile = useIsMobile()
 
     const startTimeMs = useMemo(
         () => new Date(quotation.quotationStart).getTime(), [quotation.quotationStart]
@@ -45,6 +53,54 @@ const SupplierQuotationScheduled = ({ quotation }) => {
 
     const remainingText = remainingMs <= 0 ? "Iniciando agora" : formatRemaining(remainingMs)
 
+    /* ── Mobile layout ──────────────────────────────────────────── */
+    if (isMobile) {
+        const quotationStartFormatted = formatDateTime(quotation.quotationStart)
+        const quotationEndFormatted = formatDateTime(quotation.quotationEnd)
+
+        return (
+            <div className="qm-mobile-root">
+                {/* Sticky header */}
+                <div className="qm-mobile-header">
+                    <button className="qm-mobile-back-btn" onClick={() => navigate(-1)} aria-label="Voltar">
+                        <ChevronLeft size={20} strokeWidth={2.5} />
+                    </button>
+                    <div className="qm-mobile-header-center">
+                        <span className="qm-mobile-title">Cotação #{quotation.quotationId}</span>
+                        <span className="qm-mobile-status-pill qm-status--scheduled">Agendado</span>
+                    </div>
+                    <div style={{ width: '2.25rem' }} />
+                </div>
+
+                {/* Countdown banner */}
+                <div className="qm-countdown-banner qm-status--scheduled">
+                    <Clock size={22} strokeWidth={2} className="qm-countdown-icon" />
+                    <div className="qm-countdown-text">
+                        <span className="qm-countdown-label">Começa em</span>
+                        <span className="qm-countdown-time">{remainingText}</span>
+                    </div>
+                </div>
+
+                {/* Dates info */}
+                <div className="grid grid-cols-2 gap-2 mx-4 mt-3">
+                    <MetaCard
+                        tone="success"
+                        icon={<Flag size={16} strokeWidth={2} />}
+                        label="Início"
+                        value={quotationStartFormatted ? `${quotationStartFormatted.date}, ${quotationStartFormatted.time}` : "-"}
+                    />
+                    <MetaCard
+                        tone="danger"
+                        icon={<Calendar size={16} strokeWidth={2} />}
+                        label="Fim"
+                        value={quotationEndFormatted ? `${quotationEndFormatted.date}, ${quotationEndFormatted.time}` : "-"}
+                    />
+                </div>
+            </div>
+        )
+    }
+
+    /* ── Desktop layout ──────────────────────────────────────────── */
     return (
         <div className="page-wrapper text-[var(--color-text-body)]">
             <h2 className="text-[var(--color-text-heading)] text-[1.25rem] m-0">

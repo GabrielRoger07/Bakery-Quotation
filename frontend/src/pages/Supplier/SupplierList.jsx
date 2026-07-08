@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
+import { ArrowDownAZ, ArrowUpAZ, Building2 } from 'lucide-react'
 import Table from '@/components/Table'
 import MobileCardList from '@/components/MobileCardList'
 import SupplierBottomSheet from '@/components/SupplierBottomSheet'
@@ -69,9 +70,9 @@ const SupplierList = () => {
     ]
 
     const sortOptions = [
-        { key: "name-asc", label: "Nome (A → Z)", shortLabel: "A-Z", field: "supplierName", direction: "asc" },
-        { key: "name-desc", label: "Nome (Z → A)", shortLabel: "Z-A", field: "supplierName", direction: "desc" },
-        { key: "company", label: "Nome da Empresa", shortLabel: "Empresa", field: "employerName", direction: "asc" },
+        { key: "name-asc", label: "Nome (A → Z)", shortLabel: "A-Z", field: "supplierName", direction: "asc", icon: <ArrowDownAZ size={18} strokeWidth={2} /> },
+        { key: "name-desc", label: "Nome (Z → A)", shortLabel: "Z-A", field: "supplierName", direction: "desc", icon: <ArrowUpAZ size={18} strokeWidth={2} /> },
+        { key: "company", label: "Nome da Empresa", shortLabel: "Empresa", field: "employerName", direction: "asc", icon: <Building2 size={18} strokeWidth={2} /> },
     ]
 
     const openSheet = (supplier) => {
@@ -151,10 +152,11 @@ const SupplierList = () => {
                 onChange={e => setSearchWord(e.target.value)}
                 placeholder={"Digite o campo"}
                 onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
+                disabled={suppliers.length === 0}
             />
-            <Button onClick={handleSearch} disabled={loading || !searchField}>Buscar</Button>
+            <Button onClick={handleSearch} disabled={loading || !searchField || suppliers.length === 0}>Buscar</Button>
         </>
-    ), [searchField, searchWord, handleSearch, loading])
+    ), [searchField, searchWord, handleSearch, loading, suppliers.length])
 
     const mobileSearchBar = useMemo(() => (
         <>
@@ -177,8 +179,8 @@ const SupplierList = () => {
                 onSearch={handleSearch}
                 onClear={handleClearSearch}
                 placeholder={searchField ? `Buscar por ${SUPPLIER_FILTER_OPTIONS.find(o => o.value === searchField)?.label ?? '...'}` : "Selecione um campo acima"}
-                inputDisabled={!searchField}
-                searchDisabled={loading || !searchField}
+                inputDisabled={!searchField || suppliers.length === 0}
+                searchDisabled={loading || !searchField || suppliers.length === 0}
             />
             <ActiveFilterPill
                 label={SUPPLIER_FILTER_OPTIONS.find(o => o.value === appliedSearch.field)?.label}
@@ -186,7 +188,7 @@ const SupplierList = () => {
                 onClear={handleClearSearch}
             />
         </>
-    ), [searchField, searchWord, handleSearch, handleClearSearch, loading, appliedSearch])
+    ), [searchField, searchWord, handleSearch, handleClearSearch, loading, appliedSearch, suppliers.length])
 
     const formattedSuppliers = suppliers.map((supplier) => ({
         ...supplier,

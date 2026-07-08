@@ -19,7 +19,7 @@ import { formatDateTime } from '@/utils/formatDateTime'
 import { getPaginationSummary } from '@/utils/paginationSummary'
 import useIsMobile from '@/hooks/useIsMobile'
 import { useMobilePage } from '@/contexts/MobilePageContext'
-import { CalendarRange, CheckCircle, CloudOff, RotateCw, X } from 'lucide-react'
+import { CalendarRange, CheckCircle, Clock, CloudOff, History, RotateCw, X } from 'lucide-react'
 
 const QuotationList = () => {
 
@@ -58,7 +58,7 @@ const QuotationList = () => {
     const [totalElements, setTotalElements] = useState(0)
     const [pageSize, setPageSize] = useState(0)
 
-    const [sortField, setSortField] = useState("quotationStartFormatted")
+    const [sortField, setSortField] = useState("quotationEndFormatted")
     const [sortDirection, setSortDirection] = useState("desc")
 
     const [statusFilter, setStatusFilter] = useState("")
@@ -192,8 +192,8 @@ const QuotationList = () => {
     }
 
     const sortOptions = useMemo(() => [
-        { key: "date-asc", label: "Data (mais antiga primeiro)", shortLabel: "Antigas", field: "quotationStartFormatted", direction: "asc" },
-        { key: "date-desc", label: "Data (mais recente primeiro)", shortLabel: "Recentes", field: "quotationStartFormatted", direction: "desc" },
+        { key: "date-desc", label: "Mais recentes primeiro", shortLabel: "Recentes", field: "quotationEndFormatted", direction: "desc", icon: <Clock size={18} strokeWidth={2} /> },
+        { key: "date-asc", label: "Mais antigas primeiro", shortLabel: "Antigas", field: "quotationEndFormatted", direction: "asc", icon: <History size={18} strokeWidth={2} /> },
     ], [])
 
     useEffect(() => {
@@ -220,11 +220,11 @@ const QuotationList = () => {
             quotation.status === 'Agendado' ? 'accent' : ''
         const startDate = formatDateTime(quotation.quotationStart)?.date
         return {
-            avatar: <CalendarRange size={20} strokeWidth={1.75} />,
+            avatar: <CalendarRange size={13} strokeWidth={1.75} />,
             title: `Cotação · ${startDate ?? '-'}`,
-            subtitle: `${quotation.quotationStartFormatted} → ${quotation.quotationEndFormatted}`,
+            subtitle: [`Início: ${quotation.quotationStartFormatted}`, `Fim: ${quotation.quotationEndFormatted}`],
             meta: `${quotation.productCount} itens · ${quotation.supplierCount} fornecedores`,
-            tags: [{ label: quotation.status, variant: statusVariant }],
+            titleTag: { label: quotation.status, variant: statusVariant },
         }
     }
 

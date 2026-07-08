@@ -7,24 +7,19 @@ import { useMobilePage } from '@/contexts/MobilePageContext'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import Table from '@/components/Table'
+import EmptyState from '@/components/EmptyState'
+import MetaCard from '@/components/MetaCard'
 import { ENV } from '@/config/env'
 import { formatCnpj } from '@/utils/formatCnpj'
 import { formatMoney } from '@/utils/formatMoney'
-import { X, FileDown, Package, Gavel, TrendingDown, Users, Clock, Activity, ChevronDown, ChevronLeft, CheckCircle2, MinusCircle, Building2 } from 'lucide-react'
+import { formatDateTime } from '@/utils/formatDateTime'
+import { X, FileDown, Package, Gavel, TrendingDown, Users, User, Clock, Activity, ChevronDown, ChevronRight, CheckCircle2, MinusCircle, Building2, SearchX, RotateCw, Flag, Calendar } from 'lucide-react'
 import Cookies from 'js-cookie'
 
 
 /* ── Mobile sub-components ─────────────────────────────────────── */
 
-const PRODUCT_FILTER_OPTIONS = [
-    { value: "productName",  label: "Produto" },
-    { value: "supplierName", label: "Fornecedor" },
-    { value: "employerName", label: "Empresa" },
-    { value: "employerCnpj", label: "CNPJ" },
-]
-
 const BID_FILTER_OPTIONS = [
-    { value: "productName",  label: "Produto" },
     { value: "supplierName", label: "Fornecedor" },
     { value: "employerName", label: "Empresa" },
     { value: "employerCnpj", label: "CNPJ" },
@@ -36,74 +31,90 @@ const BID_PRESENCE_OPTIONS = [
     { value: "without", label: "Sem lance" },
 ]
 
+const BID_STATUS_OPTIONS = [
+    { value: "all",     label: "Todos" },
+    { value: "winning", label: "Vencendo" },
+    { value: "losing",  label: "Superado" },
+]
+
 const MobileFilterPanel = ({
-    filterOptions,
+    filterOptions = [],
     selectedField, onSelectField,
     searchWord, onSearchWord,
     onSearch,
     appliedWord,
     onClear,
     extraChips,
-}) => (
-    <div className="mf-root">
-        <p className="mf-label">Filtrar por</p>
-        <div className="mf-chips">
-            {filterOptions.map(opt => (
-                <button
-                    key={opt.value}
-                    type="button"
-                    className={`mf-chip ${selectedField === opt.value ? 'selected' : ''}`}
-                    onClick={() => onSelectField(prev => prev === opt.value ? "" : opt.value)}
-                >
-                    {opt.label}
+    extraChipsLabel = "Situação",
+    fieldLabel,
+}) => {
+    const resolvedFieldLabel = fieldLabel ?? filterOptions.find(o => o.value === selectedField)?.label
+
+    return (
+        <div className="mf-root">
+            {extraChips && (
+                <>
+                    <p className="mf-label">{extraChipsLabel}</p>
+                    <div className="mf-chips">{extraChips}</div>
+                </>
+            )}
+            {filterOptions.length > 0 && (
+                <>
+                    <p className="mf-label" style={{ marginTop: '0.25rem' }}>Filtrar por</p>
+                    <div className="mf-chips">
+                        {filterOptions.map(opt => (
+                            <button
+                                key={opt.value}
+                                type="button"
+                                className={`mf-chip ${selectedField === opt.value ? 'selected' : ''}`}
+                                onClick={() => onSelectField(prev => prev === opt.value ? "" : opt.value)}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                </>
+            )}
+            <div className="mf-input-row">
+                <div className="mf-input-wrap">
+                    <svg className="mf-input-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+                        <path d="M10.5 10.5L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                    <input
+                        type="text"
+                        className="mf-input"
+                        value={searchWord}
+                        onChange={e => onSearchWord(e.target.value)}
+                        placeholder={selectedField ? `Buscar por ${resolvedFieldLabel ?? '...'}` : "Selecione um campo acima"}
+                        onKeyDown={e => { if (e.key === "Enter") onSearch() }}
+                        disabled={!selectedField}
+                    />
+                    {searchWord && (
+                        <button type="button" className="mf-input-clear" onClick={() => onSearchWord("")} aria-label="Limpar texto">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/></svg>
+                        </button>
+                    )}
+                </div>
+                <button type="button" className="mf-search-btn" onClick={onSearch} disabled={!selectedField}>
+                    Buscar
                 </button>
-            ))}
-        </div>
-        {extraChips && (
-            <>
-                <p className="mf-label" style={{ marginTop: '0.25rem' }}>Lance</p>
-                <div className="mf-chips">{extraChips}</div>
-            </>
-        )}
-        <div className="mf-input-row">
-            <div className="mf-input-wrap">
-                <svg className="mf-input-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
-                    <path d="M10.5 10.5L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-                <input
-                    type="text"
-                    className="mf-input"
-                    value={searchWord}
-                    onChange={e => onSearchWord(e.target.value)}
-                    placeholder={selectedField ? `Buscar por ${filterOptions.find(o => o.value === selectedField)?.label ?? '...'}` : "Selecione um campo acima"}
-                    onKeyDown={e => { if (e.key === "Enter") onSearch() }}
-                    disabled={!selectedField}
-                />
-                {searchWord && (
-                    <button type="button" className="mf-input-clear" onClick={() => onSearchWord("")} aria-label="Limpar texto">
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/></svg>
+            </div>
+            {appliedWord && (
+                <div className="mf-active-row">
+                    <span className="mf-active-pill">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M4 6h4M6 4v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                        {resolvedFieldLabel}: <strong>{appliedWord}</strong>
+                    </span>
+                    <button type="button" className="mf-clear-btn" onClick={onClear}>
+                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 1l9 9M10 1L1 10" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/></svg>
+                        Limpar
                     </button>
-                )}
-            </div>
-            <button type="button" className="mf-search-btn" onClick={onSearch} disabled={!selectedField}>
-                Buscar
-            </button>
+                </div>
+            )}
         </div>
-        {appliedWord && (
-            <div className="mf-active-row">
-                <span className="mf-active-pill">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M4 6h4M6 4v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                    {filterOptions.find(o => o.value === selectedField)?.label}: <strong>{appliedWord}</strong>
-                </span>
-                <button type="button" className="mf-clear-btn" onClick={onClear}>
-                    <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 1l9 9M10 1L1 10" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/></svg>
-                    Limpar
-                </button>
-            </div>
-        )}
-    </div>
-)
+    )
+}
 
 const MobileProductCard = ({ product }) => {
     const hasLance = product.lowestBid !== null && product.lowestBid !== "-"
@@ -115,9 +126,14 @@ const MobileProductCard = ({ product }) => {
                 </div>
                 <div className="qm-product-info">
                     <span className="qm-product-name">{product.productName}</span>
-                    {product.brand && product.brand !== "-" && (
-                        <span className="qm-product-brand">{product.brand}</span>
-                    )}
+                    <div className="qm-product-brand-row">
+                        <span className={`qm-product-brand ${!product.brand || product.brand === "-" ? 'qm-product-brand--empty' : ''}`}>
+                            {product.brand && product.brand !== "-" ? product.brand : "Sem marca"}
+                        </span>
+                        <span className={`qm-mobile-status-pill qm-product-lance-badge ${hasLance ? 'qm-status--active' : 'qm-status--closed'}`}>
+                            {hasLance ? 'Com lance' : 'Sem lance'}
+                        </span>
+                    </div>
                 </div>
                 <div className={`qm-product-qty-badge`}>
                     <span className="qm-product-qty-label">Qtd</span>
@@ -125,12 +141,12 @@ const MobileProductCard = ({ product }) => {
                 </div>
             </div>
 
-            {hasLance ? (
+            {hasLance && (
                 <div className="qm-product-bid-section">
                     <div className="qm-product-bid-row">
                         <div className="qm-bid-metric">
                             <span className="qm-bid-metric-label">Menor Lance</span>
-                            <span className="qm-bid-metric-value qm-bid-metric-value--highlight">
+                            <span className="qm-bid-metric-value">
                                 {formatMoney(product.lowestBid)}
                             </span>
                         </div>
@@ -144,57 +160,67 @@ const MobileProductCard = ({ product }) => {
                         </div>
                     </div>
                     <div className="qm-product-supplier-row">
+                        <User size={13} strokeWidth={2} className="qm-bid-supplier-icon" />
                         <span className="qm-product-supplier-name">{product.supplierName}</span>
                         {product.employerName !== "-" && (
                             <span className="qm-product-employer-name">{product.employerName}</span>
                         )}
                     </div>
                 </div>
-            ) : (
-                <div className="qm-product-no-bid">
-                    <span>Sem lances</span>
-                </div>
             )}
         </div>
     )
 }
 
-const MobileBidCard = ({ bid, isLowest }) => (
-    <div className={`qm-bid-card ${isLowest ? 'qm-bid-card--winning' : 'qm-bid-card--losing'}`}>
-        <div className="qm-bid-card-header">
-            <div className="qm-bid-card-product">
-                <span className="qm-bid-product-name">{bid.productName}</span>
-                <span className="qm-bid-qty">Qtd: {bid.quantity}{bid.bonus > 0 ? ` +${bid.bonus} bônus` : ''}</span>
-            </div>
-            <span className={`qm-bid-status-badge ${isLowest ? 'winning' : 'losing'}`}>
-                {isLowest ? 'Vencendo' : 'Superado'}
-            </span>
-        </div>
-        <div className="qm-bid-prices-row">
-            <div className="qm-bid-price-metric">
-                <span className="qm-bid-price-label">Total</span>
-                <span className={`qm-bid-price-value ${isLowest ? 'qm-bid-price-value--winning' : ''}`}>
-                    {formatMoney(bid.price)}
-                </span>
-            </div>
-            <div className="qm-bid-price-metric">
-                <span className="qm-bid-price-label">Unitário</span>
-                <span className="qm-bid-price-value">
-                    {formatMoney(bid.price / (bid.quantity + bid.bonus))}
-                </span>
-            </div>
-        </div>
-        <div className="qm-bid-supplier-row">
-            <span className="qm-bid-supplier-name">{bid.supplierName}</span>
-            {bid.employerName && <span className="qm-bid-employer">{bid.employerName}</span>}
-        </div>
-        <span className="qm-bid-timestamp">{new Date(bid.createdAt).toLocaleString()}</span>
-    </div>
-)
+const MobileBidCard = ({ bid, isLowest }) => {
+    const createdAt = formatDateTime(bid.createdAt)
 
-const MobileSection = ({ title, icon, count, children, filterSlot, filterActive, defaultOpen = true }) => {
+    return (
+        <div className={`qm-bid-card ${isLowest ? 'qm-bid-card--winning' : 'qm-bid-card--losing'}`}>
+            <div className="qm-bid-card-header">
+                <div className="qm-bid-card-product">
+                    <span className="qm-bid-product-name">{bid.productName}</span>
+                    <div className="qm-bid-qty-row">
+                        <span className="qm-bid-qty-label">Qtd</span>
+                        <span className="qm-bid-qty-badge">{bid.quantity}</span>
+                        {bid.bonus > 0 && (
+                            <span className="qm-bid-bonus-badge">+{bid.bonus} bônus</span>
+                        )}
+                    </div>
+                </div>
+                <span className={`qm-bid-status-badge ${isLowest ? 'winning' : 'losing'}`}>
+                    {isLowest ? 'Vencendo' : 'Superado'}
+                </span>
+            </div>
+            <div className="qm-bid-prices-row">
+                <div className="qm-bid-price-metric">
+                    <span className="qm-bid-price-label">Total</span>
+                    <span className="qm-bid-price-value">
+                        {formatMoney(bid.price)}
+                    </span>
+                </div>
+                <div className="qm-bid-price-metric">
+                    <span className="qm-bid-price-label">Unitário</span>
+                    <span className="qm-bid-price-value">
+                        {formatMoney(bid.price / (bid.quantity + bid.bonus))}
+                    </span>
+                </div>
+            </div>
+            <div className="qm-bid-supplier-row">
+                <User size={13} strokeWidth={2} className="qm-bid-supplier-icon" />
+                <span className="qm-bid-supplier-name">{bid.supplierName}</span>
+                {bid.employerName && <span className="qm-bid-employer">{bid.employerName}</span>}
+            </div>
+            <div className="qm-bid-timestamp">
+                <Clock size={12} strokeWidth={2} />
+                <span>{createdAt ? `${createdAt.date} • ${createdAt.time}` : "-"}</span>
+            </div>
+        </div>
+    )
+}
+
+const MobileSection = ({ title, icon, count, children, filterSlot, defaultOpen = true }) => {
     const [open, setOpen] = useState(defaultOpen)
-    const [filterOpen, setFilterOpen] = useState(false)
 
     return (
         <div className="qm-section">
@@ -219,20 +245,7 @@ const MobileSection = ({ title, icon, count, children, filterSlot, filterActive,
             {open && (
                 <div className="qm-section-body">
                     {filterSlot && (
-                        <div className="qm-section-filter-bar">
-                            <button
-                                type="button"
-                                className={`filter-toggle-btn ${filterOpen ? 'active' : ''} ${filterActive ? 'has-dot' : ''}`}
-                                onClick={e => { e.stopPropagation(); setFilterOpen(p => !p) }}
-                            >
-                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 3h13M3 7.5h9M5.5 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                                <span>Filtros</span>
-                                {filterActive && <span className="filter-dot" />}
-                            </button>
-                            <div className={`filter-drawer ${filterOpen ? 'open' : ''}`}>
-                                <div className="filter-drawer-inner">{filterSlot}</div>
-                            </div>
-                        </div>
+                        <div className="qm-section-filter-bar">{filterSlot}</div>
                     )}
                     {children}
                 </div>
@@ -340,19 +353,31 @@ const QuotationMonitor = () => {
     const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
     const [bidFilter, setBidFilter] = useState("all")
 
-    const [bidSearchField, setBidSearchField] = useState("")
+    const [bidSearchField, setBidSearchField] = useState("supplierName")
     const [bidSearchWord, setBidSearchWord] = useState("")
     const [appliedBidSearch, setAppliedBidSearch] = useState({ field: "", word: "" })
+    const [bidStatusFilter, setBidStatusFilter] = useState("all")
 
     const [participations, setParticipations] = useState([])
     const [showSuppliersPanel, setShowSuppliersPanel] = useState(false)
     const [countdown, setCountdown] = useState({ status: '', timeRemaining: '' })
 
+    const statusLabel = countdown.status === 'Active' ? 'Ativo'
+        : countdown.status === 'Scheduled' ? 'Agendado'
+        : 'Fechado'
+
+    const statusCls = countdown.status === 'Active' ? 'qm-status--active'
+        : countdown.status === 'Scheduled' ? 'qm-status--scheduled'
+        : 'qm-status--closed'
+
     useEffect(() => {
         if (!quotation) return
-        registerPage(`Cotação #${quotation.quotationId}`, null)
+        registerPage(`Cotação #${quotation.quotationId}`, null, {
+            leftAction: { icon: X, onClick: () => navigate(-1), ariaLabel: "Fechar" },
+            rightSlot: <span className={`qm-mobile-status-pill ${statusCls}`}>{statusLabel}</span>,
+        })
         return () => unregisterPage()
-    }, [quotation, registerPage, unregisterPage])
+    }, [quotation, registerPage, unregisterPage, navigate, statusCls, statusLabel])
 
     useEffect(() => {
         const fetchQuotationData = async () => {
@@ -485,6 +510,10 @@ const QuotationMonitor = () => {
         setAppliedSearch({ field: searchField, word: searchWord })
     }, [searchField, searchWord])
 
+    const handleProductNameSearch = useCallback(() => {
+        setAppliedSearch({ field: "productName", word: searchWord })
+    }, [searchWord])
+
     const handleClearSearch = useCallback(() => {
         setSearchField("")
         setSearchWord("")
@@ -525,9 +554,10 @@ const QuotationMonitor = () => {
     }, [bidSearchField, bidSearchWord])
 
     const handleClearBidSearch = useCallback(() => {
-        setBidSearchField("")
+        setBidSearchField("supplierName")
         setBidSearchWord("")
         setAppliedBidSearch({ field: "", word: "" })
+        setBidStatusFilter("all")
     }, [])
 
     const filteredBids = useMemo(() => {
@@ -544,8 +574,16 @@ const QuotationMonitor = () => {
             }
         }
 
+        if (bidStatusFilter !== "all") {
+            result = result.filter(b => {
+                const lowest = lowestBids[b.productId]
+                const isLowest = lowest && b.price === lowest.price
+                return bidStatusFilter === "winning" ? isLowest : !isLowest
+            })
+        }
+
         return result
-    }, [bids, filteredProducts, appliedBidSearch])
+    }, [bids, filteredProducts, appliedBidSearch, bidStatusFilter, lowestBids])
 
     const segBtnCls = (active) => [
         'px-3 py-[0.4rem] text-[0.875rem] font-medium font-sans border-none cursor-pointer whitespace-nowrap transition-[background-color,color] duration-[160ms] not-last:border-r not-last:border-[var(--color-border-default)]',
@@ -678,24 +716,22 @@ const QuotationMonitor = () => {
 
     /* ── Mobile layout ────────────────────────────────────────────── */
     if (isMobile) {
-        const statusLabel = countdown.status === 'Active' ? 'Ativo'
-            : countdown.status === 'Scheduled' ? 'Agendado'
-            : 'Fechado'
+        const quotationStartFormatted = formatDateTime(quotation.quotationStart)
+        const quotationEndFormatted = formatDateTime(quotation.quotationEnd)
 
-        const statusCls = countdown.status === 'Active' ? 'qm-status--active'
-            : countdown.status === 'Scheduled' ? 'qm-status--scheduled'
-            : 'qm-status--closed'
+        const hasActiveProductFilter = appliedSearch.word !== "" || bidFilter !== "all"
+        const hasActiveBidFilter = appliedBidSearch.word !== "" || bidStatusFilter !== "all"
 
         const mobileProductFilter = (
             <MobileFilterPanel
-                filterOptions={PRODUCT_FILTER_OPTIONS}
-                selectedField={searchField}
-                onSelectField={setSearchField}
+                selectedField="productName"
+                fieldLabel="Nome do produto"
                 searchWord={searchWord}
                 onSearchWord={setSearchWord}
-                onSearch={handleSearch}
+                onSearch={handleProductNameSearch}
                 appliedWord={appliedSearch.word}
                 onClear={handleClearSearch}
+                extraChipsLabel="Lance"
                 extraChips={BID_PRESENCE_OPTIONS.map(opt => (
                     <button
                         key={opt.value}
@@ -719,25 +755,24 @@ const QuotationMonitor = () => {
                 onSearch={handleBidSearch}
                 appliedWord={appliedBidSearch.word}
                 onClear={handleClearBidSearch}
+                extraChips={BID_STATUS_OPTIONS.map(opt => (
+                    <button
+                        key={opt.value}
+                        type="button"
+                        className={`mf-chip ${bidStatusFilter === opt.value ? 'selected' : ''}`}
+                        onClick={() => setBidStatusFilter(opt.value)}
+                    >
+                        {opt.label}
+                    </button>
+                ))}
             />
         )
 
         return (
             <div className="qm-mobile-root">
-                {/* ── Sticky header ── */}
-                <div className="qm-mobile-header">
-                    <button
-                        className="qm-mobile-back-btn"
-                        onClick={() => navigate(-1)}
-                        aria-label="Voltar"
-                    >
-                        <ChevronLeft size={20} strokeWidth={2.5} />
-                    </button>
-                    <div className="qm-mobile-header-center">
-                        <span className="qm-mobile-title">Cotação #{quotation.quotationId}</span>
-                        <span className={`qm-mobile-status-pill ${statusCls}`}>{statusLabel}</span>
-                    </div>
-                    {countdown.status === 'Closed' ? (
+                {/* ── Sticky header (só quando há botão de exportar) ── */}
+                {countdown.status === 'Closed' && (
+                    <div className="qm-mobile-header justify-end">
                         <button
                             className="qm-mobile-export-btn"
                             onClick={handlePrintPdf}
@@ -745,39 +780,44 @@ const QuotationMonitor = () => {
                         >
                             <FileDown size={18} strokeWidth={2} />
                         </button>
-                    ) : (
-                        <div style={{ width: '2.25rem' }} />
-                    )}
-                </div>
+                    </div>
+                )}
 
                 {/* ── Countdown banner ── */}
                 {countdown.status !== 'Closed' && (
                     <div className={`qm-countdown-banner ${statusCls}`}>
-                        <Clock size={14} strokeWidth={2} />
-                        <span>{countdown.status === 'Active' ? 'Encerra em' : 'Começa em'}</span>
-                        <span className="qm-countdown-time">{countdown.timeRemaining}</span>
+                        <Clock size={22} strokeWidth={2} className="qm-countdown-icon" />
+                        <div className="qm-countdown-text">
+                            <span className="qm-countdown-label">{countdown.status === 'Active' ? 'Encerra em' : 'Começa em'}</span>
+                            <span className="qm-countdown-time">{countdown.timeRemaining}</span>
+                        </div>
                     </div>
                 )}
 
                 {/* ── Dates info ── */}
-                <div className="qm-dates-row">
-                    <div className="qm-date-item">
-                        <span className="qm-date-label">Início</span>
-                        <span className="qm-date-value">{new Date(quotation.quotationStart).toLocaleString()}</span>
-                    </div>
-                    <div className="qm-date-divider" />
-                    <div className="qm-date-item">
-                        <span className="qm-date-label">Fim</span>
-                        <span className="qm-date-value">{new Date(quotation.quotationEnd).toLocaleString()}</span>
-                    </div>
+                <div className="grid grid-cols-2 gap-2 mx-4 mt-3">
+                    <MetaCard
+                        tone="success"
+                        icon={<Flag size={16} strokeWidth={2} />}
+                        label="Início"
+                        value={quotationStartFormatted ? `${quotationStartFormatted.date}, ${quotationStartFormatted.time}` : "-"}
+                    />
+                    <MetaCard
+                        tone="danger"
+                        icon={<Calendar size={16} strokeWidth={2} />}
+                        label="Fim"
+                        value={quotationEndFormatted ? `${quotationEndFormatted.date}, ${quotationEndFormatted.time}` : "-"}
+                    />
                 </div>
 
                 {/* ── Stats grid ── */}
                 <div className="qm-stats-grid">
                     <div className="qm-stat-card qm-stat-card--total">
                         <div className="qm-stat-icon"><TrendingDown size={16} strokeWidth={2} /></div>
-                        <span className="qm-stat-value">{formattedTotalEstimated}</span>
-                        <span className="qm-stat-label">Total estimado</span>
+                        <div className="qm-stat-total-text">
+                            <span className="qm-stat-label">Total estimado</span>
+                            <span className="qm-stat-value">{formattedTotalEstimated}</span>
+                        </div>
                     </div>
                     <div className="qm-stat-card">
                         <div className="qm-stat-icon"><Activity size={16} strokeWidth={2} /></div>
@@ -785,7 +825,10 @@ const QuotationMonitor = () => {
                         <span className="qm-stat-label">Lances</span>
                     </div>
                     <button className="qm-stat-card qm-stat-card--clickable" onClick={() => setShowSuppliersPanel(true)}>
-                        <div className="qm-stat-icon"><Users size={16} strokeWidth={2} /></div>
+                        <div className="qm-stat-card-top">
+                            <div className="qm-stat-icon"><Users size={16} strokeWidth={2} /></div>
+                            <ChevronRight size={14} strokeWidth={2.5} className="qm-stat-chevron" />
+                        </div>
                         <span className="qm-stat-value">{uniqueSuppliers}</span>
                         <span className="qm-stat-label">Fornecedores</span>
                     </button>
@@ -802,11 +845,24 @@ const QuotationMonitor = () => {
                     icon={<Package size={15} strokeWidth={2} />}
                     count={sortedFilteredProducts.length}
                     filterSlot={mobileProductFilter}
-                    filterActive={appliedSearch.word !== "" || bidFilter !== "all"}
                     defaultOpen={true}
                 >
                     {sortedFilteredProducts.length === 0 ? (
-                        <div className="qm-empty">Nenhum produto encontrado.</div>
+                        hasActiveProductFilter ? (
+                            <EmptyState
+                                icon={<SearchX size={28} strokeWidth={1.75} />}
+                                title="Nenhum produto encontrado"
+                                description="Ajuste a situação ou tente outro termo de busca."
+                                action={
+                                    <button type="button" className="qm-empty-clear-btn" onClick={handleClearSearch}>
+                                        <RotateCw size={14} strokeWidth={2} />
+                                        Limpar filtros
+                                    </button>
+                                }
+                            />
+                        ) : (
+                            <div className="qm-empty">Nenhum produto encontrado.</div>
+                        )
                     ) : (
                         <div className="qm-cards-list">
                             {sortedFilteredProducts.map(p => (
@@ -822,11 +878,24 @@ const QuotationMonitor = () => {
                     icon={<Gavel size={15} strokeWidth={2} />}
                     count={filteredBids.length}
                     filterSlot={mobileBidFilter}
-                    filterActive={appliedBidSearch.word !== ""}
                     defaultOpen={false}
                 >
                     {filteredBids.length === 0 ? (
-                        <div className="qm-empty">Nenhum lance registrado.</div>
+                        hasActiveBidFilter ? (
+                            <EmptyState
+                                icon={<SearchX size={28} strokeWidth={1.75} />}
+                                title="Nenhum lance encontrado"
+                                description="Ajuste a situação ou tente outro termo de busca."
+                                action={
+                                    <button type="button" className="qm-empty-clear-btn" onClick={handleClearBidSearch}>
+                                        <RotateCw size={14} strokeWidth={2} />
+                                        Limpar filtros
+                                    </button>
+                                }
+                            />
+                        ) : (
+                            <div className="qm-empty">Nenhum lance registrado.</div>
+                        )
                     ) : (
                         <div className="qm-cards-list">
                             {filteredBids.map((b, i) => {
@@ -853,6 +922,9 @@ const QuotationMonitor = () => {
     }
 
     /* ── Desktop layout (unchanged) ─────────────────────────────── */
+    const quotationStartFormatted = formatDateTime(quotation.quotationStart)
+    const quotationEndFormatted = formatDateTime(quotation.quotationEnd)
+
     return (
         <div className="page-wrapper text-[var(--color-text-body)]">
             {/* Header */}
@@ -877,8 +949,8 @@ const QuotationMonitor = () => {
 
             {/* Quotation info */}
             <div className="flex justify-center items-center gap-6 bg-[var(--color-surface-card)] border border-[var(--color-border-default)] [box-shadow:var(--shadow-xs)] px-[1.125rem] py-3 rounded-[var(--radius-lg)] mb-4 text-[0.875rem] text-[var(--color-text-neutral)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.375rem]">
-                <p className="m-0"><strong>Início:</strong> {new Date(quotation.quotationStart).toLocaleString()}</p>
-                <p className="m-0"><strong>Fim:</strong> {new Date(quotation.quotationEnd).toLocaleString()}</p>
+                <p className="m-0"><strong>Início:</strong> {quotationStartFormatted ? `${quotationStartFormatted.date} ${quotationStartFormatted.time}` : "-"}</p>
+                <p className="m-0"><strong>Fim:</strong> {quotationEndFormatted ? `${quotationEndFormatted.date} ${quotationEndFormatted.time}` : "-"}</p>
             </div>
 
             {/* Stats grid */}

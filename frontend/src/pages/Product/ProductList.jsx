@@ -169,7 +169,7 @@ const ProductList = () => {
                 value={searchWord}
                 onChange={e => setSearchWord(e.target.value)}
                 onSearch={handleSearch}
-                onClear={() => setSearchWord("")}
+                onClear={handleClearSearch}
                 placeholder="Buscar por nome do produto"
                 searchDisabled={loading}
             />

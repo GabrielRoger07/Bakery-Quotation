@@ -175,7 +175,7 @@ const SupplierList = () => {
                 value={searchWord}
                 onChange={e => setSearchWord(e.target.value)}
                 onSearch={handleSearch}
-                onClear={() => setSearchWord("")}
+                onClear={handleClearSearch}
                 placeholder={searchField ? `Buscar por ${SUPPLIER_FILTER_OPTIONS.find(o => o.value === searchField)?.label ?? '...'}` : "Selecione um campo acima"}
                 inputDisabled={!searchField}
                 searchDisabled={loading || !searchField}

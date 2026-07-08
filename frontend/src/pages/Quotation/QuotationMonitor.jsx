@@ -91,7 +91,7 @@ const MobileFilterPanel = ({
                         disabled={!selectedField}
                     />
                     {searchWord && (
-                        <button type="button" className="mf-input-clear" onClick={() => onSearchWord("")} aria-label="Limpar texto">
+                        <button type="button" className="mf-input-clear" onClick={onClear} aria-label="Limpar texto">
                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/></svg>
                         </button>
                     )}
@@ -116,7 +116,7 @@ const MobileFilterPanel = ({
     )
 }
 
-const MobileProductCard = ({ product }) => {
+const MobileProductCard = ({ product, isScheduled }) => {
     const hasLance = product.lowestBid !== null && product.lowestBid !== "-"
     return (
         <div className="qm-product-card">
@@ -130,18 +130,25 @@ const MobileProductCard = ({ product }) => {
                         <span className={`qm-product-brand ${!product.brand || product.brand === "-" ? 'qm-product-brand--empty' : ''}`}>
                             {product.brand && product.brand !== "-" ? product.brand : "Sem marca"}
                         </span>
-                        <span className={`qm-mobile-status-pill qm-product-lance-badge ${hasLance ? 'qm-status--active' : 'qm-status--closed'}`}>
-                            {hasLance ? 'Com lance' : 'Sem lance'}
-                        </span>
+                        {!isScheduled && (
+                            <span className={`qm-mobile-status-pill qm-product-lance-badge ${hasLance ? 'qm-status--active' : 'qm-status--closed'}`}>
+                                {hasLance ? 'Com lance' : 'Sem lance'}
+                            </span>
+                        )}
                     </div>
                 </div>
                 <div className={`qm-product-qty-badge`}>
                     <span className="qm-product-qty-label">Qtd</span>
-                    <span className="qm-product-qty-value">{product.quantity}</span>
+                    <span className="qm-product-qty-value">
+                        {product.quantity}
+                        <span className="qm-product-qty-unit">
+                            {' '}{product.unitOfMeasure.toUpperCase()}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 'S' : ''}
+                        </span>
+                    </span>
                 </div>
             </div>
 
-            {hasLance && (
+            {hasLance && !isScheduled && (
                 <div className="qm-product-bid-section">
                     <div className="qm-product-bid-row">
                         <div className="qm-bid-metric">
@@ -154,7 +161,7 @@ const MobileProductCard = ({ product }) => {
                             <span className="qm-bid-metric-label">Preço Unitário</span>
                             <span className="qm-bid-metric-value">
                                 {product.pricePerUnit && product.pricePerUnit !== "-"
-                                    ? formatMoney(product.pricePerUnit)
+                                    ? `${formatMoney(product.pricePerUnit)}/${product.unitOfMeasure}`
                                     : "-"}
                             </span>
                         </div>
@@ -172,7 +179,7 @@ const MobileProductCard = ({ product }) => {
     )
 }
 
-const MobileBidCard = ({ bid, isLowest }) => {
+const MobileBidCard = ({ bid, isLowest, unitOfMeasure, isClosed }) => {
     const createdAt = formatDateTime(bid.createdAt)
 
     return (
@@ -182,14 +189,21 @@ const MobileBidCard = ({ bid, isLowest }) => {
                     <span className="qm-bid-product-name">{bid.productName}</span>
                     <div className="qm-bid-qty-row">
                         <span className="qm-bid-qty-label">Qtd</span>
-                        <span className="qm-bid-qty-badge">{bid.quantity}</span>
+                        <span className="qm-bid-qty-badge">
+                            {bid.quantity}
+                            {unitOfMeasure && (
+                                <span className="qm-bid-qty-unit">
+                                    {' '}{unitOfMeasure.toUpperCase()}{['bag', 'balde'].includes(unitOfMeasure) && bid.quantity > 1 ? 'S' : ''}
+                                </span>
+                            )}
+                        </span>
                         {bid.bonus > 0 && (
                             <span className="qm-bid-bonus-badge">+{bid.bonus} bônus</span>
                         )}
                     </div>
                 </div>
                 <span className={`qm-bid-status-badge ${isLowest ? 'winning' : 'losing'}`}>
-                    {isLowest ? 'Vencendo' : 'Superado'}
+                    {isLowest ? (isClosed ? 'Vencedor' : 'Vencendo') : 'Superado'}
                 </span>
             </div>
             <div className="qm-bid-prices-row">
@@ -203,6 +217,7 @@ const MobileBidCard = ({ bid, isLowest }) => {
                     <span className="qm-bid-price-label">Unitário</span>
                     <span className="qm-bid-price-value">
                         {formatMoney(bid.price / (bid.quantity + bid.bonus))}
+                        {unitOfMeasure ? `/${unitOfMeasure}` : ''}
                     </span>
                 </div>
             </div>
@@ -456,6 +471,12 @@ const QuotationMonitor = () => {
         }))
     }, [participations, bids])
 
+    const unitByProductId = useMemo(() => {
+        const map = {}
+        for (const p of baseProducts) map[p.productId] = p.unitOfMeasure
+        return map
+    }, [baseProducts])
+
     const products = useMemo(() => baseProducts.map(p => {
         const lowest = lowestBids[p.productId]
         return lowest ? {
@@ -561,8 +582,7 @@ const QuotationMonitor = () => {
     }, [])
 
     const filteredBids = useMemo(() => {
-        const matchingProductIds = new Set(filteredProducts.map(p => p.productId))
-        let result = bids.filter(b => matchingProductIds.has(b.productId))
+        let result = bids
 
         if (appliedBidSearch.word) {
             const term = appliedBidSearch.word.toLowerCase()
@@ -583,7 +603,7 @@ const QuotationMonitor = () => {
         }
 
         return result
-    }, [bids, filteredProducts, appliedBidSearch, bidStatusFilter, lowestBids])
+    }, [bids, appliedBidSearch, bidStatusFilter, lowestBids])
 
     const segBtnCls = (active) => [
         'px-3 py-[0.4rem] text-[0.875rem] font-medium font-sans border-none cursor-pointer whitespace-nowrap transition-[background-color,color] duration-[160ms] not-last:border-r not-last:border-[var(--color-border-default)]',
@@ -732,7 +752,7 @@ const QuotationMonitor = () => {
                 appliedWord={appliedSearch.word}
                 onClear={handleClearSearch}
                 extraChipsLabel="Lance"
-                extraChips={BID_PRESENCE_OPTIONS.map(opt => (
+                extraChips={countdown.status === 'Scheduled' ? undefined : BID_PRESENCE_OPTIONS.map(opt => (
                     <button
                         key={opt.value}
                         type="button"
@@ -770,18 +790,6 @@ const QuotationMonitor = () => {
 
         return (
             <div className="qm-mobile-root">
-                {/* ── Sticky header (só quando há botão de exportar) ── */}
-                {countdown.status === 'Closed' && (
-                    <div className="qm-mobile-header justify-end">
-                        <button
-                            className="qm-mobile-export-btn"
-                            onClick={handlePrintPdf}
-                            aria-label="Exportar PDF"
-                        >
-                            <FileDown size={18} strokeWidth={2} />
-                        </button>
-                    </div>
-                )}
 
                 {/* ── Countdown banner ── */}
                 {countdown.status !== 'Closed' && (
@@ -811,33 +819,45 @@ const QuotationMonitor = () => {
                 </div>
 
                 {/* ── Stats grid ── */}
-                <div className="qm-stats-grid">
-                    <div className="qm-stat-card qm-stat-card--total">
-                        <div className="qm-stat-icon"><TrendingDown size={16} strokeWidth={2} /></div>
-                        <div className="qm-stat-total-text">
-                            <span className="qm-stat-label">Total estimado</span>
-                            <span className="qm-stat-value">{formattedTotalEstimated}</span>
+                {countdown.status !== 'Scheduled' && (
+                    <div className="qm-stats-grid">
+                        <div className="qm-stat-card qm-stat-card--total">
+                            <div className="qm-stat-icon"><TrendingDown size={16} strokeWidth={2} /></div>
+                            <div className="qm-stat-total-text">
+                                <span className="qm-stat-label">{countdown.status === 'Closed' ? 'Valor Total' : 'Total estimado'}</span>
+                                <span className="qm-stat-value">{formattedTotalEstimated}</span>
+                            </div>
+                        </div>
+                        {countdown.status === 'Closed' && (
+                            <button
+                                type="button"
+                                className="qm-download-pdf-btn"
+                                onClick={handlePrintPdf}
+                            >
+                                <FileDown size={18} strokeWidth={2} />
+                                Baixar lista de compras (PDF)
+                            </button>
+                        )}
+                        <div className="qm-stat-card">
+                            <div className="qm-stat-icon"><Activity size={16} strokeWidth={2} /></div>
+                            <span className="qm-stat-value">{bids.length}</span>
+                            <span className="qm-stat-label">Lances</span>
+                        </div>
+                        <button className="qm-stat-card qm-stat-card--clickable" onClick={() => setShowSuppliersPanel(true)}>
+                            <div className="qm-stat-card-top">
+                                <div className="qm-stat-icon"><Users size={16} strokeWidth={2} /></div>
+                                <ChevronRight size={14} strokeWidth={2.5} className="qm-stat-chevron" />
+                            </div>
+                            <span className="qm-stat-value">{uniqueSuppliers}</span>
+                            <span className="qm-stat-label">Fornecedores</span>
+                        </button>
+                        <div className="qm-stat-card">
+                            <div className="qm-stat-icon"><Package size={16} strokeWidth={2} /></div>
+                            <span className="qm-stat-value">{productsWithBidsCount}<span className="qm-stat-value-denom">/{products.length}</span></span>
+                            <span className="qm-stat-label">Produtos c/ lance</span>
                         </div>
                     </div>
-                    <div className="qm-stat-card">
-                        <div className="qm-stat-icon"><Activity size={16} strokeWidth={2} /></div>
-                        <span className="qm-stat-value">{bids.length}</span>
-                        <span className="qm-stat-label">Lances</span>
-                    </div>
-                    <button className="qm-stat-card qm-stat-card--clickable" onClick={() => setShowSuppliersPanel(true)}>
-                        <div className="qm-stat-card-top">
-                            <div className="qm-stat-icon"><Users size={16} strokeWidth={2} /></div>
-                            <ChevronRight size={14} strokeWidth={2.5} className="qm-stat-chevron" />
-                        </div>
-                        <span className="qm-stat-value">{uniqueSuppliers}</span>
-                        <span className="qm-stat-label">Fornecedores</span>
-                    </button>
-                    <div className="qm-stat-card">
-                        <div className="qm-stat-icon"><Package size={16} strokeWidth={2} /></div>
-                        <span className="qm-stat-value">{productsWithBidsCount}<span className="qm-stat-value-denom">/{products.length}</span></span>
-                        <span className="qm-stat-label">Produtos c/ lance</span>
-                    </div>
-                </div>
+                )}
 
                 {/* ── Produtos section ── */}
                 <MobileSection
@@ -866,46 +886,48 @@ const QuotationMonitor = () => {
                     ) : (
                         <div className="qm-cards-list">
                             {sortedFilteredProducts.map(p => (
-                                <MobileProductCard key={p.productId} product={p} />
+                                <MobileProductCard key={p.productId} product={p} isScheduled={countdown.status === 'Scheduled'} />
                             ))}
                         </div>
                     )}
                 </MobileSection>
 
                 {/* ── Lances section ── */}
-                <MobileSection
-                    title="Lances"
-                    icon={<Gavel size={15} strokeWidth={2} />}
-                    count={filteredBids.length}
-                    filterSlot={mobileBidFilter}
-                    defaultOpen={false}
-                >
-                    {filteredBids.length === 0 ? (
-                        hasActiveBidFilter ? (
-                            <EmptyState
-                                icon={<SearchX size={28} strokeWidth={1.75} />}
-                                title="Nenhum lance encontrado"
-                                description="Ajuste a situação ou tente outro termo de busca."
-                                action={
-                                    <button type="button" className="qm-empty-clear-btn" onClick={handleClearBidSearch}>
-                                        <RotateCw size={14} strokeWidth={2} />
-                                        Limpar filtros
-                                    </button>
-                                }
-                            />
+                {countdown.status !== 'Scheduled' && (
+                    <MobileSection
+                        title="Lances"
+                        icon={<Gavel size={15} strokeWidth={2} />}
+                        count={filteredBids.length}
+                        filterSlot={mobileBidFilter}
+                        defaultOpen={false}
+                    >
+                        {filteredBids.length === 0 ? (
+                            hasActiveBidFilter ? (
+                                <EmptyState
+                                    icon={<SearchX size={28} strokeWidth={1.75} />}
+                                    title="Nenhum lance encontrado"
+                                    description="Ajuste a situação ou tente outro termo de busca."
+                                    action={
+                                        <button type="button" className="qm-empty-clear-btn" onClick={handleClearBidSearch}>
+                                            <RotateCw size={14} strokeWidth={2} />
+                                            Limpar filtros
+                                        </button>
+                                    }
+                                />
+                            ) : (
+                                <div className="qm-empty">Nenhum lance registrado.</div>
+                            )
                         ) : (
-                            <div className="qm-empty">Nenhum lance registrado.</div>
-                        )
-                    ) : (
-                        <div className="qm-cards-list">
-                            {filteredBids.map((b, i) => {
-                                const lowest = lowestBids[b.productId]
-                                const isLowest = lowest && b.price === lowest.price
-                                return <MobileBidCard key={i} bid={b} isLowest={isLowest} />
-                            })}
-                        </div>
-                    )}
-                </MobileSection>
+                            <div className="qm-cards-list">
+                                {filteredBids.map((b, i) => {
+                                    const lowest = lowestBids[b.productId]
+                                    const isLowest = lowest && b.price === lowest.price
+                                    return <MobileBidCard key={i} bid={b} isLowest={isLowest} unitOfMeasure={unitByProductId[b.productId]} isClosed={countdown.status === 'Closed'} />
+                                })}
+                            </div>
+                        )}
+                    </MobileSection>
+                )}
 
                 {/* bottom safe-area padding */}
                 <div style={{ height: 'calc(4.25rem + env(safe-area-inset-bottom) + 1.5rem)' }} />

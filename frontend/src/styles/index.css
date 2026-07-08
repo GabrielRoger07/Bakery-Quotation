@@ -2087,6 +2087,28 @@ textarea {
     color: var(--color-accent);
     font-size: 0.75rem;
   }
+  .qm-download-pdf-btn {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1rem;
+    border: none;
+    border-radius: var(--radius-2xl);
+    background: var(--color-accent);
+    color: white;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--text-body);
+    box-shadow: var(--shadow-accent);
+    cursor: pointer;
+    transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  }
+  .qm-download-pdf-btn:active {
+    background: var(--color-accent-hover);
+    transform: translateY(1px);
+  }
   .qm-stat-icon {
     flex-shrink: 0;
     display: flex;
@@ -2314,10 +2336,13 @@ textarea {
     color: var(--color-text-muted);
   }
   .qm-product-qty-value {
-    font-size: 0.875rem;
+    font-size: var(--text-caption);
     font-weight: 700;
     color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
+  }
+  .qm-product-qty-unit {
+    font-size: var(--text-label);
   }
 
   .qm-product-bid-section {
@@ -2431,14 +2456,18 @@ textarea {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.2rem;
     min-width: 1.25rem;
     padding: 0.15rem 0.45rem;
     border-radius: 1rem;
     background: var(--color-surface-muted);
     border: 1px solid var(--color-border-default);
-    font-size: 0.75rem;
+    font-size: var(--text-caption);
     font-weight: 700;
     color: var(--color-text-heading);
+  }
+  .qm-bid-qty-unit {
+    font-size: var(--text-label);
   }
   .qm-bid-bonus-badge {
     display: inline-flex;

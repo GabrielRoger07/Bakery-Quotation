@@ -79,6 +79,12 @@ export default function useResourceList({ endpoint, idKey, defaultSortField, del
     setCurrentPage(0)
   }
 
+  const setSort = (field, direction) => {
+    setSortField(field)
+    setSortDirection(direction)
+    setCurrentPage(0)
+  }
+
   const applySearch = (field, word) => {
     setCurrentPage(0)
     setAppliedSearch({ field, word })
@@ -114,7 +120,7 @@ export default function useResourceList({ endpoint, idKey, defaultSortField, del
   return {
     items, setItems, loading, error, setError, status,
     currentPage, setCurrentPage, totalPages, totalElements, pageSize,
-    sortField, sortDirection, handleSort, clearSort,
+    sortField, sortDirection, handleSort, clearSort, setSort,
     appliedSearch, applySearch, clearSearch,
     refetch: fetchItems,
     confirm: {

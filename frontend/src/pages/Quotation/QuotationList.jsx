@@ -58,8 +58,8 @@ const QuotationList = () => {
     const [totalElements, setTotalElements] = useState(0)
     const [pageSize, setPageSize] = useState(0)
 
-    const [sortField, setSortField] = useState(null)
-    const [sortDirection, setSortDirection] = useState("asc")
+    const [sortField, setSortField] = useState("quotationStartFormatted")
+    const [sortDirection, setSortDirection] = useState("desc")
 
     const [statusFilter, setStatusFilter] = useState("")
 
@@ -134,7 +134,9 @@ const QuotationList = () => {
         const backendSortField = sortMap[sortField]
         if (sortField) sortQuery = `&sort=${backendSortField},${sortDirection}`
 
-        const res = await request("GET", `/quotations/company?page=${page}${sortQuery}`)
+        const statusQuery = statusFilter ? `&field=status&value=${statusFilter}` : ""
+
+        const res = await request("GET", `/quotations/company?page=${page}${sortQuery}${statusQuery}`)
         if (res.ok) {
             const mapped = await Promise.all(res.data.content.map(async (q) => {
                 const start = formatDateTime(q.quotationStart)
@@ -163,7 +165,7 @@ const QuotationList = () => {
             setError(res.data?.message)
         }
         setStatus(res.status)
-    }, [request, requestCounts, sortField, sortDirection, sortMap])
+    }, [request, requestCounts, sortField, sortDirection, sortMap, statusFilter])
 
     const reloadCurrentPage = useCallback(() => fetchQuotations(currentPage), [fetchQuotations, currentPage])
 
@@ -178,13 +180,21 @@ const QuotationList = () => {
         setCurrentPage(0)
     }
 
-    const handleClearSort = () => {
-        setSortField(null)
-        setSortDirection("asc")
+    const setSort = (field, direction) => {
+        setSortField(field)
+        setSortDirection(direction)
         setCurrentPage(0)
     }
 
-    const sortableColumns = useMemo(() => columns.filter(c => sortMap[c.key]), [columns, sortMap])
+    const handleStatusFilterChange = (value) => {
+        setStatusFilter(value)
+        setCurrentPage(0)
+    }
+
+    const sortOptions = useMemo(() => [
+        { key: "date-asc", label: "Data (mais antiga primeiro)", shortLabel: "Antigas", field: "quotationStartFormatted", direction: "asc" },
+        { key: "date-desc", label: "Data (mais recente primeiro)", shortLabel: "Recentes", field: "quotationStartFormatted", direction: "desc" },
+    ], [])
 
     useEffect(() => {
         fetchQuotations(currentPage)
@@ -203,20 +213,6 @@ const QuotationList = () => {
         pageItemCount: quotations.length,
         emptyLabel: "Nenhuma cotação encontrada",
     })
-
-    const statusCounts = useMemo(() => {
-        const counts = { "": quotations.length, agendado: 0, ativo: 0, fechado: 0 }
-        for (const q of quotations) {
-            const key = q.status.toLowerCase()
-            if (key in counts) counts[key]++
-        }
-        return counts
-    }, [quotations])
-
-    const filteredQuotations = useMemo(() => {
-        if (!statusFilter) return quotations
-        return quotations.filter(q => q.status.toLowerCase() === statusFilter)
-    }, [quotations, statusFilter])
 
     const renderQuotationCard = (quotation) => {
         const statusVariant =
@@ -259,9 +255,8 @@ const QuotationList = () => {
                     <div className="px-4 pt-4">
                         <StatusTabFilter
                             value={statusFilter}
-                            onChange={setStatusFilter}
+                            onChange={handleStatusFilterChange}
                             mobile
-                            counts={statusCounts}
                         />
                     </div>
                     {error && quotations.length === 0 ? (
@@ -283,7 +278,7 @@ const QuotationList = () => {
                     ) : (
                         <MobileCardList
                             title="Cotações"
-                            items={filteredQuotations}
+                            items={quotations}
                             idKey="quotationId"
                             loading={loading}
                             emptyMessage="Nenhuma cotação encontrada."
@@ -293,11 +288,10 @@ const QuotationList = () => {
                             renderCard={renderQuotationCard}
                             showCount={false}
                             inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
-                            sortColumns={sortableColumns}
+                            sortOptions={sortOptions}
                             sortField={sortField}
                             sortDirection={sortDirection}
-                            onSort={handleColumnSort}
-                            onClearSort={handleClearSort}
+                            onSelectSort={(opt) => setSort(opt.field, opt.direction)}
                             currentPage={currentPage}
                             totalPages={totalPages}
                             onPageChange={setCurrentPage}
@@ -317,7 +311,7 @@ const QuotationList = () => {
                     <Table
                         title={"Cotações"}
                         columns={columns}
-                        data={filteredQuotations}
+                        data={quotations}
                         idKey="quotationId"
                         loading={loading}
                         onEdit={(q) => navigate(`/quotations/${q.quotationId}/edit`)}
@@ -333,8 +327,7 @@ const QuotationList = () => {
                         filterSlot={
                             <StatusTabFilter
                                 value={statusFilter}
-                                onChange={setStatusFilter}
-                                counts={statusCounts}
+                                onChange={handleStatusFilterChange}
                             />
                         }
                     />

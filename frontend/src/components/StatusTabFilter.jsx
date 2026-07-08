@@ -11,9 +11,9 @@ const StatusDot = ({ color }) => {
 }
 
 /**
- * Filtro de status em abas (com contadores e ponto colorido), em versões desktop e mobile.
+ * Filtro de status em abas (com ponto colorido), em versões desktop e mobile.
  */
-const StatusTabFilter = ({ value, onChange, mobile = false, counts = {} }) => (
+const StatusTabFilter = ({ value, onChange, mobile = false }) => (
     <div
         className={`stf-root ${mobile ? 'stf-root--mobile' : ''}`}
         role="tablist"
@@ -21,7 +21,6 @@ const StatusTabFilter = ({ value, onChange, mobile = false, counts = {} }) => (
     >
         {TABS.map(tab => {
             const isActive = value === tab.value
-            const count = counts[tab.value]
             return (
                 <button
                     key={tab.value}
@@ -32,11 +31,6 @@ const StatusTabFilter = ({ value, onChange, mobile = false, counts = {} }) => (
                 >
                     <StatusDot color={tab.color} />
                     <span className="stf-tab-label">{tab.label}</span>
-                    {count !== undefined && (
-                        <span className={`stf-badge ${isActive ? 'stf-badge--active' : ''}`}>
-                            {count}
-                        </span>
-                    )}
                 </button>
             )
         })}

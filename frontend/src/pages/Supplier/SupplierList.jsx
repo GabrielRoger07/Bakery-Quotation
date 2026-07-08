@@ -37,7 +37,7 @@ const SupplierList = () => {
     const {
         items: suppliers, setItems: setSuppliers, loading, error, status,
         currentPage, setCurrentPage, totalPages, totalElements, pageSize,
-        sortField, sortDirection, handleSort, clearSort,
+        sortField, sortDirection, handleSort, setSort,
         appliedSearch, applySearch, clearSearch, refetch, confirm,
     } = useResourceList({
         endpoint: '/suppliers/company',
@@ -66,6 +66,12 @@ const SupplierList = () => {
         { key: "supplierWhatsappNumber", label: "Whatsapp"},
         { key: "employerName", label: "Nome da Empresa"},
         { key: "employerCnpj", label: "CNPJ da Empresa"}
+    ]
+
+    const sortOptions = [
+        { key: "name-asc", label: "Nome (A → Z)", shortLabel: "A-Z", field: "supplierName", direction: "asc" },
+        { key: "name-desc", label: "Nome (Z → A)", shortLabel: "Z-A", field: "supplierName", direction: "desc" },
+        { key: "company", label: "Nome da Empresa", shortLabel: "Empresa", field: "employerName", direction: "asc" },
     ]
 
     const openSheet = (supplier) => {
@@ -218,11 +224,10 @@ const SupplierList = () => {
                         onCardClick={openSheet}
                         renderCard={renderSupplierCard}
                         searchBar={mobileSearchBar}
-                        sortColumns={columns}
-                        sortField={sortField}
-                        sortDirection={sortDirection}
-                        onSort={handleSort}
-                        onClearSort={clearSort}
+                        sortOptions={sortOptions}
+                        sortField={sortField ?? 'supplierName'}
+                        sortDirection={sortField ? sortDirection : 'asc'}
+                        onSelectSort={(opt) => setSort(opt.field, opt.direction)}
                         showCount={false}
                         inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
                         currentPage={currentPage}

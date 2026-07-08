@@ -23,10 +23,10 @@ import SortButton from '@/components/SortButton'
  *   toolbar        ReactNode     — conteúdo da barra de filtro
  *   filterActive   bool
  *   searchBar      ReactNode     — input de busca rápida (opcional, fixo/sticky logo abaixo do navbar)
- *   sortColumns    [{ key, label }]  — colunas ordenáveis (ativa o botão de sort, exibido ao lado do inlineToolbar)
+ *   sortOptions    [{ key, label, shortLabel, field, direction }]  — opções de ordenação (ativa o botão de sort, exibido ao lado do inlineToolbar); shortLabel é o texto exibido no próprio botão quando a opção está ativa
  *   sortField      string | null
  *   sortDirection  "asc" | "desc"
- *   onSort         fn(columnKey)
+ *   onSelectSort   fn(option)
  *   showCount      bool          — exibe o chip "N registros" (default true; desative se a tela já tem seu próprio indicador de contagem/página)
  */
 const MobilePagination = ({ currentPage, totalPages, onPageChange }) => {
@@ -109,11 +109,10 @@ const MobileCardList = ({
     inlineToolbar,
     filterActive = false,
     searchBar,
-    sortColumns,
+    sortOptions,
     sortField,
     sortDirection,
-    onSort,
-    onClearSort,
+    onSelectSort,
     currentPage,
     totalPages,
     onPageChange,
@@ -150,6 +149,8 @@ const MobileCardList = ({
 
     const closeSwipe = () => setSwipedId(null)
 
+    const activeSortOption = sortOptions?.find(opt => opt.field === sortField && opt.direction === sortDirection)
+
     return (
         <div className="mobile-card-list-root" onClick={closeSwipe}>
             {/* ── Sticky search bar (fixa logo abaixo do navbar) ── */}
@@ -160,15 +161,11 @@ const MobileCardList = ({
             )}
 
             {/* ── Inline toolbar (always visible, no drawer) + botão de sort ── */}
-            {(inlineToolbar || (sortColumns && onSort)) && (
+            {(inlineToolbar || (sortOptions && onSelectSort)) && (
                 <div className="px-4 pt-3 pb-1 flex items-center justify-between gap-2">
                     {inlineToolbar}
-                    {sortColumns && onSort && (
-                        <SortButton
-                            active={!!sortField}
-                            onOpen={() => setSortOpen(true)}
-                            onClear={onClearSort}
-                        />
+                    {sortOptions && onSelectSort && (
+                        <SortButton label={activeSortOption?.shortLabel} onOpen={() => setSortOpen(true)} />
                     )}
                 </div>
             )}
@@ -388,15 +385,14 @@ const MobileCardList = ({
             )}
 
             {/* ── Sort bottom sheet ── */}
-            {sortColumns && onSort && (
+            {sortOptions && onSelectSort && (
                 <SortBottomSheet
                     isOpen={sortOpen}
                     onClose={() => setSortOpen(false)}
-                    columns={sortColumns}
+                    options={sortOptions}
                     sortField={sortField}
                     sortDirection={sortDirection}
-                    onSort={onSort}
-                    onClearSort={onClearSort}
+                    onSelectSort={onSelectSort}
                 />
             )}
         </div>

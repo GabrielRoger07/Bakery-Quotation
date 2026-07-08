@@ -1,18 +1,21 @@
 import { useEffect, useRef } from 'react'
-import { X, ArrowUpNarrowWide, ArrowDownNarrowWide, ArrowUpAZ, ArrowDownAZ } from 'lucide-react'
+import { X, Check } from 'lucide-react'
 
 /**
  * SortBottomSheet — native-feel mobile sort panel.
  *
+ * Lista plana de opções pré-compostas (campo + direção já combinados).
+ * Tocar numa opção aplica a ordenação e fecha o sheet imediatamente.
+ *
  * Props:
  *   isOpen        bool
  *   onClose       fn()
- *   columns       [{ key, label }]   — sortable columns
+ *   options       [{ key, label, field, direction }]
  *   sortField     string | null
  *   sortDirection "asc" | "desc"
- *   onSort        fn(columnKey)      — same signature as desktop handleColumnSort
+ *   onSelectSort  fn(option)
  */
-const SortBottomSheet = ({ isOpen, onClose, columns = [], sortField, sortDirection, onSort, onClearSort }) => {
+const SortBottomSheet = ({ isOpen, onClose, options = [], sortField, sortDirection, onSelectSort }) => {
     const sheetRef = useRef(null)
 
     useEffect(() => {
@@ -27,17 +30,9 @@ const SortBottomSheet = ({ isOpen, onClose, columns = [], sortField, sortDirecti
         return () => { document.body.style.overflow = '' }
     }, [isOpen])
 
-    // Selects a column. If already selected, toggles direction. Otherwise sets it ascending.
-    const handleColumnSelect = (key) => {
-        onSort(key)
-    }
-
-    // Forces a specific direction by calling onSort only when direction would change.
-    // onSort toggles direction when the same field is passed, so we only call it if needed.
-    const handleDirectionSelect = (dir) => {
-        if (dir !== sortDirection && sortField) {
-            onSort(sortField)
-        }
+    const handleSelect = (option) => {
+        onSelectSort(option)
+        onClose()
     }
 
     return (
@@ -64,64 +59,20 @@ const SortBottomSheet = ({ isOpen, onClose, columns = [], sortField, sortDirecti
                 </div>
 
                 <div className="sort-sheet-body">
-                    <p className="sort-section-label">Campo</p>
-                    <div className="sort-columns">
-                        {columns.map(col => {
-                            const active = sortField === col.key
+                    <div className="sort-options-list">
+                        {options.map(opt => {
+                            const active = opt.field === sortField && opt.direction === sortDirection
                             return (
                                 <button
-                                    key={col.key}
-                                    className={`sort-col-btn ${active ? 'active' : ''}`}
-                                    onClick={() => handleColumnSelect(col.key)}
+                                    key={opt.key}
+                                    className={`sort-option-btn ${active ? 'active' : ''}`}
+                                    onClick={() => handleSelect(opt)}
                                 >
-                                    <span className="sort-col-label">{col.label}</span>
-                                    {active && (
-                                        <span className="sort-col-indicator">
-                                            {sortDirection === 'asc'
-                                                ? <ArrowUpAZ size={15} strokeWidth={2.5} />
-                                                : <ArrowDownAZ size={15} strokeWidth={2.5} />
-                                            }
-                                        </span>
-                                    )}
+                                    <span className="sort-option-label">{opt.label}</span>
+                                    {active && <Check size={17} strokeWidth={2.5} />}
                                 </button>
                             )
                         })}
-                    </div>
-
-                    {sortField && (
-                        <>
-                            <p className="sort-section-label" style={{ marginTop: '1.25rem' }}>Direção</p>
-                            <div className="sort-direction-row">
-                                <button
-                                    className={`sort-dir-btn ${sortDirection === 'asc' ? 'active' : ''}`}
-                                    onClick={() => handleDirectionSelect('asc')}
-                                >
-                                    <ArrowUpNarrowWide size={16} strokeWidth={2} />
-                                    <span>A → Z / Menor primeiro</span>
-                                </button>
-                                <button
-                                    className={`sort-dir-btn ${sortDirection === 'desc' ? 'active' : ''}`}
-                                    onClick={() => handleDirectionSelect('desc')}
-                                >
-                                    <ArrowDownNarrowWide size={16} strokeWidth={2} />
-                                    <span>Z → A / Maior primeiro</span>
-                                </button>
-                            </div>
-                        </>
-                    )}
-
-                    <div className="sort-sheet-actions">
-                        {sortField && onClearSort && (
-                            <button
-                                className="sort-remove-btn"
-                                onClick={() => { onClearSort(); onClose() }}
-                            >
-                                Limpar ordenação
-                            </button>
-                        )}
-                        <button className="sort-clear-btn" onClick={onClose}>
-                            Aplicar
-                        </button>
                     </div>
                 </div>
             </div>

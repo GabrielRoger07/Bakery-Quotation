@@ -30,7 +30,7 @@ const ProductList = () => {
     const {
         items: products, setItems: setProducts, loading, error, status,
         currentPage, setCurrentPage, totalPages, totalElements, pageSize,
-        sortField, sortDirection, handleSort, clearSort,
+        sortField, sortDirection, handleSort, setSort,
         appliedSearch, applySearch, clearSearch, refetch, confirm,
     } = useResourceList({
         endpoint: '/products/company',
@@ -60,6 +60,11 @@ const ProductList = () => {
         { key: "productName", label: "Nome do Produto" },
         { key: "productDescription", label: "Descrição do Produto" },
         ...(userDepts.length > 0 ? [{ key: "departmentName", label: "Departamento" }] : []),
+    ]
+
+    const sortOptions = [
+        { key: "name-asc", label: "Nome (A → Z)", shortLabel: "A-Z", field: "productName", direction: "asc" },
+        { key: "name-desc", label: "Nome (Z → A)", shortLabel: "Z-A", field: "productName", direction: "desc" },
     ]
 
     const openSheet = (product) => {
@@ -220,11 +225,10 @@ const ProductList = () => {
                         toolbar={mobileFilterToolbar}
                         searchBar={mobileSearchBar}
                         filterActive={deptFilter !== null}
-                        sortColumns={columns}
-                        sortField={sortField}
-                        sortDirection={sortDirection}
-                        onSort={handleSort}
-                        onClearSort={clearSort}
+                        sortOptions={sortOptions}
+                        sortField={sortField ?? 'productName'}
+                        sortDirection={sortField ? sortDirection : 'asc'}
+                        onSelectSort={(opt) => setSort(opt.field, opt.direction)}
                         showCount={false}
                         inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
                         currentPage={currentPage}

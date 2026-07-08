@@ -382,7 +382,7 @@ const PrimitivesSection = () => {
       </Primitive>
 
       <Primitive name="StatusTabFilter">
-        <StatusTabFilter value={status} onChange={setStatus} counts={{ '': 12, agendado: 3, ativo: 5, fechado: 4 }} />
+        <StatusTabFilter value={status} onChange={setStatus} />
       </Primitive>
 
       <Primitive name="ActiveFilterPill">

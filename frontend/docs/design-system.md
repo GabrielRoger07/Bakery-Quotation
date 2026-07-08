@@ -107,15 +107,16 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 ### Listas
 | Componente | Props principais | Notas |
 |---|---|---|
-| hook `useResourceList` | `{ endpoint, idKey, defaultSortField, deletePath }` | fetch + paginação + sort + busca + remoção; expõe também `totalElements`/`pageSize` |
+| hook `useResourceList` | `{ endpoint, idKey, defaultSortField, deletePath }` | fetch + paginação + sort + busca + remoção; expõe `handleSort`/`clearSort` (toggle, usado pelo `Table` desktop) e `setSort(field, direction)` (seleção direta, usado pelo sheet de ordenação mobile) |
 | `Table` | `columns`, `data`, `idKey`, `onEdit/onDelete/onView/onMonitor`, `onSort`, `toolbar` | desktop |
-| `MobileCardList` | `items`, `renderCard`, `onEdit/...`, `sortColumns`, `onSort`, `onClearSort`, `inlineToolbar` | mobile (par do `Table`); se `sortColumns`+`onSort` forem passados, renderiza `SortButton` ao lado do `inlineToolbar` |
-| `SortButton` | `active`, `onOpen`, `onClear` | botão "Ordenar" usado internamente pelo `MobileCardList` (ao lado do `PaginationSummary`); normalmente não é usado direto pelas páginas |
+| `MobileCardList` | `items`, `renderCard`, `onEdit/...`, `sortOptions`, `sortField`, `sortDirection`, `onSelectSort`, `inlineToolbar` | mobile (par do `Table`); se `sortOptions`+`onSelectSort` forem passados, renderiza o pill `SortButton` ("A-Z") ao lado do `inlineToolbar`, que abre o `SortBottomSheet` |
+| `SortButton` | `onOpen` | pill "A-Z" usado internamente pelo `MobileCardList` (ao lado do `PaginationSummary`) para abrir o `SortBottomSheet`; normalmente não é usado direto pelas páginas |
+| `SortBottomSheet` | `isOpen`, `onClose`, `options: [{key,label,field,direction}]`, `sortField`, `sortDirection`, `onSelectSort` | sheet com lista plana de opções de ordenação pré-compostas (campo+direção); tocar numa opção aplica e fecha na hora; cada página define seu próprio array de `options` (ex.: "Nome (A → Z)") |
 | `Pagination` | `currentPage`, `totalPages`, `onPageChange` | desktop, com elipses |
 | `PaginationSummary` | `pageLabel`, `rangeLabel` | texto "Página X de Y" / "Mostrando W–Z de Total" / "N registros"; usar com `getPaginationSummary` (`@/utils/paginationSummary`); no mobile, passar como `inlineToolbar` do `MobileCardList` para ficar ao lado do `SortButton` |
 | `MobileSearchInput` | `value`, `onChange`, `onSearch`, `onClear` | toolbar mobile |
 | `ActiveFilterPill` | `label`, `value`, `onClear` | pill de busca ativa (mobile) |
-| `StatusTabFilter` | `value`, `onChange`, `counts`, `mobile` | abas de status (Todas/Agendado/Ativo/Fechado) |
+| `StatusTabFilter` | `value`, `onChange`, `mobile` | abas de status (Todas/Agendado/Ativo/Fechado) |
 | `ConfirmDialog` | `isOpen`, `onConfirm`, `confirmVariant`, `icon`, `title`, `confirmLabel`, `children` | alerta de confirmação centralizado (ícone + título + ação destrutiva; botões empilhados) |
 
 ### Detalhe / feedback

@@ -69,7 +69,7 @@ public class DevDataSeeder {
             Quotation quotation8 = new Quotation(Instant.parse("2026-05-21T08:00:00Z"), Instant.parse("2026-05-21T10:00:00Z"), false, company1);
             Quotation quotation9 = new Quotation(Instant.parse("2026-10-21T08:00:00Z"), Instant.parse("2026-10-21T10:00:00Z"), false, company1);
             Quotation quotation10 = new Quotation(Instant.parse("2026-11-21T08:00:00Z"), Instant.parse("2026-11-21T10:00:00Z"), false, company1);
-            Quotation quotation11 = new Quotation(Instant.parse("2025-11-21T08:00:00Z"), Instant.parse("2026-08-21T10:00:00Z"), false, company1);
+            Quotation quotation11 = new Quotation(Instant.parse("2027-11-21T08:00:00Z"), Instant.parse("2027-08-21T10:00:00Z"), false, company1);
 
             quotationRepository.save(quotation1);
             quotationRepository.save(quotation2);

@@ -88,6 +88,7 @@ const SupplierPage = () => {
         currentPage, totalPages, totalElements, pageSize,
         pageItemCount: items.length,
         emptyLabel: 'Nenhuma cotação encontrada',
+        loading,
     })
 
     const renderCard = (p) => {

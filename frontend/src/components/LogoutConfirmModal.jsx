@@ -10,7 +10,6 @@ const LogoutConfirmModal = ({ open, onConfirm, onCancel }) => (
         onConfirm={onConfirm}
         title="Confirmar Saída"
         confirmLabel="Sair"
-        confirmVariant="danger"
         cancelVariant="secondary"
     >
         Tem certeza de que deseja sair da conta?

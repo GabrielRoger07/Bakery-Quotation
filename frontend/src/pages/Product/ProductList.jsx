@@ -199,6 +199,7 @@ const ProductList = () => {
         currentPage, totalPages, totalElements, pageSize,
         pageItemCount: products.length,
         emptyLabel: "Nenhum produto encontrado.",
+        loading,
     })
 
     const renderProductCard = (product) => ({
@@ -303,6 +304,7 @@ const ProductList = () => {
                 onClose={confirm.cancel}
                 onConfirm={confirm.confirm}
                 loading={loading}
+                confirmVariant="danger"
             >
                 Tem certeza de que você deseja remover o produto <strong>{confirm.item?.productName}</strong>?
             </ConfirmDialog>

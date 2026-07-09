@@ -362,6 +362,7 @@ const QuotationMonitor = () => {
     const [quotation, setQuotation] = useState(null)
     const [baseProducts, setBaseProducts] = useState([])
     const [bids, setBids] = useState([])
+    const [dataLoading, setDataLoading] = useState(true)
 
     const [searchField, setSearchField] = useState("")
     const [searchWord, setSearchWord] = useState("")
@@ -407,6 +408,8 @@ const QuotationMonitor = () => {
 
             const bidsRes = await request("GET", `/bids/quotations/${quotationId}`)
             if(bidsRes.ok) setBids(bidsRes.data)
+
+            setDataLoading(false)
         }
 
         fetchQuotationData()
@@ -867,7 +870,9 @@ const QuotationMonitor = () => {
                     filterSlot={mobileProductFilter}
                     defaultOpen={true}
                 >
-                    {sortedFilteredProducts.length === 0 ? (
+                    {dataLoading ? (
+                        <div className="qm-empty">Carregando produtos...</div>
+                    ) : sortedFilteredProducts.length === 0 ? (
                         hasActiveProductFilter ? (
                             <EmptyState
                                 icon={<SearchX size={28} strokeWidth={1.75} />}
@@ -901,7 +906,9 @@ const QuotationMonitor = () => {
                         filterSlot={mobileBidFilter}
                         defaultOpen={false}
                     >
-                        {filteredBids.length === 0 ? (
+                        {dataLoading ? (
+                            <div className="qm-empty">Carregando lances...</div>
+                        ) : filteredBids.length === 0 ? (
                             hasActiveBidFilter ? (
                                 <EmptyState
                                     icon={<SearchX size={28} strokeWidth={1.75} />}
@@ -1001,7 +1008,7 @@ const QuotationMonitor = () => {
                     title={"Produtos"}
                     columns={productColumns}
                     data={formattedProducts}
-                    loading={false}
+                    loading={dataLoading}
                     emptyMessage={"Nenhum produto encontrado para essa cotação."}
                     toolbar={filterToolbar}
                     filterActive={appliedSearch.word !== "" || bidFilter !== "all"}
@@ -1011,7 +1018,7 @@ const QuotationMonitor = () => {
                     title={"Lances"}
                     columns={bidColumns}
                     data={formattedBids}
-                    loading={false}
+                    loading={dataLoading}
                     emptyMessage={"Nenhum lance encontrado para essa cotação."}
                     toolbar={bidFilterToolbar}
                     filterActive={appliedBidSearch.word !== ""}

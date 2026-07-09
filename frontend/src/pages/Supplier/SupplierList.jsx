@@ -200,6 +200,7 @@ const SupplierList = () => {
         currentPage, totalPages, totalElements, pageSize,
         pageItemCount: suppliers.length,
         emptyLabel: "Nenhum fornecedor encontrado.",
+        loading,
     })
 
     const renderSupplierCard = (supplier) => ({
@@ -298,6 +299,7 @@ const SupplierList = () => {
                 onClose={confirm.cancel}
                 onConfirm={confirm.confirm}
                 loading={loading}
+                confirmVariant="danger"
             >
                 Tem certeza de que você deseja remover o fornecedor <strong>{confirm.item?.supplierName}</strong> da empresa <strong>{confirm.item?.employerName}</strong>?
             </ConfirmDialog>

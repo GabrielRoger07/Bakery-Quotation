@@ -155,6 +155,7 @@ const DepartmentList = () => {
 
     const [departments, setDepartments] = useState([])
     const [error, setError] = useState('')
+    const [initialLoad, setInitialLoad] = useState(true)
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -182,6 +183,7 @@ const DepartmentList = () => {
         } else {
             setError('Não foi possível carregar os departamentos.')
         }
+        setInitialLoad(false)
     }, [request])
 
     useEffect(() => {
@@ -277,7 +279,7 @@ const DepartmentList = () => {
                         title="Departamentos"
                         items={departments}
                         idKey="departmentId"
-                        loading={loading}
+                        loading={loading || initialLoad}
                         emptyMessage="Nenhum departamento cadastrado."
                         onReload={fetchDepartments}
                         onAdd={openCreateForm}
@@ -306,7 +308,7 @@ const DepartmentList = () => {
                         columns={columns}
                         data={departments}
                         idKey="departmentId"
-                        loading={loading}
+                        loading={loading || initialLoad}
                         onEdit={openEditModal}
                         onDelete={requestRemove}
                         onAdd={openCreateForm}
@@ -329,6 +331,7 @@ const DepartmentList = () => {
                 onClose={closeModals}
                 onConfirm={confirmRemove}
                 loading={loading}
+                confirmVariant="danger"
             >
                 Tem certeza de que deseja remover o departamento <strong>{departmentToRemove?.departmentName}</strong>?
                 {departments.length === 1 && (

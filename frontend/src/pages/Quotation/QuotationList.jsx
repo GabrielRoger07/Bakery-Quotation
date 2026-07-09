@@ -42,6 +42,7 @@ const QuotationList = () => {
     const [quotations, setQuotations] = useState([])
     const [error, setError] = useState("")
     const [status, setStatus] = useState(null)
+    const [initialLoad, setInitialLoad] = useState(true)
 
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
     const [quotationToView, setQuotationToView] = useState(null)
@@ -165,6 +166,7 @@ const QuotationList = () => {
             setError(res.data?.message)
         }
         setStatus(res.status)
+        setInitialLoad(false)
     }, [request, requestCounts, sortField, sortDirection, sortMap, statusFilter])
 
     const reloadCurrentPage = useCallback(() => fetchQuotations(currentPage), [fetchQuotations, currentPage])
@@ -212,6 +214,7 @@ const QuotationList = () => {
         currentPage, totalPages, totalElements, pageSize,
         pageItemCount: quotations.length,
         emptyLabel: "Nenhuma cotação encontrada",
+        loading: loading || initialLoad,
     })
 
     const renderQuotationCard = (quotation) => {
@@ -280,7 +283,7 @@ const QuotationList = () => {
                             title="Cotações"
                             items={quotations}
                             idKey="quotationId"
-                            loading={loading}
+                            loading={loading || initialLoad}
                             emptyMessage="Nenhuma cotação encontrada."
                             onReload={reloadCurrentPage}
                             onAdd={() => navigate('/quotations/new')}
@@ -313,7 +316,7 @@ const QuotationList = () => {
                         columns={columns}
                         data={quotations}
                         idKey="quotationId"
-                        loading={loading}
+                        loading={loading || initialLoad}
                         onEdit={(q) => navigate(`/quotations/${q.quotationId}/edit`)}
                         onDelete={requestRemove}
                         onAdd={() => navigate('/quotations/new')}
@@ -352,6 +355,7 @@ const QuotationList = () => {
                     onClose={closeModals}
                     onConfirm={confirmRemove}
                     loading={loading}
+                    confirmVariant="danger"
                 >
                     Tem certeza de que você deseja remover a cotação <strong>{quotationToRemove?.quotationId}</strong>?
                 </ConfirmDialog>

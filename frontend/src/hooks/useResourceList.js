@@ -22,6 +22,7 @@ export default function useResourceList({ endpoint, idKey, defaultSortField, del
   const [items, setItems] = useState([])
   const [error, setError] = useState('')
   const [status, setStatus] = useState(null)
+  const [initialLoad, setInitialLoad] = useState(true)
 
   const [currentPage, setCurrentPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
@@ -55,6 +56,7 @@ export default function useResourceList({ endpoint, idKey, defaultSortField, del
       setError(res.data?.message)
     }
     setStatus(res.status)
+    setInitialLoad(false)
   }, [request, endpoint, sortField, sortDirection, appliedSearch, defaultSortField])
 
   useEffect(() => {
@@ -118,7 +120,7 @@ export default function useResourceList({ endpoint, idKey, defaultSortField, del
   }
 
   return {
-    items, setItems, loading, error, setError, status,
+    items, setItems, loading: loading || initialLoad, error, setError, status,
     currentPage, setCurrentPage, totalPages, totalElements, pageSize,
     sortField, sortDirection, handleSort, clearSort, setSort,
     appliedSearch, applySearch, clearSearch,

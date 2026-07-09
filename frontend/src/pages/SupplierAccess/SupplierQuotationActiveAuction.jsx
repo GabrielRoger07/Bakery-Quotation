@@ -19,7 +19,7 @@ const SupplierQuotation = ({ participationId, quotationId }) => {
   const [bids, setBids] = useState([])
   const [lowestBids, setLowestBids] = useState([])
   const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [isWinningModalOpen, setIsWinningModalOpen] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState("")
   const [searchWord, setSearchWord] = useState("")

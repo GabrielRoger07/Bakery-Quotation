@@ -15,6 +15,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
     const isMobile = useIsMobile(768)
 
     const [availableSuppliers, setAvailableSuppliers] = useState([])
+    const [suppliersLoading, setSuppliersLoading] = useState(true)
     const [localSelected, setLocalSelected] = useState(() =>
         [...selectedSuppliers].sort((a, b) => a.supplierName.localeCompare(b.supplierName))
     )
@@ -46,6 +47,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
         } else {
             setError(res.data?.message)
         }
+        setSuppliersLoading(false)
     }, [request, localSelected, searchField, searchWord])
 
     const handleLoadMoreSuppliers = () => fetchSuppliers(currentPage + 1, searchField, searchWord, true)
@@ -127,7 +129,9 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                 </div>
             </div>
 
-            {availableSuppliers.length === 0 ? (
+            {suppliersLoading ? (
+                <EmptyState className="mb-3">Carregando fornecedores...</EmptyState>
+            ) : availableSuppliers.length === 0 ? (
                 <EmptyState
                     icon={<UserRoundSearch size={28} strokeWidth={1.75} />}
                     title="Nenhum fornecedor encontrado"

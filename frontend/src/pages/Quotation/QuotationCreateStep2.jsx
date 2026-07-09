@@ -267,6 +267,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const [deptFilter, setDeptFilter] = useState(null)
 
     const [availableProducts, setAvailableProducts] = useState([])
+    const [productsLoading, setProductsLoading] = useState(true)
     const [localSelected, setLocalSelected] = useState(() => {
         const map = {}
         selectedProducts.forEach(p => {
@@ -311,6 +312,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
             setCurrentPage(res.data.number)
             setTotalElements(res.data.totalElements ?? res.data.content.length)
         }
+        setProductsLoading(false)
     }, [request, appliedSearch, excludedIds, deptFilter])
 
     const handleLoadMoreProducts = () => fetchProducts(currentPage + 1, true)
@@ -519,7 +521,9 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
             </div>
 
             {/* Results */}
-            {availableProducts.length === 0 ? (
+            {productsLoading ? (
+                <EmptyState className="mb-3">Carregando produtos...</EmptyState>
+            ) : availableProducts.length === 0 ? (
                 <EmptyState
                     icon={<SearchX size={28} strokeWidth={1.75} />}
                     title="Nenhum produto encontrado"

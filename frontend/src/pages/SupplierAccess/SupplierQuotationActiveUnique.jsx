@@ -28,14 +28,7 @@ const UNIT_LABEL = {
     bag:   ['a', 'bag'],
 }
 
-const unitLabel = (u) => {
-    const [article, name] = UNIT_LABEL[u] ?? ['o', u]
-    return (
-        <span>
-            Preço d{article} <span className="font-bold text-[var(--color-accent)]">{name}</span>
-        </span>
-    )
-}
+const unitLabel = (u) => UNIT_LABEL[u]?.[1] ?? u
 
 const thCls = "text-left px-[0.6rem] py-2 text-[0.75rem] font-semibold uppercase tracking-[0.04em] text-[var(--color-text-muted)] border-b-2 border-[var(--color-border-default)]"
 const thNumCls = `${thCls} text-right`
@@ -71,29 +64,39 @@ const MobileProductInputCard = ({ product, initialNumericValue, onNumericChange,
                     {product.productDescription && (
                         <span className="saqu-input-desc">{product.productDescription}</span>
                     )}
-                    <div className="saqu-input-meta-row">
-                        <span className="saqu-input-brand-inline">
-                            <Tag size={10} strokeWidth={2} />
-                            {product.brand || <span className="italic">Marca não definida</span>}
-                        </span>
-                        <div className="saqu-input-qty-badge">
-                            <span className="saqu-input-qty-label">Qtd</span>
-                            <span className="saqu-input-qty-value">{product.quantity} {(product.unitOfMeasure).toUpperCase()}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 'S' : ''}</span>
-                        </div>
-                    </div>
+                    <span className="saqu-input-brand-inline">
+                        <Tag size={10} strokeWidth={2} />
+                        {product.brand || <span className="italic">Marca não definida</span>}
+                    </span>
+                </div>
+                <div className="saqu-input-qty-badge">
+                    <span className="saqu-input-qty-label">Qtd</span>
+                    <span className="saqu-input-qty-value">{product.quantity}</span>
+                    <span className="saqu-input-qty-unit">{(product.unitOfMeasure).toUpperCase()}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 'S' : ''}</span>
                 </div>
             </div>
 
+            {/* Total só aparece após o fornecedor preencher um preço (hasPrice)
+            {hasPrice && (
+                <div className="saqu-input-total-row">
+                    <span className="saqu-input-total-label">Total ·</span>
+                    <span className="saqu-input-total-value">{formatMoney(getNumericValue() * Number(product.quantity))}</span>
+                </div>
+            )}
+            */}
+
             <div className="saqu-input-field-row">
-                <span className="saqu-input-field-label">{unitLabel(product.unitOfMeasure)}</span>
-                <input
-                    type="text"
-                    className={`saqu-price-input ${hasPrice ? 'saqu-price-input--filled' : ''}`}
-                    value={value}
-                    onChange={handleChange}
-                    placeholder="R$ 0,00"
-                    inputMode="numeric"
-                />
+                <div className="saqu-price-input-group">
+                    <input
+                        type="text"
+                        className="saqu-price-input"
+                        value={value}
+                        onChange={handleChange}
+                        placeholder="R$ 0,00"
+                        inputMode="numeric"
+                    />
+                    <span className="saqu-price-input-unit">/ {unitLabel(product.unitOfMeasure)}</span>
+                </div>
             </div>
         </div>
     )
@@ -111,16 +114,18 @@ const MobileSubmittedCard = ({ product, unitPrice, index }) => {
             <div className="saqu-submitted-header">
                 <div className="saqu-submitted-info">
                     <span className="saqu-submitted-name">{product.productName}</span>
-                    <div className="saqu-submitted-meta-row">
-                        <span className="saqu-submitted-brand">
-                            <Tag size={10} strokeWidth={2} />
-                            {product.brand || <span className="italic">Marca não definida</span>}
-                        </span>
-                        <div className="saqu-submitted-qty">
-                            <span className="saqu-submitted-qty-label">Qtd</span>
-                            <span className="saqu-submitted-qty-value">{product.quantity} {(product.unitOfMeasure).toUpperCase()}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 'S' : ''}</span>
-                        </div>
-                    </div>
+                    {product.productDescription && (
+                        <span className="saqu-input-desc">{product.productDescription}</span>
+                    )}
+                    <span className="saqu-submitted-brand">
+                        <Tag size={10} strokeWidth={2} />
+                        {product.brand || <span className="italic">Marca não definida</span>}
+                    </span>
+                </div>
+                <div className="saqu-submitted-qty">
+                    <span className="saqu-submitted-qty-label">Qtd</span>
+                    <span className="saqu-submitted-qty-value">{product.quantity}</span>
+                    <span className="saqu-submitted-qty-unit">{(product.unitOfMeasure).toUpperCase()}{['bag', 'balde'].includes(product.unitOfMeasure) && product.quantity > 1 ? 'S' : ''}</span>
                 </div>
             </div>
 
@@ -515,7 +520,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                         <div className="saqu-status-banner-body">
                             <span className="saqu-status-banner-title">Proposta não enviada</span>
                             <span className="saqu-status-banner-sub">
-                                {filledCount}/{products.length} produto(s) com preço
+                                Após o envio, os valores não poderão ser alterados
                             </span>
                         </div>
                     </div>
@@ -602,6 +607,9 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                 {!hasSubmittedBids && (
                     <div className="saqu-bottom-cta">
                         <div className="saqu-bottom-cta-inner">
+                            <span className="saqu-bottom-cta-meta">
+                                <span className="saqu-bottom-cta-total">{filledCount}/{products.length}</span> produto(s) com preço
+                            </span>
                             <button
                                 className="saqu-submit-btn"
                                 onClick={handleReview}

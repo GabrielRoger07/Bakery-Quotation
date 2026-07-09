@@ -3038,15 +3038,19 @@ textarea {
   /* Product input card (preenchimento) */
   .saqu-input-card {
     background: var(--color-surface-card);
-    border: 1.5px solid var(--color-border-subtle);
+    border-left-width: 3px;
+    border-left-style: solid;
+    border-left-color: var(--color-border-subtle);
+    border-top: 1.5px solid var(--color-border-subtle);
+    border-right: 1.5px solid var(--color-border-subtle);
+    border-bottom: 1.5px solid var(--color-border-subtle);
     border-radius: var(--radius-lg);
     overflow: hidden;
     animation: cardAppear 0.22s ease-out both;
     transition: border-color 200ms ease, box-shadow 200ms ease;
   }
   .saqu-input-card--filled {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px rgba(91,33,182,0.07);
+    border-left-color: var(--color-accent);
   }
   .saqu-input-card-header {
     display: flex;
@@ -3092,13 +3096,6 @@ textarea {
     color: var(--color-text-muted);
     line-height: 1.4;
   }
-  .saqu-input-meta-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    margin-top: 0.1rem;
-  }
   .saqu-input-brand-inline {
     display: flex;
     align-items: center;
@@ -3106,7 +3103,6 @@ textarea {
     font-size: 0.75rem;
     color: var(--color-text-muted);
     min-width: 0;
-    flex: 1;
   }
   .saqu-input-qty-badge {
     flex-shrink: 0;
@@ -3134,78 +3130,87 @@ textarea {
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
+  .saqu-input-qty-unit {
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
 
   /* Price input field row */
   .saqu-input-field-row {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
     padding: 0 0.875rem 0.75rem;
   }
-  .saqu-input-field-label {
-    font-size: var(--text-caption);
-    font-weight: 600;
-    color: var(--color-text-muted);
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-    flex-shrink: 0;
+  .saqu-price-input-group {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: stretch;
+    height: 2.625rem;
+    border: 1.5px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-subtle);
+    overflow: hidden;
+    transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  }
+  .saqu-price-input-group:focus-within {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-focus-accent-soft);
+    background: var(--color-surface-card);
   }
   .saqu-price-input {
     flex: 1;
     min-width: 0;
-    height: 2.625rem;
     padding-inline: 0.875rem;
-    border: 1.5px solid var(--color-border-strong);
-    border-radius: var(--radius-md);
+    border: none;
     font-family: var(--font-sans);
     font-size: 1rem;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     color: var(--color-text-body);
-    background: var(--color-surface-subtle);
+    background: transparent;
     outline: none;
     text-align: right;
-    transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
     -webkit-tap-highlight-color: transparent;
   }
   .saqu-price-input::placeholder {
     color: var(--color-text-disabled);
     font-weight: 400;
   }
-  .saqu-price-input:focus {
-    border-color: var(--color-accent);
-    box-shadow: var(--shadow-focus-accent-soft);
-    background: var(--color-surface-card);
-  }
-  .saqu-price-input--filled {
-    border-color: var(--color-accent);
-    color: var(--color-accent-strong);
-    background: var(--color-highlight-lighter);
+  .saqu-price-input-unit {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding-inline: 0.7rem;
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-accent);
+    background: var(--color-surface-muted);
+    border-left: 1.5px solid var(--color-border-strong);
+    white-space: nowrap;
   }
 
   /* Total inline dentro do card de input */
   .saqu-input-total-row {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.5rem 0.875rem 0.625rem;
-    border-top: 1px solid var(--color-border-faint);
-    background: var(--color-highlight-lighter);
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    padding: 0 0.875rem 0.4rem;
   }
   .saqu-input-total-label {
-    font-size: var(--text-label);
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--color-accent);
-    opacity: 0.75;
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--color-text-muted);
   }
   .saqu-input-total-value {
-    font-size: var(--text-body);
+    font-size: var(--text-caption);
     font-weight: 700;
-    color: var(--color-accent-strong);
+    color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
   }
 
   /* Submitted product card (proposta enviada) */
@@ -3271,12 +3276,6 @@ textarea {
     line-height: 1.35;
     word-break: break-word;
   }
-  .saqu-submitted-meta-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
   .saqu-submitted-brand {
     display: flex;
     align-items: center;
@@ -3284,7 +3283,6 @@ textarea {
     font-size: 0.75rem;
     color: var(--color-text-muted);
     min-width: 0;
-    flex: 1;
   }
   .saqu-submitted-qty {
     flex-shrink: 0;
@@ -3311,6 +3309,13 @@ textarea {
     color: var(--color-text-heading);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+  }
+  .saqu-submitted-qty-unit {
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
   }
   .saqu-submitted-prices {
     display: grid;
@@ -3389,8 +3394,10 @@ textarea {
     left: 0;
     right: 0;
     z-index: 90;
+    padding-top: 0.375rem;
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
-    background: linear-gradient(to top, var(--color-surface-app) 70%, transparent);
+    background: var(--color-surface-card);
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.06);
     pointer-events: none;
   }
   .saqu-bottom-cta-inner {
@@ -3401,7 +3408,7 @@ textarea {
     pointer-events: all;
   }
   .saqu-bottom-cta-meta {
-    text-align: center;
+    text-align: right;
     font-size: var(--text-caption);
     color: var(--color-text-muted);
     font-variant-numeric: tabular-nums;

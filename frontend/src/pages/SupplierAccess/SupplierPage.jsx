@@ -46,6 +46,7 @@ const SupplierPage = () => {
         endpoint: '/participations/supplier',
         idKey: 'quotationId',
         defaultSortField: 'quotation.quotationEnd',
+        defaultSortDirection: 'desc',
     })
 
     const statusFilter = appliedSearch.field === 'status' ? appliedSearch.word : ''
@@ -85,7 +86,8 @@ const SupplierPage = () => {
         }
     }
 
-    const activeSortKey = sortOptions.find(opt => opt.field === (sortField ?? 'quotation.quotationEnd') && opt.direction === (sortField ? sortDirection : 'desc'))?.key
+    const currentSortField = sortField ?? 'quotation.quotationEnd'
+    const activeSortKey = sortOptions.find(opt => opt.field === currentSortField && opt.direction === sortDirection)?.key
 
     const desktopToolbar = (
         <ListToolbar
@@ -148,8 +150,8 @@ const SupplierPage = () => {
                     showCount={false}
                     inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
                     sortOptions={sortOptions}
-                    sortField={sortField ?? 'quotation.quotationEnd'}
-                    sortDirection={sortField ? sortDirection : 'desc'}
+                    sortField={currentSortField}
+                    sortDirection={sortDirection}
                     onSelectSort={(opt) => setSort(opt.field, opt.direction)}
                     currentPage={currentPage}
                     totalPages={totalPages}

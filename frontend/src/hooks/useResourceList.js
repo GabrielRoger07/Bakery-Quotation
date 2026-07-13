@@ -13,10 +13,11 @@ import { ENV } from '@/config/env'
  * @param {string} cfg.endpoint            ex.: '/products/company'
  * @param {string} cfg.idKey               ex.: 'productId'
  * @param {string} cfg.defaultSortField    ex.: 'productName'
+ * @param {'asc'|'desc'} cfg.defaultSortDirection direção inicial (padrão: 'asc')
  * @param {(item) => string} cfg.deletePath caminho do DELETE p/ um item
  * @param {string} cfg.deleteErrorMessage  mensagem de erro ao remover
  */
-export default function useResourceList({ endpoint, idKey, defaultSortField, deletePath, deleteErrorMessage }) {
+export default function useResourceList({ endpoint, idKey, defaultSortField, defaultSortDirection = 'asc', deletePath, deleteErrorMessage }) {
   const { request, loading } = useFetch(ENV.API_BASE_URL)
 
   const [items, setItems] = useState([])
@@ -30,7 +31,7 @@ export default function useResourceList({ endpoint, idKey, defaultSortField, del
   const [pageSize, setPageSize] = useState(0)
 
   const [sortField, setSortField] = useState(null)
-  const [sortDirection, setSortDirection] = useState('asc')
+  const [sortDirection, setSortDirection] = useState(defaultSortDirection)
 
   const [appliedSearch, setAppliedSearch] = useState({ field: '', word: '' })
 
@@ -77,7 +78,7 @@ export default function useResourceList({ endpoint, idKey, defaultSortField, del
 
   const clearSort = () => {
     setSortField(null)
-    setSortDirection('asc')
+    setSortDirection(defaultSortDirection)
     setCurrentPage(0)
   }
 

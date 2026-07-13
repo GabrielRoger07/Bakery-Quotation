@@ -344,8 +344,12 @@ textarea {
 
   .mobile-card-list-root {
     position: relative;
-    /* always clear the fixed bottom nav + FAB */
-    padding-bottom: calc(4.25rem + env(safe-area-inset-bottom) + 5rem);
+  }
+  @media (max-width: 640px) {
+    .mobile-card-list-root {
+      /* clear the fixed bottom nav + FAB */
+      padding-bottom: calc(4.25rem + env(safe-area-inset-bottom) + 5rem);
+    }
   }
 
   /* Search bar wrapper */
@@ -2209,7 +2213,7 @@ textarea {
 
   /* ── Product card ── */
   .qm-product-card {
-    background: var(--color-surface-subtle);
+    background: var(--color-surface-card);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -2303,7 +2307,7 @@ textarea {
   .qm-product-bid-section {
     padding: 0.625rem 0.875rem 0.75rem;
     border-top: 1px solid var(--color-border-subtle);
-    background: var(--color-surface-card);
+    background: var(--color-surface-subtle);
     display: flex;
     flex-direction: column;
     gap: 0.5rem;

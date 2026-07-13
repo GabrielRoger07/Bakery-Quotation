@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ArrowDownAZ, ArrowUpAZ } from 'lucide-react'
 import useFetch from '@/hooks/useFetch'
-import Table from '@/components/Table'
 import MobileCardList from '@/components/MobileCardList'
 import ProductBottomSheet from '@/components/ProductBottomSheet'
 import ProductFormBottomSheet from '@/components/ProductFormBottomSheet'
@@ -12,10 +11,9 @@ import PageContainer from '@/components/PageContainer'
 import Select from '@/components/Select'
 import MobileSearchInput from '@/components/MobileSearchInput'
 import ActiveFilterPill from '@/components/ActiveFilterPill'
+import ListToolbar from '@/components/ListToolbar'
 import ProductCreate from '@/pages/Product/ProductCreate'
 import ProductEdit from '@/pages/Product/ProductEdit'
-import Button from '@/components/Button'
-import Pagination from '@/components/Pagination'
 import PaginationSummary from '@/components/PaginationSummary'
 import { ENV } from '@/config/env'
 import useIsMobile from '@/hooks/useIsMobile'
@@ -31,7 +29,7 @@ const ProductList = () => {
     const {
         items: products, setItems: setProducts, loading, error, status,
         currentPage, setCurrentPage, totalPages, totalElements, pageSize,
-        sortField, sortDirection, handleSort, setSort,
+        sortField, sortDirection, setSort,
         appliedSearch, applySearch, clearSearch, refetch, confirm,
     } = useResourceList({
         endpoint: '/products/company',
@@ -56,17 +54,10 @@ const ProductList = () => {
 
     const [searchWord, setSearchWord] = useState("")
 
-    const columns = [
-        { key: "productBarCodeNumber", label: "Código do Produto" },
-        { key: "productName", label: "Nome do Produto" },
-        { key: "productDescription", label: "Descrição do Produto" },
-        ...(userDepts.length > 0 ? [{ key: "departmentName", label: "Departamento" }] : []),
-    ]
-
-    const sortOptions = [
+    const sortOptions = useMemo(() => [
         { key: "name-asc", label: "Nome (A → Z)", shortLabel: "A-Z", field: "productName", direction: "asc", icon: <ArrowDownAZ size={18} strokeWidth={2} /> },
         { key: "name-desc", label: "Nome (Z → A)", shortLabel: "Z-A", field: "productName", direction: "desc", icon: <ArrowUpAZ size={18} strokeWidth={2} /> },
-    ]
+    ], [])
 
     const openSheet = (product) => {
         setSheetProduct(product)
@@ -140,32 +131,7 @@ const ProductList = () => {
         fetchDepartments()
     }, [fetchDepartments])
 
-    const filterToolbar = useMemo(() => (
-        <>
-            {userDepts.length >= 2 && (
-                <Select
-                    bare
-                    value={deptFilter === null ? '' : String(deptFilter)}
-                    onChange={e => { setDeptFilter(e.target.value === '' ? null : Number(e.target.value)); setCurrentPage(0) }}
-                    placeholder="Todos os setores"
-                    selectClassName="h-[2.25rem]"
-                    options={userDepts.map(d => ({ value: d.departmentId, label: d.departmentName }))}
-                />
-            )}
-            <input
-                type="text"
-                className="toolbar-input"
-                value={searchWord}
-                onChange={e => setSearchWord(e.target.value)}
-                placeholder={"Nome do Produto"}
-                onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
-                disabled={products.length === 0}
-            />
-            <Button onClick={handleSearch} disabled={loading || products.length === 0}>Buscar</Button>
-        </>
-    ), [userDepts, deptFilter, searchWord, handleSearch, loading, setCurrentPage, products.length])
-
-    const mobileSearchBar = useMemo(() => (
+    const searchBar = useMemo(() => (
         <>
             <MobileSearchInput
                 value={searchWord}
@@ -180,7 +146,7 @@ const ProductList = () => {
         </>
     ), [searchWord, handleSearch, handleClearSearch, loading, appliedSearch, products.length])
 
-    const mobileFilterToolbar = useMemo(() => (
+    const filterToolbar = useMemo(() => (
         userDepts.length >= 2 ? (
             <div className="mf-root">
                 <Select
@@ -202,6 +168,50 @@ const ProductList = () => {
         loading,
     })
 
+    const activeSortKey = sortOptions.find(opt => opt.field === (sortField ?? 'productName') && opt.direction === (sortField ? sortDirection : 'asc'))?.key
+
+    const desktopToolbar = useMemo(() => (
+        <ListToolbar
+            search={{
+                value: searchWord,
+                onChange: e => setSearchWord(e.target.value),
+                onSearch: handleSearch,
+                onClear: handleClearSearch,
+                placeholder: "Buscar por nome do produto",
+                ariaLabel: "Buscar produto",
+                disabled: products.length === 0,
+                searchDisabled: loading || products.length === 0,
+            }}
+            after={userDepts.length >= 2 && (
+                <Select
+                    bare
+                    className="flex-1 min-w-[12rem]"
+                    value={deptFilter === null ? '' : String(deptFilter)}
+                    onChange={e => { setDeptFilter(e.target.value === '' ? null : Number(e.target.value)); setCurrentPage(0) }}
+                    placeholder="Todos os setores"
+                    selectClassName="h-[2.5rem]"
+                    options={userDepts.map(d => ({ value: d.departmentId, label: d.departmentName }))}
+                />
+            )}
+            sort={(
+                <Select
+                    bare
+                    className="w-[12rem] shrink-0"
+                    value={activeSortKey}
+                    onChange={e => {
+                        const opt = sortOptions.find(o => o.key === e.target.value)
+                        if (opt) setSort(opt.field, opt.direction)
+                    }}
+                    selectClassName="h-[2.5rem]"
+                    options={sortOptions.map(opt => ({ value: opt.key, label: opt.label }))}
+                />
+            )}
+            pageLabel={pageLabel}
+            rangeLabel={rangeLabel}
+            activeFilter={{ label: "Nome", value: appliedSearch.word, onClear: handleClearSearch }}
+        />
+    ), [searchWord, handleSearch, handleClearSearch, loading, products.length, userDepts, deptFilter, setCurrentPage, activeSortKey, setSort, pageLabel, rangeLabel, appliedSearch.word, sortOptions])
+
     const renderProductCard = (product) => ({
         avatar: initials(product.productName),
         title: product.productName,
@@ -214,73 +224,48 @@ const ProductList = () => {
             {error && <Alert message={error}/>}
             {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
-            {isMobile ? (
-                <>
-                    <MobileCardList
-                        title="Produtos"
-                        items={products}
-                        idKey="productId"
-                        loading={loading}
-                        emptyMessage="Nenhum produto encontrado."
-                        onReload={reloadCurrentPage}
-                        onAdd={openCreateForm}
-                        onCardClick={openSheet}
-                        renderCard={renderProductCard}
-                        toolbar={mobileFilterToolbar}
-                        searchBar={mobileSearchBar}
-                        filterActive={deptFilter !== null}
-                        sortOptions={sortOptions}
-                        sortField={sortField ?? 'productName'}
-                        sortDirection={sortField ? sortDirection : 'asc'}
-                        onSelectSort={(opt) => setSort(opt.field, opt.direction)}
-                        showCount={false}
-                        inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={setCurrentPage}
-                    />
-                    <ProductBottomSheet
-                        isOpen={sheetOpen}
-                        onClose={closeSheet}
-                        product={sheetProduct}
-                        onEdit={openEditModal}
-                        onDelete={confirm.requestRemove}
-                    />
-                    <ProductFormBottomSheet
-                        isOpen={formSheetOpen}
-                        onClose={closeFormSheet}
-                        mode={formSheetMode}
-                        product={productToEdit}
-                        onSaveCreate={handleSaveCreate}
-                        onSaveEdit={handleSaveEdit}
-                        departments={userDepts}
-                    />
-                </>
-            ) : (
-                <>
-                    <Table
-                        title={"Produtos"}
-                        columns={columns}
-                        data={products}
-                        idKey="productId"
-                        loading={loading}
-                        onEdit={openEditModal}
-                        onDelete={confirm.requestRemove}
-                        onAdd={() => setIsCreateModalOpen(true)}
-                        onReload={reloadCurrentPage}
-                        onSort={handleSort}
-                        sortField={sortField}
-                        sortDirection={sortDirection}
-                        emptyMessage={"Nenhum produto encontrado."}
-                        toolbar={filterToolbar}
-                        filterActive={appliedSearch.word !== ""}
-                    />
-                    <div className="flex items-center justify-between gap-2 px-1">
-                        <PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />
-                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-                    </div>
-                </>
-            )}
+            <MobileCardList
+                title="Produtos"
+                eyebrow="Catálogo"
+                addLabel="Novo Produto"
+                items={products}
+                idKey="productId"
+                loading={loading}
+                emptyMessage="Nenhum produto encontrado."
+                onReload={reloadCurrentPage}
+                onAdd={openCreateForm}
+                onCardClick={openSheet}
+                renderCard={renderProductCard}
+                toolbar={filterToolbar}
+                searchBar={searchBar}
+                desktopToolbar={desktopToolbar}
+                filterActive={deptFilter !== null}
+                sortOptions={sortOptions}
+                sortField={sortField ?? 'productName'}
+                sortDirection={sortField ? sortDirection : 'asc'}
+                onSelectSort={(opt) => setSort(opt.field, opt.direction)}
+                showCount={false}
+                inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
+            <ProductBottomSheet
+                isOpen={sheetOpen}
+                onClose={closeSheet}
+                product={sheetProduct}
+                onEdit={openEditModal}
+                onDelete={confirm.requestRemove}
+            />
+            <ProductFormBottomSheet
+                isOpen={formSheetOpen}
+                onClose={closeFormSheet}
+                mode={formSheetMode}
+                product={productToEdit}
+                onSaveCreate={handleSaveCreate}
+                onSaveEdit={handleSaveEdit}
+                departments={userDepts}
+            />
 
             <Modal isOpen={isEditModalOpen} onClose={closeModals} title={"Editar Produto"}>
                 <ProductEdit

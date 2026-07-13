@@ -19,6 +19,8 @@ import Pagination from '@/components/Pagination'
 import Modal from '@/components/Modal'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import ActiveFilterPill from '@/components/ActiveFilterPill'
+import MobileSearchInput from '@/components/MobileSearchInput'
+import ListToolbar from '@/components/ListToolbar'
 import Table from '@/components/Table'
 
 /*
@@ -283,6 +285,8 @@ const PrimitivesSection = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [pillValue, setPillValue] = useState('pão francês')
+  const [searchMobile, setSearchMobile] = useState('')
+  const [searchDense, setSearchDense] = useState('farinha')
 
   const selectOptions = [
     { value: 'kg', label: 'Quilograma (kg)' },
@@ -385,6 +389,33 @@ const PrimitivesSection = () => {
         <StatusTabFilter value={status} onChange={setStatus} />
       </Primitive>
 
+      <Primitive name="MobileSearchInput" count="2 variantes">
+        <div className="flex flex-col gap-4">
+          <div>
+            <p className="m-0 mb-2 text-caption text-[var(--color-text-muted)]">Padrão (mobile/sticky — botão "Buscar")</p>
+            <MobileSearchInput value={searchMobile} onChange={(e) => setSearchMobile(e.target.value)} onSearch={() => {}} onClear={() => setSearchMobile('')} placeholder="Buscar por nome do produto" />
+          </div>
+          <div>
+            <p className="m-0 mb-2 text-caption text-[var(--color-text-muted)]">dense (desktopToolbar — lupa clicável, sem botão)</p>
+            <div className="flex">
+              <MobileSearchInput dense value={searchDense} onChange={(e) => setSearchDense(e.target.value)} onSearch={() => {}} onClear={() => setSearchDense('')} placeholder="Buscar por nome do produto" ariaLabel="Buscar produto" />
+            </div>
+          </div>
+        </div>
+      </Primitive>
+
+      <Primitive name="ListToolbar">
+        <ListToolbar
+          search={{ value: searchDense, onChange: (e) => setSearchDense(e.target.value), onSearch: () => {}, onClear: () => setSearchDense(''), placeholder: "Buscar por nome do produto", ariaLabel: "Buscar produto" }}
+          after={<Select bare className="flex-1 min-w-[12rem]" value={selectValue} onChange={(e) => setSelectValue(e.target.value)} placeholder="Todos os setores" selectClassName="h-[2.5rem]" options={selectOptions} />}
+          sort={<Select bare className="w-[12rem] shrink-0" value="" onChange={() => {}} placeholder="Ordenar" selectClassName="h-[2.5rem]" options={[{ value: 'a', label: 'Nome (A → Z)' }]} />}
+          pageLabel="Página 1 de 4"
+          rangeLabel="Mostrando 1–10 de 34"
+          activeFilter={{ label: "Nome", value: searchDense, onClear: () => setSearchDense('') }}
+        />
+        <p className="m-0 mt-2 text-caption text-[var(--color-text-muted)]">Padrão do <code>desktopToolbar</code>: busca (dense) + <code>before</code>/<code>after</code>/<code>sort</code> opcionais + paginação/filtro ativo.</p>
+      </Primitive>
+
       <Primitive name="ActiveFilterPill">
         <ActiveFilterPill label="Busca" value={pillValue} onClear={() => setPillValue('')} />
         {!pillValue && <p className="m-0 text-caption text-[var(--color-text-muted)]">(sem valor — não renderiza)</p>}
@@ -419,7 +450,7 @@ const PrimitivesSection = () => {
       </Primitive>
 
       <Primitive name="Table">
-        <p className="m-0 mb-3 flex items-center gap-1.5 text-caption text-[var(--color-text-muted)]"><Search size={13} /> Versão desktop; no mobile o app troca para MobileCardList.</p>
+        <p className="m-0 mb-3 flex items-center gap-1.5 text-caption text-[var(--color-text-muted)]"><Search size={13} /> Versão desktop; no mobile o app troca para MobileCardList (padrão usado por Quotation/Department — Produtos e Fornecedores usam só MobileCardList, que vira grid a partir de sm:).</p>
         <Table title="Produtos" columns={tableColumns} data={tableData} idKey="id" onEdit={() => {}} onDelete={() => {}} />
       </Primitive>
     </Section>

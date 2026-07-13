@@ -3,14 +3,17 @@ import { Info, ArrowLeft } from 'lucide-react'
 
 /**
  * Barra de ações compartilhada do wizard de cotação (Voltar + ação primária).
- * No desktop renderiza inline no fim do conteúdo; no mobile fica grudada ao rodapé
- * (sticky, acima da bottom-nav) — some quando o conteúdo é curto, evitando espaço
- * vazio, e acompanha o scroll quando o conteúdo é mais longo que a tela.
+ * No desktop renderiza como rodapé da área de conteúdo (border-t, Voltar à esquerda
+ * e primária à direita — `desktopLabel` permite um rótulo contextual só no desktop);
+ * no mobile fica grudada ao rodapé (sticky, acima da bottom-nav) — some quando o
+ * conteúdo é curto, evitando espaço vazio, e acompanha o scroll quando o conteúdo
+ * é mais longo que a tela.
  */
 const WizardActions = ({
     onBack,
     onPrimary,
     primaryLabel,
+    desktopLabel,
     primaryVariant = 'primary',
     primaryIcon: PrimaryIcon,
     blocked = false,
@@ -51,8 +54,33 @@ const WizardActions = ({
 
     return (
         <>
-            {/* Desktop: inline */}
-            <div className="max-md:hidden mt-5">{inner}</div>
+            {/* Desktop: rodapé da área de conteúdo (mt-auto encosta no fim quando o step é curto) */}
+            <div className="max-md:hidden mt-8 md:mt-auto pt-5 border-t border-[var(--color-border-subtle)]">
+                {blocked && hint && (
+                    <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-[var(--radius-md)] bg-[var(--color-warning-lighter)] border border-[var(--color-warning-border)] text-[var(--color-warning-text)] text-caption font-medium">
+                        <Info size={16} strokeWidth={2} className="flex-shrink-0" />
+                        {hint}
+                    </div>
+                )}
+                <div className="flex items-center justify-between gap-3">
+                    {onBack ? (
+                        <Button variant="secondary" onClick={onBack} disabled={loading} className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
+                            <ArrowLeft size={18} strokeWidth={2} />Voltar
+                        </Button>
+                    ) : (
+                        <span />
+                    )}
+                    <Button
+                        variant={primaryVariant}
+                        onClick={handlePrimary}
+                        disabled={blocked || loading}
+                        className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap !px-5 !py-3"
+                    >
+                        {loading ? 'Carregando...' : (desktopLabel ?? primaryLabel)}
+                        {!loading && PrimaryIcon && <PrimaryIcon size={18} strokeWidth={2} />}
+                    </Button>
+                </div>
+            </div>
 
             {/* Mobile: sticky footer above bottom-nav (fica junto ao conteúdo quando ele é curto) */}
             <div

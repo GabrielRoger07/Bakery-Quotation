@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { ArrowDownAZ, ArrowUpAZ } from 'lucide-react'
 import useFetch from '@/hooks/useFetch'
 import useIsMobile from '@/hooks/useIsMobile'
-import { useMobilePage } from '@/contexts/MobilePageContext'
-import Table from '@/components/Table'
+import useResourceList from '@/hooks/useResourceList'
 import MobileCardList from '@/components/MobileCardList'
+import DepartmentBottomSheet from '@/components/DepartmentBottomSheet'
+import DepartmentFormBottomSheet from '@/components/DepartmentFormBottomSheet'
 import Modal from '@/components/Modal'
 import Alert from '@/components/Alert'
 import Button from '@/components/Button'
@@ -11,11 +13,16 @@ import Input from '@/components/Input'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import PageContainer from '@/components/PageContainer'
 import FormActions from '@/components/FormActions'
+import PaginationSummary from '@/components/PaginationSummary'
+import Select from '@/components/Select'
+import ListToolbar from '@/components/ListToolbar'
+import MobileSearchInput from '@/components/MobileSearchInput'
+import ActiveFilterPill from '@/components/ActiveFilterPill'
 import { initials } from '@/utils/initials'
+import { getPaginationSummary } from '@/utils/paginationSummary'
 import { ENV } from '@/config/env'
-import { Pencil, Trash2, X } from 'lucide-react'
 
-const DepartmentForm = ({ department, onSave, onClose }) => {
+export const DepartmentForm = ({ department, onSave, onClose }) => {
     const [name, setName] = useState(department?.departmentName ?? '')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
@@ -67,95 +74,22 @@ const DepartmentForm = ({ department, onSave, onClose }) => {
     )
 }
 
-const DepartmentFormSheet = ({ isOpen, onClose, department, onSave }) => {
-    useEffect(() => {
-        if (!isOpen) return
-        const handleKey = (e) => { if (e.key === 'Escape') onClose() }
-        document.addEventListener('keydown', handleKey)
-        return () => document.removeEventListener('keydown', handleKey)
-    }, [isOpen, onClose])
-
-    useEffect(() => {
-        document.body.style.overflow = isOpen ? 'hidden' : ''
-        return () => { document.body.style.overflow = '' }
-    }, [isOpen])
-
-    const title = department ? 'Editar Departamento' : 'Novo Departamento'
-
-    return (
-        <>
-            <div className={`sort-sheet-backdrop ${isOpen ? 'open' : ''}`} onClick={onClose} aria-hidden="true" />
-            <div className={`sform-sheet ${isOpen ? 'open' : ''}`} role="dialog" aria-modal="true" aria-label={title}>
-                <div className="sort-sheet-handle" />
-                <div className="sform-sheet-header">
-                    <span className="sform-sheet-title">{title}</span>
-                    <button className="sort-sheet-close" onClick={onClose} aria-label="Fechar">
-                        <X size={18} strokeWidth={2} />
-                    </button>
-                </div>
-                <div className="sform-sheet-body">
-                    <DepartmentForm department={department} onSave={onSave} onClose={onClose} />
-                </div>
-            </div>
-        </>
-    )
-}
-
-const DepartmentDetailSheet = ({ isOpen, onClose, department, onEdit, onDelete }) => {
-    useEffect(() => {
-        if (!isOpen) return
-        const handleKey = (e) => { if (e.key === 'Escape') onClose() }
-        document.addEventListener('keydown', handleKey)
-        return () => document.removeEventListener('keydown', handleKey)
-    }, [isOpen, onClose])
-
-    useEffect(() => {
-        document.body.style.overflow = isOpen ? 'hidden' : ''
-        return () => { document.body.style.overflow = '' }
-    }, [isOpen])
-
-    return (
-        <>
-            <div className={`sort-sheet-backdrop ${isOpen ? 'open' : ''}`} onClick={onClose} aria-hidden="true" />
-            <div className={`sform-sheet ${isOpen ? 'open' : ''}`} role="dialog" aria-modal="true" aria-label="Departamento">
-                <div className="sort-sheet-handle" />
-                <div className="sform-sheet-header">
-                    <span className="sform-sheet-title">{department?.departmentName}</span>
-                    <button className="sort-sheet-close" onClick={onClose} aria-label="Fechar">
-                        <X size={18} strokeWidth={2} />
-                    </button>
-                </div>
-                <div className="sform-sheet-body">
-                    <div className="flex flex-col gap-3 pt-1">
-                        <button
-                            className="flex items-center gap-3 w-full px-4 py-3 rounded-[var(--radius-md)] text-body font-medium text-[var(--color-text-body)] bg-[var(--color-surface-subtle)] hover:bg-[var(--color-surface-muted)] transition-colors duration-[160ms] text-left"
-                            onClick={() => { onClose(); setTimeout(() => onEdit(department), 200) }}
-                        >
-                            <Pencil size={18} strokeWidth={2} className="text-[var(--color-accent)]" />
-                            Editar
-                        </button>
-                        <button
-                            className="flex items-center gap-3 w-full px-4 py-3 rounded-[var(--radius-md)] text-body font-medium text-[var(--color-danger)] bg-[var(--color-danger-soft)] hover:bg-[var(--color-danger-soft-bg-hover,var(--color-danger-soft))] transition-colors duration-[160ms] text-left"
-                            onClick={() => { onClose(); setTimeout(() => onDelete(department.departmentId), 200) }}
-                        >
-                            <Trash2 size={18} strokeWidth={2} />
-                            Remover
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </>
-    )
-}
-
 const DepartmentList = () => {
-    const { request, loading } = useFetch(ENV.API_BASE_URL)
     const isMobile = useIsMobile()
-    const { registerPage, unregisterPage } = useMobilePage()
 
-    const [departments, setDepartments] = useState([])
-    const [error, setError] = useState('')
-    const [initialLoad, setInitialLoad] = useState(true)
+    const {
+        items: departments, setItems: setDepartments, loading, error, status,
+        currentPage, setCurrentPage, totalPages, totalElements, pageSize,
+        sortField, sortDirection, setSort,
+        appliedSearch, applySearch, clearSearch,
+        refetch, confirm,
+    } = useResourceList({
+        endpoint: '/departments/company',
+        idKey: 'departmentId',
+        defaultSortField: 'departmentName',
+        deletePath: (d) => `/departments/${d.departmentId}`,
+        deleteErrorMessage: 'Erro ao remover departamento. Por favor tente novamente.',
+    })
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -167,33 +101,40 @@ const DepartmentList = () => {
     const [formSheetOpen, setFormSheetOpen] = useState(false)
     const [formSheetDept, setFormSheetDept] = useState(null)
 
-    const [confirmOpen, setConfirmOpen] = useState(false)
-    const [departmentToRemove, setDepartmentToRemove] = useState(null)
+    const [searchWord, setSearchWord] = useState("")
 
-    const columns = [
-        { key: 'departmentName', label: 'Nome' },
-    ]
+    const visibleDepartments = departments.filter(d => d.departmentName !== 'Default')
 
-    const fetchDepartments = useCallback(async () => {
-        const res = await request('GET', '/departments/company?size=50&sort=departmentName,asc')
-        if (res.ok) {
-            const all = res.data.content ?? res.data
-            setDepartments(all.filter(d => d.departmentName !== 'Default'))
-            setError('')
-        } else {
-            setError('Não foi possível carregar os departamentos.')
-        }
-        setInitialLoad(false)
-    }, [request])
+    const reloadCurrentPage = useCallback(() => refetch(currentPage), [refetch, currentPage])
 
-    useEffect(() => {
-        fetchDepartments()
-    }, [fetchDepartments])
+    const sortOptions = useMemo(() => [
+        { key: "name-asc", label: "Nome (A → Z)", shortLabel: "A-Z", field: "departmentName", direction: "asc", icon: <ArrowDownAZ size={18} strokeWidth={2} /> },
+        { key: "name-desc", label: "Nome (Z → A)", shortLabel: "Z-A", field: "departmentName", direction: "desc", icon: <ArrowUpAZ size={18} strokeWidth={2} /> },
+    ], [])
 
-    useEffect(() => {
-        registerPage('Departamentos', fetchDepartments)
-        return () => unregisterPage()
-    }, [registerPage, unregisterPage, fetchDepartments])
+    const handleSearch = useCallback(() => {
+        applySearch("departmentName", searchWord)
+    }, [applySearch, searchWord])
+
+    const handleClearSearch = useCallback(() => {
+        setSearchWord("")
+        clearSearch()
+    }, [clearSearch])
+
+    const searchBar = useMemo(() => (
+        <>
+            <MobileSearchInput
+                value={searchWord}
+                onChange={e => setSearchWord(e.target.value)}
+                onSearch={handleSearch}
+                onClear={handleClearSearch}
+                placeholder="Buscar por departamento"
+                inputDisabled={departments.length === 0}
+                searchDisabled={loading || departments.length === 0}
+            />
+            <ActiveFilterPill label="Nome" value={appliedSearch.word} onClear={handleClearSearch} />
+        </>
+    ), [searchWord, handleSearch, handleClearSearch, loading, appliedSearch, departments.length])
 
     const openDetailSheet = (dept) => {
         setDetailSheetDept(dept)
@@ -228,8 +169,6 @@ const DepartmentList = () => {
         setIsCreateModalOpen(false)
         setIsEditModalOpen(false)
         setDepartmentToEdit(null)
-        setConfirmOpen(false)
-        setDepartmentToRemove(null)
     }
 
     const closeFormSheet = () => {
@@ -238,30 +177,12 @@ const DepartmentList = () => {
         setDepartmentToEdit(null)
     }
 
-    const handleSave = () => {
-        fetchDepartments()
+    const handleSaveCreate = () => {
+        refetch()
     }
 
     const handleSaveEdit = (updated) => {
         setDepartments(prev => prev.map(d => d.departmentId === updated.departmentId ? updated : d))
-    }
-
-    const requestRemove = (departmentId) => {
-        const dept = departments.find(d => d.departmentId === departmentId)
-        setDepartmentToRemove(dept)
-        setConfirmOpen(true)
-    }
-
-    const confirmRemove = async () => {
-        if (!departmentToRemove) return
-        const res = await request('DELETE', `/departments/${departmentToRemove.departmentId}`)
-        if (res.ok) {
-            fetchDepartments()
-            setError('')
-        } else {
-            setError('Erro ao remover departamento. Tente novamente.')
-        }
-        closeModals()
     }
 
     const renderDepartmentCard = (dept) => ({
@@ -269,57 +190,92 @@ const DepartmentList = () => {
         title: dept.departmentName,
     })
 
+    const { pageLabel, rangeLabel } = getPaginationSummary({
+        currentPage, totalPages, totalElements, pageSize,
+        pageItemCount: visibleDepartments.length,
+        emptyLabel: "Nenhum departamento cadastrado.",
+        loading,
+    })
+
+    const activeSortKey = sortOptions.find(opt => opt.field === (sortField ?? 'departmentName') && opt.direction === (sortField ? sortDirection : 'asc'))?.key
+
+    const desktopToolbar = useMemo(() => (
+        <ListToolbar
+            search={{
+                value: searchWord,
+                onChange: e => setSearchWord(e.target.value),
+                onSearch: handleSearch,
+                onClear: handleClearSearch,
+                placeholder: "Buscar por departamento",
+                ariaLabel: "Buscar departamento",
+                disabled: departments.length === 0,
+                searchDisabled: loading || departments.length === 0,
+            }}
+            sort={(
+                <Select
+                    bare
+                    className="w-[12rem] shrink-0"
+                    value={activeSortKey}
+                    onChange={e => {
+                        const opt = sortOptions.find(o => o.key === e.target.value)
+                        if (opt) setSort(opt.field, opt.direction)
+                    }}
+                    selectClassName="h-[2.5rem]"
+                    options={sortOptions.map(opt => ({ value: opt.key, label: opt.label }))}
+                />
+            )}
+            pageLabel={pageLabel}
+            rangeLabel={rangeLabel}
+            activeFilter={{ label: "Nome", value: appliedSearch.word, onClear: handleClearSearch }}
+        />
+    ), [searchWord, handleSearch, handleClearSearch, loading, departments.length, activeSortKey, sortOptions, setSort, pageLabel, rangeLabel, appliedSearch.word])
+
     return (
         <PageContainer variant="list">
             {error && <Alert message={error} />}
+            {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
-            {isMobile ? (
-                <>
-                    <MobileCardList
-                        title="Departamentos"
-                        items={departments}
-                        idKey="departmentId"
-                        loading={loading || initialLoad}
-                        emptyMessage="Nenhum departamento cadastrado."
-                        onReload={fetchDepartments}
-                        onAdd={openCreateForm}
-                        onCardClick={openDetailSheet}
-                        renderCard={renderDepartmentCard}
-                        sortColumns={columns}
-                    />
-                    <DepartmentDetailSheet
-                        isOpen={detailSheetOpen}
-                        onClose={closeDetailSheet}
-                        department={detailSheetDept}
-                        onEdit={openEditModal}
-                        onDelete={requestRemove}
-                    />
-                    <DepartmentFormSheet
-                        isOpen={formSheetOpen}
-                        onClose={closeFormSheet}
-                        department={formSheetDept}
-                        onSave={formSheetDept ? handleSaveEdit : handleSave}
-                    />
-                </>
-            ) : (
-                <>
-                    <Table
-                        title="Departamentos"
-                        columns={columns}
-                        data={departments}
-                        idKey="departmentId"
-                        loading={loading || initialLoad}
-                        onEdit={openEditModal}
-                        onDelete={requestRemove}
-                        onAdd={openCreateForm}
-                        onReload={fetchDepartments}
-                        emptyMessage="Nenhum departamento cadastrado."
-                    />
-                </>
-            )}
+            <MobileCardList
+                title="Departamentos"
+                eyebrow="Cadastro"
+                addLabel="Novo Departamento"
+                items={visibleDepartments}
+                idKey="departmentId"
+                loading={loading}
+                emptyMessage="Nenhum departamento cadastrado."
+                onReload={reloadCurrentPage}
+                onAdd={openCreateForm}
+                onCardClick={openDetailSheet}
+                renderCard={renderDepartmentCard}
+                searchBar={searchBar}
+                desktopToolbar={desktopToolbar}
+                filterActive={appliedSearch.word !== ""}
+                showCount={false}
+                inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
+                sortOptions={sortOptions}
+                sortField={sortField ?? 'departmentName'}
+                sortDirection={sortField ? sortDirection : 'asc'}
+                onSelectSort={(opt) => setSort(opt.field, opt.direction)}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
+            <DepartmentBottomSheet
+                isOpen={detailSheetOpen}
+                onClose={closeDetailSheet}
+                department={detailSheetDept}
+                onEdit={openEditModal}
+                onDelete={confirm.requestRemove}
+            />
+            <DepartmentFormBottomSheet
+                isOpen={formSheetOpen}
+                onClose={closeFormSheet}
+                department={formSheetDept}
+                onSave={formSheetDept ? handleSaveEdit : handleSaveCreate}
+            />
 
             <Modal isOpen={isCreateModalOpen} onClose={closeModals} title="Novo Departamento">
-                <DepartmentForm onSave={handleSave} onClose={closeModals} />
+                <DepartmentForm onSave={handleSaveCreate} onClose={closeModals} />
             </Modal>
 
             <Modal isOpen={isEditModalOpen} onClose={closeModals} title="Editar Departamento">
@@ -327,14 +283,14 @@ const DepartmentList = () => {
             </Modal>
 
             <ConfirmDialog
-                isOpen={confirmOpen}
-                onClose={closeModals}
-                onConfirm={confirmRemove}
+                isOpen={confirm.isOpen}
+                onClose={confirm.cancel}
+                onConfirm={confirm.confirm}
                 loading={loading}
                 confirmVariant="danger"
             >
-                Tem certeza de que deseja remover o departamento <strong>{departmentToRemove?.departmentName}</strong>?
-                {departments.length === 1 && (
+                Tem certeza de que deseja remover o departamento <strong>{confirm.item?.departmentName}</strong>?
+                {totalElements === 2 && (
                     <span> O departamento voltará ao estado padrão.</span>
                 )}
             </ConfirmDialog>

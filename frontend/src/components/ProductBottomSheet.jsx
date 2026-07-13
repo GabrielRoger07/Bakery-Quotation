@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
 import { X, Pencil, Trash, Barcode, AlignLeft } from 'lucide-react'
+import Modal from '@/components/Modal'
+import useIsMobile from '@/hooks/useIsMobile'
 
 const DetailRow = ({ icon, label, value }) => {
     if (!value || value === '-') return null
@@ -14,10 +16,47 @@ const DetailRow = ({ icon, label, value }) => {
     )
 }
 
+const ProductDetailBody = ({ product, onEdit, onDelete, onClose }) => (
+    <>
+        <div className="qsheet-actions">
+            {onEdit && (
+                <button className="qsheet-action-btn qsheet-edit" onClick={() => { onEdit(product); onClose() }}>
+                    <Pencil size={18} strokeWidth={2} />
+                    <span>Editar</span>
+                </button>
+            )}
+            {onDelete && (
+                <button className="qsheet-action-btn qsheet-delete" onClick={() => { onDelete(product.productId); onClose() }}>
+                    <Trash size={18} strokeWidth={2} />
+                    <span>Excluir</span>
+                </button>
+            )}
+        </div>
+
+        <div className="qsheet-body">
+            <DetailRow
+                icon={<Barcode size={16} strokeWidth={1.75} />}
+                label="Código"
+                value={product?.productBarCodeNumber}
+            />
+            <DetailRow
+                icon={<AlignLeft size={16} strokeWidth={1.75} />}
+                label="Descrição"
+                value={product?.productDescription}
+            />
+        </div>
+    </>
+)
+
 /**
- * Bottom sheet (mobile) com os detalhes de um produto e ações de editar/remover.
+ * Detalhes de um produto com ações de editar/remover. No mobile abre como
+ * bottom sheet; a partir de `sm:` (desktop) o mesmo conteúdo abre dentro do
+ * `Modal` genérico — mesmo padrão "corpo compartilhado, chrome trocado por
+ * isMobile" que `SuppliersPanel` (em `QuotationMonitor.jsx`) já usa.
  */
 const ProductBottomSheet = ({ isOpen, onClose, product, onEdit, onDelete }) => {
+    const isMobile = useIsMobile()
+
     useEffect(() => {
         if (!isOpen) return
         const handleKey = (e) => { if (e.key === 'Escape') onClose() }
@@ -29,6 +68,14 @@ const ProductBottomSheet = ({ isOpen, onClose, product, onEdit, onDelete }) => {
         document.body.style.overflow = isOpen ? 'hidden' : ''
         return () => { document.body.style.overflow = '' }
     }, [isOpen])
+
+    if (!isMobile) {
+        return (
+            <Modal isOpen={isOpen} onClose={onClose} title={product?.productName}>
+                <ProductDetailBody product={product} onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
+            </Modal>
+        )
+    }
 
     const initials = product?.productName
         ? product.productName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
@@ -61,33 +108,7 @@ const ProductBottomSheet = ({ isOpen, onClose, product, onEdit, onDelete }) => {
                     </button>
                 </div>
 
-                <div className="qsheet-actions">
-                    {onEdit && (
-                        <button className="qsheet-action-btn qsheet-edit" onClick={() => { onEdit(product); onClose() }}>
-                            <Pencil size={18} strokeWidth={2} />
-                            <span>Editar</span>
-                        </button>
-                    )}
-                    {onDelete && (
-                        <button className="qsheet-action-btn qsheet-delete" onClick={() => { onDelete(product.productId); onClose() }}>
-                            <Trash size={18} strokeWidth={2} />
-                            <span>Excluir</span>
-                        </button>
-                    )}
-                </div>
-
-                <div className="qsheet-body">
-                    <DetailRow
-                        icon={<Barcode size={16} strokeWidth={1.75} />}
-                        label="Código"
-                        value={product?.productBarCodeNumber}
-                    />
-                    <DetailRow
-                        icon={<AlignLeft size={16} strokeWidth={1.75} />}
-                        label="Descrição"
-                        value={product?.productDescription}
-                    />
-                </div>
+                <ProductDetailBody product={product} onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
             </div>
         </>
     )

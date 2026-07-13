@@ -5,13 +5,15 @@ import useCharLimit from '@/hooks/useCharLimit'
 import Button from '@/components/Button'
 import Alert from '@/components/Alert'
 import Input from '@/components/Input'
+import Select from '@/components/Select'
 import Modal from '@/components/Modal'
 import LoadMoreButton from '@/components/LoadMoreButton'
 import EmptyState from '@/components/EmptyState'
 import MobileSearchInput from '@/components/MobileSearchInput'
 import ActiveFilterPill from '@/components/ActiveFilterPill'
 import WizardActions from '@/components/WizardActions'
-import { X, Plus, Minus, Package, ChevronDown, Pencil, Check, SearchX, ShoppingCart, ArrowRight } from 'lucide-react'
+import ProductCreate from '@/pages/Product/ProductCreate'
+import { X, Plus, Minus, Package, Pencil, Check, SearchX, ShoppingCart, ArrowRight, Trash2 } from 'lucide-react'
 import { ENV } from '@/config/env'
 
 /* ── Create product inline form (rendered inside Modal on desktop, bottom sheet on mobile) ── */
@@ -471,45 +473,82 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         onNext()
     }
 
-    // shared small input class (desktop table)
+    // shared small input class (desktop inline edit)
     const smallInputCls = 'w-full h-[2.125rem] border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] font-sans px-2 text-[var(--color-text-body)] bg-[var(--color-surface-card)] outline-none transition-[border-color,box-shadow] duration-[160ms] focus:border-[var(--color-accent)] focus:[box-shadow:0_0_0_2px_var(--color-accent-soft-strong)] placeholder:text-[var(--color-text-disabled)]'
     const iconBtnBase = 'flex-shrink-0 w-[26px] h-[26px] border-none bg-transparent text-[var(--color-text-muted)] cursor-pointer rounded-[var(--radius-sm)] inline-grid place-items-center transition-[background-color,color] duration-[160ms]'
-    const iconBtnAccent  = `${iconBtnBase} hover:bg-[var(--color-accent-soft)] hover:text-[var(--color-accent)]`
     const iconBtnDanger  = `${iconBtnBase} hover:bg-[var(--color-danger-soft)] hover:text-[var(--color-danger)]`
     const iconBtnSuccess = `${iconBtnBase} text-[var(--color-success)] hover:bg-[var(--color-success-soft)] hover:text-[var(--color-success-strong)]`
+
+    // Desktop: eyebrows das colunas + botões dos cards de selecionados
+    const colLabelCls = 'flex items-center gap-1.5 text-label font-bold uppercase tracking-[0.1em] text-[var(--color-text-disabled)] mb-2.5 px-0.5'
+    const colBadgeCls = 'text-label font-bold text-[var(--color-accent)] bg-[var(--color-highlight-soft)] px-1.5 py-0.5 rounded-full leading-none tabular-nums tracking-normal'
+    const cardBtnBase = 'flex-shrink-0 w-8 h-8 rounded-[var(--radius-md)] border border-[var(--color-border-default)] bg-[var(--color-surface-card)] cursor-pointer inline-grid place-items-center transition-[background-color,border-color,color] duration-[160ms]'
+    const cardBtnEdit = `${cardBtnBase} text-[var(--color-text-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] hover:bg-[var(--color-highlight-lighter)]`
+    const cardBtnDelete = `${cardBtnBase} text-[var(--color-danger)] hover:border-[var(--color-danger)] hover:bg-[var(--color-danger-soft)]`
 
     /* ── Search panel (shared between desktop and mobile search tab) ── */
     const renderSearchPanel = () => (
         <>
             {/* Search bar */}
             <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
-                {userDepts.length > 1 && (
-                    <div className="relative mb-2.5 max-sm:w-full w-fit">
-                        <select
-                            value={deptFilter === null ? 'all' : String(deptFilter)}
-                            onChange={e => { setDeptFilter(e.target.value === 'all' ? null : Number(e.target.value)); setCurrentPage(0) }}
-                            aria-label="Filtrar por departamento"
-                            className="w-full min-w-[12rem] max-w-[16rem] max-sm:max-w-full h-[2.375rem] pl-[0.75rem] pr-8 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] font-sans text-[var(--color-text-body)] bg-[var(--color-surface-card)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none cursor-pointer hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
-                        >
-                            <option value="all">Todos os departamentos</option>
-                            {userDepts.map(d => (
-                                <option key={d.departmentId} value={String(d.departmentId)}>{d.departmentName}</option>
-                            ))}
-                        </select>
-                        <span className="pointer-events-none absolute right-[0.625rem] top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
-                            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        </span>
-                    </div>
-                )}
+                {isMobile ? (
+                    <>
+                        {userDepts.length > 1 && (
+                            <div className="relative mb-2.5 max-sm:w-full w-fit">
+                                <select
+                                    value={deptFilter === null ? 'all' : String(deptFilter)}
+                                    onChange={e => { setDeptFilter(e.target.value === 'all' ? null : Number(e.target.value)); setCurrentPage(0) }}
+                                    aria-label="Filtrar por departamento"
+                                    className="w-full min-w-[12rem] max-w-[16rem] max-sm:max-w-full h-[2.375rem] pl-[0.75rem] pr-8 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] font-sans text-[var(--color-text-body)] bg-[var(--color-surface-card)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none cursor-pointer hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
+                                >
+                                    <option value="all">Todos os departamentos</option>
+                                    {userDepts.map(d => (
+                                        <option key={d.departmentId} value={String(d.departmentId)}>{d.departmentName}</option>
+                                    ))}
+                                </select>
+                                <span className="pointer-events-none absolute right-[0.625rem] top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                </span>
+                            </div>
+                        )}
 
-                <MobileSearchInput
-                    value={searchWord}
-                    onChange={e => setSearchWord(e.target.value)}
-                    onSearch={handleSearch}
-                    onClear={handleClearSearch}
-                    placeholder="Nome do Produto"
-                />
-                <ActiveFilterPill label="Busca" value={appliedSearch} onClear={handleClearSearch} />
+                        <MobileSearchInput
+                            value={searchWord}
+                            onChange={e => setSearchWord(e.target.value)}
+                            onSearch={handleSearch}
+                            onClear={handleClearSearch}
+                            placeholder="Nome do Produto"
+                        />
+                        <ActiveFilterPill label="Busca" value={appliedSearch} onClear={handleClearSearch} />
+                    </>
+                ) : (
+                    /* Desktop: mesmo padrão da toolbar da listagem de produtos (busca dense + Select de setor) */
+                    <>
+                        <div className="flex items-center gap-4 flex-wrap">
+                            <MobileSearchInput
+                                dense
+                                value={searchWord}
+                                onChange={e => setSearchWord(e.target.value)}
+                                onSearch={handleSearch}
+                                onClear={handleClearSearch}
+                                placeholder="Buscar por nome do produto"
+                                ariaLabel="Buscar produto"
+                            />
+                            {userDepts.length > 1 && (
+                                <Select
+                                    bare
+                                    className="flex-1 min-w-[12rem]"
+                                    value={deptFilter === null ? '' : String(deptFilter)}
+                                    onChange={e => { setDeptFilter(e.target.value === '' ? null : Number(e.target.value)); setCurrentPage(0) }}
+                                    placeholder="Todos os setores"
+                                    selectClassName="h-[2.5rem]"
+                                    options={userDepts.map(d => ({ value: d.departmentId, label: d.departmentName }))}
+                                />
+                            )}
+                        </div>
+                        <ActiveFilterPill label="Nome" value={appliedSearch} onClear={handleClearSearch} />
+                    </>
+                )}
 
                 <button
                     type="button"
@@ -553,30 +592,29 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                             ))}
                         </div>
                     ) : (
-                        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-md)] overflow-hidden bg-[var(--color-surface-card)] mb-1">
+                        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-lg)] overflow-hidden bg-[var(--color-surface-card)] mb-1">
                             {availableProducts.map(p => {
-                                const isExpanded = !isMobile && expandedId === p.productId
+                                const isExpanded = expandedId === p.productId
                                 return (
                                     <div key={p.productId} className="border-b border-[var(--color-border-faint)] last:border-b-0">
-                                        <div
-                                            onClick={() => isMobile
-                                                ? handleOpenSheet(p, null)
-                                                : handleExpandProduct(p)
-                                            }
-                                            className={`flex items-center justify-between px-3 py-[0.6rem] cursor-pointer gap-2 transition-[background-color] duration-[160ms] ${isExpanded ? 'bg-[var(--color-highlight-lighter)]' : 'hover:bg-[var(--color-surface-subtle)]'}`}
-                                        >
-                                            <div className="flex flex-col min-w-0 flex-1">
-                                                <span className="font-medium text-[0.875rem] text-[var(--color-text-heading)] overflow-hidden text-ellipsis whitespace-nowrap">{p.productName}</span>
-                                                {p.productDescription && <span className="text-caption text-[var(--color-text-muted)] mt-px">{p.productDescription}</span>}
+                                        <div className={`flex items-center gap-3 px-3 py-2.5 transition-[background-color] duration-[160ms] ${isExpanded ? 'bg-[var(--color-highlight-lighter)]' : ''}`}>
+                                            <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] flex items-center justify-center flex-shrink-0">
+                                                <Package size={20} strokeWidth={2} />
                                             </div>
-                                            {isMobile ? (
-                                                <Plus size={16} className="text-[var(--color-accent)] flex-shrink-0" />
-                                            ) : (
-                                                <ChevronDown size={16} className={`text-[var(--color-text-muted)] flex-shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
-                                            )}
+                                            <div className="flex flex-col min-w-0 flex-1">
+                                                <span className="font-bold text-[0.875rem] text-[var(--color-text-heading)] overflow-hidden text-ellipsis whitespace-nowrap">{p.productName}</span>
+                                                {p.productDescription && <span className="text-caption text-[var(--color-text-muted)] mt-px overflow-hidden text-ellipsis whitespace-nowrap">{p.productDescription}</span>}
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleExpandProduct(p)}
+                                                className={`flex-shrink-0 inline-flex items-center gap-1 px-3 h-9 rounded-[var(--radius-md)] border-[1.5px] text-caption font-semibold cursor-pointer transition-[background-color,border-color] duration-[160ms] ${isExpanded ? 'border-[var(--color-accent)] bg-[var(--color-highlight-soft)] text-[var(--color-accent)]' : 'border-[var(--color-border-strong)] bg-[var(--color-surface-card)] text-[var(--color-accent)] hover:border-[var(--color-accent)] hover:bg-[var(--color-highlight-lighter)]'}`}
+                                            >
+                                                <Plus size={15} strokeWidth={2.5} />Adicionar
+                                            </button>
                                         </div>
                                         {/* Desktop inline expand */}
-                                        {!isMobile && isExpanded && (
+                                        {isExpanded && (
                                             <div className="px-3 py-2 pb-3 bg-[var(--color-highlight-lighter)] border-t border-[var(--color-border-faint)] flex items-end gap-[0.625rem] [animation:step2ExpandIn_0.15s_ease]">
                                                 <div className="flex gap-2 flex-1">
                                                     <div className="flex flex-col gap-[0.2rem] flex-1">
@@ -629,126 +667,112 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 />
             )
         }
+        if (isMobile) {
+            return (
+                <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
+                    {/* Mobile card list */}
+                    <ul className="list-none m-0 p-0 flex flex-col gap-[0.5rem]">
+                        {selectedList.map(p => {
+                            const rawProduct = localSelected[p.productId]?._product
+                            return (
+                                <li key={p.productId} className="sel-product-card">
+                                    <div className="sel-product-icon">
+                                        <Package size={18} />
+                                    </div>
+                                    <div className="sel-product-body">
+                                        <p className="sel-product-name">{p.productName}</p>
+                                        <div className="sel-product-meta">
+                                            <span className="sel-product-qty">{p.quantity} {p.unitOfMeasure}</span>
+                                            <span className="sel-product-dot" aria-hidden="true" />
+                                            {p.brand
+                                                ? <span className="sel-product-brand">{p.brand}</span>
+                                                : <span className="sel-product-no-brand">Sem marca</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className="sel-product-actions">
+                                        <button
+                                            className="sel-product-btn edit"
+                                            title="Editar"
+                                            onClick={() => handleOpenSheet(rawProduct ?? p, { quantity: p.quantity, brand: p.brand })}
+                                        >
+                                            <Pencil size={14} />
+                                        </button>
+                                        <button
+                                            className="sel-product-btn remove"
+                                            title="Remover"
+                                            onClick={() => handleRemoveProduct(p.productId)}
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    </div>
+                                </li>
+                            )
+                        })}
+                    </ul>
+                </div>
+            )
+        }
+        /* Desktop: cards individuais */
         return (
-        <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
-            {!isMobile && (
-                <h4 className="m-0 mb-[0.6rem] text-[var(--color-text-secondary)] text-heading flex items-center gap-[0.4rem]">
-                    <Package size={16} />Produtos Adicionados ({selectedList.length})
-                </h4>
-            )}
-            {isMobile ? (
-                /* Mobile card list */
-                <ul className="list-none m-0 p-0 flex flex-col gap-[0.5rem]">
-                    {selectedList.map(p => {
-                        const rawProduct = localSelected[p.productId]?._product
-                        return (
-                            <li key={p.productId} className="sel-product-card">
-                                <div className="sel-product-icon">
-                                    <Package size={18} />
-                                </div>
-                                <div className="sel-product-body">
-                                    <p className="sel-product-name">{p.productName}</p>
-                                    <div className="sel-product-meta">
-                                        <span className="sel-product-qty">{p.quantity} {p.unitOfMeasure}</span>
-                                        <span className="sel-product-dot" aria-hidden="true" />
+            <ul className="list-none m-0 p-0 flex flex-col gap-2.5 mb-3">
+                {selectedList.map(p => {
+                    const isEditing = editingId === p.productId
+                    return (
+                        <li
+                            key={p.productId}
+                            className={`flex items-center gap-3 p-3 border rounded-[var(--radius-xl)] [box-shadow:var(--shadow-card-soft)] transition-[background-color,border-color] duration-[160ms] ${isEditing ? 'bg-[var(--color-highlight-lighter)] border-[var(--color-highlight-border)]' : 'bg-[var(--color-surface-card)] border-[var(--color-border-subtle)]'}`}
+                        >
+                            <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] flex items-center justify-center flex-shrink-0 self-start mt-0.5">
+                                <Package size={20} strokeWidth={2} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="font-bold text-[0.875rem] text-[var(--color-text-heading)] overflow-hidden text-ellipsis whitespace-nowrap">{p.productName}</div>
+                                {isEditing ? (
+                                    <div className="flex items-center gap-2 mt-1.5">
+                                        <input type="number" className={`!w-[70px] ${smallInputCls} text-center [font-variant-numeric:tabular-nums] appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none`} value={editQty} onChange={e => setEditQty(e.target.value)} onKeyDown={e => { if (['-','e','E'].includes(e.key)) e.preventDefault(); if (e.key === "Enter") handleConfirmEdit(p.productId); if (e.key === "Escape") handleCancelEdit() }} onFocus={e => e.target.select()} min="1" autoFocus />
+                                        <div className="relative w-[80px] flex-shrink-0">
+                                            <select className={`${smallInputCls} appearance-none pr-5`} value={editUnit} onChange={e => setEditUnit(e.target.value)}>
+                                                {UNIT_OPTIONS.map(u => <option key={u} value={u}>{u}</option>)}
+                                            </select>
+                                            <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
+                                                <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                            </span>
+                                        </div>
+                                        <input type="text" className={`${smallInputCls} max-w-[160px]`} value={editBrand} onChange={e => setEditBrand(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleConfirmEdit(p.productId); if (e.key === "Escape") handleCancelEdit() }} placeholder="Marca" />
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                                        <span className="text-label font-bold uppercase bg-[var(--color-highlight-soft)] text-[var(--color-accent)] px-2 py-0.5 rounded-full tabular-nums">{p.quantity} {p.unitOfMeasure}</span>
                                         {p.brand
-                                            ? <span className="sel-product-brand">{p.brand}</span>
-                                            : <span className="sel-product-no-brand">Sem marca</span>
+                                            ? <span className="text-label font-semibold border border-[var(--color-border-default)] text-[var(--color-text-secondary)] px-2 py-0.5 rounded-full">{p.brand}</span>
+                                            : <span className="text-caption italic text-[var(--color-text-disabled)]">Sem marca</span>
                                         }
                                     </div>
+                                )}
+                            </div>
+                            {isEditing ? (
+                                <div className="flex items-center gap-1.5 flex-shrink-0">
+                                    <button onClick={() => handleConfirmEdit(p.productId)} title="Confirmar" className={iconBtnSuccess}><Check size={14} /></button>
+                                    <button onClick={handleCancelEdit} title="Cancelar" className={iconBtnDanger}><X size={14} /></button>
                                 </div>
-                                <div className="sel-product-actions">
-                                    <button
-                                        className="sel-product-btn edit"
-                                        title="Editar"
-                                        onClick={() => handleOpenSheet(rawProduct ?? p, { quantity: p.quantity, brand: p.brand })}
-                                    >
-                                        <Pencil size={14} />
-                                    </button>
-                                    <button
-                                        className="sel-product-btn remove"
-                                        title="Remover"
-                                        onClick={() => handleRemoveProduct(p.productId)}
-                                    >
-                                        <X size={14} />
-                                    </button>
+                            ) : (
+                                <div className="flex items-center gap-1.5 flex-shrink-0">
+                                    <button onClick={() => handleStartEdit(p)} title="Editar" className={cardBtnEdit}><Pencil size={14} strokeWidth={2} /></button>
+                                    <button onClick={() => handleRemoveProduct(p.productId)} title="Remover" className={cardBtnDelete}><Trash2 size={14} strokeWidth={2} /></button>
                                 </div>
-                            </li>
-                        )
-                    })}
-                </ul>
-            ) : (
-                /* Desktop table */
-                <div className="overflow-x-auto border border-[var(--color-border-subtle)] rounded-[var(--radius-md)]">
-                    <table className="w-full border-collapse">
-                        <thead>
-                            <tr>
-                                {["Nome do Produto", "Quantidade", "Unidade", "Marca", ""].map((h, i) => (
-                                    <th key={i} className={`bg-[var(--color-surface-muted)] text-left px-3 py-2 text-label font-bold text-[var(--color-text-muted)] uppercase tracking-[0.06em] border-b border-[var(--color-border-subtle)] ${i === 1 || i === 2 ? 'text-center' : ''}`}>{h}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {selectedList.map(p => {
-                                const isEditing = editingId === p.productId
-                                return (
-                                    <tr key={p.productId} className={isEditing ? '[&>td]:bg-[var(--color-highlight-lighter)]' : ''}>
-                                        <td className="px-3 py-2 border-b border-[var(--color-border-faint)] text-[0.875rem] text-[var(--color-text-neutral)] align-middle last:border-b-0"><span className="font-medium text-[var(--color-text-heading)]">{p.productName}</span></td>
-                                        <td className="px-3 py-2 border-b border-[var(--color-border-faint)] text-[0.875rem] align-middle text-center">
-                                            {isEditing
-                                                ? <input type="number" className={`w-[70px] ${smallInputCls} text-center [font-variant-numeric:tabular-nums] appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none`} value={editQty} onChange={e => setEditQty(e.target.value)} onKeyDown={e => { if (['-','e','E'].includes(e.key)) e.preventDefault(); if (e.key === "Enter") handleConfirmEdit(p.productId); if (e.key === "Escape") handleCancelEdit() }} onFocus={e => e.target.select()} min="1" autoFocus />
-                                                : <span className="font-bold [font-variant-numeric:tabular-nums] text-[var(--color-text-body)]">{p.quantity}</span>
-                                            }
-                                        </td>
-                                        <td className="px-3 py-2 border-b border-[var(--color-border-faint)] text-[0.875rem] align-middle text-center">
-                                            {isEditing
-                                                ? (
-                                                    <div className="relative w-[80px] mx-auto">
-                                                        <select className={`${smallInputCls} appearance-none pr-5`} value={editUnit} onChange={e => setEditUnit(e.target.value)}>
-                                                            {UNIT_OPTIONS.map(u => <option key={u} value={u}>{u}</option>)}
-                                                        </select>
-                                                        <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
-                                                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                                                        </span>
-                                                    </div>
-                                                )
-                                                : <span className="font-medium text-[var(--color-text-secondary)] text-caption">{p.unitOfMeasure}</span>
-                                            }
-                                        </td>
-                                        <td className="px-3 py-2 border-b border-[var(--color-border-faint)] text-[0.875rem] align-middle">
-                                            {isEditing
-                                                ? <input type="text" className={smallInputCls} value={editBrand} onChange={e => setEditBrand(e.target.value)} onKeyDown={e => { if (e.key === "Enter") handleConfirmEdit(p.productId); if (e.key === "Escape") handleCancelEdit() }} placeholder="Marca" />
-                                                : p.brand ? <span className="text-[var(--color-text-heading)] font-light text-caption">{p.brand}</span> : <span className="text-[var(--color-text-disabled)]">—</span>
-                                            }
-                                        </td>
-                                        <td className="w-9 px-3 py-2 border-b border-[var(--color-border-faint)] text-center align-middle">
-                                            {isEditing ? (
-                                                <div className="flex items-center gap-[0.2rem]">
-                                                    <button onClick={() => handleConfirmEdit(p.productId)} title="Confirmar" className={iconBtnSuccess}><Check size={14} /></button>
-                                                    <button onClick={handleCancelEdit} title="Cancelar" className={iconBtnDanger}><X size={14} /></button>
-                                                </div>
-                                            ) : (
-                                                <div className="flex items-center gap-[0.2rem]">
-                                                    <button onClick={() => handleStartEdit(p)} title="Editar" className={iconBtnAccent}><Pencil size={13} /></button>
-                                                    <button onClick={() => handleRemoveProduct(p.productId)} title="Remover" className={iconBtnDanger}><X size={14} /></button>
-                                                </div>
-                                            )}
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-        </div>
+                            )}
+                        </li>
+                    )
+                })}
+            </ul>
         )
     }
 
     return (
-        <div>
+        <div className="md:flex md:flex-col md:flex-1">
             <div className="mb-5">
-                <h2 className="m-0 text-title font-bold text-[var(--color-text-body)] tracking-[-0.02em]">Produtos</h2>
+                <h2 className="m-0 text-title font-bold text-[var(--color-text-body)] tracking-[-0.02em] md:text-[1.75rem] md:font-extrabold md:text-[var(--color-text-heading)]">Produtos</h2>
                 <p className="mt-1 mb-0 text-caption text-[var(--color-text-muted)] leading-[1.5]">Selecione os itens e defina as quantidades.</p>
             </div>
 
@@ -777,11 +801,22 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                     {mobileTab === 'selected' && renderSelectedPanel()}
                 </>
             ) : (
-                /* ── Desktop layout: stacked ── */
-                <>
-                    {renderSearchPanel()}
-                    {renderSelectedPanel()}
-                </>
+                /* ── Desktop layout: duas colunas Catálogo | Selecionados ── */
+                <div className="grid gap-6 items-start lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+                    <div className="min-w-0">
+                        <span className={colLabelCls}>Catálogo</span>
+                        {renderSearchPanel()}
+                    </div>
+                    <div className="min-w-0">
+                        <span className={colLabelCls}>
+                            Selecionados
+                            {selectedList.length > 0 && (
+                                <span className={colBadgeCls}>{selectedList.length}</span>
+                            )}
+                        </span>
+                        {renderSelectedPanel()}
+                    </div>
+                </div>
             )}
 
             <Alert message={error} />
@@ -790,15 +825,16 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 onBack={onBack}
                 onPrimary={handleNextClick}
                 primaryLabel="Avançar"
+                desktopLabel="Continuar para Fornecedores"
                 primaryIcon={ArrowRight}
                 blocked={selectedList.length === 0}
                 hint="Adicione pelo menos um produto para avançar."
                 loading={loading}
             />
 
-            {/* Create product — bottom sheet on mobile, modal on desktop */}
-            {(() => {
-                const createProductForm = (
+            {/* Create product — bottom sheet on mobile, modal compartilhado com a listagem de produtos no desktop */}
+            {isMobile ? (
+                <CreateProductSheet isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Criar Novo Produto">
                     <CreateProductModalForm
                         onSuccess={handleNewProductCreated}
                         onClose={() => setShowCreateModal(false)}
@@ -806,17 +842,16 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                         departments={userDepts}
                         initialDepartmentId={deptFilter !== null ? String(deptFilter) : ''}
                     />
-                )
-                return isMobile ? (
-                    <CreateProductSheet isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Criar Novo Produto">
-                        {createProductForm}
-                    </CreateProductSheet>
-                ) : (
-                    <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Criar Novo Produto">
-                        {createProductForm}
-                    </Modal>
-                )
-            })()}
+                </CreateProductSheet>
+            ) : (
+                <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Criar Produto">
+                    <ProductCreate
+                        onSave={handleNewProductCreated}
+                        onClose={() => setShowCreateModal(false)}
+                        departments={userDepts}
+                    />
+                </Modal>
+            )}
 
             {/* Mobile product bottom sheet */}
             <ProductBottomSheet

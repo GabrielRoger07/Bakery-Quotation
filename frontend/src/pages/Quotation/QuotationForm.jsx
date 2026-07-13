@@ -1,4 +1,4 @@
-import {useState, useEffect, useCallback, useMemo} from 'react'
+import {useState, useEffect, useCallback, useMemo, useRef} from 'react'
 import useFetch from '@/hooks/useFetch'
 import Alert from '@/components/Alert'
 import QuotationCreateStep1 from '@/pages/Quotation/QuotationCreateStep1'
@@ -7,14 +7,15 @@ import QuotationCreateStep3 from '@/pages/Quotation/QuotationCreateStep3'
 import QuotationCreateStep4 from '@/pages/Quotation/QuotationCreateStep4'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { useMobilePage } from '@/contexts/MobilePageContext'
-import { Check, X, OctagonAlert } from 'lucide-react'
+import { Check, X, OctagonAlert, CalendarClock, Package, Users, ClipboardCheck, Clock, Gavel, FileText } from 'lucide-react'
+import { formatDateTime } from '@/utils/formatDateTime'
 import { ENV } from '@/config/env'
 
 const STEPS = [
-    { key: 1, labelKey: "Período" },
-    { key: 2, labelKey: "Produtos" },
-    { key: 3, labelKey: "Fornecedores" },
-    { key: 4, labelKey: "Revisão" }
+    { key: 1, labelKey: "Período", desktopLabel: "Período e modo", sub: "Quando e como", icon: CalendarClock },
+    { key: 2, labelKey: "Produtos", desktopLabel: "Produtos", sub: "Itens e quantidades", icon: Package },
+    { key: 3, labelKey: "Fornecedores", desktopLabel: "Fornecedores", sub: "Quem participa", icon: Users },
+    { key: 4, labelKey: "Revisão", desktopLabel: "Revisão", sub: "Confirmar e salvar", icon: ClipboardCheck }
 ]
 
 const toLocalDateTimeInputValue = (isoString) => {
@@ -33,6 +34,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
 
     const { request } = useFetch(ENV.API_BASE_URL)
     const { registerPage, unregisterPage } = useMobilePage()
+    const mainRef = useRef(null)
 
     const [quotationData, setQuotationData] = useState({
         start: "",
@@ -70,6 +72,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'instant' })
+        mainRef.current?.scrollTo({ top: 0, behavior: 'instant' })
     }, [step])
 
     // Usa a mesma barra superior do app (Navbar) no mobile: X para descartar + pílula de etapa
@@ -120,6 +123,17 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         2: quotationData.products.length || null,
         3: quotationData.suppliers.length || null
     }), [quotationData.products.length, quotationData.suppliers.length])
+
+    // Resumo do rail desktop — período formatado + modo
+    const summary = useMemo(() => {
+        const startFmt = formatDateTime(quotationData.start)
+        const endFmt = formatDateTime(quotationData.end)
+        return {
+            period: startFmt && endFmt ? `${startFmt.date} ${startFmt.time} → ${endFmt.date} ${endFmt.time}` : "—",
+            modeLabel: quotationData.isAuction ? "Leilão" : "Proposta única",
+            ModeIcon: quotationData.isAuction ? Gavel : FileText,
+        }
+    }, [quotationData.start, quotationData.end, quotationData.isAuction])
 
     const handleSave = async (suppliers = null) => {
         const finalData = suppliers ? {...quotationData, suppliers} : quotationData
@@ -176,7 +190,7 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
             quantity: p.quantity,
             bonusLimit: Number(0),
             brand: p.brand,
-            unitOfMeasure: p.unitOfMeasure 
+            unitOfMeasure: p.unitOfMeasure
         }))
 
         const suppliersPayload = data.suppliers.map(s => ({
@@ -201,29 +215,37 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
         }
     }
 
-    return (
-        <div className="min-h-[calc(100dvh-3.5rem)]">
-            {/* ── Desktop header strip ── */}
-            <div className="max-md:hidden bg-[var(--color-surface-card)] border-b border-[var(--color-border-default)] [box-shadow:0_1px_0_var(--color-border-subtle)]">
-                <div className="max-w-[1200px] mx-auto px-6 h-14 flex items-center gap-3">
-                    <button
-                        onClick={() => setConfirmExit(true)}
-                        className="flex items-center justify-center w-7 h-7 rounded-[var(--radius-md)] border border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)] cursor-pointer transition-[background,border-color,color] duration-[160ms] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-body)] flex-shrink-0"
-                        aria-label="Fechar"
-                    >
-                        <X size={14} strokeWidth={2.5} />
-                    </button>
+    const CurrentStepIcon = STEPS[step - 1].icon
+    const { ModeIcon } = summary
 
-                    {/* breadcrumb */}
-                    <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-caption text-[var(--color-text-muted)] whitespace-nowrap">Cotações</span>
-                        <span className="text-[var(--color-border-strong)] text-[0.75rem]">/</span>
-                        <span className="text-caption font-semibold text-[var(--color-text-heading)] truncate">
-                            {mode === "create" ? "Nova Cotação" : `Editar Cotação${initialData ? ` #${initialData.quotationId}` : ''}`}
-                        </span>
-                    </div>
+    return (
+        <div className="min-h-[calc(100dvh-3.5rem)] md:min-h-0 md:h-dvh md:flex md:flex-col md:bg-[var(--color-surface-card)]">
+            {/* ── Desktop header ── */}
+            <header className="max-md:hidden flex items-center gap-4 px-6 h-[4.5rem] border-b border-[var(--color-border-default)] flex-shrink-0">
+                <button
+                    onClick={() => setConfirmExit(true)}
+                    className="flex items-center justify-center w-9 h-9 rounded-[var(--radius-md)] border border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)] cursor-pointer transition-[background,border-color,color] duration-[160ms] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-body)] flex-shrink-0"
+                    aria-label="Fechar"
+                >
+                    <X size={16} strokeWidth={2.5} />
+                </button>
+
+                <div className="w-px h-8 bg-[var(--color-border-default)] flex-shrink-0" />
+
+                <div className="min-w-0">
+                    <span className="block text-label font-bold uppercase tracking-[0.08em] text-[var(--color-accent)]">
+                        {mode === "create" ? "Nova cotação" : `Editando${initialData ? ` #${initialData.quotationId}` : ''}`}
+                    </span>
+                    <h1 className="m-0 text-[1.375rem] font-extrabold tracking-[-0.02em] text-[var(--color-text-heading)] leading-tight truncate">
+                        {mode === "create" ? "Criar cotação" : "Editar cotação"}
+                    </h1>
                 </div>
-            </div>
+
+                <span className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] px-3 py-1.5 text-caption font-semibold text-[var(--color-text-muted)] flex-shrink-0">
+                    <CurrentStepIcon size={14} strokeWidth={2} />
+                    Etapa {step} de {STEPS.length}
+                </span>
+            </header>
 
             {/* ── Mobile stepper bar ── */}
             <div className="md:hidden bg-[var(--color-surface-card)] border-b border-[var(--color-border-subtle)] px-4 pt-4 pb-3">
@@ -263,54 +285,93 @@ const QuotationForm = ({ mode = "create", initialData = null, onClose, onSave })
                 </div>
             </div>
 
-            {/* ── Desktop layout ── */}
-            <div className="max-w-[1200px] mx-auto px-6 py-8 flex flex-col gap-8 max-md:[display:none]">
+            {/* ── Body: rail esquerdo (desktop) + conteúdo (montagem única) ── */}
+            <div className="md:flex md:flex-1 md:items-stretch md:min-h-0">
 
-                {/* Top horizontal stepper */}
-                <div className="flex items-center">
-                    {STEPS.map((s, i) => {
-                        const isActive = step === s.key
-                        const isDone = step > s.key
-                        return (
-                            <div key={s.key} className="flex items-center flex-1">
-                                <div className="flex flex-col items-center gap-2 flex-1">
-                                    <div className={`relative w-8 h-8 rounded-full grid place-items-center text-[0.875rem] font-bold flex-shrink-0 transition-[background-color,color,box-shadow] duration-200 ${isDone ? 'bg-[var(--color-success)] text-white' : isActive ? 'bg-[var(--color-accent)] text-white [box-shadow:var(--shadow-step-active)]' : 'bg-[var(--color-surface-sunken)] text-[var(--color-text-disabled)]'}`}>
-                                        {isDone ? <Check size={14} strokeWidth={3} /> : s.key}
-                                        {badges[s.key] && (
-                                            <span className="absolute -top-[5px] -right-[7px] bg-[var(--color-accent)] text-white text-[0.6rem] min-w-4 h-4 rounded-full grid place-items-center font-bold px-[3px] leading-none border-[1.5px] border-[var(--color-surface-card)]">
-                                                {badges[s.key]}
-                                            </span>
+                {/* Rail: stepper vertical + resumo */}
+                <aside className="max-md:hidden w-[300px] flex-shrink-0 flex flex-col gap-8 border-r border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] px-6 py-8 overflow-y-auto">
+                    <nav className="flex flex-col" aria-label="Etapas da cotação">
+                        {STEPS.map((s, i) => {
+                            const isActive = step === s.key
+                            const isDone = step > s.key
+                            const isVisited = s.key <= step
+                            const isLast = i === STEPS.length - 1
+                            return (
+                                <button
+                                    key={s.key}
+                                    type="button"
+                                    onClick={() => goToStep(s.key)}
+                                    disabled={!isVisited}
+                                    className={`flex items-stretch gap-3 w-full text-left bg-transparent border-none p-0 ${isVisited ? 'cursor-pointer' : 'cursor-default'}`}
+                                >
+                                    <div className="flex flex-col items-center flex-shrink-0">
+                                        <div className={`w-8 h-8 rounded-full grid place-items-center text-[0.875rem] font-bold transition-[background-color,color,box-shadow] duration-200 ${isDone ? 'bg-[var(--color-success)] text-white' : isActive ? 'bg-[var(--color-accent)] text-white [box-shadow:var(--shadow-step-active)]' : 'bg-[var(--color-surface-sunken)] text-[var(--color-text-disabled)]'}`}>
+                                            {isDone ? <Check size={14} strokeWidth={3} /> : s.key}
+                                        </div>
+                                        {!isLast && (
+                                            <div className={`w-px flex-1 min-h-4 my-1 transition-[background-color] duration-200 ${isDone ? 'bg-[var(--color-success)]' : 'bg-[var(--color-border-default)]'}`} />
                                         )}
                                     </div>
-                                    <span className={`text-caption font-semibold leading-tight transition-colors duration-200 ${isActive ? 'text-[var(--color-accent)]' : isDone ? 'text-[var(--color-text-heading)]' : 'text-[var(--color-text-disabled)]'}`}>
-                                        {s.labelKey}
-                                    </span>
-                                </div>
-                                {i < STEPS.length - 1 && (
-                                    <div className={`h-px flex-1 mx-3 mb-6 transition-[background-color] duration-200 ${isDone ? 'bg-[var(--color-success)]' : 'bg-[var(--color-border-default)]'}`} />
-                                )}
-                            </div>
-                        )
-                    })}
-                </div>
+                                    <div className={`min-w-0 pt-1.5 ${isLast ? '' : 'pb-7'}`}>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`text-body font-bold leading-tight transition-colors duration-200 ${isActive ? 'text-[var(--color-text-heading)]' : isDone ? 'text-[var(--color-text-body)]' : 'text-[var(--color-text-disabled)]'}`}>
+                                                {s.desktopLabel}
+                                            </span>
+                                            {badges[s.key] && (
+                                                <span className="text-label font-bold text-[var(--color-accent)] bg-[var(--color-highlight-soft)] px-1.5 py-0.5 rounded-full leading-none tabular-nums flex-shrink-0">
+                                                    {badges[s.key]}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <span className={`block mt-0.5 text-caption ${isVisited ? 'text-[var(--color-text-muted)]' : 'text-[var(--color-text-disabled)]'}`}>
+                                            {s.sub}
+                                        </span>
+                                    </div>
+                                </button>
+                            )
+                        })}
+                    </nav>
 
-                {/* Content */}
-                <div className="min-w-0">
-                    {step === 1 && <QuotationCreateStep1 start={quotationData.start} end={quotationData.end} isAuction={quotationData.isAuction} onChange={handleStepChange} onNext={nextStep} loading={loading} />}
-                    {step === 2 && <QuotationCreateStep2 selectedProducts={quotationData.products} onChange={handleProductsChange} onBack={prevStep} onNext={nextStep} loading={loading} />}
-                    {step === 3 && <QuotationCreateStep3 selectedSuppliers={quotationData.suppliers} onChange={handleSuppliersChange} onBack={prevStep} onFinish={nextStep} loading={loading} />}
-                    {step === 4 && <QuotationCreateStep4 quotationData={quotationData} onBack={prevStep} onConfirm={() => handleSave()} loading={loading} />}
-                    <Alert message={error} />
-                </div>
-            </div>
+                    {/* Card resumo */}
+                    <div className="mt-auto rounded-[var(--radius-xl)] border border-[var(--color-border-default)] bg-[var(--color-surface-card)] [box-shadow:var(--shadow-card-soft)] p-4">
+                        <span className="block text-label font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)] mb-3">Resumo</span>
+                        <div className="flex items-start gap-2 text-caption font-semibold text-[var(--color-text-body)]">
+                            <Clock size={14} strokeWidth={2} className="flex-shrink-0 mt-0.5 text-[var(--color-text-muted)]" />
+                            <span className="min-w-0">{summary.period}</span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-2.5 text-caption font-semibold text-[var(--color-text-body)]">
+                            <ModeIcon size={14} strokeWidth={2} className="flex-shrink-0 text-[var(--color-text-muted)]" />
+                            {summary.modeLabel}
+                        </div>
+                        <div className="h-px bg-[var(--color-border-faint)] my-3" />
+                        <div className="flex items-center justify-between text-caption">
+                            <span className="flex items-center gap-2 text-[var(--color-text-muted)]">
+                                <Package size={14} strokeWidth={2} />Produtos
+                            </span>
+                            <span className="font-bold tabular-nums text-[var(--color-text-body)]">{quotationData.products.length}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-caption mt-2">
+                            <span className="flex items-center gap-2 text-[var(--color-text-muted)]">
+                                <Users size={14} strokeWidth={2} />Fornecedores
+                            </span>
+                            <span className="font-bold tabular-nums text-[var(--color-text-body)]">{quotationData.suppliers.length}</span>
+                        </div>
+                    </div>
+                </aside>
 
-            {/* ── Mobile single-column layout ── */}
-            <div className="[display:none] max-md:[display:block] px-4 py-5" style={{ paddingBottom: 'calc(4.25rem + env(safe-area-inset-bottom))' }}>
-                {step === 1 && <QuotationCreateStep1 start={quotationData.start} end={quotationData.end} isAuction={quotationData.isAuction} onChange={handleStepChange} onNext={nextStep} loading={loading} />}
-                {step === 2 && <QuotationCreateStep2 selectedProducts={quotationData.products} onChange={handleProductsChange} onBack={prevStep} onNext={nextStep} loading={loading} />}
-                {step === 3 && <QuotationCreateStep3 selectedSuppliers={quotationData.suppliers} onChange={handleSuppliersChange} onBack={prevStep} onFinish={nextStep} loading={loading} />}
-                {step === 4 && <QuotationCreateStep4 quotationData={quotationData} onBack={prevStep} onConfirm={() => handleSave()} loading={loading} />}
-                <Alert message={error} />
+                {/* Conteúdo — steps montados uma única vez (mobile e desktop trocam por CSS interno) */}
+                <main
+                    ref={mainRef}
+                    className="flex-1 min-w-0 px-4 py-5 max-md:pb-[calc(4.25rem+env(safe-area-inset-bottom))] md:px-10 md:py-8 md:overflow-y-auto"
+                >
+                    <div className="md:max-w-[960px] md:min-h-full md:flex md:flex-col">
+                        {step === 1 && <QuotationCreateStep1 start={quotationData.start} end={quotationData.end} isAuction={quotationData.isAuction} onChange={handleStepChange} onNext={nextStep} loading={loading} />}
+                        {step === 2 && <QuotationCreateStep2 selectedProducts={quotationData.products} onChange={handleProductsChange} onBack={prevStep} onNext={nextStep} loading={loading} />}
+                        {step === 3 && <QuotationCreateStep3 selectedSuppliers={quotationData.suppliers} onChange={handleSuppliersChange} onBack={prevStep} onFinish={nextStep} loading={loading} />}
+                        {step === 4 && <QuotationCreateStep4 quotationData={quotationData} onBack={prevStep} onConfirm={() => handleSave()} onEditStep={goToStep} loading={loading} />}
+                        <Alert message={error} />
+                    </div>
+                </main>
             </div>
 
             {/* ── Discard confirmation ── */}

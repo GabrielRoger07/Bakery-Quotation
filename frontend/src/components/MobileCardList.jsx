@@ -1,14 +1,30 @@
 import { useEffect, useRef, useState } from 'react'
 import { Pencil, Trash, Search, SlidersHorizontal, Plus, Eye, BarChart2, ChevronLeft, ChevronRight } from 'lucide-react'
+import Button from '@/components/Button'
 import { useMobilePage } from '@/contexts/MobilePageContext'
 import SortBottomSheet from '@/components/SortBottomSheet'
 import SortButton from '@/components/SortButton'
+import Pagination from '@/components/Pagination'
 
 /**
  * MobileCardList — padrão mobile-native para listas de Fornecedores e Produtos.
+ * A partir de `sm:` (640px): `.cards-list` vira grid de múltiplas colunas, a
+ * paginação passa a usar `Pagination` (numerada) em vez do dots/progress, o
+ * FAB some (volta a ser só mobile) e, se `title` e/ou `desktopToolbar` forem
+ * passados, aparecem dentro de um painel branco (cabeçalho com `eyebrow`
+ * opcional + título + botão `addLabel`, seguido da barra de busca/filtro/
+ * ordenação) — tudo via CSS, sem nenhuma mudança de marcação/comportamento
+ * abaixo de `sm:`. A partir de `sm:`, a raiz vira `flex-1` dentro do
+ * `PageContainer` (variant `list`, que agora é `sm:min-h-screen sm:flex
+ * sm:flex-col`) e a `Pagination` desktop recebe `sm:mt-auto` — assim ela
+ * sempre fica à mesma distância do fim da tela (rodapé "grudado"), tenha a
+ * lista poucas linhas (sobra de viewport empurra a paginação pra baixo) ou
+ * muitas (a página rola e o gap vem do `sm:pb-8` do `PageContainer`).
  *
  * Props:
- *   title          string        — título da página (vai para o navbar)
+ *   title          string        — título da página (vai para o navbar no mobile; vira cabeçalho a partir de sm:)
+ *   eyebrow        string        — rótulo pequeno acima do título, só no cabeçalho desktop (ex.: "Catálogo")
+ *   addLabel       string        — texto do botão de adicionar no cabeçalho desktop (default "Adicionar")
  *   items          array         — dados formatados
  *   idKey          string        — chave de id (ex: "supplierId")
  *   loading        bool
@@ -20,9 +36,10 @@ import SortButton from '@/components/SortButton'
  *   onView         fn(item)      — abre modal de detalhes
  *   onMonitor      fn(item)      — navega para monitoramento
  *   renderCard     fn(item)      — retorna { avatar, title, subtitle, meta, tags[], titleTag? }; titleTag ({ label, variant, icon? }) exibe um único badge na própria linha do título em vez da linha de tags abaixo; subtitle aceita string ou string[] (cada item vira sua própria linha, útil p/ intervalos de data que não cabem em uma linha só no mobile)
- *   toolbar        ReactNode     — conteúdo da barra de filtro
+ *   toolbar        ReactNode     — conteúdo da barra de filtro (mobile, dentro do drawer colapsável)
  *   filterActive   bool
- *   searchBar      ReactNode     — input de busca rápida (opcional, fixo/sticky logo abaixo do navbar)
+ *   searchBar      ReactNode     — input de busca rápida mobile (opcional, fixo/sticky logo abaixo do navbar)
+ *   desktopToolbar ReactNode     — barra de busca/filtro/ordenação própria do desktop (opcional; layout costuma ser bem diferente da mobile, então não reaproveita `toolbar`/`searchBar`)
  *   sortOptions    [{ key, label, shortLabel, field, direction, icon? }]  — opções de ordenação (ativa o botão de sort, exibido ao lado do inlineToolbar); shortLabel é o texto exibido no próprio botão quando a opção está ativa; icon (ReactNode) opcional é exibido à esquerda do label no sheet
  *   sortField      string | null
  *   sortDirection  "asc" | "desc"
@@ -93,6 +110,8 @@ const MobilePagination = ({ currentPage, totalPages, onPageChange }) => {
 
 const MobileCardList = ({
     title,
+    eyebrow,
+    addLabel = 'Adicionar',
     items = [],
     idKey = 'id',
     loading = false,
@@ -109,6 +128,7 @@ const MobileCardList = ({
     inlineToolbar,
     filterActive = false,
     searchBar,
+    desktopToolbar,
     sortOptions,
     sortField,
     sortDirection,
@@ -152,17 +172,44 @@ const MobileCardList = ({
     const activeSortOption = sortOptions?.find(opt => opt.field === sortField && opt.direction === sortDirection)
 
     return (
-        <div className="mobile-card-list-root" onClick={closeSwipe}>
-            {/* ── Sticky search bar (fixa logo abaixo do navbar) ── */}
+        <div className="mobile-card-list-root sm:flex sm:flex-col sm:flex-1" onClick={closeSwipe}>
+            {/* ── Painel branco desktop: cabeçalho (título + botão de adicionar) + barra de busca/filtro/ordenação ── */}
+            {(title || desktopToolbar) && (
+                <div className="hidden sm:block mb-5 border border-[var(--color-border-default)] bg-[var(--color-surface-card)] [box-shadow:var(--shadow-card-soft)]">
+                    {title && (
+                        <div className="flex items-center justify-between px-6 pt-5 pb-4">
+                            <div>
+                                {eyebrow && (
+                                    <p className="m-0 mb-1 text-label font-bold uppercase tracking-[0.08em] text-[var(--color-accent)]">{eyebrow}</p>
+                                )}
+                                <h1 className="m-0 text-[1.75rem] font-extrabold tracking-[-0.02em] text-[var(--color-text-heading)]">{title}</h1>
+                            </div>
+                            {onAdd && (
+                                <Button onClick={onAdd} className="flex items-center gap-2 !px-5 !py-3">
+                                    <Plus size={18} strokeWidth={2.5} />
+                                    {addLabel}
+                                </Button>
+                            )}
+                        </div>
+                    )}
+                    {desktopToolbar && (
+                        <div className={`flex flex-col px-6 pb-5 ${title ? 'pt-4 border-t border-[var(--color-border-faint)]' : 'pt-5'}`}>
+                            {desktopToolbar}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* ── Sticky search bar (fixa logo abaixo do navbar, só mobile) ── */}
             {searchBar && (
-                <div className="sticky-search-bar">
+                <div className="sm:hidden sticky-search-bar">
                     {searchBar}
                 </div>
             )}
 
-            {/* ── Inline toolbar (always visible, no drawer) + botão de sort ── */}
+            {/* ── Inline toolbar (always visible, no drawer) + botão de sort — só mobile ── */}
             {(loading || items.length > 0) && (inlineToolbar || (sortOptions && onSelectSort)) && (
-                <div className="px-4 pt-3 pb-1 flex items-center justify-between gap-2">
+                <div className="sm:hidden px-4 pt-3 pb-1 flex items-center justify-between gap-2">
                     {inlineToolbar}
                     {sortOptions && onSelectSort && (
                         <SortButton label={activeSortOption?.shortLabel} onOpen={() => setSortOpen(true)} />
@@ -170,9 +217,9 @@ const MobileCardList = ({
                 </div>
             )}
 
-            {/* ── Filter bar ── */}
+            {/* ── Filter bar — só mobile ── */}
             {toolbar && (
-                <div className="px-4 pt-3 pb-1 flex flex-col gap-2">
+                <div className="sm:hidden px-4 pt-3 pb-1 flex flex-col gap-2">
                     <div className="filter-sort-row">
                         <button
                             className={`filter-toggle-btn ${filterOpen ? 'active' : ''} ${filterActive ? 'has-dot' : ''}`}
@@ -225,7 +272,7 @@ const MobileCardList = ({
 
             {/* ── Cards ── */}
             {!loading && items.length > 0 && (
-                <ul className="cards-list" onClick={e => e.stopPropagation()}>
+                <ul className="cards-list sm:grid sm:grid-cols-2 sm:gap-3 lg:grid-cols-3" onClick={e => e.stopPropagation()}>
                     {items.map((item, idx) => {
                         const id = item[idKey]
                         const swiped = swipedId === id
@@ -377,19 +424,30 @@ const MobileCardList = ({
                 </ul>
             )}
 
-            {/* ── Mobile Pagination ── */}
+            {/* ── Pagination: dots/progress no mobile, numerada a partir de sm: ── */}
             {!loading && totalPages > 1 && (
-                <MobilePagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={onPageChange}
-                />
+                <>
+                    <div className="sm:hidden">
+                        <MobilePagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={onPageChange}
+                        />
+                    </div>
+                    <div className="hidden sm:block sm:mt-auto">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={onPageChange}
+                        />
+                    </div>
+                </>
             )}
 
             {/* ── FAB ── */}
             {onAdd && (
                 <button
-                    className="mobile-fab"
+                    className="hidden max-sm:flex mobile-fab"
                     onClick={e => { e.stopPropagation(); onAdd() }}
                     style={{ bottom: 'calc(4.25rem + env(safe-area-inset-bottom) + 1rem)' }}
                     aria-label="Adicionar"

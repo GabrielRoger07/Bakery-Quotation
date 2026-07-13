@@ -1,14 +1,12 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CalendarRange, Clock, CloudOff, History, RotateCw } from 'lucide-react'
 import useResourceList from '@/hooks/useResourceList'
-import useIsMobile from '@/hooks/useIsMobile'
-import { useMobilePage } from '@/contexts/MobilePageContext'
 import MobileCardList from '@/components/MobileCardList'
-import Table from '@/components/Table'
 import StatusTabFilter from '@/components/StatusTabFilter'
 import PageContainer from '@/components/PageContainer'
-import Pagination from '@/components/Pagination'
+import ListToolbar from '@/components/ListToolbar'
+import Select from '@/components/Select'
 import PaginationSummary from '@/components/PaginationSummary'
 import EmptyState from '@/components/EmptyState'
 import Alert from '@/components/Alert'
@@ -31,13 +29,6 @@ const STATUS_TAG = {
     fechado:  { variant: '' },
 }
 
-const columns = [
-    { key: 'quotationId', label: 'ID' },
-    { key: 'quotation.quotationStart', label: 'Data de Início' },
-    { key: 'quotation.quotationEnd', label: 'Data de Fim' },
-    { key: 'status', label: 'Status' },
-]
-
 const sortOptions = [
     { key: 'date-desc', label: 'Mais recentes primeiro', shortLabel: 'Recentes', field: 'quotation.quotationEnd', direction: 'desc', icon: <Clock size={18} strokeWidth={2} /> },
     { key: 'date-asc', label: 'Mais antigas primeiro', shortLabel: 'Antigas', field: 'quotation.quotationEnd', direction: 'asc', icon: <History size={18} strokeWidth={2} /> },
@@ -45,13 +36,11 @@ const sortOptions = [
 
 const SupplierPage = () => {
     const navigate = useNavigate()
-    const isMobile = useIsMobile()
-    const { registerPage, unregisterPage } = useMobilePage()
 
     const {
         items, loading, error, status,
         currentPage, setCurrentPage, totalPages, totalElements, pageSize,
-        sortField, sortDirection, handleSort, setSort, refetch,
+        sortField, sortDirection, setSort, refetch,
         appliedSearch, applySearch, clearSearch,
     } = useResourceList({
         endpoint: '/participations/supplier',
@@ -63,12 +52,6 @@ const SupplierPage = () => {
     const handleStatusFilterChange = (value) => value ? applySearch('status', value) : clearSearch()
 
     const reloadCurrentPage = useCallback(() => refetch(currentPage), [refetch, currentPage])
-
-    useEffect(() => {
-        if (!isMobile) return
-        registerPage('Suas Cotações', reloadCurrentPage)
-        return () => unregisterPage()
-    }, [isMobile, registerPage, unregisterPage, reloadCurrentPage])
 
     const handleSelect = (p) =>
         navigate(`/supplier/quotation?quotationId=${p.quotationId}&participationId=${p.participationId}`)
@@ -102,77 +85,76 @@ const SupplierPage = () => {
         }
     }
 
+    const activeSortKey = sortOptions.find(opt => opt.field === (sortField ?? 'quotation.quotationEnd') && opt.direction === (sortField ? sortDirection : 'desc'))?.key
+
+    const desktopToolbar = (
+        <ListToolbar
+            before={<StatusTabFilter value={statusFilter} onChange={handleStatusFilterChange} />}
+            sort={(
+                <Select
+                    bare
+                    className="w-[16rem] shrink-0"
+                    value={activeSortKey}
+                    onChange={e => {
+                        const opt = sortOptions.find(o => o.key === e.target.value)
+                        if (opt) setSort(opt.field, opt.direction)
+                    }}
+                    selectClassName="h-[2.5rem]"
+                    options={sortOptions.map(opt => ({ value: opt.key, label: opt.label }))}
+                />
+            )}
+            pageLabel={pageLabel}
+            rangeLabel={rangeLabel}
+        />
+    )
+
     return (
         <PageContainer variant="list">
-            {error && !(isMobile && items.length === 0) && <Alert message={error} />}
+            {error && items.length > 0 && <Alert message={error} />}
             {status === 0 && <Alert message={'Erro Interno do Servidor'} />}
 
-            {isMobile ? (
-                <>
-                    <div className="px-4 pt-4">
-                        <StatusTabFilter value={statusFilter} onChange={handleStatusFilterChange} mobile />
-                    </div>
-                    {error && items.length === 0 ? (
-                        <div className="px-4 pt-6">
-                            <EmptyState
-                                tone="danger"
-                                icon={<CloudOff size={28} strokeWidth={1.75} />}
-                                title="Não foi possível carregar"
-                                description="Verifique sua conexão e tente novamente."
-                                action={
-                                    <Button onClick={reloadCurrentPage}>
-                                        <span className="inline-flex items-center gap-2">
-                                            <RotateCw size={16} strokeWidth={2} /> Tentar novamente
-                                        </span>
-                                    </Button>
-                                }
-                            />
-                        </div>
-                    ) : (
-                        <MobileCardList
-                            title="Suas Cotações"
-                            items={displayItems}
-                            idKey="quotationId"
-                            loading={loading}
-                            emptyMessage="Nenhuma cotação encontrada."
-                            onReload={reloadCurrentPage}
-                            onCardClick={handleSelect}
-                            renderCard={renderCard}
-                            showCount={false}
-                            inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
-                            sortOptions={sortOptions}
-                            sortField={sortField ?? 'quotation.quotationEnd'}
-                            sortDirection={sortField ? sortDirection : 'desc'}
-                            onSelectSort={(opt) => setSort(opt.field, opt.direction)}
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={setCurrentPage}
-                        />
-                    )}
-                </>
-            ) : (
-                <>
-                    <Table
-                        title="Suas Cotações"
-                        columns={columns}
-                        data={displayItems}
-                        idKey="quotationId"
-                        loading={loading}
-                        onView={handleSelect}
-                        onReload={reloadCurrentPage}
-                        onSort={handleSort}
-                        sortField={sortField ?? 'quotation.quotationEnd'}
-                        sortDirection={sortField ? sortDirection : 'desc'}
-                        emptyMessage="Nenhuma cotação encontrada."
-                        filterSlot={
-                            <StatusTabFilter value={statusFilter} onChange={handleStatusFilterChange} />
+            <div className="sm:hidden px-4 pt-4">
+                <StatusTabFilter value={statusFilter} onChange={handleStatusFilterChange} mobile />
+            </div>
+
+            {error && items.length === 0 ? (
+                <div className="px-4 pt-6">
+                    <EmptyState
+                        tone="danger"
+                        icon={<CloudOff size={28} strokeWidth={1.75} />}
+                        title="Não foi possível carregar"
+                        description="Verifique sua conexão e tente novamente."
+                        action={
+                            <Button onClick={reloadCurrentPage}>
+                                <span className="inline-flex items-center gap-2">
+                                    <RotateCw size={16} strokeWidth={2} /> Tentar novamente
+                                </span>
+                            </Button>
                         }
                     />
-                    <div className="flex items-center justify-between gap-2 px-1">
-                        <PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />
-                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-                    </div>
-                </>
+                </div>
+            ) : (
+                <MobileCardList
+                    title="Suas Cotações"
+                    eyebrow="Portal do Fornecedor"
+                    items={displayItems}
+                    idKey="quotationId"
+                    loading={loading}
+                    emptyMessage="Nenhuma cotação encontrada."
+                    onReload={reloadCurrentPage}
+                    onCardClick={handleSelect}
+                    renderCard={renderCard}
+                    desktopToolbar={desktopToolbar}
+                    showCount={false}
+                    inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
+                    sortOptions={sortOptions}
+                    sortField={sortField ?? 'quotation.quotationEnd'}
+                    sortDirection={sortField ? sortDirection : 'desc'}
+                    onSelectSort={(opt) => setSort(opt.field, opt.direction)}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
             )}
         </PageContainer>
     )

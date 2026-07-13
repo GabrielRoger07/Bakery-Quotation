@@ -4,9 +4,20 @@ import SectionHeader from '@/components/SectionHeader'
 import EmptyState from '@/components/EmptyState'
 import WizardActions from '@/components/WizardActions'
 import { formatDateTime } from '@/utils/formatDateTime'
-import { CirclePlay, CircleStop, Gavel, FileText, Package, Users, Tag, CheckCircle } from 'lucide-react'
+import { CirclePlay, CircleStop, Gavel, FileText, Package, Users, Tag, CheckCircle, Pencil } from 'lucide-react'
 
-const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => {
+const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, onEditStep, loading }) => {
+
+    // Link "Editar" (desktop) — volta à etapa correspondente para ajustar
+    const renderEditLink = (targetStep) => onEditStep ? (
+        <button
+            type="button"
+            onClick={() => onEditStep(targetStep)}
+            className="max-md:hidden inline-flex items-center gap-1 bg-transparent border-none p-0 mb-[0.625rem] text-caption font-semibold text-[var(--color-accent)] cursor-pointer hover:underline"
+        >
+            <Pencil size={13} strokeWidth={2} />Editar
+        </button>
+    ) : null
 
     const start = useMemo(() => formatDateTime(quotationData.start), [quotationData.start])
     const end = useMemo(() => formatDateTime(quotationData.end), [quotationData.end])
@@ -17,9 +28,9 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
     const ModeIcon = quotationData.isAuction ? Gavel : FileText
 
     return (
-        <div>
+        <div className="md:flex md:flex-col md:flex-1">
             <div className="mb-5">
-                <h2 className="m-0 text-title font-bold text-[var(--color-text-body)] tracking-[-0.02em]">Revisão</h2>
+                <h2 className="m-0 text-title font-bold text-[var(--color-text-body)] tracking-[-0.02em] md:text-[1.75rem] md:font-extrabold md:text-[var(--color-text-heading)]">Revisão</h2>
                 <p className="mt-1 mb-0 text-caption text-[var(--color-text-muted)] leading-[1.5]">Confira tudo antes de salvar.</p>
             </div>
 
@@ -37,7 +48,10 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
                 <div className="grid gap-4 md:grid-cols-2 md:gap-6">
                 {/* Products section */}
                 <div className="mt-3 md:mt-0">
-                    <SectionHeader icon={<Package size={16} />} label="Produtos" count={quotationData.products.length} />
+                    <div className="flex items-center justify-between gap-2">
+                        <SectionHeader icon={<Package size={16} />} label="Produtos" count={quotationData.products.length} />
+                        {renderEditLink(2)}
+                    </div>
                     {quotationData.products.length === 0 ? (
                         <EmptyState>Nenhum produto adicionado</EmptyState>
                     ) : (
@@ -64,7 +78,10 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, loading }) => 
 
                 {/* Suppliers section */}
                 <div className="mt-3 md:mt-0">
-                    <SectionHeader icon={<Users size={16} />} label="Fornecedores" count={quotationData.suppliers.length} />
+                    <div className="flex items-center justify-between gap-2">
+                        <SectionHeader icon={<Users size={16} />} label="Fornecedores" count={quotationData.suppliers.length} />
+                        {renderEditLink(3)}
+                    </div>
                     {quotationData.suppliers.length === 0 ? (
                         <EmptyState>Nenhum fornecedor adicionado</EmptyState>
                     ) : (

@@ -1,9 +1,43 @@
 import { useEffect } from 'react'
 import { X, Pencil, Trash, BarChart2 } from 'lucide-react'
+import Modal from '@/components/Modal'
 import QuotationDetails from '@/pages/Quotation/QuotationDetails'
+import useIsMobile from '@/hooks/useIsMobile'
+
+const QuotationDetailBody = ({ quotation, onEdit, onDelete, onMonitor, onClose }) => (
+    <>
+        <div className="qsheet-actions">
+            {onMonitor && (
+                <button className="qsheet-action-btn qsheet-monitor" onClick={() => { onMonitor(quotation); onClose() }}>
+                    <BarChart2 size={18} strokeWidth={2} />
+                    <span>Monitorar</span>
+                </button>
+            )}
+            {onEdit && (
+                <button className="qsheet-action-btn qsheet-edit" onClick={() => { onEdit(quotation); onClose() }}>
+                    <Pencil size={18} strokeWidth={2} />
+                    <span>Editar</span>
+                </button>
+            )}
+            {onDelete && (
+                <button className="qsheet-action-btn qsheet-delete" onClick={() => { onDelete(quotation.quotationId); onClose() }}>
+                    <Trash size={18} strokeWidth={2} />
+                    <span>Excluir</span>
+                </button>
+            )}
+        </div>
+
+        <div className="qsheet-body">
+            <QuotationDetails quotation={quotation} />
+        </div>
+    </>
+)
 
 /**
- * Bottom sheet (mobile) com os detalhes de uma cotação e ações (editar/remover/monitorar).
+ * Detalhes de uma cotação com ações de monitorar/editar/remover. No mobile
+ * abre como bottom sheet; a partir de `sm:` (desktop) o mesmo conteúdo abre
+ * dentro do `Modal` genérico — mesmo padrão "corpo compartilhado, chrome
+ * trocado por isMobile" usado por `SupplierBottomSheet`/`ProductBottomSheet`.
  */
 const QuotationBottomSheet = ({
     isOpen,
@@ -13,6 +47,8 @@ const QuotationBottomSheet = ({
     onDelete,
     onMonitor,
 }) => {
+    const isMobile = useIsMobile()
+
     useEffect(() => {
         if (!isOpen) return
         const handleKey = (e) => { if (e.key === 'Escape') onClose() }
@@ -24,6 +60,14 @@ const QuotationBottomSheet = ({
         document.body.style.overflow = isOpen ? 'hidden' : ''
         return () => { document.body.style.overflow = '' }
     }, [isOpen])
+
+    if (!isMobile) {
+        return (
+            <Modal isOpen={isOpen} onClose={onClose} title={quotation ? `Cotação #${quotation.quotationId}` : ''}>
+                <QuotationDetailBody quotation={quotation} onEdit={onEdit} onDelete={onDelete} onMonitor={onMonitor} onClose={onClose} />
+            </Modal>
+        )
+    }
 
     const statusVariant =
         quotation?.status === 'Ativo' ? 'success' :
@@ -61,32 +105,7 @@ const QuotationBottomSheet = ({
                     </button>
                 </div>
 
-                {/* Actions row */}
-                <div className="qsheet-actions">
-                    {onMonitor && (
-                        <button className="qsheet-action-btn qsheet-monitor" onClick={() => { onMonitor(quotation); onClose() }}>
-                            <BarChart2 size={18} strokeWidth={2} />
-                            <span>Monitorar</span>
-                        </button>
-                    )}
-                    {onEdit && (
-                        <button className="qsheet-action-btn qsheet-edit" onClick={() => { onEdit(quotation); onClose() }}>
-                            <Pencil size={18} strokeWidth={2} />
-                            <span>Editar</span>
-                        </button>
-                    )}
-                    {onDelete && (
-                        <button className="qsheet-action-btn qsheet-delete" onClick={() => { onDelete(quotation); onClose() }}>
-                            <Trash size={18} strokeWidth={2} />
-                            <span>Excluir</span>
-                        </button>
-                    )}
-                </div>
-
-                {/* Details body */}
-                <div className="qsheet-body">
-                    <QuotationDetails quotation={quotation} />
-                </div>
+                <QuotationDetailBody quotation={quotation} onEdit={onEdit} onDelete={onDelete} onMonitor={onMonitor} onClose={onClose} />
             </div>
         </>
     )

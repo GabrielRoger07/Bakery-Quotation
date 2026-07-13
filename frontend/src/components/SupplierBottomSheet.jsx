@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
 import { X, Pencil, Trash, Phone, Mail, Building2, Hash } from 'lucide-react'
+import Modal from '@/components/Modal'
+import useIsMobile from '@/hooks/useIsMobile'
 
 const DetailRow = ({ icon, label, value }) => {
     if (!value || value === '-') return null
@@ -14,10 +16,57 @@ const DetailRow = ({ icon, label, value }) => {
     )
 }
 
+const SupplierDetailBody = ({ supplier, onEdit, onDelete, onClose }) => (
+    <>
+        <div className="qsheet-actions">
+            {onEdit && (
+                <button className="qsheet-action-btn qsheet-edit" onClick={() => { onEdit(supplier); onClose() }}>
+                    <Pencil size={18} strokeWidth={2} />
+                    <span>Editar</span>
+                </button>
+            )}
+            {onDelete && (
+                <button className="qsheet-action-btn qsheet-delete" onClick={() => { onDelete(supplier.supplierId); onClose() }}>
+                    <Trash size={18} strokeWidth={2} />
+                    <span>Excluir</span>
+                </button>
+            )}
+        </div>
+
+        <div className="qsheet-body">
+            <DetailRow
+                icon={<Building2 size={16} strokeWidth={1.75} />}
+                label="Empresa"
+                value={supplier?.employerName}
+            />
+            <DetailRow
+                icon={<Hash size={16} strokeWidth={1.75} />}
+                label="CNPJ"
+                value={supplier?.employerCnpj}
+            />
+            <DetailRow
+                icon={<Phone size={16} strokeWidth={1.75} />}
+                label="Whatsapp"
+                value={supplier?.supplierWhatsappNumber}
+            />
+            <DetailRow
+                icon={<Mail size={16} strokeWidth={1.75} />}
+                label="E-mail"
+                value={supplier?.supplierEmail}
+            />
+        </div>
+    </>
+)
+
 /**
- * Bottom sheet (mobile) com os detalhes de um fornecedor e ações de editar/remover.
+ * Detalhes de um fornecedor com ações de editar/remover. No mobile abre como
+ * bottom sheet; a partir de `sm:` (desktop) o mesmo conteúdo abre dentro do
+ * `Modal` genérico — mesmo padrão "corpo compartilhado, chrome trocado por
+ * isMobile" usado por `ProductBottomSheet`.
  */
 const SupplierBottomSheet = ({ isOpen, onClose, supplier, onEdit, onDelete }) => {
+    const isMobile = useIsMobile()
+
     useEffect(() => {
         if (!isOpen) return
         const handleKey = (e) => { if (e.key === 'Escape') onClose() }
@@ -29,6 +78,14 @@ const SupplierBottomSheet = ({ isOpen, onClose, supplier, onEdit, onDelete }) =>
         document.body.style.overflow = isOpen ? 'hidden' : ''
         return () => { document.body.style.overflow = '' }
     }, [isOpen])
+
+    if (!isMobile) {
+        return (
+            <Modal isOpen={isOpen} onClose={onClose} title={supplier?.supplierName}>
+                <SupplierDetailBody supplier={supplier} onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
+            </Modal>
+        )
+    }
 
     const initials = supplier?.supplierName
         ? supplier.supplierName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
@@ -61,43 +118,7 @@ const SupplierBottomSheet = ({ isOpen, onClose, supplier, onEdit, onDelete }) =>
                     </button>
                 </div>
 
-                <div className="qsheet-actions">
-                    {onEdit && (
-                        <button className="qsheet-action-btn qsheet-edit" onClick={() => { onEdit(supplier); onClose() }}>
-                            <Pencil size={18} strokeWidth={2} />
-                            <span>Editar</span>
-                        </button>
-                    )}
-                    {onDelete && (
-                        <button className="qsheet-action-btn qsheet-delete" onClick={() => { onDelete(supplier.supplierId); onClose() }}>
-                            <Trash size={18} strokeWidth={2} />
-                            <span>Excluir</span>
-                        </button>
-                    )}
-                </div>
-
-                <div className="qsheet-body">
-                    <DetailRow
-                        icon={<Building2 size={16} strokeWidth={1.75} />}
-                        label="Empresa"
-                        value={supplier?.employerName}
-                    />
-                    <DetailRow
-                        icon={<Hash size={16} strokeWidth={1.75} />}
-                        label="CNPJ"
-                        value={supplier?.employerCnpj}
-                    />
-                    <DetailRow
-                        icon={<Phone size={16} strokeWidth={1.75} />}
-                        label="Whatsapp"
-                        value={supplier?.supplierWhatsappNumber}
-                    />
-                    <DetailRow
-                        icon={<Mail size={16} strokeWidth={1.75} />}
-                        label="E-mail"
-                        value={supplier?.supplierEmail}
-                    />
-                </div>
+                <SupplierDetailBody supplier={supplier} onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
             </div>
         </>
     )

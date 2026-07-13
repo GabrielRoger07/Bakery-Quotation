@@ -11,6 +11,7 @@ import QuotationList from '@/pages/Quotation/QuotationList';
 import QuotationCreatePage from '@/pages/Quotation/QuotationCreatePage';
 import QuotationEditPage from '@/pages/Quotation/QuotationEditPage';
 import Navbar from '@/components/Navbar';
+import Sidebar from '@/components/Sidebar';
 import SupplierNavbar from '@/components/SupplierNavbar';
 import QuotationMonitor from '@/pages/Quotation/QuotationMonitor';
 import DepartmentList from '@/pages/Department/DepartmentList'
@@ -39,7 +40,9 @@ function AppContent() {
 
   return (
     <>
+      {shouldShowNavbar && <Sidebar />}
       {shouldShowNavbar ? <Navbar /> : shouldShowSupplierNavbar ? <SupplierNavbar /> : null}
+      <div className={shouldShowNavbar ? 'sm:ml-24' : undefined}>
         <Routes>
           <Route path="/" element={<LandingPage />}></Route>
           <Route path="/login" element={<Login />}></Route>
@@ -59,6 +62,7 @@ function AppContent() {
 
           <Route path="*" element={<Navigate to="/login" />}></Route>
         </Routes>
+      </div>
     </>
   )
 }

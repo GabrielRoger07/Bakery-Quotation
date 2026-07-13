@@ -92,6 +92,8 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 |---|---|---|
 | `PageContainer` | `variant`, `children` | `list` / `detail` / `form` / `auth` |
 | `PageHeader` | `title`, `subtitle`, `actions` | h1 padrão da tela |
+| `Navbar` | — | contexto empresa, **só mobile** (`sm:hidden`): título da página + reload + `MobileMenu` (barra inferior) |
+| `Sidebar` | — | contexto empresa, rail fixo à esquerda **só desktop** (`hidden sm:flex`, `w-24`), par de `Navbar`/`MobileMenu`; mesmos ícones (`@/components/icons/NavIcons`) e rotas |
 
 ### Formulário
 | Componente | Props principais | Variantes / notas |
@@ -101,21 +103,22 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 | `Select` | `label`, `value`, `onChange`, `options`, `placeholder`, `bare` | `bare` para toolbars (sem label/margem) |
 | `FieldMessage` | `tone`, `children` | `error` / `warning` — mensagem sob o campo |
 | `FormActions` | `align`, `children` | `center` / `end` / `between` / `start` |
-| `WizardActions` | `onBack`, `onPrimary`, `primaryLabel`, `primaryIcon`, `blocked`, `hint`, `loading` | barra do wizard; fixa no rodapé no mobile |
+| `WizardActions` | `onBack`, `onPrimary`, `primaryLabel`, `desktopLabel`, `primaryIcon`, `blocked`, `hint`, `loading` | barra do wizard; fixa no rodapé no mobile; no desktop vira rodapé da área de conteúdo (`border-t`, Voltar à esquerda / primária à direita, `md:mt-auto` encosta no fim do step) — `desktopLabel` dá rótulo contextual só no desktop (ex: "Continuar para Produtos"), mobile mantém `primaryLabel` |
 | `Alert` | `message`, `variant` | `error` / `success` / `warning` / `info` |
 
 ### Listas
 | Componente | Props principais | Notas |
 |---|---|---|
 | hook `useResourceList` | `{ endpoint, idKey, defaultSortField, deletePath }` | fetch + paginação + sort + busca + remoção; expõe `handleSort`/`clearSort` (toggle, usado pelo `Table` desktop) e `setSort(field, direction)` (seleção direta, usado pelo sheet de ordenação mobile) |
-| `Table` | `columns`, `data`, `idKey`, `onEdit/onDelete/onView/onMonitor`, `onSort`, `toolbar` | desktop |
-| `MobileCardList` | `items`, `renderCard`, `onEdit/...`, `sortOptions`, `sortField`, `sortDirection`, `onSelectSort`, `inlineToolbar` | mobile (par do `Table`); se `sortOptions`+`onSelectSort` forem passados, renderiza o pill `SortButton` ("A-Z") ao lado do `inlineToolbar`, que abre o `SortBottomSheet` |
+| `Table` | `columns`, `data`, `idKey`, `onEdit/onDelete/onView/onMonitor`, `onSort`, `toolbar` | desktop; não é mais usado por nenhuma tela de listagem (Department/Product/Supplier/Quotation migraram para `MobileCardList` em todos os breakpoints) — segue existindo para outros usos (`QuotationMonitor`, `SupplierAccess`) |
+| `MobileCardList` | `items`, `renderCard`, `onEdit/...`, `sortOptions`, `sortField`, `sortDirection`, `onSelectSort`, `inlineToolbar`, `eyebrow`, `addLabel`, `desktopToolbar` | mobile (par do `Table`); se `sortOptions`+`onSelectSort` forem passados, renderiza o pill `SortButton` ("A-Z") ao lado do `inlineToolbar`, que abre o `SortBottomSheet`. A partir de `sm:` (640px): `.cards-list` vira grid de múltiplas colunas; a paginação troca para `Pagination` (numerada) em vez de dots/progress; o FAB some (só mobile); se `title` for passado, aparece um cabeçalho (`eyebrow` opcional + título + botão `addLabel`); e, se `desktopToolbar` for passado, ele substitui `toolbar`/`searchBar` (mobile-only a partir de agora) por uma barra própria de busca/filtro/ordenação — layout costuma diferir bastante do mobile, então não é 1:1. Cabeçalho + `desktopToolbar` ficam dentro de um painel branco só (mesma linguagem visual do container do `Table`: `surface-card`/`radius-xl`/borda/`shadow-card-soft`), separado do grid de cards abaixo. `ProductList`/`SupplierList`/`QuotationList` usam esse componente em todos os breakpoints (sem `Table`), com `onCardClick` igual nos dois (abre o bottom sheet de detalhe, que troca de chrome por `isMobile`). A partir de `sm:`, a raiz é `flex-1` dentro do `PageContainer` (`list` = `sm:min-h-screen sm:flex sm:flex-col`) e a paginação desktop leva `sm:mt-auto` — a distância da paginação até o fim da tela fica sempre igual entre as telas, independente de quantas linhas de card cabem (lista curta: sobra de viewport empurra a paginação para baixo; lista longa: a página rola e o gap vem do `sm:pb-8` do `PageContainer`) |
 | `SortButton` | `onOpen` | pill "A-Z" usado internamente pelo `MobileCardList` (ao lado do `PaginationSummary`) para abrir o `SortBottomSheet`; normalmente não é usado direto pelas páginas |
 | `SortBottomSheet` | `isOpen`, `onClose`, `options: [{key,label,field,direction}]`, `sortField`, `sortDirection`, `onSelectSort` | sheet com lista plana de opções de ordenação pré-compostas (campo+direção); tocar numa opção aplica e fecha na hora; cada página define seu próprio array de `options` (ex.: "Nome (A → Z)") |
-| `Pagination` | `currentPage`, `totalPages`, `onPageChange` | desktop, com elipses |
+| `Pagination` | `currentPage`, `totalPages`, `onPageChange` | desktop, com elipses; também usado internamente por `MobileCardList` (bloco `hidden sm:block`) para a paginação numerada a partir de `sm:` |
 | `PaginationSummary` | `pageLabel`, `rangeLabel` | texto "Página X de Y" / "Mostrando W–Z de Total" / "N registros"; usar com `getPaginationSummary` (`@/utils/paginationSummary`); no mobile, passar como `inlineToolbar` do `MobileCardList` para ficar ao lado do `SortButton` |
-| `MobileSearchInput` | `value`, `onChange`, `onSearch`, `onClear` | toolbar mobile |
-| `ActiveFilterPill` | `label`, `value`, `onClear` | pill de busca ativa (mobile) |
+| `MobileSearchInput` | `value`, `onChange`, `onSearch`, `onClear`, `ariaLabel`, `dense` | campo de busca com ícone + limpar + Enter-to-search; `dense` (usado pelo `ListToolbar`) troca o botão "Buscar" por lupa clicável, altura/raio batendo com `Select bare`, e contém a largura (`flex-1 min-w-[200px] max-w-[280px]`) — sem `dense` (default) é o padrão mobile/sticky, com botão de texto |
+| `ListToolbar` | `search`, `before`, `after`, `sort`, `pageLabel`, `rangeLabel`, `activeFilter` | barra padrão do `desktopToolbar` (busca + filtros + ordenação, depois paginação + `ActiveFilterPill`); `before`/`after` recebem `Select`s específicos da tela (ex.: seletor de campo do Supplier vai em `before`, filtro de setor do Product vai em `after`) — ver `ProductList.jsx`/`SupplierList.jsx` |
+| `ActiveFilterPill` | `label`, `value`, `onClear` | pill de busca ativa (mobile e dentro do `ListToolbar`) |
 | `StatusTabFilter` | `value`, `onChange`, `mobile` | abas de status (Todas/Agendado/Ativo/Fechado) |
 | `ConfirmDialog` | `isOpen`, `onConfirm`, `confirmVariant`, `icon`, `title`, `confirmLabel`, `children` | alerta de confirmação centralizado (ícone + título + ação destrutiva; botões empilhados) |
 
@@ -123,7 +126,7 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 | Componente | Props principais | Notas |
 |---|---|---|
 | `Modal` | `isOpen`, `onClose`, `title`, `children` | overlay + card centralizado |
-| `MetaCard` | `icon`, `label`, `value`, `sub`, `tone` (`default`/`success`/`danger`) | metadado (card branco, rótulo colorido por `tone`) em detalhe/revisão |
+| `MetaCard` | `icon`, `label`, `value`, `sub`, `tone` (`default`/`success`/`danger`/`muted`) | metadado (card branco, rótulo colorido por `tone`) em detalhe/revisão |
 | `SectionHeader` | `icon`, `label`, `count` | cabeçalho de seção |
 | `EmptyState` | `children` ou `icon`/`title`/`description`/`action`/`tone` (`accent`/`danger`) | estado vazio simples (texto) ou rico (ícone + título + CTA, ex.: erro de carregamento) |
 
@@ -163,6 +166,7 @@ return (
   </PageContainer>
 )
 ```
+Esse era o padrão antigo (não usado por nenhuma tela de listagem atualmente). `Department`, `Product`, `Supplier` e `Quotation` usam uma variação sem `Table`: renderizam sempre `MobileCardList` (que já vira grid a partir de `sm:`, com cabeçalho e `desktopToolbar` próprios no desktop) e mantêm `onCardClick` igual nos dois breakpoints — quem troca de chrome por `isMobile` é o bottom sheet de detalhe (`DepartmentBottomSheet`/`ProductBottomSheet`/`SupplierBottomSheet`/`QuotationBottomSheet`: bottom sheet no mobile, `Modal` no desktop), não a lista em si; o formulário de criar/editar segue o mesmo princípio via `DepartmentFormBottomSheet`/`ProductFormBottomSheet`/`SupplierFormBottomSheet` (sheet no mobile, `Modal` no desktop). O `desktopToolbar` em si deve ser montado com `ListToolbar` (em vez de remontar `Select`/`MobileSearchInput`/`ActiveFilterPill`/`PaginationSummary` na mão) — ver `ProductList.jsx`/`SupplierList.jsx`/`QuotationList.jsx` para o exemplo completo. `Quotation` não usa `search` no `ListToolbar` (a prop é opcional) — só `before` (`StatusTabFilter`) e `sort`. `Department` não tem busca/filtro, só ordenação (`sortOptions` "Nome (A → Z)"/"Nome (Z → A)"), então seu `ListToolbar` usa só `sort` + `pageLabel`/`rangeLabel` (sem `search`/`before`/`after`/`activeFilter`).
 
 ---
 

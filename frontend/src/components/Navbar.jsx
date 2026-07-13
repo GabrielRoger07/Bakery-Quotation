@@ -1,29 +1,16 @@
-import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { RotateCw } from "lucide-react";
-import Button from "@/components/Button";
 import MobileMenu from "@/components/MobileMenu";
-import LogoutConfirmModal from "@/components/LogoutConfirmModal";
 import { useMobilePage } from "@/contexts/MobilePageContext";
 
-const navLinkClass = ({ isActive }) =>
-    [
-        'no-underline font-medium text-[0.875rem] tracking-[0.01em]',
-        'px-[0.875rem] py-[0.4rem] rounded-[var(--radius-md)]',
-        'transition-[color,background-color] duration-[160ms] ease-[ease]',
-        isActive
-            ? 'text-white bg-[var(--color-accent)] font-semibold [box-shadow:var(--shadow-accent)]'
-            : 'text-[var(--color-on-dark-text)] hover:text-[var(--color-on-dark-text)] hover:bg-[var(--color-on-dark-bg)]',
-    ].join(' ')
-
 /**
- * Barra de navegação do contexto empresa (links no desktop;
- * título da página + ações no mobile).
+ * Barra de navegação do contexto empresa — só mobile (título da página +
+ * ações); a partir de `sm:` a navegação vira a `Sidebar` fixa lateral, então
+ * essa barra inteira desaparece (`sm:hidden`).
  */
 const Navbar = () => {
     const navigate = useNavigate()
-    const [confirmOpen, setConfirmOpen] = useState(false)
     const { pageTitle, reloadFn, leftAction, rightSlot } = useMobilePage()
 
     const doLogout = () => {
@@ -33,15 +20,7 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="flex justify-between items-center gap-4 px-6 h-[4.5rem] sm:h-[3.375rem] bg-[var(--color-brand)] border-b border-[var(--color-on-dark-border)] sticky top-0 z-[1000] [box-shadow:var(--shadow-md-strong)] max-sm:px-4">
-                {/* Desktop: links centrados */}
-                <div className="absolute left-1/2 -translate-x-1/2 flex justify-center gap-1 whitespace-nowrap max-sm:hidden max-[860px]:gap-0.5">
-                    <NavLink to="/suppliers" className={navLinkClass}>Fornecedores</NavLink>
-                    <NavLink to="/products" className={navLinkClass}>Produtos</NavLink>
-                    <NavLink to="/quotations" className={navLinkClass}>Cotações</NavLink>
-                    <NavLink to="/departments" className={navLinkClass}>Departamentos</NavLink>
-                </div>
-
+            <nav className="sm:hidden flex justify-between items-center gap-4 px-4 h-[4.5rem] bg-[var(--color-brand)] border-b border-[var(--color-on-dark-border)] sticky top-0 z-[1000] [box-shadow:var(--shadow-md-strong)]">
                 {/* Mobile: botão de ação à esquerda (opcional, ex.: fechar wizard) */}
                 {leftAction && (
                     <button
@@ -60,11 +39,6 @@ const Navbar = () => {
                     </span>
                 )}
 
-                {/* Desktop: botão Sair */}
-                <div className="flex items-center justify-end gap-[0.625rem] ml-auto max-sm:hidden">
-                    <Button onClick={() => setConfirmOpen(true)}>Sair</Button>
-                </div>
-
                 {/* Mobile: slot customizado à direita, ou botão reload */}
                 {rightSlot ? (
                     <div className="hidden max-sm:flex items-center ml-auto flex-shrink-0">{rightSlot}</div>
@@ -80,12 +54,6 @@ const Navbar = () => {
             </nav>
 
             <MobileMenu onLogout={doLogout} />
-
-            <LogoutConfirmModal
-                open={confirmOpen}
-                onConfirm={doLogout}
-                onCancel={() => setConfirmOpen(false)}
-            />
         </>
     )
 }

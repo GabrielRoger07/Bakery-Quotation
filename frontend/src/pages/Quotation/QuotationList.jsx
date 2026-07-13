@@ -2,24 +2,19 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useFetch from '@/hooks/useFetch'
 import Modal from '@/components/Modal'
-import Table from '@/components/Table'
 import MobileCardList from '@/components/MobileCardList'
 import QuotationBottomSheet from '@/components/QuotationBottomSheet'
-import QuotationDetails from '@/pages/Quotation/QuotationDetails'
 import StatusTabFilter from '@/components/StatusTabFilter'
 import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import PageContainer from '@/components/PageContainer'
-import Pagination from '@/components/Pagination'
+import Select from '@/components/Select'
+import ListToolbar from '@/components/ListToolbar'
 import PaginationSummary from '@/components/PaginationSummary'
-import EmptyState from '@/components/EmptyState'
-import Button from '@/components/Button'
 import { ENV } from '@/config/env'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { getPaginationSummary } from '@/utils/paginationSummary'
-import useIsMobile from '@/hooks/useIsMobile'
-import { useMobilePage } from '@/contexts/MobilePageContext'
-import { CalendarRange, CheckCircle, Clock, CloudOff, History, RotateCw, X } from 'lucide-react'
+import { CalendarRange, CheckCircle, Clock, History, X } from 'lucide-react'
 
 const QuotationList = () => {
 
@@ -27,8 +22,6 @@ const QuotationList = () => {
     const { request: requestCounts } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate()
     const location = useLocation()
-    const isMobile = useIsMobile()
-    const { registerPage, unregisterPage } = useMobilePage()
 
     const [savedNotice, setSavedNotice] = useState(location.state?.quotationSaved ?? null)
 
@@ -44,9 +37,6 @@ const QuotationList = () => {
     const [status, setStatus] = useState(null)
     const [initialLoad, setInitialLoad] = useState(true)
 
-    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
-    const [quotationToView, setQuotationToView] = useState(null)
-
     const [sheetOpen, setSheetOpen] = useState(false)
     const [sheetQuotation, setSheetQuotation] = useState(null)
 
@@ -59,33 +49,12 @@ const QuotationList = () => {
     const [totalElements, setTotalElements] = useState(0)
     const [pageSize, setPageSize] = useState(0)
 
-    const [sortField, setSortField] = useState("quotationEndFormatted")
+    const [sortField, setSortField] = useState("quotationEnd")
     const [sortDirection, setSortDirection] = useState("desc")
 
     const [statusFilter, setStatusFilter] = useState("")
 
-    const columns = useMemo(() => [
-        { key: "quotationId", label: "ID" },
-        { key: "quotationStartFormatted", label: "Data de Início" },
-        { key: "quotationEndFormatted", label: "Data de Fim" },
-        { key: "status", label: "Status" }
-    ], [])
-
-    const sortMap = useMemo(() => ({
-        quotationId: "id",
-        quotationStartFormatted: "quotationStart",
-        quotationEndFormatted: "quotationEnd",
-        status: null
-    }), [])
-
-    const openDetailsModal = (quotation) => {
-        setQuotationToView(quotation)
-        setIsDetailsModalOpen(true)
-    }
-
     const closeModals = () => {
-        setQuotationToView(null)
-        setIsDetailsModalOpen(false)
         setConfirmOpen(false)
         setQuotationToRemove(null)
         setCannotDelete(false)
@@ -131,9 +100,7 @@ const QuotationList = () => {
     }
 
     const fetchQuotations = useCallback(async (page = 0) => {
-        let sortQuery = ""
-        const backendSortField = sortMap[sortField]
-        if (sortField) sortQuery = `&sort=${backendSortField},${sortDirection}`
+        const sortQuery = sortField ? `&sort=${sortField},${sortDirection}` : ""
 
         const statusQuery = statusFilter ? `&field=status&value=${statusFilter}` : ""
 
@@ -167,20 +134,9 @@ const QuotationList = () => {
         }
         setStatus(res.status)
         setInitialLoad(false)
-    }, [request, requestCounts, sortField, sortDirection, sortMap, statusFilter])
+    }, [request, requestCounts, sortField, sortDirection, statusFilter])
 
     const reloadCurrentPage = useCallback(() => fetchQuotations(currentPage), [fetchQuotations, currentPage])
-
-    const handleColumnSort = (columnKey) => {
-        if (!sortMap[columnKey]) return
-        if (sortField === columnKey) {
-            setSortDirection(prev => prev === "asc" ? "desc" : "asc")
-        } else {
-            setSortField(columnKey)
-            setSortDirection("asc")
-        }
-        setCurrentPage(0)
-    }
 
     const setSort = (field, direction) => {
         setSortField(field)
@@ -194,21 +150,13 @@ const QuotationList = () => {
     }
 
     const sortOptions = useMemo(() => [
-        { key: "date-desc", label: "Mais recentes primeiro", shortLabel: "Recentes", field: "quotationEndFormatted", direction: "desc", icon: <Clock size={18} strokeWidth={2} /> },
-        { key: "date-asc", label: "Mais antigas primeiro", shortLabel: "Antigas", field: "quotationEndFormatted", direction: "asc", icon: <History size={18} strokeWidth={2} /> },
+        { key: "date-desc", label: "Mais recentes primeiro", shortLabel: "Recentes", field: "quotationEnd", direction: "desc", icon: <Clock size={18} strokeWidth={2} /> },
+        { key: "date-asc", label: "Mais antigas primeiro", shortLabel: "Antigas", field: "quotationEnd", direction: "asc", icon: <History size={18} strokeWidth={2} /> },
     ], [])
 
     useEffect(() => {
         fetchQuotations(currentPage)
     }, [fetchQuotations, currentPage])
-
-    // Mantém o título/reload do header mobile registrados mesmo quando o
-    // MobileCardList é desmontado (ex.: card de erro no lugar da lista).
-    useEffect(() => {
-        if (!isMobile) return
-        registerPage("Cotações", reloadCurrentPage)
-        return () => unregisterPage()
-    }, [isMobile, registerPage, unregisterPage, reloadCurrentPage])
 
     const { pageLabel, rangeLabel } = getPaginationSummary({
         currentPage, totalPages, totalElements, pageSize,
@@ -231,6 +179,29 @@ const QuotationList = () => {
         }
     }
 
+    const activeSortKey = sortOptions.find(opt => opt.field === sortField && opt.direction === sortDirection)?.key
+
+    const desktopToolbar = useMemo(() => (
+        <ListToolbar
+            before={<StatusTabFilter value={statusFilter} onChange={handleStatusFilterChange} />}
+            sort={(
+                <Select
+                    bare
+                    className="w-[16rem] shrink-0"
+                    value={activeSortKey}
+                    onChange={e => {
+                        const opt = sortOptions.find(o => o.key === e.target.value)
+                        if (opt) setSort(opt.field, opt.direction)
+                    }}
+                    selectClassName="h-[2.5rem]"
+                    options={sortOptions.map(opt => ({ value: opt.key, label: opt.label }))}
+                />
+            )}
+            pageLabel={pageLabel}
+            rangeLabel={rangeLabel}
+        />
+    ), [statusFilter, activeSortKey, sortOptions, pageLabel, rangeLabel])
+
     return (
         <PageContainer variant="list">
 
@@ -250,100 +221,49 @@ const QuotationList = () => {
                 </div>
             )}
 
-            {error && !(isMobile && quotations.length === 0) && <Alert message={error} />}
+            {error && <Alert message={error} />}
             {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
-            {isMobile ? (
-                <>
-                    <div className="px-4 pt-4">
-                        <StatusTabFilter
-                            value={statusFilter}
-                            onChange={handleStatusFilterChange}
-                            mobile
-                        />
-                    </div>
-                    {error && quotations.length === 0 ? (
-                        <div className="px-4 pt-6">
-                            <EmptyState
-                                tone="danger"
-                                icon={<CloudOff size={28} strokeWidth={1.75} />}
-                                title="Não foi possível carregar"
-                                description="Verifique sua conexão e tente novamente."
-                                action={
-                                    <Button onClick={() => fetchQuotations(currentPage)}>
-                                        <span className="inline-flex items-center gap-2">
-                                            <RotateCw size={16} strokeWidth={2} /> Tentar novamente
-                                        </span>
-                                    </Button>
-                                }
-                            />
-                        </div>
-                    ) : (
-                        <MobileCardList
-                            title="Cotações"
-                            items={quotations}
-                            idKey="quotationId"
-                            loading={loading || initialLoad}
-                            emptyMessage="Nenhuma cotação encontrada."
-                            onReload={reloadCurrentPage}
-                            onAdd={() => navigate('/quotations/new')}
-                            onCardClick={openSheet}
-                            renderCard={renderQuotationCard}
-                            showCount={false}
-                            inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
-                            sortOptions={sortOptions}
-                            sortField={sortField}
-                            sortDirection={sortDirection}
-                            onSelectSort={(opt) => setSort(opt.field, opt.direction)}
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={setCurrentPage}
-                        />
-                    )}
-                    <QuotationBottomSheet
-                        isOpen={sheetOpen}
-                        onClose={closeSheet}
-                        quotation={sheetQuotation}
-                        onEdit={(q) => navigate(`/quotations/${q.quotationId}/edit`)}
-                        onDelete={requestRemove}
-                        onMonitor={handleMonitor}
-                    />
-                </>
-            ) : (
-                <>
-                    <Table
-                        title={"Cotações"}
-                        columns={columns}
-                        data={quotations}
-                        idKey="quotationId"
-                        loading={loading || initialLoad}
-                        onEdit={(q) => navigate(`/quotations/${q.quotationId}/edit`)}
-                        onDelete={requestRemove}
-                        onAdd={() => navigate('/quotations/new')}
-                        onReload={reloadCurrentPage}
-                        onSort={handleColumnSort}
-                        sortField={sortField}
-                        sortDirection={sortDirection}
-                        onView={openDetailsModal}
-                        onMonitor={handleMonitor}
-                        emptyMessage={"Nenhuma cotação encontrada."}
-                        filterSlot={
-                            <StatusTabFilter
-                                value={statusFilter}
-                                onChange={handleStatusFilterChange}
-                            />
-                        }
-                    />
-                    <div className="flex items-center justify-between gap-2 px-1">
-                        <PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />
-                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-                    </div>
-                </>
-            )}
+            <div className="sm:hidden px-4 pt-4">
+                <StatusTabFilter
+                    value={statusFilter}
+                    onChange={handleStatusFilterChange}
+                    mobile
+                />
+            </div>
 
-            <Modal isOpen={isDetailsModalOpen} onClose={closeModals} title={"Detalhes da Cotação"}>
-                <QuotationDetails quotation={quotationToView} />
-            </Modal>
+            <MobileCardList
+                title="Cotações"
+                eyebrow="Compras"
+                addLabel="Nova Cotação"
+                items={quotations}
+                idKey="quotationId"
+                loading={loading || initialLoad}
+                emptyMessage="Nenhuma cotação encontrada."
+                onReload={reloadCurrentPage}
+                onAdd={() => navigate('/quotations/new')}
+                onCardClick={openSheet}
+                renderCard={renderQuotationCard}
+                desktopToolbar={desktopToolbar}
+                showCount={false}
+                inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
+                sortOptions={sortOptions}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSelectSort={(opt) => setSort(opt.field, opt.direction)}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
+
+            <QuotationBottomSheet
+                isOpen={sheetOpen}
+                onClose={closeSheet}
+                quotation={sheetQuotation}
+                onEdit={(q) => navigate(`/quotations/${q.quotationId}/edit`)}
+                onDelete={requestRemove}
+                onMonitor={handleMonitor}
+            />
 
             {cannotDelete ? (
                 <Modal isOpen={confirmOpen} onClose={closeModals} title={"Confirmar Remoção"}>

@@ -8,11 +8,13 @@ import { cn } from '@/utils/cn'
  *  - 'default' → roxo (accent) — ex.: Modo
  *  - 'success' → verde — ex.: Início
  *  - 'danger'  → vermelho — ex.: Fim
+ *  - 'muted'   → cinza — ex.: rótulos de estatística
  */
 const TONES = {
   default: 'text-[var(--color-accent)]',
   success: 'text-[var(--color-success)]',
   danger: 'text-[var(--color-danger)]',
+  muted: 'text-[var(--color-text-muted)]',
 }
 
 const MetaCard = ({ icon, label, value, sub, tone = 'default' }) => (

@@ -6,11 +6,11 @@ import useIsMobile from '@/hooks/useIsMobile'
 import { useMobilePage } from '@/contexts/MobilePageContext'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
-import Table from '@/components/Table'
 import EmptyState from '@/components/EmptyState'
 import MetaCard from '@/components/MetaCard'
+import MobileSearchInput from '@/components/MobileSearchInput'
+import SectionHeader from '@/components/SectionHeader'
 import { ENV } from '@/config/env'
-import { formatCnpj } from '@/utils/formatCnpj'
 import { formatMoney } from '@/utils/formatMoney'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { X, FileDown, Package, Gavel, TrendingDown, Users, User, Clock, Activity, ChevronDown, ChevronRight, CheckCircle2, MinusCircle, Building2, SearchX, RotateCw, Flag, Calendar } from 'lucide-react'
@@ -269,30 +269,43 @@ const MobileSection = ({ title, icon, count, children, filterSlot, defaultOpen =
     )
 }
 
-/* ── Suppliers panel (sheet mobile / Modal desktop) ─────────────── */
-const SuppliersPanel = ({ suppliers, onClose, isMobile }) => {
+/* ── Suppliers list (grouped by bid status) ─────────────────────── */
+const SuppliersList = ({ suppliers, plain = false }) => {
     const withBid    = suppliers.filter(s => s.hasBid)
     const withoutBid = suppliers.filter(s => !s.hasBid)
 
     const row = (s, i) => (
         <div key={s.participationId} className="sqm-row" style={{ animationDelay: `${i * 35}ms` }}>
-            <div className={`sqm-row-avatar ${s.hasBid ? 'sqm-row-avatar--active' : ''}`}>
+            <div className={`sqm-row-avatar ${!plain && s.hasBid ? 'sqm-row-avatar--active' : ''}`}>
                 <Building2 size={15} strokeWidth={1.75} />
             </div>
             <div className="sqm-row-info">
                 <span className="sqm-row-name">{s.supplierName}</span>
                 {s.employerName && <span className="sqm-row-employer">{s.employerName}</span>}
             </div>
-            <div className={`sqm-row-badge ${s.hasBid ? 'sqm-row-badge--active' : 'sqm-row-badge--pending'}`}>
-                {s.hasBid
-                    ? <><CheckCircle2 size={11} strokeWidth={2.5} />{s.bidCount} lance{s.bidCount !== 1 ? 's' : ''}</>
-                    : <><MinusCircle size={11} strokeWidth={2} />Sem lance</>
-                }
-            </div>
+            {!plain && (
+                <div className={`sqm-row-badge ${s.hasBid ? 'sqm-row-badge--active' : 'sqm-row-badge--pending'}`}>
+                    {s.hasBid
+                        ? <><CheckCircle2 size={11} strokeWidth={2.5} />{s.bidCount} lance{s.bidCount !== 1 ? 's' : ''}</>
+                        : <><MinusCircle size={11} strokeWidth={2} />Sem lance</>
+                    }
+                </div>
+            )}
         </div>
     )
 
-    const body = (
+    if (plain) {
+        return (
+            <>
+                {suppliers.map((s, i) => row(s, i))}
+                {suppliers.length === 0 && (
+                    <div className="qm-empty" style={{ padding: '2rem 1rem' }}>Nenhum fornecedor participando.</div>
+                )}
+            </>
+        )
+    }
+
+    return (
         <>
             {withBid.length > 0 && (
                 <div className="sqm-group">
@@ -319,6 +332,11 @@ const SuppliersPanel = ({ suppliers, onClose, isMobile }) => {
             )}
         </>
     )
+}
+
+/* ── Suppliers panel (sheet mobile / Modal desktop) ─────────────── */
+const SuppliersPanel = ({ suppliers, onClose, isMobile }) => {
+    const body = <SuppliersList suppliers={suppliers} />
 
     if (!isMobile) return (
         <Modal isOpen onClose={onClose} title={`Fornecedores (${suppliers.length})`}>
@@ -364,7 +382,7 @@ const QuotationMonitor = () => {
     const [bids, setBids] = useState([])
     const [dataLoading, setDataLoading] = useState(true)
 
-    const [searchField, setSearchField] = useState("")
+    const [, setSearchField] = useState("")
     const [searchWord, setSearchWord] = useState("")
     const [appliedSearch, setAppliedSearch] = useState({ field: "", word: "" })
     const [bidFilter, setBidFilter] = useState("all")
@@ -507,33 +525,6 @@ const QuotationMonitor = () => {
 
     useWebSocket(quotationId, handleNewBid)
 
-    const productColumns = useMemo(() => [
-        {key: "productName", label: "Produto"},
-        {key: "quantity", label: "Quantidade"},
-        {key: "brand", label: "Marca"},
-        {key: "lowestBid", label: "Menor Lance"},
-        {key: "pricePerUnit", label: "Preço Unitário"},
-        {key: "supplierName", label: "Fornecedor"},
-        {key: "employerName", label: "Empresa"},
-        {key: "employerCnpj", label: "CNPJ da Empresa"},
-    ], [])
-
-    const bidColumns = useMemo(() => [
-        {key: "productName", label: "Produto"},
-        {key: "quantity", label: "Quantidade"},
-        {key: "supplierName", label: "Fornecedor"},
-        {key: "employerName", label: "Empresa"},
-        {key: "employerCnpj", label: "CNPJ da Empresa"},
-        {key: "price", label: "Preço Total"},
-        {key: "pricePerUnit", label: "Preço Unitário"},
-        {key: "createdAt", label: "Data/Hora"},
-        {key: "status", label: "Status"},
-    ], [])
-
-    const handleSearch = useCallback(() => {
-        setAppliedSearch({ field: searchField, word: searchWord })
-    }, [searchField, searchWord])
-
     const handleProductNameSearch = useCallback(() => {
         setAppliedSearch({ field: "productName", word: searchWord })
     }, [searchWord])
@@ -607,105 +598,6 @@ const QuotationMonitor = () => {
 
         return result
     }, [bids, appliedBidSearch, bidStatusFilter, lowestBids])
-
-    const segBtnCls = (active) => [
-        'px-3 py-[0.4rem] text-[0.875rem] font-medium font-sans border-none cursor-pointer whitespace-nowrap transition-[background-color,color] duration-[160ms] not-last:border-r not-last:border-[var(--color-border-default)]',
-        active
-            ? 'bg-[var(--color-accent)] text-white'
-            : 'bg-[var(--color-surface-card)] text-[var(--color-text-neutral)] hover:bg-[var(--color-surface-subtle)]',
-    ].join(' ')
-
-    const filterToolbar = useMemo(() => (
-        <>
-            <div className="relative">
-                <select value={searchField} onChange={e => setSearchField(e.target.value)} className="toolbar-select">
-                    <option value="">Selecione</option>
-                    <option value="productName">Nome do Produto</option>
-                    <option value="supplierName">Nome do Fornecedor</option>
-                    <option value="employerName">Nome da Empresa</option>
-                    <option value="employerCnpj">CNPJ da Empresa</option>
-                </select>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </span>
-            </div>
-            <input
-                type="text"
-                className="toolbar-input"
-                value={searchWord}
-                onChange={e => setSearchWord(e.target.value)}
-                placeholder={"Digite o campo"}
-                onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
-            />
-            <div className="flex border border-[var(--color-border-default)] rounded-[var(--radius-md)] overflow-hidden">
-                <button className={segBtnCls(bidFilter === "all")} onClick={() => setBidFilter("all")}>Todos</button>
-                <button className={segBtnCls(bidFilter === "with")} onClick={() => setBidFilter("with")}>Com lance</button>
-                <button className={segBtnCls(bidFilter === "without")} onClick={() => setBidFilter("without")}>Sem lance</button>
-            </div>
-            <Button onClick={handleSearch}>Buscar</Button>
-            {(appliedSearch.word || bidFilter !== "all") && (
-                <Button variant="danger" onClick={handleClearSearch}><X size={16} /></Button>
-            )}
-        </>
-    ), [searchField, searchWord, appliedSearch, bidFilter, handleSearch, handleClearSearch])
-
-    const bidFilterToolbar = useMemo(() => (
-        <>
-            <div className="relative">
-                <select value={bidSearchField} onChange={e => setBidSearchField(e.target.value)} className="toolbar-select">
-                    <option value="">Selecione</option>
-                    <option value="productName">Nome do Produto</option>
-                    <option value="supplierName">Nome do Fornecedor</option>
-                    <option value="employerName">Nome da Empresa</option>
-                    <option value="employerCnpj">CNPJ da Empresa</option>
-                </select>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </span>
-            </div>
-            <input
-                type="text"
-                className="toolbar-input"
-                value={bidSearchWord}
-                onChange={e => setBidSearchWord(e.target.value)}
-                placeholder={"Digite o campo"}
-                onKeyDown={e => { if (e.key === "Enter") handleBidSearch() }}
-            />
-            <Button onClick={handleBidSearch}>Buscar</Button>
-            {appliedBidSearch.word && (
-                <Button variant="danger" onClick={handleClearBidSearch}><X size={16} /></Button>
-            )}
-        </>
-    ), [bidSearchField, bidSearchWord, appliedBidSearch, handleBidSearch, handleClearBidSearch])
-
-    const formattedProducts = [...filteredProducts]
-        .sort((a, b) => a.productName?.localeCompare(b.productName))
-        .map(p => ({
-        ...p,
-        brand: p.brand || "-",
-        lowestBid: p.lowestBid ? formatMoney(p.lowestBid) : "-",
-        bonus: p.bonus ?? "-",
-        pricePerUnit: p.pricePerUnit && p.pricePerUnit !== "-" ? formatMoney(p.pricePerUnit) : "-",
-        supplierName: p.supplierName || "-",
-        employerName: p.employerName || "-",
-        employerCnpj: p.employerCnpj && p.employerCnpj !== "-" ? formatCnpj(p.employerCnpj) : "-"
-    }))
-
-    const formattedBids = filteredBids.map(b => {
-        const lowest = lowestBids[b.productId]
-        const isLowest = lowest && b.price === lowest.price
-
-        return {
-            ...b,
-            price: formatMoney(b.price),
-            pricePerUnit: formatMoney((b.price) / (b.quantity + b.bonus)),
-            employerCnpj: b.employerCnpj ? formatCnpj(b.employerCnpj) : "-",
-            createdAt: new Date(b.createdAt).toLocaleString(),
-            status: isLowest
-                ? <span className="text-[var(--color-success)] font-semibold">Vencendo</span>
-                : <span className="text-[var(--color-danger)] font-semibold">Superado</span>
-        }
-    })
 
     const totalEstimated = products.reduce((sum, p) => {
         if(!p.lowestBid || p.lowestBid === "-") return sum
@@ -950,88 +842,222 @@ const QuotationMonitor = () => {
         )
     }
 
-    /* ── Desktop layout (unchanged) ─────────────────────────────── */
+    /* ── Desktop layout ─────────────────────────────────────────── */
     const quotationStartFormatted = formatDateTime(quotation.quotationStart)
     const quotationEndFormatted = formatDateTime(quotation.quotationEnd)
 
+    const isClosed = countdown.status === 'Closed'
+    const isActive = countdown.status === 'Active'
+    const isScheduled = countdown.status === 'Scheduled'
+    const hasActiveProductFilter = appliedSearch.word !== "" || bidFilter !== "all"
+
+    const sectionCardCls = "bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-2xl)] [box-shadow:var(--shadow-card-soft)] p-5"
+
     return (
-        <div className="page-wrapper text-[var(--color-text-body)]">
-            {/* Header */}
-            <div className={`grid items-center w-full mb-[1.125rem] ${countdown.status === 'Closed' ? 'grid-cols-[auto_1fr_auto] max-md:grid-cols-[auto_1fr_auto] max-md:grid-rows-[auto_auto] max-md:gap-x-2 max-md:gap-y-4' : 'grid-cols-[auto_1fr_auto]'}`}>
-                <Button onClick={() => navigate(-1)}>Voltar</Button>
-                <h2 className={`m-0 text-center text-[1.25rem] font-bold text-[var(--color-text-heading)] tracking-[-0.02em] max-md:text-[1.125rem] ${countdown.status === 'Closed' ? 'max-md:col-span-full max-md:row-start-2' : ''}`}>
-                    Monitoramento Cotação #{quotation.quotationId}
-                </h2>
-                <div className="flex justify-end min-w-0">
-                    {countdown.status === 'Closed' && (
-                        <Button
-                            onClick={handlePrintPdf}
-                            variant="success"
-                            className="flex items-center gap-[0.375rem] whitespace-nowrap [animation:exportAppear_0.3s_ease]"
-                        >
-                            <FileDown size={16} />
-                            Exportar Relatório
-                        </Button>
+        <div className="text-[var(--color-text-body)]">
+
+            {/* ── Header (padrão QuotationForm) ── */}
+            <header className="sticky top-0 z-[100] flex items-center gap-4 px-6 h-[4.5rem] bg-[var(--color-surface-card)] border-b border-[var(--color-border-default)] flex-shrink-0">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="flex items-center justify-center w-9 h-9 rounded-[var(--radius-md)] border border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)] cursor-pointer transition-[background,border-color,color] duration-[160ms] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-body)] flex-shrink-0"
+                    aria-label="Fechar"
+                >
+                    <X size={16} strokeWidth={2.5} />
+                </button>
+
+                <div className="w-px h-8 bg-[var(--color-border-default)] flex-shrink-0" />
+
+                <div className="min-w-0">
+                    <span className="block text-label font-bold uppercase tracking-[0.08em] text-[var(--color-accent)]">
+                        Monitoramento
+                    </span>
+                    <div className="flex items-center gap-2.5">
+                        <h1 className="m-0 text-[1.375rem] font-extrabold tracking-[-0.02em] text-[var(--color-text-heading)] leading-tight truncate">
+                            Cotação #{quotation.quotationId}
+                        </h1>
+                        <span className={`qm-mobile-status-pill ${statusCls}`}>{statusLabel}</span>
+                    </div>
+                </div>
+
+                <div className="ml-auto flex items-center gap-3 flex-shrink-0">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] px-3 py-1.5 text-caption font-semibold text-[var(--color-text-muted)]">
+                        <Flag size={14} strokeWidth={2} className="text-[var(--color-success)]" />
+                        Início · {quotationStartFormatted ? `${quotationStartFormatted.date}, ${quotationStartFormatted.time}` : "-"}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] px-3 py-1.5 text-caption font-semibold text-[var(--color-text-muted)]">
+                        <Calendar size={14} strokeWidth={2} className="text-[var(--color-danger)]" />
+                        Fim · {quotationEndFormatted ? `${quotationEndFormatted.date}, ${quotationEndFormatted.time}` : "-"}
+                    </span>
+                    {isClosed && (
+                        <>
+                            <div className="w-px h-8 bg-[var(--color-border-default)]" />
+                            <Button onClick={handlePrintPdf} className="flex items-center gap-2 whitespace-nowrap">
+                                <FileDown size={16} strokeWidth={2} />
+                                Lista de compras
+                            </Button>
+                        </>
+                    )}
+                </div>
+            </header>
+
+            {/* ── Countdown banner (igual ao mobile) ── */}
+            {!isClosed && (
+                <div className={`qm-countdown-banner ${statusCls}`}>
+                    <Clock size={22} strokeWidth={2} className="qm-countdown-icon" />
+                    <div className="qm-countdown-text">
+                        <span className="qm-countdown-label">{isActive ? 'Encerra em' : 'Começa em'}</span>
+                        <span className="qm-countdown-time">{countdown.timeRemaining}</span>
+                    </div>
+                </div>
+            )}
+
+            <div className="max-w-[1400px] mx-auto px-6 py-6">
+
+            {/* ── Stats ── */}
+            {!isScheduled && (
+                <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-5">
+                    <div className="flex items-center gap-3 bg-[var(--color-highlight-lighter)] border border-[var(--color-highlight-border)] rounded-[var(--radius-xl)] [box-shadow:var(--shadow-xs)] px-4 py-[0.8125rem]">
+                        <div className="w-11 h-11 shrink-0 rounded-[var(--radius-md)] bg-[var(--color-accent)] text-white flex items-center justify-center">
+                            <TrendingDown size={20} strokeWidth={2} />
+                        </div>
+                        <div className="min-w-0">
+                            <span className="block text-caption font-semibold uppercase tracking-[0.03em] text-[var(--color-accent)]">
+                                {isClosed ? 'Valor Total' : 'Total estimado'}
+                            </span>
+                            <span className="block text-[1.5rem] font-extrabold leading-[1.2] text-[var(--color-text-heading)] [font-variant-numeric:tabular-nums] tracking-[-0.02em]">
+                                {formattedTotalEstimated}
+                            </span>
+                        </div>
+                    </div>
+                    <MetaCard tone="muted" icon={<Gavel size={16} strokeWidth={2} />} label="Lances" value={bids.length} />
+                    <MetaCard tone="muted" icon={<Users size={16} strokeWidth={2} />} label="Fornecedores" value={uniqueSuppliers} />
+                    <MetaCard tone="muted" icon={<Package size={16} strokeWidth={2} />} label="Produtos com lance" value={`${productsWithBidsCount}/${products.length}`} />
+                </div>
+            )}
+
+            {/* ── Main grid ── */}
+            <div className="grid gap-5 items-start lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+
+                {/* Produtos */}
+                <div className={sectionCardCls}>
+                    <SectionHeader icon={<Package size={15} strokeWidth={2} />} label="Produtos" count={sortedFilteredProducts.length} />
+                    <div className="flex items-center gap-3 flex-wrap mb-4">
+                        <MobileSearchInput
+                            dense
+                            value={searchWord}
+                            onChange={e => { setSearchWord(e.target.value); setAppliedSearch({ field: "productName", word: e.target.value }) }}
+                            onSearch={() => setAppliedSearch({ field: "productName", word: searchWord })}
+                            onClear={handleClearSearch}
+                            placeholder="Buscar produto"
+                            ariaLabel="Buscar produto"
+                        />
+                        {!isScheduled && (
+                            <div className="flex items-center gap-2">
+                                {BID_PRESENCE_OPTIONS.map(opt => (
+                                    <button
+                                        key={opt.value}
+                                        type="button"
+                                        className={`mf-chip ${bidFilter === opt.value ? 'selected' : ''}`}
+                                        onClick={() => setBidFilter(opt.value)}
+                                    >
+                                        {opt.label}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    {dataLoading ? (
+                        <div className="qm-empty">Carregando produtos...</div>
+                    ) : sortedFilteredProducts.length === 0 ? (
+                        hasActiveProductFilter ? (
+                            <EmptyState
+                                icon={<SearchX size={28} strokeWidth={1.75} />}
+                                title="Nenhum produto encontrado"
+                                description="Ajuste a situação ou tente outro termo de busca."
+                                action={
+                                    <Button variant="secondary" onClick={handleClearSearch} className="flex items-center gap-1.5">
+                                        <RotateCw size={14} strokeWidth={2} />
+                                        Limpar filtros
+                                    </Button>
+                                }
+                            />
+                        ) : (
+                            <div className="qm-empty">Nenhum produto encontrado.</div>
+                        )
+                    ) : (
+                        <div className="flex flex-col gap-3">
+                            {sortedFilteredProducts.map(p => (
+                                <MobileProductCard key={p.productId} product={p} isScheduled={isScheduled} />
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Fornecedores + Lances */}
+                <div className="flex flex-col gap-5">
+                    <div className={sectionCardCls}>
+                        <SectionHeader icon={<Users size={15} strokeWidth={2} />} label="Fornecedores" count={suppliersWithBidStatus.length} />
+                        <SuppliersList suppliers={suppliersWithBidStatus} plain={isScheduled} />
+                    </div>
+
+                    {!isScheduled && (
+                        <div className={sectionCardCls}>
+                            <SectionHeader icon={<Gavel size={15} strokeWidth={2} />} label="Lances" count={filteredBids.length} />
+                            <div className="mb-4">
+                                <MobileFilterPanel
+                                    filterOptions={BID_FILTER_OPTIONS}
+                                    selectedField={bidSearchField}
+                                    onSelectField={setBidSearchField}
+                                    searchWord={bidSearchWord}
+                                    onSearchWord={setBidSearchWord}
+                                    onSearch={handleBidSearch}
+                                    appliedWord={appliedBidSearch.word}
+                                    onClear={handleClearBidSearch}
+                                    extraChips={BID_STATUS_OPTIONS.map(opt => (
+                                        <button
+                                            key={opt.value}
+                                            type="button"
+                                            className={`mf-chip ${bidStatusFilter === opt.value ? 'selected' : ''}`}
+                                            onClick={() => setBidStatusFilter(opt.value)}
+                                        >
+                                            {opt.value === 'winning' && isClosed ? 'Vencedor' : opt.label}
+                                        </button>
+                                    ))}
+                                />
+                            </div>
+                            {dataLoading ? (
+                                <div className="qm-empty">Carregando lances...</div>
+                            ) : filteredBids.length === 0 ? (
+                                (appliedBidSearch.word !== "" || bidStatusFilter !== "all") ? (
+                                    <EmptyState
+                                        icon={<SearchX size={28} strokeWidth={1.75} />}
+                                        title="Nenhum lance encontrado"
+                                        description="Ajuste a situação para ver outros lances."
+                                        action={
+                                            <Button variant="secondary" onClick={handleClearBidSearch} className="flex items-center gap-1.5">
+                                                <RotateCw size={14} strokeWidth={2} />
+                                                Limpar filtros
+                                            </Button>
+                                        }
+                                    />
+                                ) : (
+                                    <div className="qm-empty">Nenhum lance registrado.</div>
+                                )
+                            ) : (
+                                <div className="flex flex-col gap-3">
+                                    {filteredBids.map((b, i) => {
+                                        const lowest = lowestBids[b.productId]
+                                        const isLowest = lowest && b.price === lowest.price
+                                        return <MobileBidCard key={i} bid={b} isLowest={isLowest} unitOfMeasure={unitByProductId[b.productId]} isClosed={isClosed} />
+                                    })}
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
             </div>
-
-            {/* Quotation info */}
-            <div className="flex justify-center items-center gap-6 bg-[var(--color-surface-card)] border border-[var(--color-border-default)] [box-shadow:var(--shadow-xs)] px-[1.125rem] py-3 rounded-[var(--radius-lg)] mb-4 text-[0.875rem] text-[var(--color-text-neutral)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.375rem]">
-                <p className="m-0"><strong>Início:</strong> {quotationStartFormatted ? `${quotationStartFormatted.date} ${quotationStartFormatted.time}` : "-"}</p>
-                <p className="m-0"><strong>Fim:</strong> {quotationEndFormatted ? `${quotationEndFormatted.date} ${quotationEndFormatted.time}` : "-"}</p>
             </div>
-
-            {/* Stats grid */}
-            <div className="grid grid-cols-6 gap-3 bg-[var(--color-surface-card)] w-full px-[1.125rem] py-[1.125rem] rounded-[var(--radius-xl)] border border-[var(--color-border-default)] [box-shadow:var(--shadow-card-soft)] mb-[1.375rem] text-center max-[1080px]:grid-cols-3 max-md:grid-cols-2 max-[520px]:grid-cols-1">
-                {[
-                    { label: `Status: ${countdown.status === 'Active' ? "Ativo" : countdown.status === 'Scheduled' ? "Agendado" : "Fechado"}` },
-                    ...(countdown.status === 'Active' || countdown.status === 'Scheduled' ? [{ label: `"Tempo Restante": ${countdown.timeRemaining}` }] : []),
-                    { label: `Total de Lances: ${bids.length}` },
-                    { label: `Fornecedores: ${uniqueSuppliers}`, clickable: true },
-                    { label: `Produtos com lances: ${productsWithBidsCount}/${products.length}` },
-                    { label: `Total: ${formattedTotalEstimated}`, highlight: true },
-                ].map((item, i) => (
-                    <div
-                        key={i}
-                        onClick={item.clickable ? () => setShowSuppliersPanel(true) : undefined}
-                        className={`rounded-[var(--radius-lg)] border px-2 py-[0.875rem] text-[1rem] font-semibold flex items-center justify-center text-center min-h-[4.5rem] transition-[transform,box-shadow] duration-[160ms] hover:-translate-y-[2px] hover:[box-shadow:var(--shadow-sm)] ${item.highlight ? 'bg-[var(--color-highlight-lighter)] border-[var(--color-highlight-border)] text-[var(--color-accent)] font-bold text-[1.125rem]' : 'bg-[var(--color-surface-subtle)] border-[var(--color-border-faint)] text-[var(--color-text-neutral)]'} ${item.clickable ? 'cursor-pointer hover:border-[var(--color-accent)] hover:bg-[var(--color-highlight-lighter)] hover:text-[var(--color-accent)]' : ''}`}
-                    >
-                        {item.label}
-                    </div>
-                ))}
-            </div>
-
-            {/* Tables */}
-            <div className="flex flex-col items-center w-full gap-1">
-                <Table
-                    title={"Produtos"}
-                    columns={productColumns}
-                    data={formattedProducts}
-                    loading={dataLoading}
-                    emptyMessage={"Nenhum produto encontrado para essa cotação."}
-                    toolbar={filterToolbar}
-                    filterActive={appliedSearch.word !== "" || bidFilter !== "all"}
-                />
-
-                <Table
-                    title={"Lances"}
-                    columns={bidColumns}
-                    data={formattedBids}
-                    loading={dataLoading}
-                    emptyMessage={"Nenhum lance encontrado para essa cotação."}
-                    toolbar={bidFilterToolbar}
-                    filterActive={appliedBidSearch.word !== ""}
-                />
-            </div>
-
-            {showSuppliersPanel && (
-                <SuppliersPanel
-                    suppliers={suppliersWithBidStatus}
-                    onClose={() => setShowSuppliersPanel(false)}
-                    isMobile={false}
-                />
-            )}
         </div>
     )
 }

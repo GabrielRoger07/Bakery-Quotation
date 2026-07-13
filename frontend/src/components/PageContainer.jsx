@@ -10,7 +10,7 @@ import { cn } from '@/utils/cn'
  *  - auth   → fundo de marca + card centralizado (login/registro)
  */
 const containerVariants = {
-  list: 'max-w-[1200px] mx-auto px-4 py-6 max-sm:p-0',
+  list: 'w-full p-0 sm:pb-8 sm:min-h-screen sm:flex sm:flex-col',
   detail: 'max-w-[920px] mx-auto px-4 py-6 max-sm:px-3 max-sm:py-4',
   form: 'w-full',
 }

@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
 import { ArrowDownAZ, ArrowUpAZ, Building2 } from 'lucide-react'
-import Table from '@/components/Table'
 import MobileCardList from '@/components/MobileCardList'
 import SupplierBottomSheet from '@/components/SupplierBottomSheet'
 import SupplierFormBottomSheet from '@/components/SupplierFormBottomSheet'
@@ -11,10 +10,9 @@ import PageContainer from '@/components/PageContainer'
 import Select from '@/components/Select'
 import MobileSearchInput from '@/components/MobileSearchInput'
 import ActiveFilterPill from '@/components/ActiveFilterPill'
+import ListToolbar from '@/components/ListToolbar'
 import SupplierCreate from '@/pages/Supplier/SupplierCreate'
 import SupplierEdit from '@/pages/Supplier/SupplierEdit'
-import Button from '@/components/Button'
-import Pagination from '@/components/Pagination'
 import PaginationSummary from '@/components/PaginationSummary'
 import { formatCnpj } from '@/utils/formatCnpj'
 import { formatPhone } from '@/utils/formatPhone'
@@ -38,7 +36,7 @@ const SupplierList = () => {
     const {
         items: suppliers, setItems: setSuppliers, loading, error, status,
         currentPage, setCurrentPage, totalPages, totalElements, pageSize,
-        sortField, sortDirection, handleSort, setSort,
+        sortField, sortDirection, setSort,
         appliedSearch, applySearch, clearSearch, refetch, confirm,
     } = useResourceList({
         endpoint: '/suppliers/company',
@@ -61,19 +59,11 @@ const SupplierList = () => {
     const [searchField, setSearchField] = useState("")
     const [searchWord, setSearchWord] = useState("")
 
-    const columns = [
-        { key: "supplierName", label: "Nome"},
-        { key: "supplierEmail", label: "E-mail"},
-        { key: "supplierWhatsappNumber", label: "Whatsapp"},
-        { key: "employerName", label: "Nome da Empresa"},
-        { key: "employerCnpj", label: "CNPJ da Empresa"}
-    ]
-
-    const sortOptions = [
+    const sortOptions = useMemo(() => [
         { key: "name-asc", label: "Nome (A → Z)", shortLabel: "A-Z", field: "supplierName", direction: "asc", icon: <ArrowDownAZ size={18} strokeWidth={2} /> },
         { key: "name-desc", label: "Nome (Z → A)", shortLabel: "Z-A", field: "supplierName", direction: "desc", icon: <ArrowUpAZ size={18} strokeWidth={2} /> },
         { key: "company", label: "Nome da Empresa", shortLabel: "Empresa", field: "employerName", direction: "asc", icon: <Building2 size={18} strokeWidth={2} /> },
-    ]
+    ], [])
 
     const openSheet = (supplier) => {
         setSheetSupplier(supplier)
@@ -136,29 +126,7 @@ const SupplierList = () => {
         clearSearch()
     }, [clearSearch])
 
-    const filterToolbar = useMemo(() => (
-        <>
-            <Select
-                bare
-                value={searchField}
-                onChange={(e) => setSearchField(e.target.value)}
-                placeholder="Selecione"
-                options={SUPPLIER_FILTER_OPTIONS.map(o => ({ value: o.value, label: o.label }))}
-            />
-            <input
-                type="text"
-                className="toolbar-input"
-                value={searchWord}
-                onChange={e => setSearchWord(e.target.value)}
-                placeholder={"Digite o campo"}
-                onKeyDown={e => { if (e.key === "Enter") handleSearch() }}
-                disabled={suppliers.length === 0}
-            />
-            <Button onClick={handleSearch} disabled={loading || !searchField || suppliers.length === 0}>Buscar</Button>
-        </>
-    ), [searchField, searchWord, handleSearch, loading, suppliers.length])
-
-    const mobileSearchBar = useMemo(() => (
+    const searchBar = useMemo(() => (
         <>
             <p className="mf-label">Filtrar por</p>
             <div className="mf-chips mf-chips--scroll">
@@ -203,6 +171,54 @@ const SupplierList = () => {
         loading,
     })
 
+    const activeSortKey = sortOptions.find(opt => opt.field === (sortField ?? 'supplierName') && opt.direction === (sortField ? sortDirection : 'asc'))?.key
+
+    const desktopToolbar = useMemo(() => (
+        <ListToolbar
+            before={(
+                <Select
+                    bare
+                    className="w-[12rem] shrink-0"
+                    value={searchField}
+                    onChange={(e) => setSearchField(e.target.value)}
+                    placeholder="Filtrar por"
+                    selectClassName="h-[2.5rem]"
+                    options={SUPPLIER_FILTER_OPTIONS.map(o => ({ value: o.value, label: o.label }))}
+                />
+            )}
+            search={{
+                value: searchWord,
+                onChange: e => setSearchWord(e.target.value),
+                onSearch: handleSearch,
+                onClear: handleClearSearch,
+                placeholder: searchField ? `Buscar por ${SUPPLIER_FILTER_OPTIONS.find(o => o.value === searchField)?.label ?? '...'}` : "Selecione um campo",
+                ariaLabel: "Buscar fornecedor",
+                disabled: !searchField || suppliers.length === 0,
+                searchDisabled: loading || !searchField || suppliers.length === 0,
+            }}
+            sort={(
+                <Select
+                    bare
+                    className="w-[12rem] shrink-0"
+                    value={activeSortKey}
+                    onChange={e => {
+                        const opt = sortOptions.find(o => o.key === e.target.value)
+                        if (opt) setSort(opt.field, opt.direction)
+                    }}
+                    selectClassName="h-[2.5rem]"
+                    options={sortOptions.map(opt => ({ value: opt.key, label: opt.label }))}
+                />
+            )}
+            pageLabel={pageLabel}
+            rangeLabel={rangeLabel}
+            activeFilter={{
+                label: SUPPLIER_FILTER_OPTIONS.find(o => o.value === appliedSearch.field)?.label,
+                value: appliedSearch.word,
+                onClear: handleClearSearch,
+            }}
+        />
+    ), [searchField, searchWord, handleSearch, handleClearSearch, loading, suppliers.length, activeSortKey, setSort, pageLabel, rangeLabel, appliedSearch, sortOptions])
+
     const renderSupplierCard = (supplier) => ({
         avatar: initials(supplier.supplierName),
         title: supplier.supplierName,
@@ -214,70 +230,46 @@ const SupplierList = () => {
             {error && <Alert message={error}/>}
             {status === 0 && <Alert message={"Erro Interno do Servidor"} />}
 
-            {isMobile ? (
-                <>
-                    <MobileCardList
-                        title="Fornecedores"
-                        items={formattedSuppliers}
-                        idKey="supplierId"
-                        loading={loading}
-                        emptyMessage="Nenhum fornecedor encontrado."
-                        onReload={reloadCurrentPage}
-                        onAdd={openCreateForm}
-                        onCardClick={openSheet}
-                        renderCard={renderSupplierCard}
-                        searchBar={mobileSearchBar}
-                        sortOptions={sortOptions}
-                        sortField={sortField ?? 'supplierName'}
-                        sortDirection={sortField ? sortDirection : 'asc'}
-                        onSelectSort={(opt) => setSort(opt.field, opt.direction)}
-                        showCount={false}
-                        inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={setCurrentPage}
-                    />
-                    <SupplierBottomSheet
-                        isOpen={sheetOpen}
-                        onClose={closeSheet}
-                        supplier={sheetSupplier}
-                        onEdit={openEditModal}
-                        onDelete={confirm.requestRemove}
-                    />
-                    <SupplierFormBottomSheet
-                        isOpen={formSheetOpen}
-                        onClose={closeFormSheet}
-                        mode={formSheetMode}
-                        supplier={supplierToEdit}
-                        onSaveCreate={handleSaveCreate}
-                        onSaveEdit={handleSaveEdit}
-                    />
-                </>
-            ) : (
-                <>
-                    <Table
-                        title={"Fornecedores"}
-                        columns={columns}
-                        data={formattedSuppliers}
-                        idKey="supplierId"
-                        loading={loading}
-                        onEdit={openEditModal}
-                        onDelete={confirm.requestRemove}
-                        onAdd={() => setIsCreateModalOpen(true)}
-                        onReload={reloadCurrentPage}
-                        onSort={handleSort}
-                        sortField={sortField}
-                        sortDirection={sortDirection}
-                        emptyMessage={"Nenhum fornecedor encontrado."}
-                        toolbar={filterToolbar}
-                        filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
-                    />
-                    <div className="flex items-center justify-between gap-2 px-1">
-                        <PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />
-                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-                    </div>
-                </>
-            )}
+            <MobileCardList
+                title="Fornecedores"
+                eyebrow="Cadastro"
+                addLabel="Novo Fornecedor"
+                items={formattedSuppliers}
+                idKey="supplierId"
+                loading={loading}
+                emptyMessage="Nenhum fornecedor encontrado."
+                onReload={reloadCurrentPage}
+                onAdd={openCreateForm}
+                onCardClick={openSheet}
+                renderCard={renderSupplierCard}
+                searchBar={searchBar}
+                desktopToolbar={desktopToolbar}
+                filterActive={appliedSearch.word !== "" || appliedSearch.field !== ""}
+                sortOptions={sortOptions}
+                sortField={sortField ?? 'supplierName'}
+                sortDirection={sortField ? sortDirection : 'asc'}
+                onSelectSort={(opt) => setSort(opt.field, opt.direction)}
+                showCount={false}
+                inlineToolbar={<PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
+            <SupplierBottomSheet
+                isOpen={sheetOpen}
+                onClose={closeSheet}
+                supplier={sheetSupplier}
+                onEdit={openEditModal}
+                onDelete={confirm.requestRemove}
+            />
+            <SupplierFormBottomSheet
+                isOpen={formSheetOpen}
+                onClose={closeFormSheet}
+                mode={formSheetMode}
+                supplier={supplierToEdit}
+                onSaveCreate={handleSaveCreate}
+                onSaveEdit={handleSaveEdit}
+            />
 
             <Modal isOpen={isEditModalOpen} onClose={closeModals} title={"Editar Fornecedor"}>
                 <SupplierEdit

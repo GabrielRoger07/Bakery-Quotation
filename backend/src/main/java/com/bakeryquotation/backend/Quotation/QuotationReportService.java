@@ -151,7 +151,7 @@ public class QuotationReportService {
         table.setWidthPercentage(100);
         table.setWidths(new float[]{3f, 2f, 1.5f, 2f, 2f, 2.5f, 2.5f, 2.5f});
 
-        String[] headers = {"Produto", "Marca", "Qtd", "Menor Lance", "Preço Unitário.", "Fornecedor", "Cnpj Empresa", "Nome Empresa"};
+        String[] headers = {"Produto", "Marca", "Qtd", "Menor Lance", "Preço Unitário", "Fornecedor", "Cnpj Empresa", "Nome Empresa"};
         for (String header : headers) {
             PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
             cell.setBackgroundColor(new Color(243, 244, 246));
@@ -185,9 +185,9 @@ public class QuotationReportService {
             addTableRow(table, cellFont, rowBg,
                     contain.getProduct().getProductName(),
                     contain.getBrand() != null ? contain.getBrand() : "-",
-                    contain.getQuantity().stripTrailingZeros().toPlainString() + " UN",
+                    contain.getQuantity().stripTrailingZeros().toPlainString() + " " + contain.getUnitOfMeasure(),
                     lowestBidStr,
-                    pricePerUnitStr,
+                    lowestBid != null ? pricePerUnitStr + "/" + contain.getUnitOfMeasure() : pricePerUnitStr,
                     supplierName,
                     employerCnpj,
                     employerName

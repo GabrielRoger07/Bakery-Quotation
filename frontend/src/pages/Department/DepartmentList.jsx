@@ -193,9 +193,9 @@ const DepartmentList = () => {
     const { pageLabel, rangeLabel } = getPaginationSummary({
         currentPage, totalPages, totalElements, pageSize,
         pageItemCount: visibleDepartments.length,
-        emptyLabel: "Nenhum departamento cadastrado.",
-        loading,
     })
+
+    const listEmpty = !loading && visibleDepartments.length === 0
 
     const activeSortKey = sortOptions.find(opt => opt.field === (sortField ?? 'departmentName') && opt.direction === (sortField ? sortDirection : 'asc'))?.key
 
@@ -227,8 +227,9 @@ const DepartmentList = () => {
             pageLabel={pageLabel}
             rangeLabel={rangeLabel}
             activeFilter={{ label: "Nome", value: appliedSearch.word, onClear: handleClearSearch }}
+            empty={listEmpty}
         />
-    ), [searchWord, handleSearch, handleClearSearch, loading, departments.length, activeSortKey, sortOptions, setSort, pageLabel, rangeLabel, appliedSearch.word])
+    ), [searchWord, handleSearch, handleClearSearch, loading, departments.length, activeSortKey, sortOptions, setSort, pageLabel, rangeLabel, appliedSearch.word, listEmpty])
 
     return (
         <PageContainer variant="list">

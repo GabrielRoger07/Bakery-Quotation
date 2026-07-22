@@ -298,11 +298,12 @@ const PrimitivesSection = () => {
     { key: 'name', label: 'Produto' },
     { key: 'dept', label: 'Departamento' },
     { key: 'unit', label: 'Unidade' },
+    { key: 'price', label: 'Preço', align: 'right' },
   ]
   const tableData = [
-    { id: 1, name: 'Farinha de trigo', dept: 'Secos', unit: 'kg' },
-    { id: 2, name: 'Fermento biológico', dept: 'Secos', unit: 'un' },
-    { id: 3, name: 'Leite integral', dept: 'Laticínios', unit: 'L' },
+    { id: 1, name: 'Farinha de trigo', dept: 'Secos', unit: 'kg', price: 'R$ 4,20' },
+    { id: 2, name: 'Fermento biológico', dept: 'Secos', unit: 'un', price: 'R$ 12,90' },
+    { id: 3, name: 'Leite integral', dept: 'Laticínios', unit: 'L', price: 'R$ 6,00' },
   ]
 
   return (
@@ -450,7 +451,7 @@ const PrimitivesSection = () => {
       </Primitive>
 
       <Primitive name="Table">
-        <p className="m-0 mb-3 flex items-center gap-1.5 text-caption text-[var(--color-text-muted)]"><Search size={13} /> Versão desktop; no mobile o app troca para MobileCardList (padrão usado por Quotation/Department — Produtos e Fornecedores usam só MobileCardList, que vira grid a partir de sm:).</p>
+        <p className="m-0 mb-3 flex items-center gap-1.5 text-caption text-[var(--color-text-muted)]"><Search size={13} /> Versão desktop; no mobile o app troca para MobileCardList (padrão usado por Quotation/Department — Produtos e Fornecedores usam só MobileCardList, que vira grid a partir de sm:). Colunas numéricas usam <code>align: 'right'</code> (dígitos tabulares), como na coluna Preço.</p>
         <Table title="Produtos" columns={tableColumns} data={tableData} idKey="id" onEdit={() => {}} onDelete={() => {}} />
       </Primitive>
     </Section>

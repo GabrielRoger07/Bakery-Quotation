@@ -9,15 +9,11 @@
  * @param {number} params.totalElements  total de itens em todas as páginas
  * @param {number} params.pageSize       tamanho da página (vindo de `res.data.size`)
  * @param {number} params.pageItemCount  quantidade de itens na página atual (ex.: `items.length`)
- * @param {string} [params.emptyLabel]   texto exibido quando `totalElements === 0`
- * @param {boolean} [params.loading]    true enquanto o fetch inicial/atual ainda não resolveu
  * @returns {{ pageLabel: string, rangeLabel: string }}
  */
-export function getPaginationSummary({ currentPage, totalPages, totalElements, pageSize, pageItemCount, emptyLabel = 'Nenhum registro encontrado', loading = false }) {
-    if (totalElements === 0) {
-        if (loading) return { pageLabel: '', rangeLabel: '' }
-        return { pageLabel: '', rangeLabel: emptyLabel }
-    }
+export function getPaginationSummary({ currentPage, totalPages, totalElements, pageSize, pageItemCount }) {
+    // Sem registros não há resumo: quem comunica isso é o estado vazio da lista.
+    if (totalElements === 0) return { pageLabel: '', rangeLabel: '' }
 
     if (totalPages <= 1) {
         return { pageLabel: `${totalElements} ${totalElements === 1 ? 'registro' : 'registros'}`, rangeLabel: '' }

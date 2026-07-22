@@ -161,9 +161,9 @@ const QuotationList = () => {
     const { pageLabel, rangeLabel } = getPaginationSummary({
         currentPage, totalPages, totalElements, pageSize,
         pageItemCount: quotations.length,
-        emptyLabel: "Nenhuma cotação encontrada",
-        loading: loading || initialLoad,
     })
+
+    const listEmpty = !loading && !initialLoad && quotations.length === 0
 
     const renderQuotationCard = (quotation) => {
         const statusVariant =
@@ -199,8 +199,9 @@ const QuotationList = () => {
             )}
             pageLabel={pageLabel}
             rangeLabel={rangeLabel}
+            empty={listEmpty}
         />
-    ), [statusFilter, activeSortKey, sortOptions, pageLabel, rangeLabel])
+    ), [statusFilter, activeSortKey, sortOptions, pageLabel, rangeLabel, listEmpty])
 
     return (
         <PageContainer variant="list">

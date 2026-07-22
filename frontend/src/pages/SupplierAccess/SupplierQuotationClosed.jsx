@@ -5,19 +5,17 @@ import useIsMobile from "@/hooks/useIsMobile"
 import { ENV } from "@/config/env"
 import Button from "@/components/Button"
 import MetaCard from "@/components/MetaCard"
+import EmptyState from "@/components/EmptyState"
+import BidResultTable from "@/components/BidResultTable"
 import { formatMoney } from "@/utils/formatMoney"
 import { formatDateTime } from "@/utils/formatDateTime"
+import { PLURAL_UNITS } from "@/utils/formatQuantity"
 import Cookies from "js-cookie"
-import { ChevronLeft, FileDown, Package, Trophy, TrendingDown, CheckCircle2, XCircle, Flag, Calendar } from "lucide-react"
+import { ChevronLeft, FileDown, Lock, Package, TrendingDown, CheckCircle2, XCircle, Flag, Calendar } from "lucide-react"
 
-const thCls = "text-left px-[0.6rem] py-2 text-[0.75rem] font-semibold uppercase tracking-[0.04em] text-[var(--color-text-muted)] border-b-2 border-[var(--color-border-default)]"
-const thNumCls = `${thCls} text-right`
-const tdCls = "px-[0.6rem] py-[0.55rem] text-[var(--color-text-body)] border-b border-[var(--color-border-faint)] align-middle"
-const tdNumCls = `${tdCls} text-right whitespace-nowrap`
+/* ── Sub-components (mobile) ────────────────────────────────────── */
 
-/* ── Mobile sub-components ──────────────────────────────────────── */
-
-const MobileWinningCard = ({ item, index }) => (
+const WinningCard = ({ item, index }) => (
     <div
         className="sqc-win-card"
         style={{ animationDelay: `${index * 60}ms` }}
@@ -35,7 +33,7 @@ const MobileWinningCard = ({ item, index }) => (
                         {item.quantity}
                         {item.unitOfMeasure && (
                             <span className="qm-bid-qty-unit">
-                                {' '}{item.unitOfMeasure.toUpperCase()}{['bag', 'balde'].includes(item.unitOfMeasure) && item.quantity > 1 ? 'S' : ''}
+                                {' '}{item.unitOfMeasure.toUpperCase()}{PLURAL_UNITS.includes(item.unitOfMeasure) && item.quantity > 1 ? 'S' : ''}
                             </span>
                         )}
                     </span>
@@ -111,6 +109,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
 
             return {
                 productName: product?.productName ?? "-",
+                productDescription: product?.productDescription || null,
                 brand: product?.brand || null,
                 price: bid.price,
                 quantity: bid.quantity,
@@ -119,6 +118,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                 unitOfMeasure: product?.unitOfMeasure || null
             }
         })
+        .sort((a, b) => a.productName?.localeCompare(b.productName))
     }, [lowestBids, products, participationId])
 
     const totalWinningValue = winningItems.reduce((sum, item) => sum + item.price, 0)
@@ -255,7 +255,7 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
                         <div className="qm-section-body">
                             <div className="qm-cards-list">
                                 {winningItems.map((item, i) => (
-                                    <MobileWinningCard key={i} item={item} index={i} />
+                                    <WinningCard key={i} item={item} index={i} />
                                 ))}
                             </div>
                         </div>
@@ -268,73 +268,102 @@ const SupplierQuotationClosed = ({ quotation, participationId }) => {
     }
 
     /* ── Desktop layout ──────────────────────────────────────────── */
-    if (loading) return <p>Carregando...</p>
-    if (error) return <p>{error}</p>
+    const quotationStartFormatted = formatDateTime(quotation.quotationStart)
+    const quotationEndFormatted = formatDateTime(quotation.quotationEnd)
+
+    const startText = quotationStartFormatted ? `${quotationStartFormatted.date}, ${quotationStartFormatted.time}` : "-"
+    const endText = quotationEndFormatted ? `${quotationEndFormatted.date}, ${quotationEndFormatted.time}` : "-"
+
+    const didWin = winningItems.length > 0
+
+    const productsLabel = `${winningItems.length} de ${products.length} produto${products.length === 1 ? '' : 's'}`
 
     return (
-        <div className="page-wrapper text-[var(--color-text-body)]">
-            <h2 className="text-[var(--color-text-heading)] text-[1.25rem] m-0">
-                Cotação {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotation.quotationId}
-            </h2>
-            <h3 className="text-[var(--color-text-secondary)] mt-1 mb-4">Fechado</h3>
+        <div className="text-[var(--color-text-body)]">
 
-            <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-card)] border border-[var(--color-border-default)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.4rem]">
-                <p className="m-0 text-[1rem]">
-                    <strong className="text-[1.125rem] text-[var(--color-text-heading)]">Início:</strong>{" "}
-                    {new Date(quotation.quotationStart).toLocaleString()}
-                </p>
-                <p className="m-0 text-[1rem]">
-                    <strong className="text-[1.125rem] text-[var(--color-text-heading)]">Fim:</strong>{" "}
-                    {new Date(quotation.quotationEnd).toLocaleString()}
-                </p>
-            </div>
+            {/* ── Header (padrão QuotationMonitor, abaixo da SupplierNavbar) ── */}
+            <header className="sticky top-[3.375rem] z-[100] flex items-center gap-4 px-6 h-[4.5rem] bg-[var(--color-surface-card)] border-b border-[var(--color-border-default)] flex-shrink-0">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="flex items-center justify-center w-9 h-9 rounded-[var(--radius-md)] border border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)] cursor-pointer transition-[background,border-color,color] duration-[160ms] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-body)] flex-shrink-0"
+                    aria-label="Voltar"
+                >
+                    <ChevronLeft size={16} strokeWidth={2.5} />
+                </button>
 
-            <div className="flex flex-col items-center flex-grow justify-center pb-60 w-full">
-                {winningItems.length === 0 ? (
-                    <p className="text-[var(--color-text-secondary)]">Você não venceu nenhum lance</p>
-                ) : (
-                    <div className="w-full bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] [box-shadow:var(--shadow-xs)] p-4">
-                        <h4 className="m-0 mb-3 text-[var(--color-text-heading)]">Lances Vencedores</h4>
-                        <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
-                            <table className="w-full border-collapse text-[0.875rem]">
-                                <thead>
-                                    <tr>
-                                        <th className={thCls}>Produto</th>
-                                        <th className={thCls}>Marca</th>
-                                        <th className={thNumCls}>Quantidade</th>
-                                        <th className={thNumCls}>Preço Unitário</th>
-                                        <th className={thNumCls}>Preço Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {winningItems.map((item, index) => (
-                                        <tr key={index}>
-                                            <td className={tdCls}>{item.productName}</td>
-                                            <td className={tdCls}>
-                                                {item.brand ? item.brand : <span className="text-[var(--color-text-muted)] italic">-</span>}
-                                            </td>
-                                            <td className={tdNumCls}>{item.quantity} {item.unitOfMeasure}{['bag', 'balde'].includes(item.unitOfMeasure) && item.quantity > 1 ? 's' : ''}</td>
-                                            <td className={tdNumCls}>{formatMoney(item.pricePerUnit)}/{item.unitOfMeasure}</td>
-                                            <td className={`${tdNumCls} font-medium text-[var(--color-text-heading)]`}>{formatMoney(item.price)}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colSpan={4} className="px-[0.6rem] py-[0.6rem] text-right text-[0.875rem] text-[var(--color-text-secondary)] font-semibold border-t-2 border-[var(--color-border-default)]">Valor Total</td>
-                                        <td className="px-[0.6rem] py-[0.6rem] text-right text-[1rem] text-[var(--color-accent-strong)] font-bold whitespace-nowrap border-t-2 border-[var(--color-border-default)]">{formatMoney(totalWinningValue)}</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
+                <div className="w-px h-8 bg-[var(--color-border-default)] flex-shrink-0" />
+
+                <div className="min-w-0">
+                    <span className="block text-label font-bold uppercase tracking-[0.08em] text-[var(--color-accent)]">
+                        {quotation.isAuction ? "Leilão reverso" : "Cotação única"}
+                    </span>
+                    <div className="flex items-center gap-2.5">
+                        <h1 className="m-0 text-[1.375rem] font-extrabold tracking-[-0.02em] text-[var(--color-text-heading)] leading-tight truncate">
+                            Cotação #{quotation.quotationId}
+                        </h1>
+                        <span className="qm-mobile-status-pill qm-status--closed inline-flex items-center gap-1">
+                            Fechado
+                        </span>
                     </div>
-                )}
-
-                <div className="mt-6">
-                    <Button onClick={handleDownloadReport}>
-                        Exportar Relatório
-                    </Button>
                 </div>
+
+                <div className="ml-auto flex items-center gap-3 flex-shrink-0">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] px-3 py-1.5 text-caption font-semibold text-[var(--color-text-muted)]">
+                        <Flag size={14} strokeWidth={2} className="text-[var(--color-success)]" />
+                        Início · {startText}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] px-3 py-1.5 text-caption font-semibold text-[var(--color-text-muted)]">
+                        <Calendar size={14} strokeWidth={2} className="text-[var(--color-danger)]" />
+                        Fim · {endText}
+                    </span>
+                </div>
+            </header>
+
+            <div className="px-6 py-6">
+                {loading ? (
+                    <div className="sqc-loading-state">
+                        <div className="sqc-loading-spinner" />
+                        <span className="sqc-loading-text">Carregando resultados...</span>
+                    </div>
+                ) : error ? (
+                    <EmptyState
+                        className="max-w-[34rem] mx-auto"
+                        tone="danger"
+                        icon={<XCircle size={28} strokeWidth={1.75} />}
+                        title="Não foi possível carregar os resultados"
+                        description={error}
+                    />
+                ) : !didWin ? (
+                    <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex-1 min-w-[18rem] flex items-center gap-3 px-4 py-3.5 rounded-[var(--radius-lg)] bg-[var(--color-surface-muted)] border border-[var(--color-border-default)] text-body font-medium text-[var(--color-text-muted)]">
+                            <XCircle size={20} strokeWidth={1.75} className="shrink-0" />
+                            <span>Você não venceu nenhum lance nesta cotação.</span>
+                        </div>
+                        <Button onClick={handleDownloadReport} className="flex items-center gap-2 whitespace-nowrap">
+                            <FileDown size={16} strokeWidth={2} />
+                            Baixar relatório (PDF)
+                        </Button>
+                    </div>
+                ) : (
+                    <>
+                        {/* ── Cabeçalho da seção + ação ── */}
+                        <div className="flex flex-wrap items-center gap-3 mb-5">
+                            <CheckCircle2 size={22} strokeWidth={2} className="text-[var(--color-success)] shrink-0" />
+                            <h2 className="m-0 text-[1.375rem] font-extrabold tracking-[-0.02em] text-[var(--color-text-heading)]">
+                                Lances vencedores
+                            </h2>
+                            <span className="inline-flex items-center rounded-full border border-[var(--color-success-border)] bg-[var(--color-success-lighter)] px-2.5 py-1 text-caption font-semibold text-[var(--color-success-strong)] whitespace-nowrap">
+                                {productsLabel}
+                            </span>
+                            <Button onClick={handleDownloadReport} className="ml-auto flex items-center gap-2 whitespace-nowrap">
+                                <FileDown size={16} strokeWidth={2} />
+                                Baixar relatório (PDF)
+                            </Button>
+                        </div>
+
+                        <BidResultTable items={winningItems} totalValue={totalWinningValue} />
+                    </>
+                )}
             </div>
         </div>
     )

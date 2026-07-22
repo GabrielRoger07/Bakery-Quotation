@@ -15,11 +15,16 @@ import PaginationSummary from '@/components/PaginationSummary'
  *   antes de digitar (ex.: Supplier), `after` para filtros complementares (ex.: setor).
  * `sort`: conteúdo opcional, sempre por último na linha 1 (ex.: `<Select bare .../>`).
  * `activeFilter`: { label, value, onClear } repassado ao `ActiveFilterPill`.
+ * `empty`: true quando a lista terminou de carregar sem nenhum registro — esconde a
+ *   ordenação e o resumo de paginação (o estado vazio da lista já dá o recado), igual
+ *   ao que o `MobileCardList` faz com o `inlineToolbar` e o `SortButton` no mobile.
+ *   Busca e filtros continuam visíveis para o usuário poder limpar o que zerou a lista.
  */
 const ListToolbar = ({
   search, before, after, sort,
   pageLabel, rangeLabel,
   activeFilter,
+  empty = false,
 }) => (
   <div className="flex flex-col gap-4 w-full">
     <div className="flex items-center gap-4 flex-wrap">
@@ -38,14 +43,16 @@ const ListToolbar = ({
         />
       )}
       {after}
-      {sort}
+      {!empty && sort}
     </div>
-    <div className="flex items-center justify-between gap-3 flex-wrap">
-      <PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />
-      {activeFilter && (
-        <ActiveFilterPill label={activeFilter.label} value={activeFilter.value} onClear={activeFilter.onClear} />
-      )}
-    </div>
+    {(!empty || activeFilter?.value) && (
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        {!empty && <PaginationSummary pageLabel={pageLabel} rangeLabel={rangeLabel} />}
+        {activeFilter && (
+          <ActiveFilterPill label={activeFilter.label} value={activeFilter.value} onClear={activeFilter.onClear} />
+        )}
+      </div>
+    )}
   </div>
 )
 

@@ -167,9 +167,9 @@ const SupplierList = () => {
     const { pageLabel, rangeLabel } = getPaginationSummary({
         currentPage, totalPages, totalElements, pageSize,
         pageItemCount: suppliers.length,
-        emptyLabel: "Nenhum fornecedor encontrado.",
-        loading,
     })
+
+    const listEmpty = !loading && suppliers.length === 0
 
     const activeSortKey = sortOptions.find(opt => opt.field === (sortField ?? 'supplierName') && opt.direction === (sortField ? sortDirection : 'asc'))?.key
 
@@ -216,8 +216,9 @@ const SupplierList = () => {
                 value: appliedSearch.word,
                 onClear: handleClearSearch,
             }}
+            empty={listEmpty}
         />
-    ), [searchField, searchWord, handleSearch, handleClearSearch, loading, suppliers.length, activeSortKey, setSort, pageLabel, rangeLabel, appliedSearch, sortOptions])
+    ), [searchField, searchWord, handleSearch, handleClearSearch, loading, suppliers.length, activeSortKey, setSort, pageLabel, rangeLabel, appliedSearch, sortOptions, listEmpty])
 
     const renderSupplierCard = (supplier) => ({
         avatar: initials(supplier.supplierName),

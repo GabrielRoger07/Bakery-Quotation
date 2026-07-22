@@ -164,9 +164,9 @@ const ProductList = () => {
     const { pageLabel, rangeLabel } = getPaginationSummary({
         currentPage, totalPages, totalElements, pageSize,
         pageItemCount: products.length,
-        emptyLabel: "Nenhum produto encontrado.",
-        loading,
     })
+
+    const listEmpty = !loading && products.length === 0
 
     const activeSortKey = sortOptions.find(opt => opt.field === (sortField ?? 'productName') && opt.direction === (sortField ? sortDirection : 'asc'))?.key
 
@@ -209,8 +209,9 @@ const ProductList = () => {
             pageLabel={pageLabel}
             rangeLabel={rangeLabel}
             activeFilter={{ label: "Nome", value: appliedSearch.word, onClear: handleClearSearch }}
+            empty={listEmpty}
         />
-    ), [searchWord, handleSearch, handleClearSearch, loading, products.length, userDepts, deptFilter, setCurrentPage, activeSortKey, setSort, pageLabel, rangeLabel, appliedSearch.word, sortOptions])
+    ), [searchWord, handleSearch, handleClearSearch, loading, products.length, userDepts, deptFilter, setCurrentPage, activeSortKey, setSort, pageLabel, rangeLabel, appliedSearch.word, sortOptions, listEmpty])
 
     const renderProductCard = (product) => ({
         avatar: initials(product.productName),

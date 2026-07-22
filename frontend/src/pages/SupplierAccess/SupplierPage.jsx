@@ -71,9 +71,9 @@ const SupplierPage = () => {
     const { pageLabel, rangeLabel } = getPaginationSummary({
         currentPage, totalPages, totalElements, pageSize,
         pageItemCount: items.length,
-        emptyLabel: 'Nenhuma cotação encontrada',
-        loading,
     })
+
+    const listEmpty = !loading && items.length === 0
 
     const renderCard = (p) => {
         const { variant } = STATUS_TAG[getStatusKey(p.quotationStart, p.quotationEnd)]
@@ -107,6 +107,7 @@ const SupplierPage = () => {
             )}
             pageLabel={pageLabel}
             rangeLabel={rangeLabel}
+            empty={listEmpty}
         />
     )
 

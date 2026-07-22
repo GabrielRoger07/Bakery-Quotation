@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom"
 import useIsMobile from "@/hooks/useIsMobile"
 import { formatDateTime } from "@/utils/formatDateTime"
 import MetaCard from "@/components/MetaCard"
-import { ChevronLeft, Clock, Flag, Calendar } from "lucide-react"
+import EmptyState from "@/components/EmptyState"
+import { ChevronLeft, Clock, Flag, Calendar, CalendarClock } from "lucide-react"
 
 const pad2 = (n) => String(n).padStart(2, "0")
 
@@ -101,27 +102,68 @@ const SupplierQuotationScheduled = ({ quotation }) => {
     }
 
     /* ── Desktop layout ──────────────────────────────────────────── */
-    return (
-        <div className="page-wrapper text-[var(--color-text-body)]">
-            <h2 className="text-[var(--color-text-heading)] text-[1.25rem] m-0">
-                Cotação {new Date(quotation.quotationStart).toLocaleDateString("pt-BR")} - #{quotation.quotationId}
-            </h2>
-            <h3 className="text-[var(--color-text-secondary)] mt-1 mb-4">Agendado</h3>
+    const quotationStartFormatted = formatDateTime(quotation.quotationStart)
+    const quotationEndFormatted = formatDateTime(quotation.quotationEnd)
 
-            <div className="flex justify-center items-center gap-[1.3rem] bg-[var(--color-surface-card)] border border-[var(--color-border-default)] [box-shadow:var(--shadow-xs)] px-[0.9rem] py-[0.68rem] rounded-[var(--radius-md)] mb-[0.9rem] text-[1rem] text-[var(--color-text-secondary)] w-full max-md:flex-col max-md:items-start max-md:gap-[0.4rem]">
-                <p className="m-0 text-[1rem]">
-                    <strong className="text-[1.125rem] text-[var(--color-text-heading)]">Início:</strong>{" "}
-                    {new Date(quotation.quotationStart).toLocaleString()}
-                </p>
-                <p className="m-0 text-[1rem]">
-                    <strong className="text-[1.125rem] text-[var(--color-text-heading)]">Fim:</strong>{" "}
-                    {new Date(quotation.quotationEnd).toLocaleString()}
-                </p>
+    const startText = quotationStartFormatted ? `${quotationStartFormatted.date}, ${quotationStartFormatted.time}` : "-"
+    const endText = quotationEndFormatted ? `${quotationEndFormatted.date}, ${quotationEndFormatted.time}` : "-"
+
+    return (
+        <div className="text-[var(--color-text-body)]">
+
+            {/* ── Header (padrão QuotationMonitor, abaixo da SupplierNavbar) ── */}
+            <header className="sticky top-[3.375rem] z-[100] flex items-center gap-4 px-6 h-[4.5rem] bg-[var(--color-surface-card)] border-b border-[var(--color-border-default)] flex-shrink-0">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="flex items-center justify-center w-9 h-9 rounded-[var(--radius-md)] border border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)] cursor-pointer transition-[background,border-color,color] duration-[160ms] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-body)] flex-shrink-0"
+                    aria-label="Voltar"
+                >
+                    <ChevronLeft size={16} strokeWidth={2.5} />
+                </button>
+
+                <div className="w-px h-8 bg-[var(--color-border-default)] flex-shrink-0" />
+
+                <div className="min-w-0">
+                    <span className="block text-label font-bold uppercase tracking-[0.08em] text-[var(--color-accent)]">
+                        {quotation.isAuction ? "Leilão reverso" : "Cotação única"}
+                    </span>
+                    <div className="flex items-center gap-2.5">
+                        <h1 className="m-0 text-[1.375rem] font-extrabold tracking-[-0.02em] text-[var(--color-text-heading)] leading-tight truncate">
+                            Cotação #{quotation.quotationId}
+                        </h1>
+                        <span className="qm-mobile-status-pill qm-status--scheduled">Agendado</span>
+                    </div>
+                </div>
+
+                <div className="ml-auto flex items-center gap-3 flex-shrink-0">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] px-3 py-1.5 text-caption font-semibold text-[var(--color-text-muted)]">
+                        <Flag size={14} strokeWidth={2} className="text-[var(--color-success)]" />
+                        Início · {startText}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-surface-subtle)] px-3 py-1.5 text-caption font-semibold text-[var(--color-text-muted)]">
+                        <Calendar size={14} strokeWidth={2} className="text-[var(--color-danger)]" />
+                        Fim · {endText}
+                    </span>
+                </div>
+            </header>
+
+            {/* ── Countdown banner (igual ao mobile) ── */}
+            <div className="qm-countdown-banner qm-status--scheduled top-[7.875rem]">
+                <Clock size={22} strokeWidth={2} className="qm-countdown-icon" />
+                <div className="qm-countdown-text">
+                    <span className="qm-countdown-label">Começa em</span>
+                    <span className="qm-countdown-time">{remainingText}</span>
+                </div>
             </div>
 
-            <p className="text-[var(--color-text-secondary)] mt-2">
-                Começa em: <strong className="text-[var(--color-text-heading)]">{remainingText}</strong>
-            </p>
+            <div className="max-w-[1400px] mx-auto px-6 py-10">
+                <EmptyState
+                    className="max-w-[34rem] mx-auto"
+                    icon={<CalendarClock size={28} strokeWidth={1.75} />}
+                    title="A cotação ainda não começou"
+                    description={`Os produtos e o envio de propostas ficam disponíveis a partir de ${startText}.`}
+                />
+            </div>
         </div>
     )
 }

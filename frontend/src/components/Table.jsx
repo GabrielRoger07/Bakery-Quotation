@@ -7,7 +7,14 @@ import { useMobilePage } from '@/contexts/MobilePageContext'
 /**
  * Tabela de dados (desktop) com toolbar de filtro, ordenação por coluna e ações por linha
  * (editar/remover/ver/monitorar). No mobile o título e as ações migram para a navbar.
+ *
+ * `columns`: [{ key, label, align }] — `align: 'right'` alinha a coluna à direita e usa
+ * dígitos tabulares (colunas numéricas: quantidade, preço). Default: esquerda.
  */
+const alignCls = (align) => align === 'right'
+    ? 'text-right [font-variant-numeric:tabular-nums] whitespace-nowrap'
+    : 'text-left'
+
 const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, emptyMessage = "No records found.", onEdit, onDelete, onAdd, onView, onReload, onMonitor, onSort, sortField, sortDirection, toolbar, filterActive = false, filterSlot }) => {
     const [toolbarOpen, setToolbarOpen] = useState(false)
     const { registerPage, unregisterPage } = useMobilePage()
@@ -99,7 +106,7 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                                     <th
                                         key={col.key}
                                         onClick={() => onSort && onSort(col.key)}
-                                        className="sticky top-0 z-[1] bg-[var(--color-accent)] text-[var(--color-on-dark-text)] text-left px-4 py-3 font-semibold text-caption uppercase tracking-[0.07em] border-r border-[var(--color-on-dark-border-strong)] whitespace-nowrap cursor-pointer select-none transition-[background-color,color] duration-[160ms] hover:bg-[var(--color-accent-hover)] hover:text-[var(--color-on-dark-text)] last:border-r-0 max-md:px-3 max-md:py-[0.625rem] max-md:text-caption"
+                                        className={`sticky top-0 z-[1] bg-[var(--color-accent)] text-[var(--color-on-dark-text)] ${alignCls(col.align)} px-4 py-3 font-semibold text-caption uppercase tracking-[0.07em] border-r border-[var(--color-on-dark-border-strong)] whitespace-nowrap cursor-pointer select-none transition-[background-color,color] duration-[160ms] hover:bg-[var(--color-accent-hover)] hover:text-[var(--color-on-dark-text)] last:border-r-0 max-md:px-3 max-md:py-[0.625rem] max-md:text-caption`}
                                     >
                                         {col.label}
                                         {sortField === col.key && (
@@ -118,7 +125,7 @@ const Table = ({ title, columns = [], data = [], idKey = "id", loading = false, 
                             {data.map((item, index) => (
                                 <tr key={item[idKey] || index} className="even:[&>td]:bg-[var(--color-surface-subtle)] hover:[&>td]:bg-[var(--color-highlight-lighter)] hover:[&>td]:transition-[background-color] hover:[&>td]:duration-[160ms]">
                                     {columns.map((col) => (
-                                        <td key={col.key} className="px-4 py-[0.875rem] border-b border-r border-[var(--color-border-faint)] text-[var(--color-text-neutral)] text-[0.875rem] leading-[1.4] bg-[var(--color-surface-card)] last:border-r-0 max-md:px-3 max-md:py-[0.625rem] max-md:text-caption">
+                                        <td key={col.key} className={`px-4 py-[0.875rem] border-b border-r border-[var(--color-border-faint)] text-[var(--color-text-neutral)] text-[0.875rem] leading-[1.4] bg-[var(--color-surface-card)] last:border-r-0 max-md:px-3 max-md:py-[0.625rem] max-md:text-caption ${alignCls(col.align)}`}>
                                             {item[col.key] ? item[col.key] : "-"}
                                         </td>
                                     ))}

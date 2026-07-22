@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useId, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import useFetch from '@/hooks/useFetch'
 import useWebSocket from '@/hooks/useWebSocket'
@@ -13,6 +13,7 @@ import SectionHeader from '@/components/SectionHeader'
 import { ENV } from '@/config/env'
 import { formatMoney } from '@/utils/formatMoney'
 import { formatDateTime } from '@/utils/formatDateTime'
+import { cn } from '@/utils/cn'
 import { X, FileDown, Package, Gavel, TrendingDown, Users, User, Clock, Activity, ChevronDown, ChevronRight, CheckCircle2, MinusCircle, Building2, SearchX, RotateCw, Flag, Calendar } from 'lucide-react'
 import Cookies from 'js-cookie'
 
@@ -234,14 +235,47 @@ const MobileBidCard = ({ bid, isLowest, unitOfMeasure, isClosed }) => {
     )
 }
 
-const MobileSection = ({ title, icon, count, children, filterSlot, defaultOpen = true }) => {
+/* Seção fechável — `mobile` usa o chrome qm-*, `desktop` o card + SectionHeader. */
+const Section = ({ title, icon, count, children, filterSlot, defaultOpen = true, variant = 'mobile' }) => {
     const [open, setOpen] = useState(defaultOpen)
+    const bodyId = useId()
+
+    if (variant === 'desktop') return (
+        <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-2xl)] [box-shadow:var(--shadow-card-soft)] p-5">
+            <button
+                type="button"
+                onClick={() => setOpen(p => !p)}
+                aria-expanded={open}
+                aria-controls={bodyId}
+                className="w-full flex items-center justify-between gap-2 cursor-pointer"
+            >
+                <SectionHeader icon={icon} label={title} count={count} className="mb-0" />
+                <ChevronDown
+                    size={16}
+                    strokeWidth={2}
+                    className={cn(
+                        "text-[var(--color-text-muted)] transition-transform duration-[240ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
+                        open && "rotate-180"
+                    )}
+                />
+            </button>
+
+            {open && (
+                <div id={bodyId} className="mt-2.5">
+                    {filterSlot && <div className="mb-4">{filterSlot}</div>}
+                    {children}
+                </div>
+            )}
+        </div>
+    )
 
     return (
         <div className="qm-section">
             <button
                 className="qm-section-header"
                 onClick={() => setOpen(p => !p)}
+                aria-expanded={open}
+                aria-controls={bodyId}
                 type="button"
             >
                 <div className="qm-section-header-left">
@@ -258,7 +292,7 @@ const MobileSection = ({ title, icon, count, children, filterSlot, defaultOpen =
             </button>
 
             {open && (
-                <div className="qm-section-body">
+                <div id={bodyId} className="qm-section-body">
                     {filterSlot && (
                         <div className="qm-section-filter-bar">{filterSlot}</div>
                     )}
@@ -755,7 +789,7 @@ const QuotationMonitor = () => {
                 )}
 
                 {/* ── Produtos section ── */}
-                <MobileSection
+                <Section
                     title="Produtos"
                     icon={<Package size={15} strokeWidth={2} />}
                     count={sortedFilteredProducts.length}
@@ -787,11 +821,11 @@ const QuotationMonitor = () => {
                             ))}
                         </div>
                     )}
-                </MobileSection>
+                </Section>
 
                 {/* ── Lances section ── */}
                 {countdown.status !== 'Scheduled' && (
-                    <MobileSection
+                    <Section
                         title="Lances"
                         icon={<Gavel size={15} strokeWidth={2} />}
                         count={filteredBids.length}
@@ -825,7 +859,7 @@ const QuotationMonitor = () => {
                                 })}
                             </div>
                         )}
-                    </MobileSection>
+                    </Section>
                 )}
 
                 {/* bottom safe-area padding */}
@@ -850,8 +884,6 @@ const QuotationMonitor = () => {
     const isActive = countdown.status === 'Active'
     const isScheduled = countdown.status === 'Scheduled'
     const hasActiveProductFilter = appliedSearch.word !== "" || bidFilter !== "all"
-
-    const sectionCardCls = "bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-2xl)] [box-shadow:var(--shadow-card-soft)] p-5"
 
     return (
         <div className="text-[var(--color-text-body)]">
@@ -940,33 +972,39 @@ const QuotationMonitor = () => {
             <div className="grid gap-5 items-start lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
 
                 {/* Produtos */}
-                <div className={sectionCardCls}>
-                    <SectionHeader icon={<Package size={15} strokeWidth={2} />} label="Produtos" count={sortedFilteredProducts.length} />
-                    <div className="flex items-center gap-3 flex-wrap mb-4">
-                        <MobileSearchInput
-                            dense
-                            value={searchWord}
-                            onChange={e => { setSearchWord(e.target.value); setAppliedSearch({ field: "productName", word: e.target.value }) }}
-                            onSearch={() => setAppliedSearch({ field: "productName", word: searchWord })}
-                            onClear={handleClearSearch}
-                            placeholder="Buscar produto"
-                            ariaLabel="Buscar produto"
-                        />
-                        {!isScheduled && (
-                            <div className="flex items-center gap-2">
-                                {BID_PRESENCE_OPTIONS.map(opt => (
-                                    <button
-                                        key={opt.value}
-                                        type="button"
-                                        className={`mf-chip ${bidFilter === opt.value ? 'selected' : ''}`}
-                                        onClick={() => setBidFilter(opt.value)}
-                                    >
-                                        {opt.label}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                <Section
+                    variant="desktop"
+                    title="Produtos"
+                    icon={<Package size={15} strokeWidth={2} />}
+                    count={sortedFilteredProducts.length}
+                    filterSlot={
+                        <div className="flex items-center gap-3 flex-wrap">
+                            <MobileSearchInput
+                                dense
+                                value={searchWord}
+                                onChange={e => { setSearchWord(e.target.value); setAppliedSearch({ field: "productName", word: e.target.value }) }}
+                                onSearch={() => setAppliedSearch({ field: "productName", word: searchWord })}
+                                onClear={handleClearSearch}
+                                placeholder="Buscar produto"
+                                ariaLabel="Buscar produto"
+                            />
+                            {!isScheduled && (
+                                <div className="flex items-center gap-2">
+                                    {BID_PRESENCE_OPTIONS.map(opt => (
+                                        <button
+                                            key={opt.value}
+                                            type="button"
+                                            className={`mf-chip ${bidFilter === opt.value ? 'selected' : ''}`}
+                                            onClick={() => setBidFilter(opt.value)}
+                                        >
+                                            {opt.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    }
+                >
                     {dataLoading ? (
                         <div className="qm-empty">Carregando produtos...</div>
                     ) : sortedFilteredProducts.length === 0 ? (
@@ -992,19 +1030,27 @@ const QuotationMonitor = () => {
                             ))}
                         </div>
                     )}
-                </div>
+                </Section>
 
                 {/* Fornecedores + Lances */}
                 <div className="flex flex-col gap-5">
-                    <div className={sectionCardCls}>
-                        <SectionHeader icon={<Users size={15} strokeWidth={2} />} label="Fornecedores" count={suppliersWithBidStatus.length} />
+                    <Section
+                        variant="desktop"
+                        title="Fornecedores"
+                        icon={<Users size={15} strokeWidth={2} />}
+                        count={suppliersWithBidStatus.length}
+                    >
                         <SuppliersList suppliers={suppliersWithBidStatus} plain={isScheduled} />
-                    </div>
+                    </Section>
 
                     {!isScheduled && (
-                        <div className={sectionCardCls}>
-                            <SectionHeader icon={<Gavel size={15} strokeWidth={2} />} label="Lances" count={filteredBids.length} />
-                            <div className="mb-4">
+                        <Section
+                            variant="desktop"
+                            title="Lances"
+                            icon={<Gavel size={15} strokeWidth={2} />}
+                            count={filteredBids.length}
+                            defaultOpen={false}
+                            filterSlot={
                                 <MobileFilterPanel
                                     filterOptions={BID_FILTER_OPTIONS}
                                     selectedField={bidSearchField}
@@ -1025,7 +1071,8 @@ const QuotationMonitor = () => {
                                         </button>
                                     ))}
                                 />
-                            </div>
+                            }
+                        >
                             {dataLoading ? (
                                 <div className="qm-empty">Carregando lances...</div>
                             ) : filteredBids.length === 0 ? (
@@ -1053,7 +1100,7 @@ const QuotationMonitor = () => {
                                     })}
                                 </div>
                             )}
-                        </div>
+                        </Section>
                     )}
                 </div>
             </div>

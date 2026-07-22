@@ -773,7 +773,7 @@ const SupplierQuotationActiveUnique = ({ quotationId, participationId }) => {
                             </span>
                         </div>
 
-                        <BidResultTable items={bidItems} totalValue={submittedGrandTotal} totalLabel="Valor potencial" />
+                        <BidResultTable items={bidItems} totalValue={submittedGrandTotal} totalLabel="Valor potencial" statusBar />
                     </>
                 ) : (
                     <>

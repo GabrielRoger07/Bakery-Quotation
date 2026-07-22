@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { X, Pencil, Trash, Barcode, AlignLeft } from 'lucide-react'
+import { X, Pencil, Trash, Barcode, AlignLeft, Building2 } from 'lucide-react'
 import Modal from '@/components/Modal'
 import useIsMobile from '@/hooks/useIsMobile'
 
@@ -43,6 +43,11 @@ const ProductDetailBody = ({ product, onEdit, onDelete, onClose }) => (
                 icon={<AlignLeft size={16} strokeWidth={1.75} />}
                 label="Descrição"
                 value={product?.productDescription}
+            />
+            <DetailRow
+                icon={<Building2 size={16} strokeWidth={1.75} />}
+                label="Departamento"
+                value={product?.departmentName && product?.departmentName !== 'Default' ? product.departmentName : undefined}
             />
         </div>
     </>

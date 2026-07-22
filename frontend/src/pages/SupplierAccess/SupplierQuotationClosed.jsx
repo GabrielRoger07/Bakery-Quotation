@@ -26,6 +26,11 @@ const WinningCard = ({ item, index }) => (
             </div>
             <div className="sqc-win-info">
                 <span className="sqc-win-name">{item.productName}</span>
+                {item.productDescription && (
+                    <span className="text-[0.75rem] leading-[1.4] text-[var(--color-text-muted)] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
+                        {item.productDescription}
+                    </span>
+                )}
                 <span className={`sqc-win-brand ${!item.brand ? 'sqc-win-brand--empty' : ''}`}>{item.brand || "Marca não definida"}</span>
                 <div className="qm-bid-qty-row">
                     <span className="qm-bid-qty-label">Qtd</span>

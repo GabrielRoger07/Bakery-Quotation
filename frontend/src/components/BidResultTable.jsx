@@ -16,14 +16,20 @@ import { useCurrencyMask } from '@/hooks/useCurrencyMask'
  * - `showAvatar={false}` → oculta o quadrado com ícone (nome+descrição ocupam a largura).
  * - `editable` + `onPriceChange(productId, numeric)` → coluna Unitário vira um input de
  *   preço por linha (usa `item.productId` e `item.pricePerUnit` como valor inicial), com
- *   o total calculado ao vivo. O `totalValue` do rodapé continua vindo do pai.
+ *   o total calculado ao vivo. O `totalValue` do rodapé continua vindo do pai. As linhas
+ *   ganham uma faixa lateral: accent (com preço) ou cinza (sem preço).
+ * - `statusBar` (modo exibição) → faixa lateral por linha: accent (produto cotado) ou
+ *   warning (produto sem lance/`noPrice`), espelhando o card de proposta enviada do mobile.
  */
 const numericCls = 'text-right [font-variant-numeric:tabular-nums] whitespace-nowrap'
 
 const headCls = 'px-5 py-3.5 text-label font-bold uppercase tracking-[0.07em] text-[var(--color-text-muted)] whitespace-nowrap'
 
-const ProductCell = ({ item, showAvatar, showNoPriceTag = true, leftBarClass }) => (
-    <td className={cn('px-5 py-3.5', leftBarClass)}>
+const ProductCell = ({ item, showAvatar, showNoPriceTag = true, barColor }) => (
+    <td
+        className="px-5 py-3.5 transition-[box-shadow] duration-200"
+        style={barColor ? { boxShadow: `inset 3px 0 0 0 ${barColor}` } : undefined}
+    >
         <div className="flex items-center gap-3">
             {showAvatar && (
                 <span className="flex items-center justify-center w-10 h-10 shrink-0 rounded-[var(--radius-md)] bg-[var(--color-highlight-soft)] text-[var(--color-accent)]">
@@ -79,7 +85,7 @@ const QuantityCell = ({ item }) => (
     </td>
 )
 
-const BidResultDisplayRow = ({ item, showAvatar }) => (
+const BidResultDisplayRow = ({ item, showAvatar, statusBar }) => (
     <tr
         className={cn(
             'border-b border-[var(--color-border-faint)] transition-[background-color] duration-[160ms]',
@@ -88,7 +94,11 @@ const BidResultDisplayRow = ({ item, showAvatar }) => (
                 : 'hover:bg-[var(--color-highlight-lighter)]'
         )}
     >
-        <ProductCell item={item} showAvatar={showAvatar} />
+        <ProductCell
+            item={item}
+            showAvatar={showAvatar}
+            barColor={statusBar ? (item.noPrice ? 'var(--color-warning)' : 'var(--color-accent)') : undefined}
+        />
         <BrandCell item={item} />
         <QuantityCell item={item} />
 
@@ -139,12 +149,7 @@ const BidResultInputRow = ({ item, showAvatar, onPriceChange }) => {
                 item={item}
                 showAvatar={showAvatar}
                 showNoPriceTag={false}
-                leftBarClass={cn(
-                    'transition-[box-shadow] duration-200',
-                    hasPrice
-                        ? 'shadow-[inset_3px_0_0_0_var(--color-accent)]'
-                        : 'shadow-[inset_3px_0_0_0_var(--color-border-subtle)]'
-                )}
+                barColor={hasPrice ? 'var(--color-accent)' : 'var(--color-border-subtle)'}
             />
             <BrandCell item={item} />
             <QuantityCell item={item} />
@@ -186,6 +191,7 @@ const BidResultTable = ({
     showAvatar = true,
     editable = false,
     onPriceChange,
+    statusBar = false,
 }) => (
     <div className="w-full overflow-x-auto bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] rounded-[var(--radius-xl)] [box-shadow:var(--shadow-card-soft)]">
         <table className="w-full border-collapse min-w-[760px]">
@@ -212,6 +218,7 @@ const BidResultTable = ({
                         key={`${item.productName}-${index}`}
                         item={item}
                         showAvatar={showAvatar}
+                        statusBar={statusBar}
                     />
                 ))}
             </tbody>

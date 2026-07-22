@@ -185,7 +185,7 @@ const ProductList = () => {
             after={userDepts.length >= 2 && (
                 <Select
                     bare
-                    className="flex-1 min-w-[12rem]"
+                    className="w-[12rem] shrink-0"
                     value={deptFilter === null ? '' : String(deptFilter)}
                     onChange={e => { setDeptFilter(e.target.value === '' ? null : Number(e.target.value)); setCurrentPage(0) }}
                     placeholder="Todos os setores"

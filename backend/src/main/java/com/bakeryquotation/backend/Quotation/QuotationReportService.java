@@ -184,7 +184,7 @@ public class QuotationReportService {
 
             addTableRow(table, cellFont, rowBg,
                     contain.getProduct().getProductName(),
-                    contain.getBrand() != null ? contain.getBrand() : "-",
+                    contain.getBrand() != null || contain.getBrand().isEmpty() ? contain.getBrand() : "-",
                     contain.getQuantity().stripTrailingZeros().toPlainString() + " " + contain.getUnitOfMeasure(),
                     lowestBidStr,
                     lowestBid != null ? pricePerUnitStr + "/" + contain.getUnitOfMeasure() : pricePerUnitStr,

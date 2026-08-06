@@ -8,18 +8,21 @@ import Alert from '@/components/Alert'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
 import { ENV } from '@/config/env'
+import usePhoneMask from '@/hooks/usePhoneMask'
 
 const SupplierAccessToken = () => {
 
     const navigate = useNavigate()
     const { companyCnpj } = useParams()
 
-    const [supplierWhatsappNumber, setSupplierWhatsappNumber] = useState("")
+    const { value: supplierWhatsappNumber, handleChange: handleWhatsappChange, handleBlur: handleWhatsappBlur, getNumericValue: getWhatsappRaw, isInvalid: isWhatsappInvalid } = usePhoneMask("")
     const [supplierPassword, setSupplierPassword] = useState("")
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
+
+    const isDisabled = !supplierWhatsappNumber || !supplierPassword || isWhatsappInvalid
 
     const handleLogin = async (e) => {
         e.preventDefault()
@@ -32,9 +35,11 @@ const SupplierAccessToken = () => {
         setError("")
 
         const body = {
-            supplierWhatsappNumber,
-            supplierPassword
+            supplierWhatsappNumber: getWhatsappRaw(),
+            supplierPassword: supplierPassword.replace(/\D/g, "")
         }
+
+        console.log(body)
 
         const res = await request("POST", `/suppliers/login/${companyCnpj}`, body)
 
@@ -63,19 +68,28 @@ const SupplierAccessToken = () => {
                     label={"Whatsapp"}
                     type="text"
                     value={supplierWhatsappNumber}
-                    onChange={e => setSupplierWhatsappNumber(e.target.value)}
-                    placeholder={"Digite o Whatsapp do fornecedor"}
+                    onChange={handleWhatsappChange}
+                    onBlur={handleWhatsappBlur}
+                    placeholder="Digite o Whatsapp do fornecedor"
+                    isInvalid={isWhatsappInvalid}
+                    error={isWhatsappInvalid && "Número de Whatsapp inválido"}
+                    required
                 />
                 <Input
                     label={"Senha"}
                     type="password"
                     value={supplierPassword}
-                    onChange={e => setSupplierPassword(e.target.value)}
-                    placeholder={"Digite sua senha"}
+                    onChange={e => {
+                        const value = e.target.value.replace(/[^0-9./-]/g, "");
+                        setSupplierPassword(value)}
+                    }
+                    placeholder="Digite sua senha"
+                    required
                 />
+
                 <Alert message={error} />
                 <Alert variant="success" message={success} />
-                <Button type="submit" loading={loading}>Entrar</Button>
+                <Button type="submit" loading={loading} disabled={isDisabled}>Entrar</Button>
             </form>
         </PageContainer>
     )

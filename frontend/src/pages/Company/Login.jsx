@@ -21,10 +21,18 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault()
-        if (!companyEmail || !companyPassword) { setError("Preencha todos os campos"); return }
-        if (!/\S+@\S+\.\S+/.test(companyEmail)) { setError("E-mail inválido"); return }
+        
+        const email = companyEmail.trim()
+        if (!email || !companyPassword) { setError("Preencha todos os campos"); return }
+        if (!/^\S+@\S+\.\S+$/.test(email)) { setError("E-mail inválido"); return }
         setError("")
-        const res = await request("POST", "/companies/login", { companyEmail, companyPassword })
+
+        const body = {
+            companyEmail: email,
+            companyPassword
+        }
+
+        const res = await request("POST", "/companies/login", body)
         if (res.ok) {
             setSuccess("Login realizado com sucesso!")
             setError("")
@@ -40,8 +48,8 @@ const Login = () => {
         <PageContainer variant="auth">
             <PageHeader title="Entrar" className="mb-1" />
             <form onSubmit={handleLogin}>
-                <Input label={"E-mail"} type="email" name="companyEmail" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} placeholder={"Digite seu e-mail"} />
-                <Input label={"Senha"} type="password" name="companyPassword" value={companyPassword} onChange={(e) => setCompanyPassword(e.target.value)} placeholder={"Digite sua senha"} />
+                <Input label="E-mail" type="email" name="companyEmail" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} placeholder="Digite seu e-mail" />
+                <Input label="Senha" type="password" name="companyPassword" value={companyPassword} onChange={(e) => setCompanyPassword(e.target.value)} placeholder="Digite sua senha" />
                 <Alert message={error} />
                 <Alert variant="success" message={success} />
                 <Button type="submit" loading={loading}>Entrar</Button>

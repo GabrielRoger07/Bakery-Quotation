@@ -41,7 +41,9 @@ const CompanyCreate = () => {
     const handleCreateCompany = async (e) => {
         e.preventDefault();
 
-        if (!/\S+@\S+\.\S+/.test(companyEmail)) {
+        const email = companyEmail.trim()
+
+        if (!/^\S+@\S+\.\S+$/.test(email)) {
             setError("E-mail inválido");
             setSuccess("");
             return;
@@ -51,8 +53,8 @@ const CompanyCreate = () => {
 
         const company = {
             companyCnpj: getCnpjRaw(),
-            companyName,
-            companyEmail,
+            companyName: companyName.trim(),
+            companyEmail: email,
             companyWhatsappNumber: getWhatsappRaw(),
             companyPassword
         }
@@ -73,15 +75,11 @@ const CompanyCreate = () => {
         <PageContainer variant="auth">
             <PageHeader title="Criar Conta" className="mb-1" />
             <form onSubmit={handleCreateCompany}>
-                <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} onBlur={handleCnpjBlur} placeholder={"Digite o CNPJ"} isInvalid={isCnpjInvalid} error={isCnpjInvalid && "CNPJ inválido"} required />
-
-                <Input label={"Nome da Empresa"} type="text" value={companyName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder={"Digite o nome da empresa"} isInvalid={isNameInvalid} error={charLimitMessage(nameWarning)} required />
-
-                <Input label={"E-mail da empresa"} type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder={"Digite o e-mail da empresa"} isInvalid={isEmailInvalid} error={charLimitMessage(emailWarning)} required />
-
-                <Input label={"Número do Whatsapp"} type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder={"Digite o número do Whatsapp"} isInvalid={isWhatsappInvalid} error={isWhatsappInvalid && "Número de Whatsapp inválido"} required />
-
-                <Input label={"Senha"} type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder={"Digite a senha"} isInvalid={isPasswordInvalid} error={charLimitMessage(passwordWarning)} required />
+                <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} onBlur={handleCnpjBlur} placeholder="Digite o CNPJ" isInvalid={isCnpjInvalid} error={isCnpjInvalid && "CNPJ inválido"} required />
+                <Input label="Nome da Empresa" type="text" value={companyName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder="Digite o nome da empresa" isInvalid={isNameInvalid} error={charLimitMessage(nameWarning)} required />
+                <Input label="E-mail da empresa" type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder="Digite o e-mail da empresa" isInvalid={isEmailInvalid} error={charLimitMessage(emailWarning)} required />
+                <Input label="Número do Whatsapp" type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder="Digite o número do Whatsapp" isInvalid={isWhatsappInvalid} error={isWhatsappInvalid && "Número de Whatsapp inválido"} required />
+                <Input label="Senha" type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder="Digite a senha" isInvalid={isPasswordInvalid} error={charLimitMessage(passwordWarning)} required />
 
                 <Alert message={error} />
                 <Alert variant="success" message={success} />

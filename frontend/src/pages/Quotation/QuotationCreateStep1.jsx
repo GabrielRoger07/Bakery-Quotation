@@ -47,10 +47,10 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
         const sEnd = new Date(`${endDateValue}T${endTimeValue}`)
         const now = new Date()
 
-        if (!(sStart.getTime() > now.getTime()))
-            return { ok: false, tone: 'error', message: 'A data de início precisa estar no futuro.' }
         if (!(sEnd.getTime() > sStart.getTime()))
             return { ok: false, tone: 'error', message: 'O fim deve ser depois do início.' }
+        if (!(sEnd.getTime() > now.getTime()))
+            return { ok: false, tone: 'error', message: 'A data de fim precisa estar no futuro.' }
 
         return { ok: true, tone: 'success', message: 'Período válido. Tudo certo para avançar.' }
     }, [startDateValue, startTimeValue, endDateValue, endTimeValue])

@@ -147,7 +147,7 @@ const QuotationProductItem = ({ product, participationId, currentLowestBid }) =>
             </div>
 
             <form className="flex flex-col h-full" onSubmit={handleBidSubmit}>
-                <Input label={"Preço"} type="text" value={price} onChange={handlePriceInputChange} placeholder="R$0,00" />
+                <Input label={"Preço"} type="text" inputMode="numeric" value={price} onChange={handlePriceInputChange} placeholder="R$0,00" />
 
                 {product.bonusLimit > 0 && (
                     <div className="m-0 mb-[0.85rem] font-sans">

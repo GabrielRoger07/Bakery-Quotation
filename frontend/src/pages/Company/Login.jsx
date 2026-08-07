@@ -7,6 +7,7 @@ import Button from '@/components/Button'
 import Alert from '@/components/Alert'
 import PageContainer from '@/components/PageContainer'
 import PageHeader from '@/components/PageHeader'
+import FormActions from '@/components/FormActions'
 import { ENV } from '@/config/env'
 
 const Login = () => {
@@ -18,6 +19,8 @@ const Login = () => {
 
     const { request, loading } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate()
+
+    const isDisabled = !companyEmail || !companyPassword
 
     const handleLogin = async (e) => {
         e.preventDefault()
@@ -48,11 +51,14 @@ const Login = () => {
         <PageContainer variant="auth">
             <PageHeader title="Entrar" className="mb-1" />
             <form onSubmit={handleLogin}>
-                <Input label="E-mail" type="email" name="companyEmail" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} placeholder="Digite seu e-mail" />
-                <Input label="Senha" type="password" name="companyPassword" value={companyPassword} onChange={(e) => setCompanyPassword(e.target.value)} placeholder="Digite sua senha" />
+                <Input label="E-mail" type="email" name="companyEmail" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} placeholder="Digite seu e-mail" required />
+                <Input label="Senha" type="password" name="companyPassword" value={companyPassword} onChange={(e) => setCompanyPassword(e.target.value)} placeholder="Digite sua senha" required />
+                
                 <Alert message={error} />
                 <Alert variant="success" message={success} />
-                <Button type="submit" loading={loading}>Entrar</Button>
+                <FormActions>
+                    <Button type="submit" disabled={isDisabled} loading={loading}>Entrar</Button>
+                </FormActions>
             </form>
             <p className="mt-5 mb-0 text-body text-[var(--color-text-muted)]">
                 <Link to="/register" className="text-[var(--color-accent)] no-underline font-semibold hover:underline">Nova empresa? Criar conta!</Link>

@@ -149,6 +149,7 @@ const SupplierList = () => {
                 placeholder={searchField ? `Buscar por ${SUPPLIER_FILTER_OPTIONS.find(o => o.value === searchField)?.label ?? '...'}` : "Selecione um campo acima"}
                 inputDisabled={!searchField || suppliers.length === 0}
                 searchDisabled={loading || !searchField || suppliers.length === 0}
+                inputMode={searchField === "supplierWhatsappNumber" || searchField === "employerCnpj" ? "numeric" : undefined}
             />
             <ActiveFilterPill
                 label={SUPPLIER_FILTER_OPTIONS.find(o => o.value === appliedSearch.field)?.label}

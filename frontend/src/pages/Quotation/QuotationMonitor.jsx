@@ -90,6 +90,7 @@ const MobileFilterPanel = ({
                         placeholder={selectedField ? `Buscar por ${resolvedFieldLabel ?? '...'}` : "Selecione um campo acima"}
                         onKeyDown={e => { if (e.key === "Enter") onSearch() }}
                         disabled={!selectedField}
+                        inputMode={selectedField === "employerCnpj" ? "numeric" : undefined}
                     />
                     {searchWord && (
                         <button type="button" className="mf-input-clear" onClick={onClear} aria-label="Limpar texto">

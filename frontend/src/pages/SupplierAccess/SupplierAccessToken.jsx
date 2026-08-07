@@ -67,6 +67,7 @@ const SupplierAccessToken = () => {
                 <Input
                     label={"Whatsapp"}
                     type="text"
+                    inputMode="numeric"
                     value={supplierWhatsappNumber}
                     onChange={handleWhatsappChange}
                     onBlur={handleWhatsappBlur}

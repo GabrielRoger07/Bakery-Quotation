@@ -23,7 +23,7 @@ const CompanyCreate = () => {
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
-    const { request } = useFetch(ENV.API_BASE_URL)
+    const { request, loading } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate();
 
     const isDisabled = 
@@ -75,15 +75,17 @@ const CompanyCreate = () => {
         <PageContainer variant="auth">
             <PageHeader title="Criar Conta" className="mb-1" />
             <form onSubmit={handleCreateCompany}>
-                <Input label="CNPJ" type="text" value={companyCnpj} onChange={handleCnpjChange} onBlur={handleCnpjBlur} placeholder="Digite o CNPJ" isInvalid={isCnpjInvalid} error={isCnpjInvalid && "CNPJ inválido"} required />
+                <Input label="CNPJ" type="text" inputMode="numeric" value={companyCnpj} onChange={handleCnpjChange} onBlur={handleCnpjBlur} placeholder="Digite o CNPJ" isInvalid={isCnpjInvalid} error={isCnpjInvalid && "CNPJ inválido"} required />
                 <Input label="Nome da Empresa" type="text" value={companyName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder="Digite o nome da empresa" isInvalid={isNameInvalid} error={charLimitMessage(nameWarning)} required />
                 <Input label="E-mail da empresa" type="text" value={companyEmail} onChange={handleEmailChange} onBlur={handleEmailBlur} placeholder="Digite o e-mail da empresa" isInvalid={isEmailInvalid} error={charLimitMessage(emailWarning)} required />
-                <Input label="Número do Whatsapp" type="text" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder="Digite o número do Whatsapp" isInvalid={isWhatsappInvalid} error={isWhatsappInvalid && "Número de Whatsapp inválido"} required />
+                <Input label="Número do Whatsapp" type="text" inputMode="numeric" value={companyWhatsappNumber} onChange={handleWhatsappChange} onBlur={handleWhatsappBlur} placeholder="Digite o número do Whatsapp" isInvalid={isWhatsappInvalid} error={isWhatsappInvalid && "Número de Whatsapp inválido"} required />
                 <Input label="Senha" type="password" value={companyPassword} onChange={handlePasswordChange} onBlur={handlePasswordBlur} placeholder="Digite a senha" isInvalid={isPasswordInvalid} error={charLimitMessage(passwordWarning)} required />
 
                 <Alert message={error} />
                 <Alert variant="success" message={success} />
-                <Button type="submit" disabled={isDisabled}>Criar Conta</Button>
+                <FormActions>
+                    <Button type="submit" disabled={isDisabled} loading={loading}>Criar Conta</Button>
+                </FormActions>
             </form>
             <p className="mt-5 mb-0 text-body text-[var(--color-text-muted)]">
                 <Link to="/login" className="text-[var(--color-accent)] no-underline font-semibold hover:underline">Já possui uma conta? Entre!</Link>

@@ -163,6 +163,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                             ariaLabel="Buscar fornecedor"
                             inputDisabled={!searchField}
                             searchDisabled={loading || !searchField}
+                            inputMode={searchField === "supplierWhatsappNumber" || searchField === "employerCnpj" ? "numeric" : undefined}
                         />
                     </div>
                 )}

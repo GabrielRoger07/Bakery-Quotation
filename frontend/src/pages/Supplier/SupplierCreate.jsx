@@ -72,14 +72,10 @@ const SupplierCreate = ({ onClose, onSave }) => {
     return (
         <form onSubmit={handleSupplierCreate}>
             <Input label={"Nome"} type="text" value={supplierName} onChange={handleSupplierNameChange} onBlur={handleSupplierNameBlur} placeholder={"Digite o nome do fornecedor"} isInvalid={isSupplierNameInvalid} error={charLimitMessage(supplierNameWarning)} required />
-
             <Input label={"E-mail"} type="email" value={supplierEmail} onChange={handleSupplierEmailChange} onBlur={handleSupplierEmailBlur} placeholder={"Digite o e-mail do fornecedor"} isInvalid={isSupplierEmailInvalid} error={supplierEmail ? charLimitMessage(supplierEmailWarning) : ''} />
-
-            <Input label={"Whatsapp"}  type="text" value={supplierWhatsappNumber} onChange={handleSupplierWhatsappNumberChange} onBlur={handleSupplierWhatsappNumberBlur} placeholder={"Digite o Whatsapp do fornecedor"} isInvalid={isSupplierWhatsappNumberInvalid} error={isSupplierWhatsappNumberInvalid && "Número de Whatsapp inválido"} required />
-
+            <Input label={"Whatsapp"}  type="text" inputMode="numeric" value={supplierWhatsappNumber} onChange={handleSupplierWhatsappNumberChange} onBlur={handleSupplierWhatsappNumberBlur} placeholder={"Digite o Whatsapp do fornecedor"} isInvalid={isSupplierWhatsappNumberInvalid} error={isSupplierWhatsappNumberInvalid && "Número de Whatsapp inválido"} required />
             <Input label={"Nome da Empresa"} type="text" value={employerName} onChange={handleEmployerNameChange} onBlur={handleEmployerNameBlur} placeholder={"Digite o nome da empresa do fornecedor"} isInvalid={isEmployerNameInvalid} error={charLimitMessage(employerNameWarning)} required />
-
-            <Input label={"CNPJ da Empresa"} type="text" value={employerCnpj} onChange={handleEmployerCnpjChange} onBlur={handleEmployerCnpjBlur} placeholder={"Digite o CNPJ da empresa do fornecedor"} isInvalid={isEmployerCnpjInvalid} error={isEmployerCnpjInvalid && "CNPJ inválido"} required />
+            <Input label={"CNPJ da Empresa"} type="text" inputMode="numeric" value={employerCnpj} onChange={handleEmployerCnpjChange} onBlur={handleEmployerCnpjBlur} placeholder={"Digite o CNPJ da empresa do fornecedor"} isInvalid={isEmployerCnpjInvalid} error={isEmployerCnpjInvalid && "CNPJ inválido"} required />
 
             <Alert message={error} />
             <Alert variant="success" message={success} />

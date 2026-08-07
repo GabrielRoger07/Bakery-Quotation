@@ -9,7 +9,7 @@ import { cn } from '@/utils/cn'
  * Sem `dense` (default), mantém o padrão mobile: botão "Buscar" à parte, campo mais alto.
  */
 const MobileSearchInput = ({
-  value, onChange, onSearch, onClear, placeholder, ariaLabel,
+  value, onChange, onSearch, onClear, placeholder, ariaLabel, inputMode = undefined,
   inputDisabled = false, searchDisabled = false, dense = false, className,
 }) => (
   <div className={cn('flex items-center gap-2', dense && 'flex-1 min-w-[200px] max-w-[280px]', className)}>
@@ -39,6 +39,7 @@ const MobileSearchInput = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        inputMode={inputMode}
         disabled={inputDisabled}
         aria-label={ariaLabel}
         onKeyDown={e => { if (e.key === 'Enter') onSearch() }}

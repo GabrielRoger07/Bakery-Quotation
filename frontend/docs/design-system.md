@@ -93,7 +93,8 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 ### Layout
 | Componente | Props principais | Variantes / notas |
 |---|---|---|
-| `PageContainer` | `variant`, `children` | `list` / `detail` / `form` / `auth` |
+| `PageContainer` | `variant`, `children` | `list` / `detail` / `form` / `auth`. Define a superfície da tela via `usePageSurface` (`auth` → `brand`, resto → `app`); no `auth` o wrapper interno só centraliza/aplica safe-area — a cor e o gradiente vêm do `<body>` |
+| hook `usePageSurface` | `surface`: `'app'` (default) / `'brand'` | pinta o `<body>` enquanto o componente está montado e restaura no unmount. **Fundo de tela cheia é sempre responsabilidade do `<body>`, nunca de um wrapper dentro do `#root`**: a moldura do navegador no mobile (status bar / barra do Safari / overscroll) usa a cor do documento, então um wrapper escuro sozinho deixa faixas claras em cima e embaixo. Usa `useLayoutEffect` para não piscar claro no primeiro paint |
 | `PageHeader` | `title`, `subtitle`, `actions` | h1 padrão da tela |
 | `Navbar` | — | contexto empresa, **só mobile** (`sm:hidden`): título da página + reload + `MobileMenu` (barra inferior) |
 | `Sidebar` | — | contexto empresa, rail fixo à esquerda **só desktop** (`hidden sm:flex`, `w-24`), par de `Navbar`/`MobileMenu`; mesmos ícones (`@/components/icons/NavIcons`) e rotas |

@@ -1,4 +1,5 @@
 import { cn } from '@/utils/cn'
+import usePageSurface from '@/hooks/usePageSurface'
 
 /**
  * Wrapper de página — fonte única de proporção/padding das telas.
@@ -7,7 +8,7 @@ import { cn } from '@/utils/cn'
  *  - list   → container das listas (substitui .page-wrapper)
  *  - detail → container de telas de detalhe
  *  - form   → container neutro para formulários standalone
- *  - auth   → fundo de marca + card centralizado (login/registro)
+ *  - auth   → card centralizado (login/registro); o fundo de marca vem do <body>
  */
 const containerVariants = {
   list: 'w-full p-0 sm:pb-8 sm:min-h-screen sm:flex sm:flex-col',
@@ -15,23 +16,19 @@ const containerVariants = {
   form: 'w-full',
 }
 
-// Gradiente decorativo do fundo de auth (tom do accent) — colocado aqui junto do componente.
-const authBgStyle = {
-  backgroundImage:
-    'radial-gradient(ellipse 80% 60% at 20% -10%, rgba(91,33,182,0.25) 0%, transparent 55%),' +
-    'radial-gradient(ellipse 60% 40% at 80% 110%, rgba(91,33,182,0.15) 0%, transparent 55%)',
-}
-
 const PageContainer = ({ variant = 'list', children, className }) => {
+  // O fundo de tela cheia é pintado no <body> (via usePageSurface), não aqui — só assim
+  // a moldura do navegador no mobile (status bar / barra do Safari) acompanha a cor.
+  usePageSurface(variant === 'auth' ? 'brand' : 'app')
+
   if (variant === 'auth') {
     return (
       <div
         className={cn(
-          'flex justify-center items-center min-h-[100dvh] px-6 max-sm:px-3 bg-[var(--color-brand)]',
+          'flex justify-center items-center min-h-[100dvh] px-6 max-sm:px-3',
           '[padding-top:max(1.5rem,env(safe-area-inset-top))] [padding-bottom:max(1.5rem,env(safe-area-inset-bottom))]',
           'max-sm:[padding-top:max(1rem,env(safe-area-inset-top))] max-sm:[padding-bottom:max(1rem,env(safe-area-inset-bottom))]',
         )}
-        style={authBgStyle}
       >
         <div
           className={cn(

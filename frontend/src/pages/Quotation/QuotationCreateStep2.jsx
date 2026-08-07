@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useFetch from '@/hooks/useFetch'
 import useIsMobile from '@/hooks/useIsMobile'
-import useCharLimit from '@/hooks/useCharLimit'
 import Button from '@/components/Button'
 import Alert from '@/components/Alert'
-import Input from '@/components/Input'
 import Select from '@/components/Select'
 import Modal from '@/components/Modal'
 import LoadMoreButton from '@/components/LoadMoreButton'
@@ -12,91 +10,10 @@ import EmptyState from '@/components/EmptyState'
 import MobileSearchInput from '@/components/MobileSearchInput'
 import ActiveFilterPill from '@/components/ActiveFilterPill'
 import WizardActions from '@/components/WizardActions'
+import ProductFormBottomSheet from '@/components/ProductFormBottomSheet'
 import ProductCreate from '@/pages/Product/ProductCreate'
 import { X, Plus, Minus, Package, Pencil, Check, SearchX, ShoppingCart, ArrowRight, Trash2 } from 'lucide-react'
 import { ENV } from '@/config/env'
-
-/* ── Create product inline form (rendered inside Modal on desktop, bottom sheet on mobile) ── */
-const CreateProductModalForm = ({ onSuccess, onClose, request, departments = [], initialDepartmentId = '' }) => {
-    const { value: barcode, onChange: handleBarcodeChange, onBlur: handleBarcodeBlur, warning: barcodeWarning, isInvalid: isBarcodeInvalid } = useCharLimit(13, "Código do Produto")
-    const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "Nome do Produto")
-    const { value: productDescription, onChange: handleDescChange, onBlur: handleDescBlur, warning: descWarning, isInvalid: isDescInvalid } = useCharLimit(255, "Descrição do Produto")
-
-    const [departmentId, setDepartmentId] = useState(initialDepartmentId)
-    const [error, setError] = useState("")
-    const [success, setSuccess] = useState("")
-    const [submitting, setSubmitting] = useState(false)
-
-    const isDisabled = barcodeWarning || nameWarning || !barcode || !productName || submitting || (departments.length >= 2 && !departmentId)
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        if (!barcode || !productName) { setError("Todos os campos são obrigatórios"); return }
-        setError("")
-        setSubmitting(true)
-        const res = await request("POST", "/products", {
-            productBarCodeNumber: barcode,
-            productName,
-            productDescription: productDescription || null,
-            ...(departments.length >= 2 ? { departmentId: Number(departmentId) } : {}),
-        })
-        setSubmitting(false)
-        if (res.ok) {
-            setSuccess("Produto criado! Agora defina a quantidade.")
-            setTimeout(() => onSuccess(res.data), 800)
-        } else {
-            setError("Não foi possível criar o produto. Por favor tente novamente.")
-        }
-    }
-
-    const warnCls = "text-[var(--color-warning-text)] text-caption -mt-2 mb-1 px-[0.125rem]"
-
-    return (
-        <form className="flex flex-col" onSubmit={handleSubmit}>
-            <Input label="Código do Produto" type="text" name="productBarCodeNumber" value={barcode} onChange={handleBarcodeChange} onBlur={handleBarcodeBlur} placeholder="Digite o código do produto" isInvalid={isBarcodeInvalid} required />
-            {barcodeWarning && <div className={warnCls}>{barcodeWarning.type === "too_short" ? `Mínimo ${barcodeWarning.min} caracteres.` : `Máximo ${barcodeWarning.max} caracteres.`}</div>}
-            
-            <Input label="Nome do Produto" type="text" name="productName" value={productName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder="Digite o nome do produto" isInvalid={isNameInvalid} required />
-            {nameWarning && <div className={warnCls}>{nameWarning.type === "too_short" ? `Mínimo ${nameWarning.min} caracteres.` : `Máximo ${nameWarning.max} caracteres.`}</div>}
-            
-            <Input label="Descrição do Produto" type="text" name="productDescription" value={productDescription} onChange={handleDescChange} onBlur={handleDescBlur} placeholder="Digite a descrição do produto" isInvalid={isDescInvalid} />
-            {productDescription && descWarning && <div className={warnCls}>{descWarning.type === "too_short" ? `Mínimo ${descWarning.min} caracteres.` : `Máximo ${descWarning.max} caracteres.`}</div>}
-
-            {departments.length >= 2 && (
-                <div className="flex flex-col mb-[1.125rem]">
-                    <label className="mb-[0.375rem] font-semibold text-[var(--color-text-neutral)] text-[0.875rem] tracking-[0.005em] mr-auto">
-                        Departamento <span className="ml-[2px] font-bold text-[var(--color-danger-strong)]">*</span>
-                    </label>
-                    <div className="relative">
-                        <select
-                            required
-                            value={departmentId}
-                            onChange={e => setDepartmentId(e.target.value)}
-                            className="w-full min-h-[2.625rem] py-[0.5625rem] pl-[0.875rem] pr-10 border-[1.5px] border-[var(--color-border-strong)] rounded-[var(--radius-md)] text-[0.875rem] text-[var(--color-text-body)] bg-[var(--color-surface-card)] outline-none transition-[border-color,box-shadow] duration-[160ms] appearance-none hover:border-[var(--color-accent)] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]"
-                        >
-                            <option value="" disabled>Selecionar departamento</option>
-                            {departments.map(d => (
-                                <option key={d.departmentId} value={d.departmentId}>{d.departmentName}</option>
-                            ))}
-                        </select>
-                        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        </span>
-                    </div>
-                </div>
-            )}
-
-            <Alert message={error} />
-            
-            {success && <div className="text-[var(--color-success)] font-medium py-2 px-3 bg-[var(--color-success-soft)] rounded-[var(--radius-md)] border border-[var(--color-success-soft-border)] text-center mt-1 text-body">{success}</div>}
-            
-            <div className="flex justify-end gap-[0.625rem] mt-5 pt-4 border-t border-[var(--color-border-default)]">
-                <Button type="button" variant="secondary" onClick={onClose} disabled={submitting}>Cancelar</Button>
-                <Button type="submit" disabled={isDisabled}>{submitting ? "Carregando..." : "Criar"}</Button>
-            </div>
-        </form>
-    )
-}
 
 const UNIT_OPTIONS = ['L', 'bag', 'balde', 'CX', 'FD', 'KG', 'PCT', 'UND']
 
@@ -224,37 +141,6 @@ const ProductBottomSheet = ({ isOpen, product, onClose, onConfirm }) => {
                         onConfirm={onConfirm}
                     />
                 )}
-            </div>
-        </>
-    )
-}
-
-/* ── Form sheet shell (mobile) — wraps the create-product form in a bottom sheet ── */
-const CreateProductSheet = ({ isOpen, onClose, title, children }) => {
-    useEffect(() => {
-        document.body.style.overflow = isOpen ? 'hidden' : ''
-        return () => { document.body.style.overflow = '' }
-    }, [isOpen])
-
-    useEffect(() => {
-        if (!isOpen) return
-        const handleKey = (e) => { if (e.key === 'Escape') onClose() }
-        document.addEventListener('keydown', handleKey)
-        return () => document.removeEventListener('keydown', handleKey)
-    }, [isOpen, onClose])
-
-    return (
-        <>
-            <div className={`sort-sheet-backdrop ${isOpen ? 'open' : ''}`} onClick={onClose} aria-hidden="true" />
-            <div className={`sform-sheet ${isOpen ? 'open' : ''}`} role="dialog" aria-modal="true" aria-label={title}>
-                <div className="sort-sheet-handle" />
-                <div className="sform-sheet-header">
-                    <span className="sform-sheet-title">{title}</span>
-                    <button className="sort-sheet-close" onClick={onClose} aria-label="Fechar"><X size={18} strokeWidth={2} /></button>
-                </div>
-                <div className="sform-sheet-body">
-                    {isOpen && children}
-                </div>
             </div>
         </>
     )
@@ -832,23 +718,26 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 loading={loading}
             />
 
-            {/* Create product — bottom sheet on mobile, modal compartilhado com a listagem de produtos no desktop */}
+            {/* Create product — formulário compartilhado com a listagem de produtos: bottom sheet no mobile, Modal no desktop */}
             {isMobile ? (
-                <CreateProductSheet isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Criar Novo Produto">
-                    <CreateProductModalForm
-                        onSuccess={handleNewProductCreated}
-                        onClose={() => setShowCreateModal(false)}
-                        request={request}
-                        departments={userDepts}
-                        initialDepartmentId={deptFilter !== null ? String(deptFilter) : ''}
-                    />
-                </CreateProductSheet>
+                <ProductFormBottomSheet
+                    isOpen={showCreateModal}
+                    onClose={() => setShowCreateModal(false)}
+                    mode="create"
+                    title="Criar Produto"
+                    onSaveCreate={handleNewProductCreated}
+                    departments={userDepts}
+                    initialDepartmentId={deptFilter !== null ? String(deptFilter) : ''}
+                    successMessage="Produto criado! Agora defina a quantidade."
+                />
             ) : (
                 <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Criar Produto">
                     <ProductCreate
                         onSave={handleNewProductCreated}
                         onClose={() => setShowCreateModal(false)}
                         departments={userDepts}
+                        initialDepartmentId={deptFilter !== null ? String(deptFilter) : ''}
+                        successMessage="Produto criado! Agora defina a quantidade."
                     />
                 </Modal>
             )}

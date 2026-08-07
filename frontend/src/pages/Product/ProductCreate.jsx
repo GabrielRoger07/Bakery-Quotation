@@ -9,21 +9,23 @@ import useCharLimit from '@/hooks/useCharLimit'
 import { charLimitMessage } from '@/utils/charLimitMessage'
 import { ENV } from '@/config/env'
 
-const ProductCreate = ({ onClose, onSave, departments = [] }) => {
+const ProductCreate = ({ onClose, onSave, departments = [], initialDepartmentId = '', successMessage = "Produto criado com sucesso!" }) => {
 
     const { value: productBarCodeNumber, onChange: handleBarCodeChange, onBlur: handleBarCodeBlur, warning: barCodeWarning, isInvalid: isBarCodeInvalid } = useCharLimit(13, "Código do Produto")
     const { value: productName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "Nome do Produto")
     const { value: productDescription, onChange: handleDescriptionChange, onBlur: handleDescriptionBlur, warning: descriptionWarning, isInvalid: isDescriptionInvalid } = useCharLimit(255, "Descrição do Produto")
 
-    const [departmentId, setDepartmentId] = useState('')
+    const [departmentId, setDepartmentId] = useState(initialDepartmentId)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
+    const [submitting, setSubmitting] = useState(false)
 
     const { request } = useFetch(ENV.API_BASE_URL)
 
     const isDisabled =
         nameWarning ||
         !productName ||
+        submitting ||
         (departments.length >= 2 && !departmentId)
 
     const handleProductCreate = async(e) => {
@@ -44,13 +46,17 @@ const ProductCreate = ({ onClose, onSave, departments = [] }) => {
             ...(departments.length >= 2 ? { departmentId: Number(departmentId) } : {}),
         }
 
+        setSubmitting(true)
         const res = await request("POST", "/products", product)
+        setSubmitting(false)
 
         if(res.ok){
-            setSuccess("Produto criado com sucesso!")
+            setSuccess(successMessage)
             setError("")
-            onSave && onSave(res.data)
-            setTimeout(() => onClose(), 800)
+            setTimeout(() => {
+                onSave && onSave(res.data)
+                onClose && onClose()
+            }, 800)
         }else{
             setSuccess("")
             setError("Não foi possível criar o produto. Por favor tente novamente.")
@@ -80,7 +86,7 @@ const ProductCreate = ({ onClose, onSave, departments = [] }) => {
             <Alert variant="success" message={success} />
 
             <FormActions>
-                <Button type="submit" disabled={isDisabled}>Criar</Button>
+                <Button type="submit" disabled={isDisabled}>{submitting ? "Carregando..." : "Criar"}</Button>
             </FormActions>
         </form>
     )

@@ -38,7 +38,7 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 
 > **Regra de ouro:** escolha a cor pelo **para que serve** (papel), não pelo tom. Cada token tem **uma** função. Veja o catálogo visual (com valor e uso) na rota `/design-system`.
 
-**Text — hierarquia por função** (era: 11 tokens em duas rampas concorrentes)
+**Text — hierarquia por função**
 
 | Token | Use quando… |
 |---|---|
@@ -64,7 +64,10 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 
 **Highlights (roxo suave):** `highlight-soft` (fundo destaque), `highlight` (médio), `highlight-lighter` (hover de linha), `highlight-border` (borda), `info-border` (borda de banner informativo).
 
-**Semantic status** (prefixo = papel): `success`/`danger`/`warning` (base) + `-strong` (enfático) + `-lighter` (fundo) + `-border` (borda) + `-soft`/`-soft-border` (translúcido). `warning-text` = tom legível em texto; `danger-dark` = foco forte.
+**Semantic status** (prefixo = papel), cada família com os sufixos que realmente existem:
+- `success` + `-strong` (enfático) · `-lighter` (fundo) · `-border` (borda) · `-soft`/`-soft-border` (translúcido)
+- `danger` + `-strong` (botão) · `-dark` (foco/hover forte) · `-border` (borda) · `-soft` (fundo translúcido)
+- `warning` + `-text` (tom legível em texto) · `-strong` (enfático) · `-lighter` (fundo) · `-border` (borda)
 
 **On-dark** (branco translúcido sobre fundo escuro — navbar/drawer): `on-dark-text` / `-text-muted` / `-text-faint` (3 níveis de texto), `on-dark-bg` / `-bg-hover` (preenchimento/hover), `on-dark-border` / `-border-strong` (bordas).
 
@@ -110,7 +113,7 @@ Famílias: `--font-sans` (Outfit), `--font-mono` (JetBrains Mono).
 | Componente | Props principais | Notas |
 |---|---|---|
 | hook `useResourceList` | `{ endpoint, idKey, defaultSortField, deletePath }` | fetch + paginação + sort + busca + remoção; expõe `handleSort`/`clearSort` (toggle, usado pelo `Table` desktop) e `setSort(field, direction)` (seleção direta, usado pelo sheet de ordenação mobile) |
-| `Table` | `columns` (`{ key, label, align }`), `data`, `idKey`, `onEdit/onDelete/onView/onMonitor`, `onSort`, `toolbar` | desktop; não é mais usado por nenhuma tela de listagem (Department/Product/Supplier/Quotation migraram para `MobileCardList` em todos os breakpoints) — segue existindo para outros usos (`QuotationMonitor`, `SupplierAccess`). `align: 'right'` na coluna alinha à direita com dígitos tabulares (quantidade/preço) — default é à esquerda; ver as tabelas de lances em `SupplierQuotationClosed`/`SupplierQuotationActiveAuction`. Traz o próprio card + título, então não deve ser aninhado em outro painel |
+| `Table` | `columns` (`{ key, label, align }`), `data`, `idKey`, `onEdit/onDelete/onView/onMonitor`, `onSort`, `toolbar` | desktop; não é mais usado por nenhuma tela de listagem (Department/Product/Supplier/Quotation migraram para `MobileCardList` em todos os breakpoints) — hoje só sobra na tabela de lances de `SupplierQuotationActiveAuction` (e no catálogo `/design-system`). `align: 'right'` na coluna alinha à direita com dígitos tabulares (quantidade/preço) — default é à esquerda. Traz o próprio card + título, então não deve ser aninhado em outro painel |
 | `MobileCardList` | `items`, `renderCard`, `onEdit/...`, `sortOptions`, `sortField`, `sortDirection`, `onSelectSort`, `inlineToolbar`, `eyebrow`, `addLabel`, `desktopToolbar` | mobile (par do `Table`); se `sortOptions`+`onSelectSort` forem passados, renderiza o pill `SortButton` ("A-Z") ao lado do `inlineToolbar`, que abre o `SortBottomSheet`. A partir de `sm:` (640px): `.cards-list` vira grid de múltiplas colunas; a paginação troca para `Pagination` (numerada) em vez de dots/progress; o FAB some (só mobile); se `title` for passado, aparece um cabeçalho (`eyebrow` opcional + título + botão `addLabel`); e, se `desktopToolbar` for passado, ele substitui `toolbar`/`searchBar` (mobile-only a partir de agora) por uma barra própria de busca/filtro/ordenação — layout costuma diferir bastante do mobile, então não é 1:1. Cabeçalho + `desktopToolbar` ficam dentro de um painel branco só (mesma linguagem visual do container do `Table`: `surface-card`/`radius-xl`/borda/`shadow-card-soft`), separado do grid de cards abaixo. `ProductList`/`SupplierList`/`QuotationList` usam esse componente em todos os breakpoints (sem `Table`), com `onCardClick` igual nos dois (abre o bottom sheet de detalhe, que troca de chrome por `isMobile`). A partir de `sm:`, a raiz é `flex-1` dentro do `PageContainer` (`list` = `sm:min-h-screen sm:flex sm:flex-col`) e a paginação desktop leva `sm:mt-auto` — a distância da paginação até o fim da tela fica sempre igual entre as telas, independente de quantas linhas de card cabem (lista curta: sobra de viewport empurra a paginação para baixo; lista longa: a página rola e o gap vem do `sm:pb-8` do `PageContainer`) |
 | `SortButton` | `onOpen` | pill "A-Z" usado internamente pelo `MobileCardList` (ao lado do `PaginationSummary`) para abrir o `SortBottomSheet`; normalmente não é usado direto pelas páginas |
 | `SortBottomSheet` | `isOpen`, `onClose`, `options: [{key,label,field,direction}]`, `sortField`, `sortDirection`, `onSelectSort` | sheet com lista plana de opções de ordenação pré-compostas (campo+direção); tocar numa opção aplica e fecha na hora; cada página define seu próprio array de `options` (ex.: "Nome (A → Z)") |
@@ -160,14 +163,19 @@ const list = useResourceList({ endpoint: '/api/v1/products', idKey: 'productId',
 return (
   <PageContainer variant="list">
     {list.error && <Alert message={list.error} />}
-    {isMobile
-      ? <MobileCardList items={list.items} renderCard={...} onDelete={list.confirm.requestRemove} ... />
-      : <Table columns={...} data={list.items} onDelete={list.confirm.requestRemove} ... />}
+    <MobileCardList
+      items={list.items}
+      renderCard={...}
+      onCardClick={...}
+      onDelete={list.confirm.requestRemove}
+      desktopToolbar={<ListToolbar search={...} sort={...} pageLabel={...} rangeLabel={...} />}
+      ...
+    />
     <ConfirmDialog isOpen={list.confirm.isOpen} onConfirm={list.confirm.confirm} onClose={list.confirm.cancel} confirmVariant="danger">...</ConfirmDialog>
   </PageContainer>
 )
 ```
-Esse era o padrão antigo (não usado por nenhuma tela de listagem atualmente). `Department`, `Product`, `Supplier` e `Quotation` usam uma variação sem `Table`: renderizam sempre `MobileCardList` (que já vira grid a partir de `sm:`, com cabeçalho e `desktopToolbar` próprios no desktop) e mantêm `onCardClick` igual nos dois breakpoints — quem troca de chrome por `isMobile` é o bottom sheet de detalhe (`DepartmentBottomSheet`/`ProductBottomSheet`/`SupplierBottomSheet`/`QuotationBottomSheet`: bottom sheet no mobile, `Modal` no desktop), não a lista em si; o formulário de criar/editar segue o mesmo princípio via `DepartmentFormBottomSheet`/`ProductFormBottomSheet`/`SupplierFormBottomSheet` (sheet no mobile, `Modal` no desktop). O `desktopToolbar` em si deve ser montado com `ListToolbar` (em vez de remontar `Select`/`MobileSearchInput`/`ActiveFilterPill`/`PaginationSummary` na mão) — ver `ProductList.jsx`/`SupplierList.jsx`/`QuotationList.jsx` para o exemplo completo. `Quotation` não usa `search` no `ListToolbar` (a prop é opcional) — só `before` (`StatusTabFilter`) e `sort`. `Department` não tem busca/filtro, só ordenação (`sortOptions` "Nome (A → Z)"/"Nome (Z → A)"), então seu `ListToolbar` usa só `sort` + `pageLabel`/`rangeLabel` (sem `search`/`before`/`after`/`activeFilter`).
+`Department`, `Product`, `Supplier` e `Quotation` renderizam sempre `MobileCardList` (que já vira grid a partir de `sm:`, com cabeçalho e `desktopToolbar` próprios no desktop) e mantêm `onCardClick` igual nos dois breakpoints — quem troca de chrome por `isMobile` é o bottom sheet de detalhe (`DepartmentBottomSheet`/`ProductBottomSheet`/`SupplierBottomSheet`/`QuotationBottomSheet`: bottom sheet no mobile, `Modal` no desktop), não a lista em si; o formulário de criar/editar segue o mesmo princípio via `DepartmentFormBottomSheet`/`ProductFormBottomSheet`/`SupplierFormBottomSheet` (sheet no mobile, `Modal` no desktop). Esse par vale também fora das listagens: o passo 2 de criar cotação (`QuotationCreateStep2`) usa o mesmo `ProductFormBottomSheet` + `ProductCreate` em vez de um formulário próprio — `ProductCreate` aceita `initialDepartmentId` (pré-seleciona o departamento a partir do filtro ativo) e `successMessage` (customiza a mensagem de sucesso), e `ProductFormBottomSheet` aceita `title` além de repassar as duas. O `desktopToolbar` em si deve ser montado com `ListToolbar` (em vez de remontar `Select`/`MobileSearchInput`/`ActiveFilterPill`/`PaginationSummary` na mão) — ver `ProductList.jsx`/`SupplierList.jsx`/`QuotationList.jsx` para o exemplo completo. `Quotation` não usa `search` no `ListToolbar` (a prop é opcional) — só `before` (`StatusTabFilter`) e `sort`. `Department` não tem busca/filtro, só ordenação (`sortOptions` "Nome (A → Z)"/"Nome (Z → A)"), então seu `ListToolbar` usa só `sort` + `pageLabel`/`rangeLabel` (sem `search`/`before`/`after`/`activeFilter`).
 
 ---
 
@@ -179,7 +187,7 @@ A refatoração das telas de **Quotation** introduziu classes de tela diretament
 |---|---|---|
 | `psheet-*`, `sform-sheet-*`, `qsheet-*` | Quotation Step 2, Department, detalhe | `BottomSheet` (par mobile do `Modal`) |
 | `step-tabs`, `step-tab*` | `QuotationCreateStep2/3` | `TabSwitcher` |
-| `sel-product-*`, `sup-row-*` | `QuotationCreateStep2/3` | `IconButton` + card primitivo |
-| Card "ícone + título" repetido; `inputCls()`/`iconBtn*` inline | `QuotationCreateStep1–4` | `SectionCard`, `IconButton`; migrar inputs para `<Input>` |
+| `sel-product-*` (Step 2), `sup-row-*` (Step 3) | `QuotationCreateStep2/3` | `IconButton` + card primitivo |
+| Card "ícone + título" repetido; `inputCls` (Step 1) / `iconBtn*` (Step 2) inline | `QuotationCreateStep1/2` | `SectionCard`, `IconButton`; migrar inputs para `<Input>` |
 
-**Plano futuro:** extrair esses padrões para primitivos com estilo colocado, remover as classes correspondentes de `index.css` e migrar `QuotationCreateStep1–4` + `QuotationForm` para os primitivos. Fora do escopo atual (este ciclo entrega só catálogo + doc).
+**Plano futuro:** extrair esses padrões para primitivos com estilo colocado, remover as classes correspondentes de `index.css` e migrar `QuotationCreateStep1–4` + `QuotationForm` para os primitivos.

@@ -6,7 +6,7 @@ import ProductEdit from '@/pages/Product/ProductEdit'
 /**
  * Bottom sheet (mobile) com o formulário de criação/edição de produto.
  */
-const ProductFormBottomSheet = ({ isOpen, onClose, mode, product, onSaveCreate, onSaveEdit, departments = [] }) => {
+const ProductFormBottomSheet = ({ isOpen, onClose, mode, product, onSaveCreate, onSaveEdit, departments = [], title: titleProp, initialDepartmentId = '', successMessage }) => {
     useEffect(() => {
         if (!isOpen) return
         const handleKey = (e) => { if (e.key === 'Escape') onClose() }
@@ -19,7 +19,7 @@ const ProductFormBottomSheet = ({ isOpen, onClose, mode, product, onSaveCreate, 
         return () => { document.body.style.overflow = '' }
     }, [isOpen])
 
-    const title = mode === 'edit' ? 'Editar Produto' : 'Novo Produto'
+    const title = titleProp ?? (mode === 'edit' ? 'Editar Produto' : 'Novo Produto')
 
     return (
         <>
@@ -56,6 +56,8 @@ const ProductFormBottomSheet = ({ isOpen, onClose, mode, product, onSaveCreate, 
                             onSave={onSaveCreate}
                             onClose={onClose}
                             departments={departments}
+                            initialDepartmentId={initialDepartmentId}
+                            successMessage={successMessage}
                         />
                     ))}
                 </div>

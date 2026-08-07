@@ -2,11 +2,14 @@ package com.bakeryquotation.backend.Quotation;
 
 import com.bakeryquotation.backend.Company.Company;
 import com.bakeryquotation.backend.Company.CompanyRepository;
+import com.bakeryquotation.backend.Product.ProductService;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationRequestDTO;
 import com.bakeryquotation.backend.Quotation.DTO.QuotationResponseDTO;
 import com.bakeryquotation.backend.Quotation.mapper.QuotationMapper;
 import com.bakeryquotation.backend.exception.AccessDeniedException;
 import com.bakeryquotation.backend.exception.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +28,8 @@ public class QuotationService {
 
     @Value("${app.pagination-size}")
     private int pageSize;
+
+    private static final Logger log = LoggerFactory.getLogger(ProductService.class);
 
     private final QuotationRepository quotationRepository;
     private final QuotationMapper quotationMapper;
@@ -55,11 +60,19 @@ public class QuotationService {
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
         Page<Quotation> quotationsByCompany;
 
+        log.info("-----------------------");
+        log.info("field: {}", field);
+        log.info("value: {}", value);
+
         boolean applyFilter = field != null && value != null && !value.isBlank();
+
+        log.info("applyFilter value: {}", applyFilter);
 
         if(applyFilter){
             if(field.equals("status")){
                 quotationsByCompany = quotationRepository.findByCompanyEmailAndStatus(companyEmail, value, Instant.now(), safePageable);
+                System.out.println(quotationsByCompany);
+                log.info("quotationsByCompany size: {}", quotationsByCompany.getTotalElements());
             } else {
                 throw new ResourceNotFoundException("Invalid field");
             }

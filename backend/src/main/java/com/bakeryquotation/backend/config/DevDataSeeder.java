@@ -91,12 +91,12 @@ public class DevDataSeeder {
                 String barcode = String.format("%013d", Math.abs(rnd.nextLong()) % 10000000000000L);
 
                 if(i < 21){
-                    Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), passwordEncoder.encode("password"), company1);
+                    Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), passwordEncoder.encode("123"), company1);
                     Product product = new Product(faker.commerce().productName(), barcode, faker.commerce().material(), company1, department1);
                     supplierRepository.save(supplier);
                     productRepository.save(product);
                 }else{
-                    Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), passwordEncoder.encode("password"), company2);
+                    Supplier supplier = new Supplier(faker.name().firstName(), "contact" + i + "@gmail.com", "6199999999" + i, faker.company().name(), generateValidCnpj(rnd), passwordEncoder.encode("123"), company2);
                     Product product = new Product(faker.commerce().productName(), barcode, faker.commerce().material(), company2, department2);
                     supplierRepository.save(supplier);
                     productRepository.save(product);

@@ -30,6 +30,8 @@ export const DepartmentForm = ({ department, onSave, onClose }) => {
 
     const isEdit = !!department
 
+    const isDisabled = !name.trim()
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         setError('')
@@ -63,10 +65,11 @@ export const DepartmentForm = ({ department, onSave, onClose }) => {
                 placeholder="Ex: Matéria Prima"
                 required
             />
+
             <Alert message={error} />
             <Alert variant="success" message={success} />
             <FormActions>
-                <Button type="submit" disabled={loading || !name.trim()}>
+                <Button type="submit" disabled={isDisabled} loading={loading}>
                     {isEdit ? 'Salvar' : 'Criar'}
                 </Button>
             </FormActions>

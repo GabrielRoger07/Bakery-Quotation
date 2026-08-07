@@ -14,7 +14,7 @@ import { ENV } from '@/config/env'
 
 const SupplierEdit = ({supplier, onSave, onClose}) => {
 
-    const { request } = useFetch(ENV.API_BASE_URL)
+    const { request, loading } = useFetch(ENV.API_BASE_URL)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
@@ -37,9 +37,9 @@ const SupplierEdit = ({supplier, onSave, onClose}) => {
     const isDisabled = 
         supplierNameWarning ||
         employerNameWarning ||
-        !supplierName ||
+        !supplierName.trim() ||
         !supplierWhatsappNumber ||
-        !employerName ||
+        !employerName.trim() ||
         !employerCnpj ||
         isSupplierWhatsappNumberInvalid ||
         isEmployerCnpjInvalid
@@ -90,7 +90,7 @@ const SupplierEdit = ({supplier, onSave, onClose}) => {
             <Alert variant="success" message={success} />
 
             <FormActions>
-                <Button type="submit" disabled={isDisabled}>Salvar</Button>
+                <Button type="submit" disabled={isDisabled} loading={loading}>Salvar</Button>
             </FormActions>
         </form>
     )

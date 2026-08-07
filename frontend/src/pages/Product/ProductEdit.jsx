@@ -15,7 +15,7 @@ const ProductEdit = ({ product, onSave, onClose, departments = [] }) => {
     const {value: productName, setValue: setProductName, onChange: handleNameChange, onBlur: handleNameBlur, warning: nameWarning, isInvalid: isNameInvalid } = useCharLimit(60, "Nome do Produto")
     const {value: productDescription, setValue: setProductDescription, onChange: handleDescriptionChange, onBlur: handleDescriptionBlur, warning: descriptionWarning, isInvalid: isDescriptionInvalid } = useCharLimit(255, "Descrição do Produto")
 
-    const { request } = useFetch(ENV.API_BASE_URL)
+    const { request, loading } = useFetch(ENV.API_BASE_URL)
     const [departmentId, setDepartmentId] = useState(product?.departmentId ? String(product.departmentId) : '')
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
@@ -30,7 +30,7 @@ const ProductEdit = ({ product, onSave, onClose, departments = [] }) => {
 
     const isDisabled =
         nameWarning ||
-        !productName ||
+        !productName.trim() ||
         (departments.length >= 2 && !departmentId)
 
     const handleSubmit = async (e) => {
@@ -88,7 +88,7 @@ const ProductEdit = ({ product, onSave, onClose, departments = [] }) => {
             <Alert variant="success" message={success} />
 
             <FormActions>
-                <Button type="submit" disabled={isDisabled}>Salvar</Button>
+                <Button type="submit" disabled={isDisabled} loading={loading}>Salvar</Button>
             </FormActions>
         </form>
     )

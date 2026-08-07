@@ -20,7 +20,7 @@ const Login = () => {
     const { request, loading } = useFetch(ENV.API_BASE_URL)
     const navigate = useNavigate()
 
-    const isDisabled = !companyEmail || !companyPassword
+    const isDisabled = !companyEmail.trim() || !companyPassword
 
     const handleLogin = async (e) => {
         e.preventDefault()

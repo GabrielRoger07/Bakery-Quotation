@@ -31,8 +31,8 @@ const CompanyCreate = () => {
         emailWarning ||
         passwordWarning ||
         !companyCnpj ||
-        !companyName ||
-        !companyEmail ||
+        !companyName.trim() ||
+        !companyEmail.trim() ||
         !companyWhatsappNumber ||
         !companyPassword ||
         isCnpjInvalid ||

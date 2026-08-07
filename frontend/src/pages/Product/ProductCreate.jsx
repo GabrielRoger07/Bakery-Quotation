@@ -20,11 +20,11 @@ const ProductCreate = ({ onClose, onSave, departments = [], initialDepartmentId 
     const [success, setSuccess] = useState("")
     const [submitting, setSubmitting] = useState(false)
 
-    const { request } = useFetch(ENV.API_BASE_URL)
+    const { request, loading } = useFetch(ENV.API_BASE_URL)
 
     const isDisabled =
         nameWarning ||
-        !productName ||
+        !productName.trim() ||
         submitting ||
         (departments.length >= 2 && !departmentId)
 
@@ -86,7 +86,7 @@ const ProductCreate = ({ onClose, onSave, departments = [], initialDepartmentId 
             <Alert variant="success" message={success} />
 
             <FormActions>
-                <Button type="submit" disabled={isDisabled}>{submitting ? "Carregando..." : "Criar"}</Button>
+                <Button type="submit" disabled={isDisabled} loading={loading}>{submitting ? "Carregando..." : "Criar"}</Button>
             </FormActions>
         </form>
     )

@@ -21,14 +21,14 @@ const SupplierCreate = ({ onClose, onSave }) => {
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
-    const { request } = useFetch(ENV.API_BASE_URL)
+    const { request, loading } = useFetch(ENV.API_BASE_URL)
 
     const isDisabled = 
         supplierNameWarning ||
         employerNameWarning ||
-        !supplierName ||
+        !supplierName.trim() ||
         !supplierWhatsappNumber ||
-        !employerName ||
+        !employerName.trim() ||
         !employerCnpj ||
         isSupplierWhatsappNumberInvalid ||
         isEmployerCnpjInvalid
@@ -81,7 +81,7 @@ const SupplierCreate = ({ onClose, onSave }) => {
             <Alert variant="success" message={success} />
 
             <FormActions>
-                <Button type="submit" disabled={isDisabled}>Criar</Button>
+                <Button type="submit" disabled={isDisabled} loading={loading}>Criar</Button>
             </FormActions>
         </form>
     )

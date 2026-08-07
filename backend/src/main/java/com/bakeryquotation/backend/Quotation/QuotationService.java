@@ -29,8 +29,6 @@ public class QuotationService {
     @Value("${app.pagination-size}")
     private int pageSize;
 
-    private static final Logger log = LoggerFactory.getLogger(ProductService.class);
-
     private final QuotationRepository quotationRepository;
     private final QuotationMapper quotationMapper;
     private final CompanyRepository companyRepository;
@@ -60,19 +58,11 @@ public class QuotationService {
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
         Page<Quotation> quotationsByCompany;
 
-        log.info("-----------------------");
-        log.info("field: {}", field);
-        log.info("value: {}", value);
-
         boolean applyFilter = field != null && value != null && !value.isBlank();
-
-        log.info("applyFilter value: {}", applyFilter);
 
         if(applyFilter){
             if(field.equals("status")){
                 quotationsByCompany = quotationRepository.findByCompanyEmailAndStatus(companyEmail, value, Instant.now(), safePageable);
-                System.out.println(quotationsByCompany);
-                log.info("quotationsByCompany size: {}", quotationsByCompany.getTotalElements());
             } else {
                 throw new ResourceNotFoundException("Invalid field");
             }

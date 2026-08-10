@@ -8,7 +8,6 @@ import java.time.Instant;
 public class QuotationRequestDTO {
 
     @NotNull(message = "Quotation start is required")
-    @Future(message = "Quotation start must be in the future")
     private Instant quotationStart;
 
     @NotNull(message = "Quotation end is required")

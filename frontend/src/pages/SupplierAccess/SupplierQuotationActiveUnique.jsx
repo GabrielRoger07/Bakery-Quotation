@@ -73,15 +73,6 @@ const MobileProductInputCard = ({ product, initialNumericValue, onNumericChange,
                 </div>
             </div>
 
-            {/* Total só aparece após o fornecedor preencher um preço (hasPrice)
-            {hasPrice && (
-                <div className="saqu-input-total-row">
-                    <span className="saqu-input-total-label">Total ·</span>
-                    <span className="saqu-input-total-value">{formatMoney(getNumericValue() * Number(product.quantity))}</span>
-                </div>
-            )}
-            */}
-
             <div className="saqu-input-field-row">
                 <div className="saqu-price-input-group">
                     <input
@@ -95,6 +86,13 @@ const MobileProductInputCard = ({ product, initialNumericValue, onNumericChange,
                     <span className="saqu-price-input-unit">/ {unitLabel(product.unitOfMeasure)}</span>
                 </div>
             </div>
+
+            {hasPrice && (
+                <div className="saqu-input-total-row">
+                    <span className="saqu-input-total-label">Total: </span>
+                    <span className="saqu-input-total-value">{formatMoney(getNumericValue() * Number(product.quantity))}</span>
+                </div>
+            )}
         </div>
     )
 }

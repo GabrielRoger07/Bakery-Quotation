@@ -61,7 +61,7 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
         onNext()
     }
 
-    const inputCls = 'w-full h-11 border-[1.5px] border-[var(--color-border-default)] rounded-[var(--radius-lg)] px-3 font-sans text-[0.875rem] font-semibold text-[var(--color-text-body)] bg-[var(--color-surface-subtle)] outline-none transition-[border-color,box-shadow] duration-[160ms] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]'
+    const inputCls = 'w-full min-w-0 max-w-full h-11 border-[1.5px] border-[var(--color-border-default)] rounded-[var(--radius-lg)] px-3 font-sans text-[0.875rem] font-semibold text-[var(--color-text-body)] bg-[var(--color-surface-subtle)] outline-none transition-[border-color,box-shadow] duration-[160ms] focus:border-[var(--color-accent)] focus:[box-shadow:var(--shadow-focus-accent)]'
     const sectionLabelCls = 'block text-label font-bold uppercase tracking-[0.1em] text-[var(--color-text-disabled)] mb-2.5 px-0.5'
     const fieldLabelCls = 'block text-label font-semibold text-[var(--color-text-disabled)] mb-1.5'
 
@@ -81,45 +81,49 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
 
             {/* ── Período da cotação ── */}
             <span className={sectionLabelCls}>Período da cotação</span>
-            <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] rounded-[var(--radius-xl)] mb-6 [box-shadow:var(--shadow-md-soft)] p-4 md:p-6">
-                {/* Desktop: Início | divisor vertical | Fim — mobile: empilhado */}
-                <div className="md:grid md:grid-cols-[1fr_1px_1fr] md:gap-x-6 md:items-start">
+            <div className="@container/period bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] rounded-[var(--radius-xl)] mb-6 [box-shadow:var(--shadow-md-soft)] p-4 md:p-6">
+                {/* O card decide quando dividir: a largura útil pode ser menor que a viewport por causa do rail do wizard. */}
+                <div className="grid grid-cols-1 gap-y-4 @xl/period:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)] @xl/period:gap-x-6 @xl/period:gap-y-0 @xl/period:items-start">
                     {/* Início */}
-                    <div>
+                    <div className="min-w-0">
                         <div className="flex items-center gap-2 text-[var(--color-success)] font-bold text-caption mb-2.5">
                             <CirclePlay size={18} strokeWidth={2} />Início
                         </div>
-                        <div className="flex gap-2.5">
-                            <div className="flex-[1.3] min-w-0">
-                                <label className={fieldLabelCls}>Data</label>
-                                <input type="date" min={today} className={inputCls} value={startDateValue}
-                                    onChange={e => { setStartDateValue(e.target.value); handleDateTimeChange("start", e.target.value, startTimeValue) }} />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <label className={fieldLabelCls}>Hora</label>
-                                <input type="time" className={inputCls} value={startTimeValue}
-                                    onChange={e => { setStartTimeValue(e.target.value); handleDateTimeChange("start", startDateValue, e.target.value) }} />
+                        <div className="@container/group min-w-0">
+                            <div className="grid grid-cols-1 gap-y-2.5 @sm/group:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] @sm/group:gap-x-2.5">
+                                <div className="min-w-0">
+                                    <label className={fieldLabelCls}>Data</label>
+                                    <input type="date" min={today} className={inputCls} value={startDateValue}
+                                        onChange={e => { setStartDateValue(e.target.value); handleDateTimeChange("start", e.target.value, startTimeValue) }} />
+                                </div>
+                                <div className="min-w-0">
+                                    <label className={fieldLabelCls}>Hora</label>
+                                    <input type="time" className={inputCls} value={startTimeValue}
+                                        onChange={e => { setStartTimeValue(e.target.value); handleDateTimeChange("start", startDateValue, e.target.value) }} />
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="h-px bg-[var(--color-border-faint)] my-4 md:h-auto md:w-full md:self-stretch md:my-0" />
+                    <div className="h-px w-full bg-[var(--color-border-faint)] my-0 @xl/period:h-auto @xl/period:w-px @xl/period:self-stretch @xl/period:my-0" />
 
                     {/* Fim */}
-                    <div>
+                    <div className="min-w-0">
                         <div className="flex items-center gap-2 text-[var(--color-danger)] font-bold text-caption mb-2.5">
                             <CircleStop size={18} strokeWidth={2} />Fim
                         </div>
-                        <div className="flex gap-2.5">
-                            <div className="flex-[1.3] min-w-0">
-                                <label className={fieldLabelCls}>Data</label>
-                                <input type="date" min={today} className={inputCls} value={endDateValue}
-                                    onChange={e => { setEndDateValue(e.target.value); handleDateTimeChange("end", e.target.value, endTimeValue) }} />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <label className={fieldLabelCls}>Hora</label>
-                                <input type="time" className={inputCls} value={endTimeValue}
-                                    onChange={e => { setEndTimeValue(e.target.value); handleDateTimeChange("end", endDateValue, e.target.value) }} />
+                        <div className="@container/group min-w-0">
+                            <div className="grid grid-cols-1 gap-y-2.5 @sm/group:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] @sm/group:gap-x-2.5">
+                                <div className="min-w-0">
+                                    <label className={fieldLabelCls}>Data</label>
+                                    <input type="date" min={today} className={inputCls} value={endDateValue}
+                                        onChange={e => { setEndDateValue(e.target.value); handleDateTimeChange("end", e.target.value, endTimeValue) }} />
+                                </div>
+                                <div className="min-w-0">
+                                    <label className={fieldLabelCls}>Hora</label>
+                                    <input type="time" className={inputCls} value={endTimeValue}
+                                        onChange={e => { setEndTimeValue(e.target.value); handleDateTimeChange("end", endDateValue, e.target.value) }} />
+                                </div>
                             </div>
                         </div>
                     </div>

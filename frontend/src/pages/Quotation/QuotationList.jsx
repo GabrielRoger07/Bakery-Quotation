@@ -11,10 +11,11 @@ import PageContainer from '@/components/PageContainer'
 import Select from '@/components/Select'
 import ListToolbar from '@/components/ListToolbar'
 import PaginationSummary from '@/components/PaginationSummary'
+import Toast from '@/components/Toast'
 import { ENV } from '@/config/env'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { getPaginationSummary } from '@/utils/paginationSummary'
-import { CalendarRange, CheckCircle, Clock, History, X } from 'lucide-react'
+import { CalendarRange, Clock, History } from 'lucide-react'
 
 const QuotationList = () => {
 
@@ -31,6 +32,16 @@ const QuotationList = () => {
             navigate(location.pathname, { replace: true, state: {} })
         }
     }, [location.state, location.pathname, navigate])
+
+    useEffect(() => {
+        if (!savedNotice) return undefined
+
+        const timeoutId = window.setTimeout(() => {
+            setSavedNotice(null)
+        }, 5000)
+
+        return () => window.clearTimeout(timeoutId)
+    }, [savedNotice])
 
     const [quotations, setQuotations] = useState([])
     const [error, setError] = useState("")
@@ -207,19 +218,13 @@ const QuotationList = () => {
         <PageContainer variant="list">
 
             {savedNotice && (
-                <div className="mx-4 mt-4 flex items-center gap-2.5 rounded-[var(--radius-lg)] border border-[var(--color-success-border)] bg-[var(--color-success-lighter)] px-3.5 py-3">
-                    <CheckCircle size={20} strokeWidth={2} className="flex-shrink-0 text-[var(--color-success)]" />
-                    <span className="flex-1 text-[0.875rem] font-semibold text-[var(--color-success-strong)]">
-                        {savedNotice === 'edit' ? 'Cotação atualizada com sucesso!' : 'Cotação criada com sucesso!'}
-                    </span>
-                    <button
-                        onClick={() => setSavedNotice(null)}
-                        aria-label="Dispensar"
-                        className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-[var(--radius-sm)] text-[var(--color-success)] cursor-pointer transition-colors duration-[160ms] hover:bg-[var(--color-success-soft)]"
-                    >
-                        <X size={16} strokeWidth={2.5} />
-                    </button>
-                </div>
+                <Toast
+                    variant="success"
+                    message={savedNotice === 'edit'
+                        ? 'Cotação atualizada com sucesso!'
+                        : 'Cotação criada com sucesso!'}
+                    onClose={() => setSavedNotice(null)}
+                />
             )}
 
             {error && <Alert message={error} />}

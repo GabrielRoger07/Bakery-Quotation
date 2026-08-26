@@ -1386,6 +1386,26 @@ textarea {
     background: var(--color-accent);
     color: white;
   }
+  .step-tab-badge--added {
+    animation: stepTabBadgeAdded 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes stepTabBadgeAdded {
+    0% {
+      transform: scale(0.82);
+      box-shadow: 0 0 0 0 transparent;
+    }
+    45% {
+      transform: scale(1.18);
+      box-shadow: 0 0 0 0.25rem var(--color-highlight-soft);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .step-tab-badge--added { animation: none; }
+  }
 
   /* ── Clickable card variant ── */
   .card-front-clickable {

@@ -36,6 +36,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
 
     // Mobile tab
     const [mobileTab, setMobileTab] = useState("available")
+    const [participatingBadgePulse, setParticipatingBadgePulse] = useState(0)
 
     useEffect(() => {
         onChange(localSelected)
@@ -88,6 +89,7 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
         }
         setLocalSelected([...localSelected, supplier].sort((a, b) => a.supplierName.localeCompare(b.supplierName)))
         setError("")
+        if (isMobile) setParticipatingBadgePulse(prev => prev + 1)
     }
 
     const handleRemoveSupplier = (supplierId) => {
@@ -337,7 +339,13 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                         >
                             Participando
                             {localSelected.length > 0 && (
-                                <span className="step-tab-badge">{localSelected.length}</span>
+                                <span
+                                    key={participatingBadgePulse}
+                                    className={`step-tab-badge ${participatingBadgePulse > 0 ? 'step-tab-badge--added' : ''}`}
+                                    aria-live="polite"
+                                >
+                                    {localSelected.length}
+                                </span>
                             )}
                         </button>
                     </div>

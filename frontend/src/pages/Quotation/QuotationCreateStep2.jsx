@@ -184,6 +184,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     // Mobile: tab ("search" | "selected") + bottom sheet
     const [mobileTab, setMobileTab] = useState("search")
     const [sheetProduct, setSheetProduct] = useState(null)
+    const [selectedBadgePulse, setSelectedBadgePulse] = useState(0)
 
     const [showCreateModal, setShowCreateModal] = useState(false)
 
@@ -307,6 +308,7 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
             }
         }))
         setSheetProduct(null)
+        if (sheetProduct._existingQty == null) setSelectedBadgePulse(prev => prev + 1)
     }, [sheetProduct])
 
     const handleNewProductCreated = useCallback((newProduct) => {
@@ -681,7 +683,13 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                         >
                             Selecionados
                             {selectedList.length > 0 && (
-                                <span className="step-tab-badge">{selectedList.length}</span>
+                                <span
+                                    key={selectedBadgePulse}
+                                    className={`step-tab-badge ${selectedBadgePulse > 0 ? 'step-tab-badge--added' : ''}`}
+                                    aria-live="polite"
+                                >
+                                    {selectedList.length}
+                                </span>
                             )}
                         </button>
                     </div>

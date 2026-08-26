@@ -106,6 +106,10 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
     // Desktop: eyebrows das colunas
     const colLabelCls = 'flex items-center gap-1.5 text-label font-bold uppercase tracking-[0.1em] text-[var(--color-text-disabled)] mb-2.5 px-0.5'
     const colBadgeCls = 'text-label font-bold text-[var(--color-accent)] bg-[var(--color-highlight-soft)] px-1.5 py-0.5 rounded-full leading-none tabular-nums tracking-normal'
+    const supplierListShellCls = 'border border-[var(--color-border-subtle)] rounded-[var(--radius-lg)] overflow-hidden bg-[var(--color-surface-card)]'
+    const supplierListRowCls = 'flex items-center gap-3 px-3 py-2.5'
+    const supplierListDividerCls = 'border-b border-[var(--color-border-faint)] last:border-b-0'
+    const supplierRemoveBtnCls = 'flex-shrink-0 w-8 h-8 rounded-[var(--radius-md)] border border-[var(--color-border-default)] bg-[var(--color-surface-card)] text-[var(--color-danger)] inline-grid place-items-center cursor-pointer transition-[background-color,border-color,color] duration-[160ms] hover:border-[var(--color-danger)] hover:bg-[var(--color-danger-soft)] disabled:opacity-50 disabled:cursor-not-allowed'
 
     /* ── Search panel ── */
     const renderAvailablePanel = () => (
@@ -183,13 +187,15 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                 <div className="text-[0.75rem] font-semibold text-[var(--color-text-disabled)] mb-2.5 px-0.5">Mostrando {availableSuppliers.length} de {totalElements} fornecedores</div>
                 <div className="mb-3">
                     {isMobile ? (
-                        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-md)] overflow-hidden bg-[var(--color-surface-card)] mb-1">
+                        <div className={`${supplierListShellCls} mb-1`}>
                             {availableSuppliers.map(s => (
-                                <div key={s.supplierId} className="flex items-center gap-3 px-3 py-2.5 border-b border-[var(--color-border-faint)] last:border-b-0">
-                                    <div className="sup-row-avatar">{s.supplierName.charAt(0).toUpperCase()}</div>
-                                    <div className="sup-row-body">
-                                        <p className="sup-row-name">{s.supplierName}</p>
-                                        <p className="sup-row-company">{s.employerName}</p>
+                                <div key={s.supplierId} className={`${supplierListRowCls} ${supplierListDividerCls}`}>
+                                    <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] flex items-center justify-center flex-shrink-0 font-bold text-[0.9375rem]">
+                                        {s.supplierName.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div className="flex flex-col min-w-0 flex-1">
+                                        <strong className="text-[0.875rem] text-[var(--color-text-heading)] overflow-hidden text-ellipsis whitespace-nowrap">{s.supplierName}</strong>
+                                        <span className="text-[0.75rem] text-[var(--color-text-muted)] overflow-hidden text-ellipsis whitespace-nowrap">{s.employerName}</span>
                                     </div>
                                     <button
                                         type="button"
@@ -204,11 +210,11 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                             ))}
                         </div>
                     ) : (
-                        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-lg)] overflow-hidden bg-[var(--color-surface-card)] mb-[0.4rem]">
+                        <div className={`${supplierListShellCls} mb-[0.4rem]`}>
                             {availableSuppliers.map(s => (
                                 <div
                                     key={s.supplierId}
-                                    className="flex items-center gap-3 px-3 py-2.5 bg-[var(--color-surface-card)] transition-[background-color] duration-[160ms] border-b border-[var(--color-border-faint)] last:border-b-0 hover:bg-[var(--color-surface-subtle)]"
+                                    className={`${supplierListRowCls} ${supplierListDividerCls} transition-[background-color] duration-[160ms] hover:bg-[var(--color-surface-subtle)]`}
                                 >
                                     <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] flex items-center justify-center flex-shrink-0 font-bold text-[0.9375rem]">
                                         {s.supplierName.charAt(0).toUpperCase()}
@@ -251,22 +257,26 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
         }
         if (isMobile) {
             return (
-                <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
-                    <ul className="list-none m-0 p-0 flex flex-col gap-[0.5rem]">
+                <div className="mb-3">
+                    <ul className={`${supplierListShellCls} list-none m-0 p-0`}>
                         {localSelected.map(s => (
-                            <li key={s.supplierId} className="sup-row-card">
-                                <div className="sup-row-avatar" style={{ background: 'linear-gradient(150deg, var(--color-accent), var(--color-accent-strong))', color: '#fff' }}>{s.supplierName.charAt(0).toUpperCase()}</div>
-                                <div className="sup-row-body">
-                                    <p className="sup-row-name">{s.supplierName}</p>
-                                    <p className="sup-row-company">{s.employerName}</p>
+                            <li key={s.supplierId} className={`${supplierListRowCls} ${supplierListDividerCls}`}>
+                                <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] flex items-center justify-center flex-shrink-0 font-bold text-[0.9375rem]">
+                                    {s.supplierName.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="flex flex-col min-w-0 flex-1">
+                                    <strong className="text-[0.875rem] text-[var(--color-text-heading)] overflow-hidden text-ellipsis whitespace-nowrap">{s.supplierName}</strong>
+                                    <span className="text-[0.75rem] text-[var(--color-text-muted)] overflow-hidden text-ellipsis whitespace-nowrap">{s.employerName}</span>
                                 </div>
                                 <button
-                                    className="sel-product-btn remove"
+                                    type="button"
+                                    className={supplierRemoveBtnCls}
                                     title="Remover"
+                                    aria-label={`Remover ${s.supplierName}`}
                                     onClick={() => handleRemoveSupplier(s.supplierId)}
                                     disabled={loading}
                                 >
-                                    <X size={15} />
+                                    <X size={16} strokeWidth={2.25} />
                                 </button>
                             </li>
                         ))}
@@ -274,15 +284,15 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                 </div>
             )
         }
-        /* Desktop: cards individuais */
+        /* Desktop: mesma lista contínua dos fornecedores disponíveis */
         return (
-            <ul className="list-none m-0 p-0 flex flex-col gap-2.5 mb-3">
+            <ul className={`${supplierListShellCls} list-none m-0 p-0 mb-3`}>
                 {localSelected.map(s => (
                     <li
                         key={s.supplierId}
-                        className="flex items-center gap-3 p-3 bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] rounded-[var(--radius-xl)] [box-shadow:var(--shadow-card-soft)]"
+                        className={`${supplierListRowCls} ${supplierListDividerCls} transition-[background-color] duration-[160ms]`}
                     >
-                        <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-accent)] text-white flex items-center justify-center flex-shrink-0 font-bold text-[0.9375rem]">
+                        <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] flex items-center justify-center flex-shrink-0 font-bold text-[0.9375rem]">
                             {s.supplierName.charAt(0).toUpperCase()}
                         </div>
                         <div className="flex flex-col min-w-0 flex-1">
@@ -292,10 +302,10 @@ const QuotationCreateStep3 = ({ selectedSuppliers, onChange, onBack, onFinish, l
                         <button
                             type="button"
                             title="Remover"
-                            aria-label="Remover"
+                            aria-label={`Remover ${s.supplierName}`}
                             onClick={() => handleRemoveSupplier(s.supplierId)}
                             disabled={loading}
-                            className="w-8 h-8 rounded-[var(--radius-md)] border-none bg-[var(--color-danger-soft)] text-[var(--color-danger)] inline-grid place-items-center flex-shrink-0 cursor-pointer transition-[background-color,color] duration-[160ms] hover:bg-[var(--color-danger)] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                            className={supplierRemoveBtnCls}
                         >
                             <X size={16} strokeWidth={2.25} />
                         </button>

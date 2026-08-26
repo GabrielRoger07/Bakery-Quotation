@@ -365,12 +365,15 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
     const iconBtnDanger  = `${iconBtnBase} hover:bg-[var(--color-danger-soft)] hover:text-[var(--color-danger)]`
     const iconBtnSuccess = `${iconBtnBase} text-[var(--color-success)] hover:bg-[var(--color-success-soft)] hover:text-[var(--color-success-strong)]`
 
-    // Desktop: eyebrows das colunas + botões dos cards de selecionados
+    // Desktop: eyebrows das colunas + ações dos produtos selecionados
     const colLabelCls = 'flex items-center gap-1.5 text-label font-bold uppercase tracking-[0.1em] text-[var(--color-text-disabled)] mb-2.5 px-0.5'
     const colBadgeCls = 'text-label font-bold text-[var(--color-accent)] bg-[var(--color-highlight-soft)] px-1.5 py-0.5 rounded-full leading-none tabular-nums tracking-normal'
     const cardBtnBase = 'flex-shrink-0 w-8 h-8 rounded-[var(--radius-md)] border border-[var(--color-border-default)] bg-[var(--color-surface-card)] cursor-pointer inline-grid place-items-center transition-[background-color,border-color,color] duration-[160ms]'
     const cardBtnEdit = `${cardBtnBase} text-[var(--color-text-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] hover:bg-[var(--color-highlight-lighter)]`
     const cardBtnDelete = `${cardBtnBase} text-[var(--color-danger)] hover:border-[var(--color-danger)] hover:bg-[var(--color-danger-soft)]`
+    const productListShellCls = 'border border-[var(--color-border-subtle)] rounded-[var(--radius-lg)] overflow-hidden bg-[var(--color-surface-card)]'
+    const productListRowCls = 'flex items-center gap-3 px-3 py-2.5'
+    const productListDividerCls = 'border-b border-[var(--color-border-faint)] last:border-b-0'
 
     /* ── Search panel (shared between desktop and mobile search tab) ── */
     const renderSearchPanel = () => (
@@ -461,9 +464,9 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 <div className="text-[0.75rem] font-semibold text-[var(--color-text-disabled)] mb-2.5 px-0.5">Mostrando {availableProducts.length} de {totalElements} produtos</div>
                 <div className="mb-3">
                     {isMobile ? (
-                        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-md)] overflow-hidden bg-[var(--color-surface-card)] mb-1">
+                        <div className={`${productListShellCls} mb-1`}>
                             {availableProducts.map(p => (
-                                <div key={p.productId} className="flex items-center gap-3 px-3 py-2.5 border-b border-[var(--color-border-faint)] last:border-b-0">
+                                <div key={p.productId} className={`${productListRowCls} ${productListDividerCls}`}>
                                     <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] flex items-center justify-center flex-shrink-0 text-[var(--color-highlight-border)]">
                                         <Package size={20} strokeWidth={2} />
                                     </div>
@@ -478,12 +481,12 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                             ))}
                         </div>
                     ) : (
-                        <div className="border border-[var(--color-border-subtle)] rounded-[var(--radius-lg)] overflow-hidden bg-[var(--color-surface-card)] mb-1">
+                        <div className={`${productListShellCls} mb-1`}>
                             {availableProducts.map(p => {
                                 const isExpanded = expandedId === p.productId
                                 return (
-                                    <div key={p.productId} className="border-b border-[var(--color-border-faint)] last:border-b-0">
-                                        <div className={`flex items-center gap-3 px-3 py-2.5 transition-[background-color] duration-[160ms] ${isExpanded ? 'bg-[var(--color-highlight-lighter)]' : ''}`}>
+                                    <div key={p.productId} className={productListDividerCls}>
+                                        <div className={`${productListRowCls} transition-[background-color] duration-[160ms] ${isExpanded ? 'bg-[var(--color-highlight-lighter)]' : ''}`}>
                                             <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] flex items-center justify-center flex-shrink-0">
                                                 <Package size={20} strokeWidth={2} />
                                             </div>
@@ -555,41 +558,43 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
         }
         if (isMobile) {
             return (
-                <div className="bg-[var(--color-surface-card)] border border-[var(--color-border-default)] rounded-[var(--radius-lg)] p-4 mb-3 [box-shadow:var(--shadow-xs)]">
-                    {/* Mobile card list */}
-                    <ul className="list-none m-0 p-0 flex flex-col gap-[0.5rem]">
+                <div className="mb-3">
+                    <ul className={`${productListShellCls} list-none m-0 p-0`}>
                         {selectedList.map(p => {
                             const rawProduct = localSelected[p.productId]?._product
                             return (
-                                <li key={p.productId} className="sel-product-card">
-                                    <div className="sel-product-icon">
-                                        <Package size={18} />
+                                <li key={p.productId} className={`${productListRowCls} ${productListDividerCls}`}>
+                                    <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] flex items-center justify-center flex-shrink-0">
+                                        <Package size={20} strokeWidth={2} />
                                     </div>
-                                    <div className="sel-product-body">
-                                        <p className="sel-product-name">{p.productName}</p>
-                                        <div className="sel-product-meta">
-                                            <span className="sel-product-qty">{p.quantity} {p.unitOfMeasure}</span>
-                                            <span className="sel-product-dot" aria-hidden="true" />
+                                    <div className="flex flex-col min-w-0 flex-1">
+                                        <span className="font-bold text-[0.875rem] text-[var(--color-text-heading)] overflow-hidden text-ellipsis whitespace-nowrap">{p.productName}</span>
+                                        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                                            <span className="text-label font-bold uppercase bg-[var(--color-highlight-soft)] text-[var(--color-accent)] px-2 py-0.5 rounded-full tabular-nums">{p.quantity} {p.unitOfMeasure}</span>
                                             {p.brand
-                                                ? <span className="sel-product-brand">{p.brand}</span>
-                                                : <span className="sel-product-no-brand">Sem marca</span>
+                                                ? <span className="text-label font-semibold border border-[var(--color-border-default)] text-[var(--color-text-secondary)] px-2 py-0.5 rounded-full max-w-full overflow-hidden text-ellipsis whitespace-nowrap">{p.brand}</span>
+                                                : <span className="text-caption italic text-[var(--color-text-disabled)]">Sem marca</span>
                                             }
                                         </div>
                                     </div>
-                                    <div className="sel-product-actions">
+                                    <div className="flex items-center gap-1.5 flex-shrink-0">
                                         <button
-                                            className="sel-product-btn edit"
+                                            type="button"
+                                            className={cardBtnEdit}
                                             title="Editar"
+                                            aria-label={`Editar ${p.productName}`}
                                             onClick={() => handleOpenSheet(rawProduct ?? p, { quantity: p.quantity, brand: p.brand })}
                                         >
-                                            <Pencil size={14} />
+                                            <Pencil size={14} strokeWidth={2} />
                                         </button>
                                         <button
-                                            className="sel-product-btn remove"
+                                            type="button"
+                                            className={cardBtnDelete}
                                             title="Remover"
+                                            aria-label={`Remover ${p.productName}`}
                                             onClick={() => handleRemoveProduct(p.productId)}
                                         >
-                                            <X size={14} />
+                                            <Trash2 size={14} strokeWidth={2} />
                                         </button>
                                     </div>
                                 </li>
@@ -599,17 +604,17 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                 </div>
             )
         }
-        /* Desktop: cards individuais */
+        /* Desktop: mesma lista contínua do catálogo */
         return (
-            <ul className="list-none m-0 p-0 flex flex-col gap-2.5 mb-3">
+            <ul className={`${productListShellCls} list-none m-0 p-0 mb-3`}>
                 {selectedList.map(p => {
                     const isEditing = editingId === p.productId
                     return (
                         <li
                             key={p.productId}
-                            className={`flex items-center gap-3 p-3 border rounded-[var(--radius-xl)] [box-shadow:var(--shadow-card-soft)] transition-[background-color,border-color] duration-[160ms] ${isEditing ? 'bg-[var(--color-highlight-lighter)] border-[var(--color-highlight-border)]' : 'bg-[var(--color-surface-card)] border-[var(--color-border-subtle)]'}`}
+                            className={`${productListRowCls} ${productListDividerCls} transition-[background-color] duration-[160ms] ${isEditing ? 'bg-[var(--color-highlight-lighter)]' : ''}`}
                         >
-                            <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] flex items-center justify-center flex-shrink-0 self-start mt-0.5">
+                            <div className="w-[38px] h-[38px] rounded-[11px] bg-[var(--color-highlight-lighter)] text-[var(--color-accent)] flex items-center justify-center flex-shrink-0">
                                 <Package size={20} strokeWidth={2} />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -639,13 +644,13 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
                             </div>
                             {isEditing ? (
                                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                                    <button onClick={() => handleConfirmEdit(p.productId)} title="Confirmar" className={iconBtnSuccess}><Check size={14} /></button>
-                                    <button onClick={handleCancelEdit} title="Cancelar" className={iconBtnDanger}><X size={14} /></button>
+                                    <button type="button" onClick={() => handleConfirmEdit(p.productId)} title="Confirmar" aria-label={`Confirmar edição de ${p.productName}`} className={iconBtnSuccess}><Check size={14} /></button>
+                                    <button type="button" onClick={handleCancelEdit} title="Cancelar" aria-label={`Cancelar edição de ${p.productName}`} className={iconBtnDanger}><X size={14} /></button>
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                                    <button onClick={() => handleStartEdit(p)} title="Editar" className={cardBtnEdit}><Pencil size={14} strokeWidth={2} /></button>
-                                    <button onClick={() => handleRemoveProduct(p.productId)} title="Remover" className={cardBtnDelete}><Trash2 size={14} strokeWidth={2} /></button>
+                                    <button type="button" onClick={() => handleStartEdit(p)} title="Editar" aria-label={`Editar ${p.productName}`} className={cardBtnEdit}><Pencil size={14} strokeWidth={2} /></button>
+                                    <button type="button" onClick={() => handleRemoveProduct(p.productId)} title="Remover" aria-label={`Remover ${p.productName}`} className={cardBtnDelete}><Trash2 size={14} strokeWidth={2} /></button>
                                 </div>
                             )}
                         </li>

@@ -36,7 +36,7 @@ const QuotationCreateStep4 = ({ quotationData, onBack, onConfirm, onEditStep, lo
 
             <div className="p-[0.125rem]">
                 {/* Resumo — mobile: Início/Fim lado a lado + Modo largura total; desktop: 3 colunas */}
-                <div className="grid grid-cols-2 gap-2 mb-4 sm:grid-cols-3 sm:gap-[0.625rem]">
+                <div className="grid grid-cols-2 gap-2 mb-10 sm:grid-cols-3 sm:gap-[0.625rem]">
                     <MetaCard tone="success" icon={<CirclePlay size={16} strokeWidth={2} />} label={"Início"} value={start ? start.date : "-"} sub={start?.time} />
                     <MetaCard tone="danger" icon={<CircleStop size={16} strokeWidth={2} />} label={"Fim"} value={end ? end.date : "-"} sub={end?.time} />
                     <div className="col-span-2 sm:col-span-1">

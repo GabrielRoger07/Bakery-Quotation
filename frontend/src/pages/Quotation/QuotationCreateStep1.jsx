@@ -66,8 +66,8 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
     const fieldLabelCls = 'block text-label font-semibold text-[var(--color-text-disabled)] mb-1.5'
 
     const modes = [
-        { value: true, icon: <Gavel size={22} strokeWidth={1.75} />, title: "Leilão", desc: "Fornecedores competem em tempo real enviando lances pelo menor preço." },
         { value: false, icon: <FileText size={22} strokeWidth={1.75} />, title: "Proposta única", desc: "Fornecedores enviam apenas uma proposta por item, sem acompanhar lances." },
+        { value: true, disabled: true, icon: <Gavel size={22} strokeWidth={1.75} />, title: "Leilão", desc: "Fornecedores competem em tempo real enviando lances pelo menor preço." },
     ]
 
     return (
@@ -148,29 +148,42 @@ const QuotationCreateStep1 = ({ start, end, isAuction, onChange, onNext, loading
             {/* ── Modo da cotação ── */}
             <span className={sectionLabelCls}>Modo da cotação</span>
             <div className="flex flex-col gap-2.5 mb-2 md:grid md:grid-cols-2 md:gap-4">
-                {modes.map(({ value, icon, title, desc }) => {
+                {modes.map(({ value, disabled = false, icon, title, desc }) => {
                     const selected = localIsAuction === value
                     return (
                         <button
                             key={title}
                             type="button"
-                            onClick={() => setLocalIsAuction(value)}
+                            disabled={disabled}
+                            aria-label={disabled ? `${title}. Em breve` : title}
+                            onClick={disabled ? undefined : () => setLocalIsAuction(value)}
                             className={[
-                                'relative w-full text-left rounded-[var(--radius-xl)] p-4 md:p-6 cursor-pointer transition-[background-color,border-color,box-shadow] duration-[160ms] active:scale-[0.99]',
-                                selected
+                                'relative w-full text-left rounded-[var(--radius-xl)] p-4 md:p-6 transition-[background-color,border-color,box-shadow,opacity] duration-[160ms]',
+                                disabled
+                                    ? 'cursor-not-allowed border-[1.5px] border-[var(--color-border-default)] bg-[var(--color-surface-muted)] opacity-70'
+                                    : selected
                                     ? 'border-2 border-[var(--color-accent)] bg-[var(--color-highlight-lighter)] [box-shadow:0_8px_20px_-12px_rgba(91,33,182,0.5)]'
-                                    : 'border-[1.5px] border-[var(--color-border-default)] bg-[var(--color-surface-card)] hover:border-[var(--color-border-strong)]',
+                                    : 'cursor-pointer border-[1.5px] border-[var(--color-border-default)] bg-[var(--color-surface-card)] hover:border-[var(--color-border-strong)] active:scale-[0.99]',
                             ].join(' ')}
                         >
                             <div className="flex items-start gap-3 md:flex-col md:gap-4">
                                 <div className={[
                                     'w-[42px] h-[42px] rounded-[13px] flex items-center justify-center flex-shrink-0 transition-colors duration-[160ms]',
-                                    selected ? 'bg-[var(--color-highlight-soft)] text-[var(--color-accent)]' : 'bg-[var(--color-surface-muted)] text-[var(--color-text-disabled)]',
+                                    disabled
+                                        ? 'bg-[var(--color-surface-muted)] text-[var(--color-text-disabled)]'
+                                        : selected ? 'bg-[var(--color-highlight-soft)] text-[var(--color-accent)]' : 'bg-[var(--color-surface-muted)] text-[var(--color-text-disabled)]',
                                 ].join(' ')}>
                                     {icon}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <div className="font-bold text-[1rem] md:text-[1.125rem] text-[var(--color-text-body)] leading-tight mb-0.5 md:mb-1">{title}</div>
+                                    <div className="flex items-center gap-2 flex-wrap mb-0.5 md:mb-1">
+                                        <div className="font-bold text-[1rem] md:text-[1.125rem] text-[var(--color-text-body)] leading-tight">{title}</div>
+                                        {disabled && (
+                                            <span className="inline-flex items-center rounded-full bg-[var(--color-surface-card)] border border-[var(--color-border-default)] px-2 py-0.5 text-label font-bold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
+                                                Em breve
+                                            </span>
+                                        )}
+                                    </div>
                                     <div className="text-[0.78125rem] md:text-body text-[var(--color-text-muted)] leading-[1.45]">{desc}</div>
                                 </div>
                                 <div className={[

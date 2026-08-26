@@ -307,8 +307,6 @@ const QuotationCreateStep2 = ({ selectedProducts, onChange, onNext, onBack, load
             }
         }))
         setSheetProduct(null)
-        // after adding, jump to selected tab so the user sees the item
-        setMobileTab("selected")
     }, [sheetProduct])
 
     const handleNewProductCreated = useCallback((newProduct) => {

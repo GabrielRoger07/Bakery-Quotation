@@ -54,7 +54,7 @@ const Button = ({ children, onClick, disabled, type = 'button', loading = false,
 
   return (
     <button type={type} onClick={onClick} disabled={disabled || loading} className={cls}>
-      {loading ? 'Loading...' : children}
+      {loading ? 'Carregando...' : children}
     </button>
   )
 }

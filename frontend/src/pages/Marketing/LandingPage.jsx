@@ -23,8 +23,8 @@ const LandingPage = () => {
             {/* Topbar */}
             <header className="landing-topbar max-w-[1180px] mx-auto h-16 border border-[var(--color-border-default)] rounded-[var(--radius-xl)] [box-shadow:var(--shadow-xs)] flex items-center justify-between px-4 max-sm:h-auto max-sm:py-3 max-sm:gap-[0.6rem] max-sm:flex-wrap">
                 <div className="inline-flex items-center gap-2 font-bold">
-                    <span className="w-[1.9rem] h-[1.9rem] rounded-[0.55rem] grid place-items-center text-white bg-gradient-to-br from-[var(--color-accent-strong)] to-[var(--color-accent)] text-[0.875rem]">BQ</span>
-                    <span>Bakery Quotation</span>
+                    <span className="w-[1.9rem] h-[1.9rem] rounded-[0.55rem] grid place-items-center text-white bg-gradient-to-br from-[var(--color-accent-strong)] to-[var(--color-accent)] text-[0.875rem]">CF</span>
+                    <span>Cota Fácil</span>
                 </div>
                 <nav className="flex items-center gap-4 max-lg:hidden">
                     <a href="#problema" className="no-underline text-[var(--color-text-secondary)] text-[0.875rem] font-medium hover:text-[var(--color-text-heading)]">Problema</a>
@@ -74,12 +74,12 @@ const LandingPage = () => {
             {/* Sections */}
             <section id="problema" className="landing-section bg-[var(--color-surface-card)]">
                 <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-heading)]">O processo tradicional de cotação custa tempo e previsibilidade</h2>
-                <p className="mt-[0.9rem] mb-0 text-[var(--color-text-secondary)] text-base max-w-[72ch]">Trocas por telefone, visitas presenciais, mensagens dispersas e planilhas diferentes dificultam comparar propostas com clareza. Isso gera retrabalho, atrasos e decisões com menos transparência.</p>
+                <p className="mt-[0.9rem] mb-0 text-[var(--color-text-secondary)] text-base max-w-[72ch]">Visitas presenciais, mensagens dispersas e planilhas diferentes dificultam comparar propostas com clareza. Isso gera retrabalho, atrasos e decisões com menos transparência.</p>
             </section>
 
             <section id="solucao" className="landing-section bg-gradient-to-b from-white to-[var(--color-highlight-lighter)]">
                 <h2 className="m-0 text-[clamp(1.4rem,2.3vw,2rem)] text-[var(--color-text-heading)]">Uma operação de compras mais rápida, organizada e auditável</h2>
-                <p className="mt-[0.9rem] mb-0 text-[var(--color-text-secondary)] text-base max-w-[72ch]">Com o Bakery Quotation, sua equipe cria cotações em poucos cliques, convida fornecedores em escala e acompanha tudo em um único painel. Resultado: mais agilidade para negociar e mais confiança para decidir.</p>
+                <p className="mt-[0.9rem] mb-0 text-[var(--color-text-secondary)] text-base max-w-[72ch]">Com o Cota Fácil, sua equipe cria cotações em poucos cliques, convida fornecedores em escala e acompanha tudo em um único painel. Resultado: mais agilidade para negociar e mais confiança para decidir.</p>
             </section>
 
             <section className="landing-section">

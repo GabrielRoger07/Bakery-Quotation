@@ -50,6 +50,17 @@ const SupplierNavbar = () => {
                 </div>
             </nav>
 
+            {/* Estende a superfície de marca para a área obscurecida pelo Safari mobile.
+                Só 4px ficam visíveis; o restante permanece sob os controles do navegador. */}
+            <div
+                aria-hidden="true"
+                className="fixed inset-x-0 bottom-0 z-[1000] bg-[var(--color-brand)] pointer-events-none sm:hidden"
+                style={{
+                    height: 'calc(6rem + env(safe-area-inset-bottom))',
+                    transform: 'translateY(calc(100% - 0.25rem))',
+                }}
+            />
+
             <LogoutConfirmModal
                 open={confirmOpen}
                 onConfirm={doLogout}

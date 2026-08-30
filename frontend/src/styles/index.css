@@ -3450,9 +3450,9 @@ textarea {
     min-width: 0;
   }
   .saqu-review-row-unit {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--color-text-muted);
+    font-size: var(--text-body);
+    font-weight: 700;
+    color: var(--color-accent-strong);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
     flex-shrink: 0;
@@ -3460,12 +3460,12 @@ textarea {
   .saqu-review-row-unit-label {
     font-weight: 400;
     font-size: var(--text-label);
-    opacity: 0.75;
+    opacity: 0.85;
   }
   .saqu-review-total {
-    font-size: var(--text-body);
-    font-weight: 700;
-    color: var(--color-accent-strong);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
     flex-shrink: 0;

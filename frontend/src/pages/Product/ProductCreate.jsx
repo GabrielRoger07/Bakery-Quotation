@@ -66,9 +66,7 @@ const ProductCreate = ({ onClose, onSave, departments = [], initialDepartmentId 
     return (
         <form onSubmit={handleProductCreate}>
             <Input label={"Nome do Produto"} type="text" name="productName" value={productName} onChange={handleNameChange} onBlur={handleNameBlur} placeholder={"Digite o nome do produto"} isInvalid={isNameInvalid} error={charLimitMessage(nameWarning)} required />
-
             <Input label={"Código do Produto"} type="text" name="productBarCodeNumber" value={productBarCodeNumber} onChange={handleBarCodeChange} onBlur={handleBarCodeBlur} placeholder={"Digite o código do produto"} isInvalid={isBarCodeInvalid} error={charLimitMessage(barCodeWarning)} />
-
             <Input label={"Descrição do Produto"} type="text" name="productDescription" value={productDescription} onChange={handleDescriptionChange} onBlur={handleDescriptionBlur} placeholder={"Digite a descrição do produto"} isInvalid={isDescriptionInvalid} error={productDescription ? charLimitMessage(descriptionWarning) : ''} />
 
             {departments.length >= 2 && (

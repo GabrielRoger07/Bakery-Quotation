@@ -181,7 +181,9 @@ const MobileConfirmSheet = ({
                                     {isSkipped ? (
                                         <span className="saqu-review-no-price-pill">Sem preço</span>
                                     ) : (
-                                        <span className="saqu-review-total">{formatMoney(total)}</span>
+                                        <span className="saqu-review-row-unit">
+                                            {formatMoney(unitPrice)}<span className="saqu-review-row-unit-label">/{product.unitOfMeasure}</span>
+                                        </span>
                                     )}
                                 </div>
                                 <div className="saqu-review-row-bottom">
@@ -191,9 +193,7 @@ const MobileConfirmSheet = ({
                                         {product.brand || <span className="italic">Marca não definida</span>}
                                     </span>
                                     {!isSkipped && (
-                                        <span className="saqu-review-row-unit">
-                                            {formatMoney(unitPrice)}<span className="saqu-review-row-unit-label">/{product.unitOfMeasure}</span>
-                                        </span>
+                                        <span className="saqu-review-total">{formatMoney(total)}</span>
                                     )}
                                 </div>
                             </div>

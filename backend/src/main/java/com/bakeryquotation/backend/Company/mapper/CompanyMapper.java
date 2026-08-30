@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 public interface CompanyMapper {
 
     @Mapping(target = "createdAt", expression = "java(java.time.Instant.now())")
-    @Mapping(target = "role", constant = "COMPANY")
+    @Mapping(target = "role", ignore = true)
     @Mapping(target = "products", ignore = true)
     @Mapping(target = "quotations", ignore = true)
     @Mapping(target = "suppliers", ignore = true)

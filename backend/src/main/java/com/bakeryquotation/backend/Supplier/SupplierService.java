@@ -122,7 +122,8 @@ public class SupplierService {
     }
 
     public ResponseEntity<SupplierLoginResponseDTO> loginSupplier(SupplierLoginRequestDTO supplierLoginRequestDTO, String companyCnpj) {
-        Supplier supplier = supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, supplierLoginRequestDTO.getSupplierWhatsappNumber())
+        String supplierWhatsappNumber = supplierLoginRequestDTO.getSupplierWhatsappNumber().trim();
+        Supplier supplier = supplierRepository.findByCompany_CompanyCnpjAndSupplierWhatsappNumber(companyCnpj, supplierWhatsappNumber)
                 .orElseThrow(() -> new BadCredentialsException("Bad credentials"));
 
         if(!passwordEncoder.matches(supplierLoginRequestDTO.getSupplierPassword(), supplier.getSupplierPassword())){

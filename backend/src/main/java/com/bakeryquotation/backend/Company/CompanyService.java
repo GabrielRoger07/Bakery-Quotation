@@ -62,20 +62,20 @@ public class CompanyService {
 
     public ResponseEntity<CompanyResponseDTO> createCompany(CompanyRequestDTO companyRequestDTO){
         String companyCnpj = companyRequestDTO.getCompanyCnpj();
-        Optional<Company> exists = companyRepository.findById(companyCnpj);
-        if(exists.isPresent()){
+        Optional<Company> companyWithSameCnpj = companyRepository.findById(companyCnpj);
+        if(companyWithSameCnpj.isPresent()){
             throw new DuplicateResourceException("Company with CNPJ " + companyCnpj + " already exists");
         }
 
-        String companyEmail = companyRequestDTO.getCompanyEmail();
-        Boolean exists2 = companyRepository.existsCompanyByCompanyEmail(companyEmail);
-        if(exists2){
+        String companyEmail = companyRequestDTO.getCompanyEmail().trim();
+        Boolean emailAlreadyRegistered = companyRepository.existsCompanyByCompanyEmail(companyEmail);
+        if(emailAlreadyRegistered){
             throw new DuplicateResourceException("Company with email " + companyEmail + " already exists");
         }
 
         String companyWhatsappNumber = companyRequestDTO.getCompanyWhatsappNumber();
-        exists = companyRepository.findByCompanyWhatsappNumber(companyWhatsappNumber);
-        if(exists.isPresent()){
+        Optional<Company> companyWithSameWhatsappNumber = companyRepository.findByCompanyWhatsappNumber(companyWhatsappNumber);
+        if(companyWithSameWhatsappNumber.isPresent()){
             throw new DuplicateResourceException("Company with whatsapp number " + companyWhatsappNumber + " already exists");
         }
 
@@ -89,7 +89,8 @@ public class CompanyService {
     }
 
     public ResponseEntity<LoginResponseDTO> loginCompany(LoginRequestDTO loginRequestDTO){
-        UsernamePasswordAuthenticationToken userAndPassword = new UsernamePasswordAuthenticationToken(loginRequestDTO.getCompanyEmail(), loginRequestDTO.getCompanyPassword());
+        String loginEmail = loginRequestDTO.getCompanyEmail().trim();
+        UsernamePasswordAuthenticationToken userAndPassword = new UsernamePasswordAuthenticationToken(loginEmail, loginRequestDTO.getCompanyPassword());
         Authentication authentication = authenticationManager.authenticate(userAndPassword);
 
         String companyEmail = ((AuthUserDetails) authentication.getPrincipal()).getUsername();

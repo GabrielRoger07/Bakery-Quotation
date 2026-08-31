@@ -178,7 +178,7 @@ public class SupplierReportService {
             BigDecimal totalQty = bid.getQuantity().add(bid.getBonus());
             String pricePerUnit = formatMoney(bid.getPrice().divide(totalQty, 2, RoundingMode.HALF_UP));
             String brand = (contain != null && contain.getBrand() != null) ? contain.getBrand() : "-";
-            String qty = bid.getQuantity().stripTrailingZeros().toPlainString() + " UN";
+            String qty = bid.getQuantity().stripTrailingZeros().toPlainString() + " " + contain.getUnitOfMeasure();
 
             addTableRow(table, cellFont, rowBg,
                     bid.getProduct().getProductName(),

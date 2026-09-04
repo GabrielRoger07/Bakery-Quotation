@@ -11,8 +11,8 @@ import java.util.List;
 @Entity
 @Table(name = "supplier",
        uniqueConstraints = {
-            @UniqueConstraint(name = "supplier_companyCnpj_whatsapp_uk", columnNames = {"supplierWhatsappNumber", "companyCnpj"}),
-            @UniqueConstraint(name = "supplier_companyCnpj_email_uk", columnNames = {"supplierEmail", "companyCnpj"})
+            @UniqueConstraint(name = "supplier_companyCnpj_whatsapp_employerCnpj_uk", columnNames = {"companyCnpj", "supplierWhatsappNumber", "employerCnpj"}),
+            @UniqueConstraint(name = "supplier_companyCnpj_email_employerCnpj_uk", columnNames = {"companyCnpj", "supplierEmail", "employerCnpj"})
        }
 )
 public class Supplier {

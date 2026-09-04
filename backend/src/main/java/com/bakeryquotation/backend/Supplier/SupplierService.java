@@ -163,19 +163,20 @@ public class SupplierService {
 
         String supplierEmail = supplierRequestDTO.getSupplierEmail();
         String supplierWhatsappNumber = supplierRequestDTO.getSupplierWhatsappNumber();
+        String employerCnpj = supplierRequestDTO.getEmployerCnpj();
 
         Optional<Supplier> exists = Optional.empty();
 
         if(supplierEmail != null) {
-            exists = supplierRepository.findByCompany_CompanyEmailAndSupplierEmail(companyEmail, supplierEmail);
+            exists = supplierRepository.findByCompany_CompanyEmailAndSupplierEmailAndEmployerCnpj(companyEmail, supplierEmail, employerCnpj);
             if(exists.isPresent() && !exists.get().getId().equals(id)){
-                throw new DuplicateResourceException("This company already has a supplier with email " + supplierEmail);
+                throw new DuplicateResourceException("This company already has a supplier with email " + supplierEmail + " and employer CNPJ " + employerCnpj);
             }
         }
 
-        exists = supplierRepository.findByCompany_CompanyEmailAndSupplierWhatsappNumber(companyEmail, supplierWhatsappNumber);
+        exists = supplierRepository.findByCompany_CompanyEmailAndSupplierWhatsappNumberAndEmployerCnpj(companyEmail, supplierWhatsappNumber, employerCnpj);
         if(exists.isPresent() && !exists.get().getId().equals(id)){
-            throw new DuplicateResourceException("This company already has a supplier with Whatsapp number " + supplierWhatsappNumber);
+            throw new DuplicateResourceException("This company already has a supplier with Whatsapp number " + supplierWhatsappNumber + " and employer CNPJ " + employerCnpj);
         }
 
         supplier.setSupplierEmail(supplierRequestDTO.getSupplierEmail());
@@ -213,20 +214,21 @@ public class SupplierService {
     public void validation(SupplierRequestDTO supplierRequestDTO){
         String supplierEmail = supplierRequestDTO.getSupplierEmail();
         String supplierWhatsappNumber = supplierRequestDTO.getSupplierWhatsappNumber();
+        String employerCnpj = supplierRequestDTO.getEmployerCnpj();
         String companyEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Optional<Supplier> exists = Optional.empty();
 
         if(supplierEmail != null) {
-            exists = supplierRepository.findByCompany_CompanyEmailAndSupplierEmail(companyEmail, supplierEmail);
+            exists = supplierRepository.findByCompany_CompanyEmailAndSupplierEmailAndEmployerCnpj(companyEmail, supplierEmail, employerCnpj);
             if(exists.isPresent()){
-                throw new DuplicateResourceException("This company already has a supplier with email " + supplierEmail);
+                throw new DuplicateResourceException("This company already has a supplier with email " + supplierEmail + " and employer CNPJ " + employerCnpj);
             }
         }
 
-        exists = supplierRepository.findByCompany_CompanyEmailAndSupplierWhatsappNumber(companyEmail, supplierWhatsappNumber);
+        exists = supplierRepository.findByCompany_CompanyEmailAndSupplierWhatsappNumberAndEmployerCnpj(companyEmail, supplierWhatsappNumber, employerCnpj);
         if(exists.isPresent()){
-            throw new DuplicateResourceException("This company already has a supplier with Whatsapp number " + supplierWhatsappNumber);
+            throw new DuplicateResourceException("This company already has a supplier with Whatsapp number " + supplierWhatsappNumber + " and employer CNPJ " + employerCnpj);
         }
     }
 

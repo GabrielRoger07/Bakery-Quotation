@@ -13,9 +13,9 @@ import java.util.Optional;
 public interface SupplierRepository extends JpaRepository<Supplier, Long> {
     boolean findBySupplierEmail(String supplierEmail);
 
-    Optional<Supplier> findByCompany_CompanyEmailAndSupplierEmail(String companyCompanyEmail, String supplierEmail);
+    Optional<Supplier> findByCompany_CompanyEmailAndSupplierEmailAndEmployerCnpj(String companyCompanyEmail, String supplierEmail, String employerCnpj);
 
-    Optional<Supplier> findByCompany_CompanyEmailAndSupplierWhatsappNumber(String companyCompanyEmail, String supplierWhatsappNumber);
+    Optional<Supplier> findByCompany_CompanyEmailAndSupplierWhatsappNumberAndEmployerCnpj(String companyCompanyEmail, String supplierWhatsappNumber, String employerCnpj);
 
     Optional<Supplier> findByCompany_CompanyCnpjAndSupplierWhatsappNumber(String companyCompanyCnpj, String supplierWhatsappNumber);
 
